@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "gg.moonflower.starter.core.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+  ],
+  "mixins": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
