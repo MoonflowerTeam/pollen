@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "version": "${version}",
+  "name": "${name}",
+  "description": "This is an example starter template.",
+  "authors": [ "Moonflower Studio" ],
+  "contributors": [ "An author", "Another author", "The last author" ],
+  "contact": {
+    "homepage": "https://moonflower.gg",
+	"issues": "https://github.com/MoonflowerTeam/starter/issues",
+    "sources": "https://github.com/MoonflowerTeam/starter"
+  },
+  "license": "GPLv3",
+  "environment": "*",
+  "mixins": [
+    "${id}-common.mixins.json",
+    "${id}.mixins.json"
+  ],
+  "entrypoints": {
+    "main": [
+      "gg.moonflower.starter.core.fabric.StarterFabric"
+    ]
+  },
+  "depends": {
+    "fabric": "*",
+    "minecraft": "1.17.x"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}
