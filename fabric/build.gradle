@@ -1,3 +1,6 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
 plugins {
     id "com.github.johnrengelman.shadow" version "7.0.0"
 }
@@ -31,12 +34,22 @@ dependencies {
 }
 
 processResources {
-    inputs.property "id", project.mod_id
-    inputs.property "name", project.mod_name
-    inputs.property "version", project.mod_version
+    inputs.property "id", rootProject.mod_id
+    inputs.property "name", rootProject.mod_name
+    inputs.property "version", rootProject.mod_version
+    inputs.property "repo", rootProject.repo_name
 
     filesMatching("fabric.mod.json") {
-        expand "id": project.mod_id, "name": project.mod_name, "version": project.mod_version
+        expand "id": rootProject.mod_id,
+                "name": rootProject.mod_name,
+                "version": rootProject.mod_version,
+                "repo": rootProject.repo_name
+    }
+
+    doLast {
+        fileTree(dir: outputs.files.asPath, include: "**/*.json").each {
+            File file -> file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
+        }
     }
 }
 

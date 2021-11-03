@@ -1,28 +1,26 @@
 modLoader = "javafml"
 loaderVersion = "[36,)"
-issueTrackerURL = "https://github.com/MoonflowerTeam/starter/issues"
+issueTrackerURL = "https://github.com/MoonflowerTeam/${repo}/issues"
 license = "GPLv3"
 
 [[mods]]
-modId = "starter"
+modId = "${id}"
 version = "${version}"
-displayName = "Starter"
+displayName = "${name}"
 authors = "Moonflower Studio"
-credits = "An author, another author, and the last author."
-description = '''
-This is an example starter template.
-'''
-updateJSONURL = "https://github.com/MoonflowerTeam/starter/update.json"
+credits = "Jackson"
+description = "Pollen is a library mod which includes various utilities and platform bridges for Fabric and Forge using Architectury."
+updateJSONURL = "https://github.com/MoonflowerTeam/${repo}/update.json"
 #logoFile = ""
 
-[[dependencies.starter]]
+[[dependencies.${id}]]
 modId = "forge"
 mandatory = true
 versionRange = "[36,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.starter]]
+[[dependencies.${id}]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[1.16.5,)"
