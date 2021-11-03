@@ -3,13 +3,13 @@
   "id": "${id}",
   "version": "${version}",
   "name": "${name}",
-  "description": "This is an example starter template.",
+  "description": "Pollen is a library mod which includes various utilities and platform bridges for Fabric and Forge using Architectury.",
   "authors": [ "Moonflower Studio" ],
-  "contributors": [ "An author", "Another author", "The last author" ],
+  "contributors": [ "Jackson" ],
   "contact": {
     "homepage": "https://moonflower.gg",
-	"issues": "https://github.com/MoonflowerTeam/starter/issues",
-    "sources": "https://github.com/MoonflowerTeam/starter"
+    "issues": "https://github.com/MoonflowerTeam/${repo}/issues",
+    "sources": "https://github.com/MoonflowerTeam/${repo}/"
   },
   "license": "GPLv3",
   "environment": "*",
@@ -19,14 +19,11 @@
   ],
   "entrypoints": {
     "main": [
-      "gg.moonflower.starter.core.fabric.StarterFabric"
+      "gg.moonflower.pollen.core.fabric.PollenFabric"
     ]
   },
   "depends": {
     "fabric": "*",
     "minecraft": "1.17.x"
-  },
-  "suggests": {
-    "flamingo": "*"
   }
 }
