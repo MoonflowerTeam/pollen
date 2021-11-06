@@ -6,6 +6,6 @@ import net.fabricmc.api.ModInitializer;
 public class PollenFabric implements ModInitializer {
     @Override
     public void onInitialize() {
-        Pollen.init();
+        Pollen.PLATFORM.setup();
     }
 }
