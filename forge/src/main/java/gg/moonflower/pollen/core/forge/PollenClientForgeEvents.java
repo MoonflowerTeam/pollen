@@ -6,7 +6,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 @Mod.EventBusSubscriber(modid = Pollen.MOD_ID, value = Dist.CLIENT)
 public class PollenClientForgeEvents {
 

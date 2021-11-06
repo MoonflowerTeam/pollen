@@ -4,7 +4,9 @@ import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.EventListener;
 import gg.moonflower.pollen.api.event.events.TickEvent;
 import gg.moonflower.pollen.api.platform.Platform;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public class Pollen {
 
     public static final String MOD_ID = "pollen";

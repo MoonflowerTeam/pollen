@@ -4,7 +4,9 @@ import gg.moonflower.pollen.core.Pollen;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 @Mod.EventBusSubscriber(modid = Pollen.MOD_ID)
 public class PollenCommonForgeEvents {
 

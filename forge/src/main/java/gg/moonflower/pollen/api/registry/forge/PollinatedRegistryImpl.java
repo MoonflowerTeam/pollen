@@ -26,9 +26,7 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> PollinatedRegistry<T> create(Registry<T> registry, String modId) {
         IForgeRegistry forgeRegistry = RegistryManager.ACTIVE.getRegistry((ResourceKey) registry.key());
-        if (forgeRegistry == null)
-            return PollinatedRegistry.createVanilla(registry, modId);
-        return new PollinatedRegistryImpl(forgeRegistry, modId);
+        return forgeRegistry != null ? new PollinatedRegistryImpl(forgeRegistry, modId) : PollinatedRegistry.createVanilla(registry, modId);
     }
 
     @Override

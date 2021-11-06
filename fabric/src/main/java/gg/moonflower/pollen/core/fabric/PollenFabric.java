@@ -6,7 +6,9 @@ import gg.moonflower.pollen.core.Pollen;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public class PollenFabric implements ModInitializer {
 
     @Override

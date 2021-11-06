@@ -5,7 +5,9 @@ import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 @Mod(Pollen.MOD_ID)
 public class PollenForge {
 
