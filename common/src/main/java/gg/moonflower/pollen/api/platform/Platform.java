@@ -5,6 +5,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 /**
  * A mod instance for initializing mods on the common side.
+ *
  * @author Jackson
  */
 public abstract class Platform {
