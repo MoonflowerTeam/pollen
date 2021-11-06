@@ -4,7 +4,7 @@ import gg.moonflower.pollen.api.platform.Platform;
 
 public class Pollen {
     public static final String MOD_ID = "pollen";
-    public static final Platform PLATFORM = Platform.builder(MOD_ID)
+    public static final Platform PLATFORM = Platform.builder(Pollen.MOD_ID)
             .commonInit(Pollen::onCommon)
             .clientInit(Pollen::onClient)
             .commonPostInit(Pollen::onCommonPost)

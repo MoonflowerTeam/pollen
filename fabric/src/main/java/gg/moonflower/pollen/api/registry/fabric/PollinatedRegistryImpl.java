@@ -5,7 +5,7 @@ import net.minecraft.core.Registry;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-public class PollinatedRegistryImpl<T> {
+public final class PollinatedRegistryImpl<T> {
 
     public static <T> PollinatedRegistry<T> create(Registry<T> registry, String modId) {
         return PollinatedRegistry.createVanilla(registry, modId);

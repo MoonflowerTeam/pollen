@@ -14,7 +14,7 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal
-public class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> extends PollinatedRegistry<T> {
+public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> extends PollinatedRegistry<T> {
     private final DeferredRegister<T> registry;
 
     private PollinatedRegistryImpl(IForgeRegistry<T> registry, String modId) {
