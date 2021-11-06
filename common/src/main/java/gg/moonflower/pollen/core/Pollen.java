@@ -1,10 +1,10 @@
 package gg.moonflower.pollen.core;
 
-import gg.moonflower.pollen.api.platform.PlatformInstance;
+import gg.moonflower.pollen.api.platform.Platform;
 
 public class Pollen {
     public static final String MOD_ID = "pollen";
-    public static final PlatformInstance PLATFORM = PlatformInstance.builder(MOD_ID)
+    public static final Platform PLATFORM = Platform.builder(MOD_ID)
             .commonInit(Pollen::onCommon)
             .clientInit(Pollen::onClient)
             .commonPostInit(Pollen::onCommonPost)

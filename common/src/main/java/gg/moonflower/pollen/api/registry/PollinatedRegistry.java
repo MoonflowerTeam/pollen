@@ -2,7 +2,6 @@ package gg.moonflower.pollen.api.registry;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.platform.Platform;
-import gg.moonflower.pollen.api.platform.PlatformInstance;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
@@ -56,13 +55,13 @@ public abstract class PollinatedRegistry<T> {
     public abstract <I extends T> Supplier<I> register(String id, Supplier<I> object);
 
     /**
-     * Initializes the registry for a {@link PlatformInstance}.
+     * Initializes the registry for a {@link Platform}.
      *
-     * @param mod The {@link PlatformInstance} to register the registry onto.
+     * @param mod The {@link Platform} to register the registry onto.
      * @throws IllegalStateException if the registry has already been registered.
      */
     @ApiStatus.NonExtendable
-    public void register(PlatformInstance mod) {
+    public void register(Platform mod) {
         if (this.registered)
             throw new IllegalStateException("Cannot register a PollinatedRegistry twice!");
         this.registered = true;
@@ -70,7 +69,7 @@ public abstract class PollinatedRegistry<T> {
     }
 
     @ApiStatus.OverrideOnly
-    protected void onRegister(PlatformInstance mod) {
+    protected void onRegister(Platform mod) {
     }
 
     @ApiStatus.Internal

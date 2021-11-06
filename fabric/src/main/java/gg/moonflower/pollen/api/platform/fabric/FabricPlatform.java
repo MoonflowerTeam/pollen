@@ -1,12 +1,12 @@
 package gg.moonflower.pollen.api.platform.fabric;
 
-import gg.moonflower.pollen.api.platform.PlatformInstance;
+import gg.moonflower.pollen.api.platform.Platform;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 
-public class FabricPlatformInstance extends PlatformInstance {
+public class FabricPlatform extends Platform {
 
-    protected FabricPlatformInstance(String modId, Runnable commonInit, Runnable clientInit, Runnable commonPostInit, Runnable clientPostInit, Runnable commonNetworkInit, Runnable clientNetworkInit) {
+    protected FabricPlatform(String modId, Runnable commonInit, Runnable clientInit, Runnable commonPostInit, Runnable clientPostInit, Runnable commonNetworkInit, Runnable clientNetworkInit) {
         super(modId);
         commonInit.run();
         commonPostInit.run();
