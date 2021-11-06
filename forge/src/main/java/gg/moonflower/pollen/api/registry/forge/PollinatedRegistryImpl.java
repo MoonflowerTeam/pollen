@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.api.registry.forge;
 
-import gg.moonflower.pollen.api.platform.PlatformInstance;
-import gg.moonflower.pollen.api.platform.forge.ForgePlatformInstance;
+import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.api.platform.forge.ForgePlatform;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -42,7 +42,7 @@ public class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> extends Po
     }
 
     @Override
-    protected void onRegister(PlatformInstance mod) {
-        this.registry.register(((ForgePlatformInstance) mod).getEventBus());
+    protected void onRegister(Platform mod) {
+        this.registry.register(((ForgePlatform) mod).getEventBus());
     }
 }
