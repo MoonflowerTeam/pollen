@@ -13,6 +13,7 @@ import java.util.function.Supplier;
  *
  * @param <T> The object type.
  * @author Jackson
+ * @since 1.0.0
  */
 public abstract class PollinatedRegistry<T> {
     protected final String modId;

@@ -7,8 +7,10 @@ import org.jetbrains.annotations.ApiStatus;
  * A mod instance for initializing mods on the common side.
  *
  * @author Jackson
+ * @since 1.0.0
  */
 public abstract class Platform {
+
     private final String modId;
 
     protected Platform(String modId) {

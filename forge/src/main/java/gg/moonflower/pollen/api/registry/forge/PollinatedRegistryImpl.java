@@ -15,6 +15,7 @@ import java.util.function.Supplier;
 
 @ApiStatus.Internal
 public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> extends PollinatedRegistry<T> {
+
     private final DeferredRegister<T> registry;
 
     private PollinatedRegistryImpl(IForgeRegistry<T> registry, String modId) {

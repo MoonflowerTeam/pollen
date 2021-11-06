@@ -29,6 +29,9 @@ dependencies {
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
     modApi "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
 
+    implementation "net.jodah:typetools:0.8.3"
+    shadowCommon "net.jodah:typetools:0.8.3"
+
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }
@@ -55,6 +58,7 @@ processResources {
 
 shadowJar {
     configurations = [project.configurations.shadowCommon]
+    relocate "net.jodah.typetools", "gg.moonflower.pollen.typetools"
     classifier "dev-shadow"
 }
 

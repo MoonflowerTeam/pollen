@@ -10,6 +10,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public final class ForgePlatform extends Platform {
+
     private final IEventBus eventBus;
 
     ForgePlatform(String modId, IEventBus eventBus, Runnable commonInit, Runnable clientInit, Runnable commonPostInit, Runnable clientPostInit, Runnable commonNetworkInit, Runnable clientNetworkInit) {
