@@ -26,9 +26,7 @@ public abstract class Platform {
     }
 
     /**
-     * Returns the mod id for the {@link Platform}.
-     *
-     * @return The {@link Platform} mod id.
+     * @return The mod id for the platform.
      */
     public String getModId() {
         return modId;
@@ -36,12 +34,14 @@ public abstract class Platform {
 
     /**
      * Loads the {@link Platform}.
-     * <p>Fabric users should not run this on their client initializer. Running this on the common initializer will handle client initialization too.</p>
+     *
+     * <p>Fabric users should not run this on their client initializer. Running this on the common initializer will handle client initialization too.
      */
     public void setup() {
     }
 
     public static class Builder {
+
         private static final Runnable EMPTY_RUNNABLE = () -> {
         };
 
@@ -58,8 +58,8 @@ public abstract class Platform {
             this.modId = modId;
         }
 
-        @ExpectPlatform
         @ApiStatus.Internal
+        @ExpectPlatform
         public static Platform buildImpl(String modId, Runnable commonInit, Runnable clientInit, Runnable commonPostInit, Runnable clientPostInit, Runnable commonNetworkInit, Runnable clientNetworkInit) {
             return Platform.error();
         }
