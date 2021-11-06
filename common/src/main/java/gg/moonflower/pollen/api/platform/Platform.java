@@ -3,6 +3,10 @@ package gg.moonflower.pollen.api.platform;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import org.jetbrains.annotations.ApiStatus;
 
+/**
+ * A mod instance for initializing mods on the common side.
+ * @author Jackson
+ */
 public abstract class Platform {
     private final String modId;
 

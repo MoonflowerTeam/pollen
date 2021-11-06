@@ -8,6 +8,12 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Supplier;
 
+/**
+ * An abstracted registry for wrapping platform-specific registries.
+ *
+ * @param <T> The object type.
+ * @author Jackson
+ */
 public abstract class PollinatedRegistry<T> {
     protected final String modId;
     private boolean registered;
