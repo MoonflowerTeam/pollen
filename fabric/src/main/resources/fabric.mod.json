@@ -20,6 +20,9 @@
   "entrypoints": {
     "main": [
       "gg.moonflower.pollen.core.fabric.PollenFabric"
+    ],
+    "client": [
+      "gg.moonflower.pollen.core.fabric.PollenFabricClient"
     ]
   },
   "depends": {
