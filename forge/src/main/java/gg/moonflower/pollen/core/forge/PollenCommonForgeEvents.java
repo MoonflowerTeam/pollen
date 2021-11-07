@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.core.forge;
 
-import gg.moonflower.pollen.api.event.events.AddReloadListenerEvent;
 import gg.moonflower.pollen.api.event.events.TickEvent;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

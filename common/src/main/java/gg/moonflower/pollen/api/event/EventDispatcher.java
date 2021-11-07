@@ -127,8 +127,10 @@ public class EventDispatcher {
         AtomicBoolean canceled = new AtomicBoolean(false);
         while (clazz != null && PollinatedEvent.class.isAssignableFrom(clazz)) {
             List<RegisteredEvent> list = EVENT_LISTENERS.get(clazz);
-            if (list == null || list.isEmpty())
+            if (list == null || list.isEmpty()) {
+                clazz = clazz.getSuperclass();
                 continue;
+            }
 
             list.stream().sorted(Comparator.comparingInt(e -> e.priority)).forEachOrdered(registeredEvent ->
             {

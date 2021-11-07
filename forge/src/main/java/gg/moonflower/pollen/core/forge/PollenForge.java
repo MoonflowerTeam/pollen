@@ -16,6 +16,8 @@ public class PollenForge {
     }
 
     public static void postEvent(Event event, PollinatedEvent pollinatedEvent) {
-        event.setCanceled(EventDispatcher.post(pollinatedEvent));
+        boolean result = EventDispatcher.post(pollinatedEvent);
+        if (event.isCancelable())
+            event.setCanceled(result);
     }
 }
