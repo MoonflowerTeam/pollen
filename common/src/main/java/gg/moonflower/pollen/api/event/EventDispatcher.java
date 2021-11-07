@@ -77,6 +77,38 @@ public class EventDispatcher {
     /**
      * Registers a single event handler method. The consumer should be kept if you want to later unregister this listener.
      *
+     * @param eventConsumer The consumer of the event
+     * @param <T>           The type of event to receive
+     */
+    public static <T extends PollinatedEvent> void register(Consumer<T> eventConsumer) {
+        register(eventConsumer, 1000, false);
+    }
+
+    /**
+     * Registers a single event handler method. The consumer should be kept if you want to later unregister this listener.
+     *
+     * @param eventConsumer The consumer of the event
+     * @param priority      The priority of the event according to {@link EventListener#priority()}
+     * @param <T>           The type of event to receive
+     */
+    public static <T extends PollinatedEvent> void register(Consumer<T> eventConsumer, int priority) {
+        register(eventConsumer, priority, false);
+    }
+
+    /**
+     * Registers a single event handler method. The consumer should be kept if you want to later unregister this listener.
+     *
+     * @param eventConsumer    The consumer of the event
+     * @param receiveCancelled Whether to receive events after being canceled according to {@link EventListener#receiveCanceled()}
+     * @param <T>              The type of event to receive
+     */
+    public static <T extends PollinatedEvent> void register(Consumer<T> eventConsumer, boolean receiveCancelled) {
+        register(eventConsumer, 1000, receiveCancelled);
+    }
+
+    /**
+     * Registers a single event handler method. The consumer should be kept if you want to later unregister this listener.
+     *
      * @param eventConsumer    The consumer of the event
      * @param priority         The priority of the event according to {@link EventListener#priority()}
      * @param receiveCancelled Whether to receive events after being canceled according to {@link EventListener#receiveCanceled()}

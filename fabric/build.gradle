@@ -31,6 +31,8 @@ dependencies {
 
     implementation "net.jodah:typetools:0.8.3"
     shadowCommon "net.jodah:typetools:0.8.3"
+    implementation "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
+    shadowCommon "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }

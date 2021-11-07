@@ -25,6 +25,11 @@ public abstract class Platform {
         throw new AssertionError();
     }
 
+    @ExpectPlatform
+    public static boolean isProduction() {
+        return Platform.error();
+    }
+
     /**
      * @return The mod id for the platform.
      */

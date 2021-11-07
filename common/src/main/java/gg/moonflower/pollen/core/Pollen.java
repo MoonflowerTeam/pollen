@@ -1,9 +1,10 @@
 package gg.moonflower.pollen.core;
 
-import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.platform.Platform;
-import gg.moonflower.pollen.api.registry.ResourceRegistry;
-import net.minecraft.server.packs.PackType;
+import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
+import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
+import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
+import gg.moonflower.pollen.pinwheel.core.common.network.ModelAnimaMessages;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
@@ -20,12 +21,12 @@ public class Pollen {
             .build();
 
     private static void onClient() {
-        ResourceRegistry.registerReloadListener(PackType.CLIENT_RESOURCES, (preparationBarrier, resourceManager, profilerFiller, profilerFiller2, backgroundExecutor, gameExecutor) -> preparationBarrier.wait(null).thenRunAsync(() -> System.out.println("Client Reload"), gameExecutor));
-        ResourceRegistry.registerReloadListener(PackType.SERVER_DATA, (preparationBarrier, resourceManager, profilerFiller, profilerFiller2, backgroundExecutor, gameExecutor) -> preparationBarrier.wait(null).thenRunAsync(() -> System.out.println("Server Reload"), gameExecutor));
+        GeometryModelManager.init();
+        GeometryTextureManager.init();
+        AnimationManager.init();
     }
 
     private static void onCommon() {
-        EventDispatcher.register(Pollen.class);
     }
 
     private static void onClientPost() {
@@ -38,5 +39,6 @@ public class Pollen {
     }
 
     private static void onCommonNetworking() {
+        ModelAnimaMessages.init();
     }
 }
