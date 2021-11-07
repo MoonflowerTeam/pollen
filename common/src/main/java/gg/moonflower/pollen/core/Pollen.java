@@ -4,6 +4,8 @@ import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.EventListener;
 import gg.moonflower.pollen.api.event.events.TickEvent;
 import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.api.resources.ResourceRegistry;
+import net.minecraft.server.packs.PackType;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
@@ -19,12 +21,9 @@ public class Pollen {
             .clientNetworkInit(Pollen::onClientNetworking)
             .build();
 
-    @EventListener
-    public static void onEvent(TickEvent.ClientEvent.Pre event) {
-        System.out.println("Test");
-    }
-
     private static void onClient() {
+        ResourceRegistry.registerReloadListener(PackType.CLIENT_RESOURCES, (preparationBarrier, resourceManager, profilerFiller, profilerFiller2, backgroundExecutor, gameExecutor) -> preparationBarrier.wait(null).thenRunAsync(() -> System.out.println("Client Reload"), gameExecutor));
+        ResourceRegistry.registerReloadListener(PackType.SERVER_DATA, (preparationBarrier, resourceManager, profilerFiller, profilerFiller2, backgroundExecutor, gameExecutor) -> preparationBarrier.wait(null).thenRunAsync(() -> System.out.println("Server Reload"), gameExecutor));
     }
 
     private static void onCommon() {
