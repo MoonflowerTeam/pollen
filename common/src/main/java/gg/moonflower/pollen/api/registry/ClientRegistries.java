@@ -28,6 +28,10 @@ import net.minecraft.world.level.material.Fluid;
 
 import java.util.function.Function;
 
+/**
+ * @author Jackson
+ * @since 1.0.0
+ */
 @Environment(EnvType.CLIENT)
 public class ClientRegistries {
 

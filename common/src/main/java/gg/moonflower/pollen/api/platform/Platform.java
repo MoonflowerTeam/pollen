@@ -56,8 +56,6 @@ public abstract class Platform {
         private Runnable clientInit = Builder.EMPTY_RUNNABLE;
         private Runnable commonPostInit = Builder.EMPTY_RUNNABLE;
         private Runnable clientPostInit = Builder.EMPTY_RUNNABLE;
-        private Runnable commonNetworkInit = Builder.EMPTY_RUNNABLE;
-        private Runnable clientNetworkInit = Builder.EMPTY_RUNNABLE;
 
         private Builder(String modId) {
             this.modId = modId;
@@ -65,7 +63,7 @@ public abstract class Platform {
 
         @ApiStatus.Internal
         @ExpectPlatform
-        public static Platform buildImpl(String modId, Runnable commonInit, Runnable clientInit, Runnable commonPostInit, Runnable clientPostInit, Runnable commonNetworkInit, Runnable clientNetworkInit) {
+        public static Platform buildImpl(String modId, Runnable commonInit, Runnable clientInit, Runnable commonPostInit, Runnable clientPostInit) {
             return Platform.error();
         }
 
@@ -89,18 +87,8 @@ public abstract class Platform {
             return this;
         }
 
-        public Builder commonNetworkInit(Runnable onCommonNetworkInit) {
-            this.commonNetworkInit = onCommonNetworkInit;
-            return this;
-        }
-
-        public Builder clientNetworkInit(Runnable onClientNetworkInit) {
-            this.clientNetworkInit = onClientNetworkInit;
-            return this;
-        }
-
         public Platform build() {
-            return buildImpl(this.modId, this.commonInit, this.clientInit, this.commonPostInit, this.clientPostInit, this.commonNetworkInit, this.clientNetworkInit);
+            return buildImpl(this.modId, this.commonInit, this.clientInit, this.commonPostInit, this.clientPostInit);
         }
     }
 }

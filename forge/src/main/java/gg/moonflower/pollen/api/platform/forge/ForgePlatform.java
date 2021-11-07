@@ -13,7 +13,7 @@ public final class ForgePlatform extends Platform {
 
     private final IEventBus eventBus;
 
-    ForgePlatform(String modId, IEventBus eventBus, Runnable commonInit, Runnable clientInit, Runnable commonPostInit, Runnable clientPostInit, Runnable commonNetworkInit, Runnable clientNetworkInit) {
+    ForgePlatform(String modId, IEventBus eventBus, Runnable commonInit, Runnable clientInit, Runnable commonPostInit, Runnable clientPostInit) {
         super(modId);
         this.eventBus = eventBus;
         this.eventBus.<FMLCommonSetupEvent>addListener(e -> e.enqueueWork(commonPostInit));
@@ -21,9 +21,6 @@ public final class ForgePlatform extends Platform {
 
         commonInit.run();
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> clientInit::run);
-
-        commonNetworkInit.run();
-        clientNetworkInit.run();
     }
 
     public IEventBus getEventBus() {

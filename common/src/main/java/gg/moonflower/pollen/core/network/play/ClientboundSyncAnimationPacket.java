@@ -1,5 +1,7 @@
-package gg.moonflower.pollen.pinwheel.core.common.network;
+package gg.moonflower.pollen.core.network.play;
 
+import gg.moonflower.pollen.api.network.message.PollinatedPacket;
+import gg.moonflower.pollen.api.network.message.PollinatedPacketContext;
 import gg.moonflower.pollen.pinwheel.api.common.animation.AnimatedEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -12,18 +14,18 @@ import org.jetbrains.annotations.ApiStatus;
  * @author Ocelot
  */
 @ApiStatus.Internal
-public class ClientboundSyncAnimationMessage
+public class ClientboundSyncAnimationPacket implements PollinatedPacket<PollenClientPlayPacketHandler>
 {
     private final int entityId;
     private final int animationId;
 
-    public <T extends Entity & AnimatedEntity> ClientboundSyncAnimationMessage(T entity)
+    public <T extends Entity & AnimatedEntity> ClientboundSyncAnimationPacket(T entity)
     {
         this.entityId = entity.getId();
         this.animationId = ArrayUtils.indexOf(entity.getAnimationStates(), entity.getAnimationState());
     }
 
-    public ClientboundSyncAnimationMessage(FriendlyByteBuf buf)
+    public ClientboundSyncAnimationPacket(FriendlyByteBuf buf)
     {
         this.entityId = buf.readVarInt();
         this.animationId = buf.readVarInt();
@@ -33,6 +35,16 @@ public class ClientboundSyncAnimationMessage
     {
         buf.writeVarInt(this.entityId);
         buf.writeVarInt(this.animationId);
+    }
+
+    @Override
+    public void writePacketData(FriendlyByteBuf buf) {
+
+    }
+
+    @Override
+    public void processPacket(PollenClientPlayPacketHandler handler, PollinatedPacketContext ctx) {
+
     }
 
     @Environment(EnvType.CLIENT)

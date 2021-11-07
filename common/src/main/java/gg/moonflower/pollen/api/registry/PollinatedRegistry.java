@@ -16,6 +16,7 @@ import java.util.function.Supplier;
  * @since 1.0.0
  */
 public abstract class PollinatedRegistry<T> {
+
     protected final String modId;
     private boolean registered;
 

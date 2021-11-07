@@ -1,5 +1,7 @@
 package gg.moonflower.pollen.pinwheel.api.common.animation;
 
+import gg.moonflower.pollen.core.network.PollenMessages;
+import gg.moonflower.pollen.core.network.play.ClientboundSyncAnimationPacket;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimatedModel;
 import gg.moonflower.pollen.pinwheel.core.client.animation.AnimationEffectSound;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
@@ -177,8 +179,7 @@ public interface AnimatedEntity extends AnimationEffectSource {
             return;
         AnimationState before = entity.getAnimationState();
         entity.setAnimationState(animationState);
-        // TODO packets
-//        if (before != animationState)
-//            ModelAnimaMessages.PLAY.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), new ClientboundSyncAnimationMessage(entity));
+        if (before != animationState)
+            PollenMessages.PLAY.sendToTracking(entity, new ClientboundSyncAnimationPacket(entity));
     }
 }

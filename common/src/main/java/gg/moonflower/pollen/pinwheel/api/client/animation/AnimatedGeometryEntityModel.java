@@ -43,6 +43,7 @@ import java.util.stream.LongStream;
  * @since 1.0.0
  */
 public class AnimatedGeometryEntityModel<T extends Entity> extends EntityModel<T> {
+
     private final ResourceLocation model;
     private ResourceLocation texture;
     private ResourceLocation[] animations;
