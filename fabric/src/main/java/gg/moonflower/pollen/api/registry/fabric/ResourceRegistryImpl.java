@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.resources.fabric;
+package gg.moonflower.pollen.api.registry.fabric;
 
 import gg.moonflower.pollen.core.Pollen;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;

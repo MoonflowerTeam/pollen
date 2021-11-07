@@ -1,10 +1,8 @@
 package gg.moonflower.pollen.core;
 
 import gg.moonflower.pollen.api.event.EventDispatcher;
-import gg.moonflower.pollen.api.event.EventListener;
-import gg.moonflower.pollen.api.event.events.TickEvent;
 import gg.moonflower.pollen.api.platform.Platform;
-import gg.moonflower.pollen.api.resources.ResourceRegistry;
+import gg.moonflower.pollen.api.registry.ResourceRegistry;
 import net.minecraft.server.packs.PackType;
 import org.jetbrains.annotations.ApiStatus;
 

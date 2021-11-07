@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.resources;
+package gg.moonflower.pollen.api.registry;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.platform.Platform;
