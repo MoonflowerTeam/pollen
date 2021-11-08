@@ -4,10 +4,7 @@ import gg.moonflower.pollen.api.event.PollinatedEvent;
 import net.minecraft.world.level.Level;
 
 /**
- * Called each time specific segments of the game are ticked.
- *
- * @author Ocelot
- * @since 1.0.0
+ * Events fired for game updates.
  */
 public class TickEvent implements PollinatedEvent {
 
