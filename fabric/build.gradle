@@ -61,6 +61,7 @@ processResources {
 shadowJar {
     configurations = [project.configurations.shadowCommon]
     relocate "net.jodah.typetools", "gg.moonflower.pollen.typetools"
+    relocate "io.github.ocelot.molangcompiler", "gg.moonflower.pollen.molangcompiler"
     classifier "dev-shadow"
 }
 

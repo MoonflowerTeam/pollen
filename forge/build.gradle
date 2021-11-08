@@ -62,6 +62,7 @@ shadowJar {
     exclude "fabric.mod.json"
 
     configurations = [project.configurations.shadowCommon]
+    relocate "io.github.ocelot.molangcompiler", "gg.moonflower.pollen.molangcompiler"
     classifier "dev-shadow"
 }
 
