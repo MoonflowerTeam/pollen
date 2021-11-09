@@ -7,7 +7,6 @@ import gg.moonflower.pollen.api.network.fabric.context.PollinatedFabricPacketCon
 import gg.moonflower.pollen.api.network.message.PollinatedPacket;
 import gg.moonflower.pollen.api.network.message.PollinatedPacketDirection;
 import gg.moonflower.pollen.api.network.message.login.PollinatedLoginPacket;
-import gg.moonflower.pollen.api.network.message.login.ServerboundAckPacket;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import net.fabricmc.api.EnvType;

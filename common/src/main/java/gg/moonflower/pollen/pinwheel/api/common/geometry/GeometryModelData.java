@@ -64,6 +64,39 @@ public class GeometryModelData {
     }
 
     /**
+     * <p>The different types of polygons that can be represented by a poly mesh.</p>
+     *
+     * @author Ocelot
+     * @since 1.0.0
+     */
+    public enum PolyType {
+
+        TRIANGLES("tri_list", 3), QUADS("quad_list", 4);
+
+        private final String name;
+        private final int vertices;
+
+        PolyType(String name, int vertices) {
+            this.name = name;
+            this.vertices = vertices;
+        }
+
+        /**
+         * @return The JSON name of this poly type
+         */
+        public String getName() {
+            return name;
+        }
+
+        /**
+         * @return The amount of vertices in this shape
+         */
+        public int getVertices() {
+            return vertices;
+        }
+    }
+
+    /**
      * <p>Information about the model.</p>
      *
      * @author Ocelot
@@ -560,36 +593,6 @@ public class GeometryModelData {
 
         public static class Deserializer implements JsonDeserializer<PolyMesh> {
 
-            @Override
-            public PolyMesh deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                JsonObject jsonObject = json.getAsJsonObject();
-                boolean normalizedUvs = GsonHelper.getAsBoolean(jsonObject, "normalized_uvs", false);
-                Vector3f[] positions = parsePositions(jsonObject, "positions", 3, Vector3f[]::new, j -> new Vector3f(j.get(0).getAsFloat(), j.get(1).getAsFloat(), j.get(2).getAsFloat()));
-                Vector3f[] normals = parsePositions(jsonObject, "normals", 3, Vector3f[]::new, j -> new Vector3f(j.get(0).getAsFloat(), j.get(1).getAsFloat(), j.get(2).getAsFloat()));
-                Vec2[] uvs = parsePositions(jsonObject, "uvs", 2, Vec2[]::new, j -> new Vec2(j.get(0).getAsFloat(), j.get(1).getAsFloat()));
-
-                if (!jsonObject.has("polys"))
-                    throw new JsonSyntaxException("Missing polys, expected to find a JsonArray or String");
-
-                JsonElement polysJson = jsonObject.get("polys");
-                if (!polysJson.isJsonArray() && !(polysJson.isJsonPrimitive() && polysJson.getAsJsonPrimitive().isString()))
-                    throw new JsonSyntaxException("Expected polys to be a JsonArray or String, was " + GsonHelper.getType(polysJson));
-
-                Poly[] polys = polysJson.isJsonArray() ? context.deserialize(polysJson, Poly[].class) : new Poly[0];
-                PolyType polyType = polysJson.isJsonPrimitive() ? parseType(polysJson) : parseType(polys);
-
-                for (Poly poly : polys) {
-                    if (poly.getPositions().length != polyType.getVertices())
-                        throw new JsonSyntaxException("Expected positions to be of length " + polyType.getVertices() + ". Was " + poly.getPositions().length);
-                    if (poly.getNormals().length != polyType.getVertices())
-                        throw new JsonSyntaxException("Expected normals to be of length " + polyType.getVertices() + ". Was " + poly.getPositions().length);
-                    if (poly.getUVs().length != polyType.getVertices())
-                        throw new JsonSyntaxException("Expected positions to be of length " + polyType.getVertices() + ". Was " + poly.getPositions().length);
-                }
-
-                return new PolyMesh(normalizedUvs, positions, normals, uvs, polys, polyType);
-            }
-
             private static PolyType parseType(JsonElement json) throws JsonParseException {
                 if (!json.isJsonPrimitive())
                     throw new JsonSyntaxException("Expected String, was " + GsonHelper.getType(json));
@@ -625,6 +628,36 @@ public class GeometryModelData {
                 }
 
                 return positions;
+            }
+
+            @Override
+            public PolyMesh deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                JsonObject jsonObject = json.getAsJsonObject();
+                boolean normalizedUvs = GsonHelper.getAsBoolean(jsonObject, "normalized_uvs", false);
+                Vector3f[] positions = parsePositions(jsonObject, "positions", 3, Vector3f[]::new, j -> new Vector3f(j.get(0).getAsFloat(), j.get(1).getAsFloat(), j.get(2).getAsFloat()));
+                Vector3f[] normals = parsePositions(jsonObject, "normals", 3, Vector3f[]::new, j -> new Vector3f(j.get(0).getAsFloat(), j.get(1).getAsFloat(), j.get(2).getAsFloat()));
+                Vec2[] uvs = parsePositions(jsonObject, "uvs", 2, Vec2[]::new, j -> new Vec2(j.get(0).getAsFloat(), j.get(1).getAsFloat()));
+
+                if (!jsonObject.has("polys"))
+                    throw new JsonSyntaxException("Missing polys, expected to find a JsonArray or String");
+
+                JsonElement polysJson = jsonObject.get("polys");
+                if (!polysJson.isJsonArray() && !(polysJson.isJsonPrimitive() && polysJson.getAsJsonPrimitive().isString()))
+                    throw new JsonSyntaxException("Expected polys to be a JsonArray or String, was " + GsonHelper.getType(polysJson));
+
+                Poly[] polys = polysJson.isJsonArray() ? context.deserialize(polysJson, Poly[].class) : new Poly[0];
+                PolyType polyType = polysJson.isJsonPrimitive() ? parseType(polysJson) : parseType(polys);
+
+                for (Poly poly : polys) {
+                    if (poly.getPositions().length != polyType.getVertices())
+                        throw new JsonSyntaxException("Expected positions to be of length " + polyType.getVertices() + ". Was " + poly.getPositions().length);
+                    if (poly.getNormals().length != polyType.getVertices())
+                        throw new JsonSyntaxException("Expected normals to be of length " + polyType.getVertices() + ". Was " + poly.getPositions().length);
+                    if (poly.getUVs().length != polyType.getVertices())
+                        throw new JsonSyntaxException("Expected positions to be of length " + polyType.getVertices() + ". Was " + poly.getPositions().length);
+                }
+
+                return new PolyMesh(normalizedUvs, positions, normals, uvs, polys, polyType);
             }
         }
     }
@@ -679,6 +712,15 @@ public class GeometryModelData {
 
         public static class Deserializer implements JsonDeserializer<Poly> {
 
+            private static int[] parseVertex(JsonElement element) throws JsonParseException {
+                if (!element.isJsonArray())
+                    throw new JsonSyntaxException("Expected vertex to be a JsonArray, was " + GsonHelper.getType(element));
+                JsonArray array = element.getAsJsonArray();
+                if (array.size() != 3)
+                    throw new JsonParseException("Expected 3 vertex values, was " + array.size());
+                return new int[]{array.get(0).getAsInt(), array.get(1).getAsInt(), array.get(2).getAsInt()};
+            }
+
             @Override
             public Poly deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
                 JsonArray jsonArray = json.getAsJsonArray();
@@ -694,48 +736,6 @@ public class GeometryModelData {
                 }
                 return new Poly(new int[]{array1[0], array2[0], array3[0]}, new int[]{array1[1], array2[1], array3[1]}, new int[]{array1[2], array2[2], array3[2]});
             }
-
-            private static int[] parseVertex(JsonElement element) throws JsonParseException {
-                if (!element.isJsonArray())
-                    throw new JsonSyntaxException("Expected vertex to be a JsonArray, was " + GsonHelper.getType(element));
-                JsonArray array = element.getAsJsonArray();
-                if (array.size() != 3)
-                    throw new JsonParseException("Expected 3 vertex values, was " + array.size());
-                return new int[]{array.get(0).getAsInt(), array.get(1).getAsInt(), array.get(2).getAsInt()};
-            }
-        }
-    }
-
-    /**
-     * <p>The different types of polygons that can be represented by a poly mesh.</p>
-     *
-     * @author Ocelot
-     * @since 1.0.0
-     */
-    public enum PolyType {
-
-        TRIANGLES("tri_list", 3), QUADS("quad_list", 4);
-
-        private final String name;
-        private final int vertices;
-
-        PolyType(String name, int vertices) {
-            this.name = name;
-            this.vertices = vertices;
-        }
-
-        /**
-         * @return The JSON name of this poly type
-         */
-        public String getName() {
-            return name;
-        }
-
-        /**
-         * @return The amount of vertices in this shape
-         */
-        public int getVertices() {
-            return vertices;
         }
     }
 

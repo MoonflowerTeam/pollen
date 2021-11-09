@@ -134,6 +134,25 @@ public class GeometryTextureSpriteUploader extends SimplePreparableReloadListene
             this.onlineLocations = onlineTextures.stream().map(GeometryModelTexture::getData).distinct().collect(Collectors.toMap(url -> url, this::updateCache));
         }
 
+        @Nullable
+        private static String parseUrl(ResourceLocation location) {
+            String[] parts = location.getPath().split("/");
+            if (parts[parts.length - 1].startsWith("base32"))
+                return new String(new Base32().decode(parts[parts.length - 1].substring(6).toUpperCase(Locale.ROOT).replaceAll("_", "=")));
+            return null;
+        }
+
+        @Nullable
+        private static InputStream read(CompletableFuture<Path> pathFuture) {
+            try {
+                Path path = pathFuture.join();
+                return path == null ? null : new FileInputStream(path.toFile());
+            } catch (Exception e) {
+                LOGGER.error("Took too long to fetch texture data", e);
+                return null;
+            }
+        }
+
         private Pair<CompletableFuture<Path>, CompletableFuture<JsonObject>> updateCache(String url) {
             String metadataUrl;
             String extension = FilenameUtils.getExtension(url);
@@ -201,25 +220,6 @@ public class GeometryTextureSpriteUploader extends SimplePreparableReloadListene
         @Override
         public Stream<PackResources> listPacks() {
             return this.parent.listPacks();
-        }
-
-        @Nullable
-        private static String parseUrl(ResourceLocation location) {
-            String[] parts = location.getPath().split("/");
-            if (parts[parts.length - 1].startsWith("base32"))
-                return new String(new Base32().decode(parts[parts.length - 1].substring(6).toUpperCase(Locale.ROOT).replaceAll("_", "=")));
-            return null;
-        }
-
-        @Nullable
-        private static InputStream read(CompletableFuture<Path> pathFuture) {
-            try {
-                Path path = pathFuture.join();
-                return path == null ? null : new FileInputStream(path.toFile());
-            } catch (Exception e) {
-                LOGGER.error("Took too long to fetch texture data", e);
-                return null;
-            }
         }
 
         private static class OnlineResource implements Resource {
@@ -290,10 +290,6 @@ public class GeometryTextureSpriteUploader extends SimplePreparableReloadListene
             this.resources = new HashMap<>();
         }
 
-        public CompletableFuture<Path> requestResource(String url, boolean cache, boolean ignoreMissing) {
-            return this.resources.computeIfAbsent(url, key -> cache ? this.hashedCache.requestResource(url, ignoreMissing) : this.cache.requestResource(url, ignoreMissing));
-        }
-
         private static ExecutorService createOnlineWorker(Supplier<Integer> idGenerator) {
             int i = Mth.clamp(Runtime.getRuntime().availableProcessors() - 1, 1, 7);
             ExecutorService executorservice;
@@ -331,6 +327,10 @@ public class GeometryTextureSpriteUploader extends SimplePreparableReloadListene
             }
 
             return executorservice;
+        }
+
+        public CompletableFuture<Path> requestResource(String url, boolean cache, boolean ignoreMissing) {
+            return this.resources.computeIfAbsent(url, key -> cache ? this.hashedCache.requestResource(url, ignoreMissing) : this.cache.requestResource(url, ignoreMissing));
         }
 
         @Override

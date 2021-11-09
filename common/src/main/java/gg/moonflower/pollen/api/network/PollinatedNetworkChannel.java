@@ -1,8 +1,8 @@
 package gg.moonflower.pollen.api.network;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import gg.moonflower.pollen.api.network.message.PollinatedPacketContext;
 import gg.moonflower.pollen.api.network.message.PollinatedPacket;
+import gg.moonflower.pollen.api.network.message.PollinatedPacketContext;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.chat.Component;

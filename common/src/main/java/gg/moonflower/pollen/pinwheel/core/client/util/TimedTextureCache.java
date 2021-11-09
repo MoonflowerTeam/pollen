@@ -16,44 +16,35 @@ import java.util.concurrent.TimeUnit;
  * @author Ocelot
  */
 @ApiStatus.Internal
-public class TimedTextureCache implements FileCache
-{
+public class TimedTextureCache implements FileCache {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Executor executor;
     private final long cacheTime;
     private final TimeUnit cacheTimeUnit;
 
-    public TimedTextureCache(Executor executor, long cacheTime, TimeUnit cacheTimeUnit)
-    {
+    public TimedTextureCache(Executor executor, long cacheTime, TimeUnit cacheTimeUnit) {
         this.executor = executor;
         this.cacheTime = cacheTime;
         this.cacheTimeUnit = cacheTimeUnit;
     }
 
     @Override
-    public CompletableFuture<Path> requestResource(String url, boolean ignoreMissing)
-    {
+    public CompletableFuture<Path> requestResource(String url, boolean ignoreMissing) {
         return CompletableFuture.supplyAsync(() ->
         {
-            try
-            {
+            try {
                 return GeometryCache.getPath(url, this.cacheTime, this.cacheTimeUnit, s ->
                 {
-                    try
-                    {
+                    try {
                         return FileCache.get(url);
-                    }
-                    catch (IOException e)
-                    {
+                    } catch (IOException e) {
                         if (!ignoreMissing)
                             LOGGER.error("Failed to read data from '" + url + "'");
                         return null;
                     }
                 });
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 if (!ignoreMissing)
                     LOGGER.error("Failed to fetch resource from '" + url + "'", e);
                 return null;

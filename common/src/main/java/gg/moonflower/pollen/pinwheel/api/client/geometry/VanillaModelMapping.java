@@ -7,7 +7,9 @@ import net.minecraft.client.model.geom.ModelPart;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Maps all string mojmap names to model fields.

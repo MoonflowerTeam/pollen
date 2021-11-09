@@ -20,12 +20,10 @@ import java.nio.file.Paths;
  * @author Ocelot
  * @since 1.0.0
  */
-public class TextureHashGenerator
-{
+public class TextureHashGenerator {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    public static void main(String[] args) throws Exception
-    {
+    public static void main(String[] args) throws Exception {
         if (args.length < 1)
             throw new IllegalArgumentException("First argument is expected to be url base.");
 
@@ -33,8 +31,7 @@ public class TextureHashGenerator
         Path source = Paths.get("src/generated/input");
         Path result = Paths.get("src/generated/hashes.json");
 
-        if (!Files.exists(source))
-        {
+        if (!Files.exists(source)) {
             Files.createDirectories(source);
             return;
         }
@@ -44,12 +41,9 @@ public class TextureHashGenerator
         {
             if (!Files.isRegularFile(child))
                 return;
-            try (InputStream stream = new FileInputStream(child.toFile()))
-            {
+            try (InputStream stream = new FileInputStream(child.toFile())) {
                 hashes.addProperty(urlBase + child.toString().replaceAll("\\\\", "/").substring("src/generated/input/".length()), DigestUtils.md5Hex(IOUtils.toByteArray(stream)));
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
@@ -57,8 +51,7 @@ public class TextureHashGenerator
         if (!Files.exists(result))
             Files.createFile(result);
 
-        try (FileOutputStream os = new FileOutputStream(result.toFile()))
-        {
+        try (FileOutputStream os = new FileOutputStream(result.toFile())) {
             IOUtils.write(GSON.toJson(hashes), os, StandardCharsets.UTF_8);
         }
     }

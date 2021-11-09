@@ -33,6 +33,14 @@ public class PollinatedNetworkChannelImpl implements PollinatedNetworkChannel {
         this.serverMessageHandler = new LazyLoadedValue<>(() -> new LazyLoadedValue<>(serverFactory.get()));
     }
 
+    public static PollinatedPlayNetworkChannel createPlay(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+        return new PollinatedFabricPlayChannel(channelId, clientFactory, serverFactory);
+    }
+
+    public static PollinatedLoginNetworkChannel createLogin(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+        return new PollinatedFabricLoginChannel(channelId, clientFactory, serverFactory);
+    }
+
     protected FriendlyByteBuf serialize(PollinatedPacket<?> message, PollinatedPacketDirection expectedDirection) {
         Optional<PacketFactory<?, ?>> factoryOptional = this.factories.stream().filter(factory -> factory.clazz == message.getClass()).findFirst();
         if (!factoryOptional.isPresent())
@@ -62,14 +70,6 @@ public class PollinatedNetworkChannelImpl implements PollinatedNetworkChannel {
 
     protected <MSG extends PollinatedPacket<T>, T> void register(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, @Nullable PollinatedPacketDirection direction) {
         this.factories.add(new PacketFactory<>(clazz, deserializer, direction));
-    }
-
-    public static PollinatedPlayNetworkChannel createPlay(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
-        return new PollinatedFabricPlayChannel(channelId, clientFactory, serverFactory);
-    }
-
-    public static PollinatedLoginNetworkChannel createLogin(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
-        return new PollinatedFabricLoginChannel(channelId, clientFactory, serverFactory);
     }
 
     private static class PacketFactory<MSG extends PollinatedPacket<T>, T> {

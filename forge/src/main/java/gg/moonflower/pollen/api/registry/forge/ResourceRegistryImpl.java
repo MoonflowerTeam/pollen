@@ -2,7 +2,6 @@ package gg.moonflower.pollen.api.registry.forge;
 
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;

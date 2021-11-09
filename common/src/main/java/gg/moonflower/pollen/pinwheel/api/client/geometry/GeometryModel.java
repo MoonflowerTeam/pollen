@@ -75,6 +75,28 @@ public interface GeometryModel {
     };
 
     /**
+     * Creates a new {@link GeometryModel} from the specified model data.
+     *
+     * @param data The data deserialized from JSON
+     * @return A new model from the data
+     */
+    static GeometryModel create(GeometryModelData data) {
+        return new BedrockGeometryModel(data.getDescription().getTextureWidth(), data.getDescription().getTextureHeight(), data.getBones());
+    }
+
+    /**
+     * Creates a new {@link GeometryModel} from the specified model data.
+     *
+     * @param textureWidth  The width of the texture in pixels
+     * @param textureHeight The height of the texture in pixels
+     * @param bones         The bones in the model
+     * @return A new model from the data
+     */
+    static GeometryModel create(int textureWidth, int textureHeight, GeometryModelData.Bone[] bones) {
+        return new BedrockGeometryModel(textureWidth, textureHeight, bones);
+    }
+
+    /**
      * Renders a specific part with the specified texture key.
      *
      * @param material      The name of the material being rendered
@@ -154,27 +176,5 @@ public interface GeometryModel {
      */
     default VertexConsumer getBuffer(MultiBufferSource buffer, GeometryAtlasTexture atlas, GeometryModelTexture texture) {
         return atlas.getSprite(texture.getLocation()).wrap(buffer.getBuffer(texture.getLayer().getRenderType(texture, atlas.getAtlasLocation())));
-    }
-
-    /**
-     * Creates a new {@link GeometryModel} from the specified model data.
-     *
-     * @param data The data deserialized from JSON
-     * @return A new model from the data
-     */
-    static GeometryModel create(GeometryModelData data) {
-        return new BedrockGeometryModel(data.getDescription().getTextureWidth(), data.getDescription().getTextureHeight(), data.getBones());
-    }
-
-    /**
-     * Creates a new {@link GeometryModel} from the specified model data.
-     *
-     * @param textureWidth  The width of the texture in pixels
-     * @param textureHeight The height of the texture in pixels
-     * @param bones         The bones in the model
-     * @return A new model from the data
-     */
-    static GeometryModel create(int textureWidth, int textureHeight, GeometryModelData.Bone[] bones) {
-        return new BedrockGeometryModel(textureWidth, textureHeight, bones);
     }
 }

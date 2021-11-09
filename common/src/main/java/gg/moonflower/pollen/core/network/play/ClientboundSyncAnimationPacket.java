@@ -14,25 +14,21 @@ import org.jetbrains.annotations.ApiStatus;
  * @author Ocelot
  */
 @ApiStatus.Internal
-public class ClientboundSyncAnimationPacket implements PollinatedPacket<PollenClientPlayPacketHandler>
-{
+public class ClientboundSyncAnimationPacket implements PollinatedPacket<PollenClientPlayPacketHandler> {
     private final int entityId;
     private final int animationId;
 
-    public <T extends Entity & AnimatedEntity> ClientboundSyncAnimationPacket(T entity)
-    {
+    public <T extends Entity & AnimatedEntity> ClientboundSyncAnimationPacket(T entity) {
         this.entityId = entity.getId();
         this.animationId = ArrayUtils.indexOf(entity.getAnimationStates(), entity.getAnimationState());
     }
 
-    public ClientboundSyncAnimationPacket(FriendlyByteBuf buf)
-    {
+    public ClientboundSyncAnimationPacket(FriendlyByteBuf buf) {
         this.entityId = buf.readVarInt();
         this.animationId = buf.readVarInt();
     }
 
-    public void write(FriendlyByteBuf buf)
-    {
+    public void write(FriendlyByteBuf buf) {
         buf.writeVarInt(this.entityId);
         buf.writeVarInt(this.animationId);
     }
@@ -48,14 +44,12 @@ public class ClientboundSyncAnimationPacket implements PollinatedPacket<PollenCl
     }
 
     @Environment(EnvType.CLIENT)
-    public int getEntityId()
-    {
+    public int getEntityId() {
         return entityId;
     }
 
     @Environment(EnvType.CLIENT)
-    public int getAnimationId()
-    {
+    public int getAnimationId() {
         return animationId;
     }
 }

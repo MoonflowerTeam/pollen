@@ -9,8 +9,7 @@ import net.minecraft.resources.ResourceLocation;
  * @author Ocelot
  * @since 1.0.0
  */
-public interface GeometryAtlasTexture
-{
+public interface GeometryAtlasTexture {
     /**
      * @return The texture location of this atlas
      */

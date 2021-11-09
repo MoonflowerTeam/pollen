@@ -16,13 +16,11 @@ import org.jetbrains.annotations.ApiStatus;
  * @author Ocelot
  */
 @ApiStatus.Internal
-public class PollenClientPlayPacketHandlerImpl implements PollenClientPlayPacketHandler
-{
+public class PollenClientPlayPacketHandlerImpl implements PollenClientPlayPacketHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
-    public void handleSyncAnimationPacket(ClientboundSyncAnimationPacket msg, PollinatedPacketContext ctx)
-    {
+    public void handleSyncAnimationPacket(ClientboundSyncAnimationPacket msg, PollinatedPacketContext ctx) {
         ClientLevel level = Minecraft.getInstance().level;
         if (level == null)
             return;
@@ -30,8 +28,7 @@ public class PollenClientPlayPacketHandlerImpl implements PollenClientPlayPacket
         ctx.enqueueWork(() ->
         {
             Entity e = level.getEntity(msg.getEntityId());
-            if (!(e instanceof AnimatedEntity))
-            {
+            if (!(e instanceof AnimatedEntity)) {
                 LOGGER.warn("Server sent animation for entity: " + e + ", but it is not an instance of AnimatedEntity");
                 return;
             }
@@ -39,15 +36,13 @@ public class PollenClientPlayPacketHandlerImpl implements PollenClientPlayPacket
             AnimatedEntity entity = (AnimatedEntity) e;
 
             int animationId = msg.getAnimationId();
-            if (animationId == -1)
-            {
+            if (animationId == -1) {
                 entity.resetAnimationState();
                 return;
             }
 
             AnimationState[] animations = entity.getAnimationStates();
-            if (animationId < 0 || animationId >= animations.length)
-            {
+            if (animationId < 0 || animationId >= animations.length) {
                 LOGGER.warn("Server sent invalid animation " + animationId + " for entity: " + e);
                 return;
             }

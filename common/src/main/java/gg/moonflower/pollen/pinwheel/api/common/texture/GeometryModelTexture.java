@@ -65,6 +65,13 @@ public class GeometryModelTexture {
     }
 
     /**
+     * @return A new builder for constructing a texture
+     */
+    public static Builder texture() {
+        return new Builder();
+    }
+
+    /**
      * @return The type of texture this cosmetic texture is
      */
     public Type getType() {
@@ -168,10 +175,90 @@ public class GeometryModelTexture {
     }
 
     /**
-     * @return A new builder for constructing a texture
+     * <p>A type of {@link GeometryModelTexture}.</p>
+     *
+     * @author Ocelot
      */
-    public static Builder texture() {
-        return new Builder();
+    public enum Type {
+
+        UNKNOWN(location -> new ResourceLocation("missingno")),
+        LOCATION(ResourceLocation::tryParse),
+        ONLINE(location -> new ResourceLocation(Pollen.MOD_ID, "base32" + ONLINE_PATTERN.matcher(new Base32().encodeAsString(location.getBytes()).toLowerCase(Locale.ROOT)).replaceAll("_")));
+
+        private final Function<String, ResourceLocation> locationGenerator;
+
+        Type(Function<String, ResourceLocation> locationGenerator) {
+            this.locationGenerator = locationGenerator;
+        }
+
+        /**
+         * Fetches a type of texture by the specified name.
+         *
+         * @param name The name of the type of texture
+         * @return The type by that name or {@link #UNKNOWN} if there is no type by that name
+         */
+        public static Type byName(String name) {
+            for (Type type : values())
+                if (type.name().equalsIgnoreCase(name))
+                    return type;
+            return UNKNOWN;
+        }
+
+        /**
+         * Creates a new {@link ResourceLocation} based on the specified data string.
+         *
+         * @param data The data to convert
+         * @return The new location for that data
+         */
+        @Nullable
+        public ResourceLocation createLocation(String data) {
+            return this.locationGenerator.apply(data);
+        }
+    }
+
+    /**
+     * <p>Supported render types for textures.</p>
+     *
+     * @author Ocelot
+     */
+    public enum TextureLayer {
+
+        SOLID(() -> GeometryRenderTypes::getGeometrySolid),
+        CUTOUT(() -> GeometryRenderTypes::getGeometryCutout),
+        CUTOUT_CULL(() -> GeometryRenderTypes::getGeometryCutoutCull),
+        TRANSLUCENT(() -> GeometryRenderTypes::getGeometryTranslucent),
+        TRANSLUCENT_CULL(() -> GeometryRenderTypes::getGeometryTranslucentCull);
+
+        private final Supplier<BiFunction<GeometryModelTexture, ResourceLocation, RenderType>> renderTypeGetter;
+
+        TextureLayer(Supplier<BiFunction<GeometryModelTexture, ResourceLocation, RenderType>> renderTypeGetter) {
+            this.renderTypeGetter = renderTypeGetter;
+        }
+
+        /**
+         * Fetches a texture layer by the specified name.
+         *
+         * @param name The name of the texture layer
+         * @return The texture layer by that name or {@link #CUTOUT} if there is no layer by that name
+         */
+        public static TextureLayer byName(String name) {
+            for (TextureLayer layer : values())
+                if (layer.name().equalsIgnoreCase(name))
+                    return layer;
+            return CUTOUT;
+        }
+
+        /**
+         * Fetches the render type for the specified location.
+         *
+         * @param texture       The texture to use in the render type
+         * @param atlasLocation The location of the texture atlas to use
+         * @return The render type for this layer
+         */
+        @Environment(EnvType.CLIENT)
+        public RenderType getRenderType(GeometryModelTexture texture, ResourceLocation atlasLocation) {
+            return this.renderTypeGetter.get().apply(texture, atlasLocation);
+        }
     }
 
     /**
@@ -270,93 +357,6 @@ public class GeometryModelTexture {
          */
         public GeometryModelTexture build() {
             return new GeometryModelTexture(this.type, this.layer, this.data, this.cache, this.color, this.glowing, this.smoothShading);
-        }
-    }
-
-    /**
-     * <p>A type of {@link GeometryModelTexture}.</p>
-     *
-     * @author Ocelot
-     */
-    public enum Type {
-
-        UNKNOWN(location -> new ResourceLocation("missingno")),
-        LOCATION(ResourceLocation::tryParse),
-        ONLINE(location -> new ResourceLocation(Pollen.MOD_ID, "base32" + ONLINE_PATTERN.matcher(new Base32().encodeAsString(location.getBytes()).toLowerCase(Locale.ROOT)).replaceAll("_")));
-
-        private final Function<String, ResourceLocation> locationGenerator;
-
-        Type(Function<String, ResourceLocation> locationGenerator) {
-            this.locationGenerator = locationGenerator;
-        }
-
-        /**
-         * Creates a new {@link ResourceLocation} based on the specified data string.
-         *
-         * @param data The data to convert
-         * @return The new location for that data
-         */
-        @Nullable
-        public ResourceLocation createLocation(String data) {
-            return this.locationGenerator.apply(data);
-        }
-
-        /**
-         * Fetches a type of texture by the specified name.
-         *
-         * @param name The name of the type of texture
-         * @return The type by that name or {@link #UNKNOWN} if there is no type by that name
-         */
-        public static Type byName(String name) {
-            for (Type type : values())
-                if (type.name().equalsIgnoreCase(name))
-                    return type;
-            return UNKNOWN;
-        }
-    }
-
-    /**
-     * <p>Supported render types for textures.</p>
-     *
-     * @author Ocelot
-     */
-    public enum TextureLayer {
-
-        SOLID(() -> GeometryRenderTypes::getGeometrySolid),
-        CUTOUT(() -> GeometryRenderTypes::getGeometryCutout),
-        CUTOUT_CULL(() -> GeometryRenderTypes::getGeometryCutoutCull),
-        TRANSLUCENT(() -> GeometryRenderTypes::getGeometryTranslucent),
-        TRANSLUCENT_CULL(() -> GeometryRenderTypes::getGeometryTranslucentCull);
-
-        private final Supplier<BiFunction<GeometryModelTexture, ResourceLocation, RenderType>> renderTypeGetter;
-
-        TextureLayer(Supplier<BiFunction<GeometryModelTexture, ResourceLocation, RenderType>> renderTypeGetter) {
-            this.renderTypeGetter = renderTypeGetter;
-        }
-
-        /**
-         * Fetches the render type for the specified location.
-         *
-         * @param texture       The texture to use in the render type
-         * @param atlasLocation The location of the texture atlas to use
-         * @return The render type for this layer
-         */
-        @Environment(EnvType.CLIENT)
-        public RenderType getRenderType(GeometryModelTexture texture, ResourceLocation atlasLocation) {
-            return this.renderTypeGetter.get().apply(texture, atlasLocation);
-        }
-
-        /**
-         * Fetches a texture layer by the specified name.
-         *
-         * @param name The name of the texture layer
-         * @return The texture layer by that name or {@link #CUTOUT} if there is no layer by that name
-         */
-        public static TextureLayer byName(String name) {
-            for (TextureLayer layer : values())
-                if (layer.name().equalsIgnoreCase(name))
-                    return layer;
-            return CUTOUT;
         }
     }
 }
