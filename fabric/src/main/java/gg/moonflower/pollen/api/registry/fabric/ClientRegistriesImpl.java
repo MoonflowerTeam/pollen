@@ -13,13 +13,12 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -31,8 +30,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.function.Function;
 
 @ApiStatus.Internal
 public class ClientRegistriesImpl {
@@ -50,10 +47,11 @@ public class ClientRegistriesImpl {
     }
 
     public static <T extends Entity> void registerEntityRenderer(EntityType<T> type, ClientRegistries.EntityRendererFactory<T> factory) {
-        EntityRendererRegistry.INSTANCE.register(type, (manager, context) -> factory.create(new ClientRegistries.EntityRendererFactory.Context() {
+        EntityRendererRegistry.INSTANCE.register(type, (renderDispatcher, context) -> factory.create(new ClientRegistries.EntityRendererFactory.Context() {
+
             @Override
             public EntityRenderDispatcher getEntityRenderDispatcher() {
-                return manager;
+                return renderDispatcher;
             }
 
             @Override
@@ -73,8 +71,29 @@ public class ClientRegistriesImpl {
         }));
     }
 
-    public static <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, Function<BlockEntityRenderDispatcher, BlockEntityRenderer<? super T>> factory) {
-        BlockEntityRendererRegistry.INSTANCE.register(type, factory);
+    public static <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, ClientRegistries.BlockEntityRendererFactory<T> factory) {
+        Minecraft minecraft = Minecraft.getInstance();
+        BlockEntityRendererRegistry.INSTANCE.register(type, renderDispatcher -> factory.create(new ClientRegistries.BlockEntityRendererFactory.Context() {
+            @Override
+            public BlockEntityRenderDispatcher getBlockEntityRenderDispatcher() {
+                return renderDispatcher;
+            }
+
+            @Override
+            public BlockRenderDispatcher getBlockRenderDispatcher() {
+                return minecraft.getBlockRenderer();
+            }
+
+            @Override
+            public ResourceManager getResourceManager() {
+                return minecraft.getResourceManager();
+            }
+
+            @Override
+            public Font getFont() {
+                return minecraft.font;
+            }
+        }));
     }
 
     public static void registerItemOverride(Item item, ResourceLocation id, ItemPropertyFunction function) {
