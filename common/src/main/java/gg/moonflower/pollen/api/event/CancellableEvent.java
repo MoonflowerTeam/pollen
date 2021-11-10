@@ -6,15 +6,21 @@ package gg.moonflower.pollen.api.event;
  * @author Ocelot
  * @since 1.0.0
  */
-public interface CancellableEvent extends PollinatedEvent {
+public class CancellableEvent implements PollinatedEvent {
+
+    private boolean cancelled;
 
     @Override
-    boolean isCancelled();
+    public boolean isCancelled() {
+        return cancelled;
+    }
 
     /**
      * Marks this event as cancelled. The event can be un-canceled by setting canceled to <code>true</code>.
      *
      * @param cancelled Whether this event should be canceled
      */
-    void setCancelled(boolean cancelled);
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 }

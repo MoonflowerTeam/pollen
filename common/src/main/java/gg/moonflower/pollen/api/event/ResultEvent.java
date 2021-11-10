@@ -8,22 +8,32 @@ import net.minecraft.world.InteractionResult;
  * @author Ocelot
  * @since 1.0.0
  */
-public interface ResultEvent extends PollinatedEvent {
+public class ResultEvent implements PollinatedEvent {
+
+    private InteractionResult result;
+
+    public ResultEvent() {
+        this.result = InteractionResult.PASS;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return this.getResult() == InteractionResult.FAIL;
+    }
 
     /**
      * @return The result of this event
      */
-    InteractionResult getResult();
+    public InteractionResult getResult() {
+        return result;
+    }
 
     /**
      * Sets the result of this event.
      *
      * @param result The new result
      */
-    void setResult(InteractionResult result);
-
-    @Override
-    default boolean isCancelled() {
-        return this.getResult() == InteractionResult.FAIL;
+    void setResult(InteractionResult result) {
+        this.result = result;
     }
 }
