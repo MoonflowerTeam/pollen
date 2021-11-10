@@ -9,8 +9,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -27,8 +27,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-
-import java.util.function.Function;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 public class ClientRegistriesImpl {
 
@@ -47,11 +46,10 @@ public class ClientRegistriesImpl {
 
     public static <T extends Entity> void registerEntityRenderer(EntityType<T> type, ClientRegistries.EntityRendererFactory<T> factory) {
         Minecraft minecraft = Minecraft.getInstance();
-        EntityRenderDispatcher dispatcher = minecraft.getEntityRenderDispatcher();
-        dispatcher.register(type, factory.create(new ClientRegistries.EntityRendererFactory.Context() {
+        RenderingRegistry.registerEntityRenderingHandler(type, renderDispatcher -> factory.create(new ClientRegistries.EntityRendererFactory.Context() {
             @Override
             public EntityRenderDispatcher getEntityRenderDispatcher() {
-                return dispatcher;
+                return renderDispatcher;
             }
 
             @Override
@@ -71,8 +69,29 @@ public class ClientRegistriesImpl {
         }));
     }
 
-    public static <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, Function<BlockEntityRenderDispatcher, BlockEntityRenderer<? super T>> factory) {
-        ClientRegistry.bindTileEntityRenderer(type, factory);
+    public static <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, ClientRegistries.BlockEntityRendererFactory<T> factory) {
+        Minecraft minecraft = Minecraft.getInstance();
+        ClientRegistry.bindTileEntityRenderer(type, renderDispatcher -> factory.create(new ClientRegistries.BlockEntityRendererFactory.Context() {
+            @Override
+            public BlockEntityRenderDispatcher getBlockEntityRenderDispatcher() {
+                return renderDispatcher;
+            }
+
+            @Override
+            public BlockRenderDispatcher getBlockRenderDispatcher() {
+                return minecraft.getBlockRenderer();
+            }
+
+            @Override
+            public ResourceManager getResourceManager() {
+                return minecraft.getResourceManager();
+            }
+
+            @Override
+            public Font getFont() {
+                return minecraft.font;
+            }
+        }));
     }
 
     public static void registerItemOverride(Item item, ResourceLocation id, ItemPropertyFunction function) {

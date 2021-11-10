@@ -9,6 +9,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -28,8 +29,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Fluid;
-
-import java.util.function.Function;
 
 /**
  * @author Jackson
@@ -62,7 +61,7 @@ public final class ClientRegistries {
     }
 
     @ExpectPlatform
-    public static <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, Function<BlockEntityRenderDispatcher, BlockEntityRenderer<? super T>> factory) {
+    public static <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, BlockEntityRendererFactory<T> factory) {
         Platform.error();
     }
 
@@ -85,6 +84,22 @@ public final class ClientRegistries {
             EntityRenderDispatcher getEntityRenderDispatcher();
 
             ItemRenderer getItemRenderer();
+
+            ResourceManager getResourceManager();
+
+            Font getFont();
+        }
+    }
+
+    @FunctionalInterface
+    public interface BlockEntityRendererFactory<T extends BlockEntity> {
+        BlockEntityRenderer<T> create(Context context);
+
+        interface Context {
+
+            BlockEntityRenderDispatcher getBlockEntityRenderDispatcher();
+
+            BlockRenderDispatcher getBlockRenderDispatcher();
 
             ResourceManager getResourceManager();
 
