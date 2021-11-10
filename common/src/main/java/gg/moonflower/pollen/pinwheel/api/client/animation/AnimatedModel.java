@@ -28,4 +28,26 @@ public interface AnimatedModel {
      * @return All locators in the model
      */
     GeometryModelData.Locator[] getLocators(String part);
+
+    /**
+     * Calculates the length of an animation based on the current time and loop modes of all animations.
+     *
+     * @param animationTime The current time in seconds
+     * @param animations    The animations to get the length of
+     * @return The length of the set of animations
+     */
+    static float getAnimationLength(float animationTime, AnimationData... animations) {
+        boolean loop = false;
+        float length = 0;
+        for (AnimationData animation : animations) {
+            if (animation.getLoop() == AnimationData.Loop.LOOP)
+                loop = true;
+            if (animation.getAnimationLength() > length)
+                length = animation.getAnimationLength();
+        }
+
+        if (loop && animationTime > length)
+            return length;
+        return Integer.MAX_VALUE;
+    }
 }

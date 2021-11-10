@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.pinwheel.api.common.animation;
 
+import gg.moonflower.pollen.pinwheel.api.client.animation.AnimatedModel;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
 import gg.moonflower.pollen.pinwheel.core.client.geometry.BedrockGeometryModel;
 import net.minecraft.resources.ResourceLocation;
@@ -38,7 +39,7 @@ public class AnimationEffectHandler
         if (this.soundId.length != animations.length)
             this.soundId = new int[animations.length];
 
-        float animationLength = BedrockGeometryModel.getAnimationLength(animationTime, Arrays.stream(animations).map(AnimationManager::getAnimation).toArray(AnimationData[]::new));
+        float animationLength = AnimatedModel.getAnimationLength(animationTime, Arrays.stream(animations).map(AnimationManager::getAnimation).toArray(AnimationData[]::new));
         int iteration = (int) (animationTime / animationLength);
         for (int i = 0; i < animations.length; i++)
         {

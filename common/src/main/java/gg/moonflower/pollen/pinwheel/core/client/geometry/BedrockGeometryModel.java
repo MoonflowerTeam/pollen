@@ -40,7 +40,6 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
     private final String[] textureKeys;
     private String activeMaterial;
 
-    @ApiStatus.Internal
     public BedrockGeometryModel(int textureWidth, int textureHeight, GeometryModelData.Bone[] bones) {
         super(RenderType::entityCutoutNoCull);
         this.texWidth = textureWidth;
@@ -170,7 +169,7 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
         runtime.setQuery("delta_time", Minecraft.getInstance()::getFrameTime);
         runtime.setQuery("life_time", animationTime);
 
-        animationTime %= getAnimationLength(animationTime, animations);
+        animationTime %= AnimatedModel.getAnimationLength(animationTime, animations);
 
         this.transformations.values().forEach(AnimatedModelPart.AnimationPose::reset);
         for (AnimationData animation : animations) {
@@ -214,21 +213,6 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
 
     public String getActiveMaterial() {
         return activeMaterial;
-    }
-
-    public static float getAnimationLength(float animationTime, AnimationData[] animations) {
-        boolean loop = false;
-        float length = 0;
-        for (AnimationData animation : animations) {
-            if (animation.getLoop() == AnimationData.Loop.LOOP)
-                loop = true;
-            if (animation.getAnimationLength() > length)
-                length = animation.getAnimationLength();
-        }
-
-        if (loop && animationTime > length)
-            return length;
-        return Integer.MAX_VALUE;
     }
 
     private static void get(float animationTime, MolangRuntime.Builder runtime, AnimationData.KeyFrame[] frames, Vector3f result) {
