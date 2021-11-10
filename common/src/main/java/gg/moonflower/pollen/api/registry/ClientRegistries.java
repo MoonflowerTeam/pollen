@@ -12,9 +12,12 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
@@ -54,7 +57,7 @@ public final class ClientRegistries {
     }
 
     @ExpectPlatform
-    public static <T extends Entity> void registerEntityRenderer(EntityType<T> type, Function<EntityRenderDispatcher, EntityRenderer<T>> factory) {
+    public static <T extends Entity> void registerEntityRenderer(EntityType<T> type, EntityRendererFactory<T> factory) {
         Platform.error();
     }
 
@@ -71,6 +74,20 @@ public final class ClientRegistries {
     @ExpectPlatform
     public static <M extends AbstractContainerMenu, S extends Screen & MenuAccess<M>> void registerScreenFactory(MenuType<M> type, ScreenFactory<M, S> object) {
         Platform.error();
+    }
+
+    public interface EntityRendererRegistryContext {
+
+        TextureManager getTextureManager();
+
+        ReloadableResourceManager getResourceManager();
+
+        ItemRenderer getItemRenderer();
+    }
+
+    @FunctionalInterface
+    public interface EntityRendererFactory<T extends Entity> {
+        EntityRenderer<T> create(EntityRenderDispatcher manager, EntityRendererRegistryContext context);
     }
 
     @FunctionalInterface
