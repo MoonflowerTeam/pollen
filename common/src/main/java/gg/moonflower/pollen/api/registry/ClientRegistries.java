@@ -5,20 +5,14 @@ import gg.moonflower.pollen.api.platform.Platform;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.item.ItemPropertyFunction;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
@@ -56,55 +50,23 @@ public final class ClientRegistries {
     }
 
     @ExpectPlatform
-    public static <T extends Entity> void registerEntityRenderer(EntityType<T> type, EntityRendererFactory<T> factory) {
+    public static <T extends Entity> void registerEntityRenderer(EntityType<T> type, EntityRendererProvider<T> factory) {
         Platform.error();
     }
 
     @ExpectPlatform
-    public static <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, BlockEntityRendererFactory<T> factory) {
+    public static <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, BlockEntityRendererProvider<T> factory) {
         Platform.error();
     }
 
     @ExpectPlatform
-    public static void registerItemOverride(Item item, ResourceLocation id, ItemPropertyFunction function) {
+    public static void registerItemOverride(Item item, ResourceLocation id, ClampedItemPropertyFunction function) {
         Platform.error();
     }
 
     @ExpectPlatform
     public static <M extends AbstractContainerMenu, S extends Screen & MenuAccess<M>> void registerScreenFactory(MenuType<M> type, ScreenFactory<M, S> object) {
         Platform.error();
-    }
-
-    @FunctionalInterface
-    public interface EntityRendererFactory<T extends Entity> {
-        EntityRenderer<T> create(Context context);
-
-        interface Context {
-
-            EntityRenderDispatcher getEntityRenderDispatcher();
-
-            ItemRenderer getItemRenderer();
-
-            ResourceManager getResourceManager();
-
-            Font getFont();
-        }
-    }
-
-    @FunctionalInterface
-    public interface BlockEntityRendererFactory<T extends BlockEntity> {
-        BlockEntityRenderer<T> create(Context context);
-
-        interface Context {
-
-            BlockEntityRenderDispatcher getBlockEntityRenderDispatcher();
-
-            BlockRenderDispatcher getBlockRenderDispatcher();
-
-            ResourceManager getResourceManager();
-
-            Font getFont();
-        }
     }
 
     @FunctionalInterface
