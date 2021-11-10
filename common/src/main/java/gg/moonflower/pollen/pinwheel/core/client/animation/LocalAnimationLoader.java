@@ -20,42 +20,33 @@ import java.util.concurrent.Executor;
  * @author Ocelot
  */
 @ApiStatus.Internal
-public class LocalAnimationLoader implements BackgroundLoader<Map<ResourceLocation, AnimationData>>
-{
+public class LocalAnimationLoader implements BackgroundLoader<Map<ResourceLocation, AnimationData>> {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final String folder;
 
-    public LocalAnimationLoader()
-    {
+    public LocalAnimationLoader() {
         this("animations");
     }
 
-    public LocalAnimationLoader(String folder)
-    {
+    public LocalAnimationLoader(String folder) {
         this.folder = folder.isEmpty() ? "" : folder + "/";
     }
 
     @Override
-    public CompletableFuture<Map<ResourceLocation, AnimationData>> reload(ResourceManager resourceManager, Executor backgroundExecutor, Executor gameExecutor)
-    {
+    public CompletableFuture<Map<ResourceLocation, AnimationData>> reload(ResourceManager resourceManager, Executor backgroundExecutor, Executor gameExecutor) {
         return CompletableFuture.supplyAsync(() ->
         {
             Map<ResourceLocation, AnimationData> animationData = new HashMap<>();
-            for (ResourceLocation animationLocation : resourceManager.listResources(this.folder, name -> name.endsWith(".json")))
-            {
-                try (Resource resource = resourceManager.getResource(animationLocation))
-                {
+            for (ResourceLocation animationLocation : resourceManager.listResources(this.folder, name -> name.endsWith(".json"))) {
+                try (Resource resource = resourceManager.getResource(animationLocation)) {
                     AnimationData[] animations = AnimationParser.parse(new InputStreamReader(resource.getInputStream()));
-                    for (AnimationData animation : animations)
-                    {
+                    for (AnimationData animation : animations) {
                         ResourceLocation id = new ResourceLocation(animationLocation.getNamespace(), animation.getName());
                         if (animationData.put(id, animation) != null)
                             LOGGER.warn("Duplicate animation: " + id);
                     }
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     LOGGER.error("Failed to load animation: " + animationLocation.getNamespace() + ":" + animationLocation.getPath().substring(this.folder.length(), animationLocation.getPath().length() - 5), e);
                 }
             }

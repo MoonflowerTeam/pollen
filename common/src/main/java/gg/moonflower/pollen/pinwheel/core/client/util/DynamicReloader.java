@@ -19,24 +19,20 @@ import java.util.concurrent.CompletableFuture;
  * @author Ocelot
  */
 @ApiStatus.Internal
-public class DynamicReloader
-{
+public class DynamicReloader {
     private static final Logger LOGGER = LogManager.getLogger();
     private final List<PreparableReloadListener> reloadListeners;
     private ReloadInstance asyncReloader;
 
-    public DynamicReloader()
-    {
+    public DynamicReloader() {
         this.reloadListeners = new ArrayList<>();
     }
 
-    public void addListener(PreparableReloadListener listener)
-    {
+    public void addListener(PreparableReloadListener listener) {
         this.reloadListeners.add(listener);
     }
 
-    public CompletableFuture<Unit> reload(boolean showLoadingScreen)
-    {
+    public CompletableFuture<Unit> reload(boolean showLoadingScreen) {
         if (asyncReloader != null)
             return asyncReloader.done();
         asyncReloader = SimpleReloadInstance.of(Minecraft.getInstance().getResourceManager(), this.reloadListeners, Util.backgroundExecutor(), Minecraft.getInstance(), CompletableFuture.completedFuture(Unit.INSTANCE));
@@ -55,8 +51,7 @@ public class DynamicReloader
         });
     }
 
-    public boolean isReloading()
-    {
+    public boolean isReloading() {
         return asyncReloader != null;
     }
 }

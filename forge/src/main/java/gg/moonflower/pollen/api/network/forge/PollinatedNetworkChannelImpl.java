@@ -31,14 +31,6 @@ public class PollinatedNetworkChannelImpl implements PollinatedNetworkChannel {
         this.serverMessageHandler = new LazyLoadedValue<>(() -> new LazyLoadedValue<>(serverFactory.get()));
     }
 
-    protected <MSG extends PollinatedPacket<T>, T> SimpleChannel.MessageBuilder<MSG> getMessageBuilder(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, @Nullable PollinatedPacketDirection direction) {
-        return this.channel.messageBuilder(clazz, this.nextId++, toNetworkDirection(direction)).encoder(PollinatedPacket::writePacketData).decoder(deserializer).consumer((msg, ctx) ->
-        {
-            PollinatedNetworkChannel.processMessage(msg, new PollinatedForgePacketContext(this.channel, ctx), ctx.get().getDirection().getReceptionSide().isClient() ? this.clientMessageHandler.get().get() : this.serverMessageHandler.get().get());
-            ctx.get().setPacketHandled(true);
-        });
-    }
-
     protected static NetworkDirection toNetworkDirection(@Nullable PollinatedPacketDirection direction) {
         if (direction == null)
             return null;
@@ -62,5 +54,13 @@ public class PollinatedNetworkChannelImpl implements PollinatedNetworkChannel {
 
     public static PollinatedLoginNetworkChannel createLogin(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
         return new PollinatedForgeLoginChannel(NetworkRegistry.newSimpleChannel(channelId, () -> version, version::equals, version::equals), clientFactory, serverFactory);
+    }
+
+    protected <MSG extends PollinatedPacket<T>, T> SimpleChannel.MessageBuilder<MSG> getMessageBuilder(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, @Nullable PollinatedPacketDirection direction) {
+        return this.channel.messageBuilder(clazz, this.nextId++, toNetworkDirection(direction)).encoder(PollinatedPacket::writePacketData).decoder(deserializer).consumer((msg, ctx) ->
+        {
+            PollinatedNetworkChannel.processMessage(msg, new PollinatedForgePacketContext(this.channel, ctx), ctx.get().getDirection().getReceptionSide().isClient() ? this.clientMessageHandler.get().get() : this.serverMessageHandler.get().get());
+            ctx.get().setPacketHandled(true);
+        });
     }
 }

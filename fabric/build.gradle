@@ -5,9 +5,17 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.0.0"
 }
 
+archivesBaseName = "${rootProject.archivesBaseName}-${project.name}"
+
 architectury {
     platformSetupLoomIde()
     fabric()
+}
+
+loom {
+    mixin {
+        defaultRefmapName = "${project.mod_id}-refmap.json"
+    }
 }
 
 configurations {
@@ -18,7 +26,6 @@ configurations {
     developmentFabric.extendsFrom common
 }
 
-archivesBaseName = "${rootProject.archivesBaseName}-${project.name}"
 
 repositories {
     maven { url "https://maven.terraformersmc.com/" }

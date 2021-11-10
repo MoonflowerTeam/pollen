@@ -12,8 +12,7 @@ import java.util.concurrent.Executor;
  * @author Ocelot
  * @since 1.0.0
  */
-public interface BackgroundLoader<T>
-{
+public interface BackgroundLoader<T> {
     /**
      * Reloads all data.
      *

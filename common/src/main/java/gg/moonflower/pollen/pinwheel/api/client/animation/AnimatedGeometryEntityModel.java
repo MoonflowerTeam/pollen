@@ -519,19 +519,19 @@ public class AnimatedGeometryEntityModel<T extends Entity> extends EntityModel<T
     }
 
     /**
-     * @return The animations this entity model is playing
-     */
-    public AnimationData[] getAnimations() {
-        return Arrays.stream(this.animations).map(AnimationManager::getAnimation).filter(animation -> animation != AnimationData.EMPTY).toArray(AnimationData[]::new);
-    }
-
-    /**
      * Sets the texture table to render with.
      *
      * @param texture The new texture
      */
     public void setTexture(@Nullable ResourceLocation texture) {
         this.texture = texture;
+    }
+
+    /**
+     * @return The animations this entity model is playing
+     */
+    public AnimationData[] getAnimations() {
+        return Arrays.stream(this.animations).map(AnimationManager::getAnimation).filter(animation -> animation != AnimationData.EMPTY).toArray(AnimationData[]::new);
     }
 
     /**

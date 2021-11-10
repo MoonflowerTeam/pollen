@@ -55,6 +55,12 @@ public class BoneModelPart extends ModelPart implements AnimatedModelPart {
             this.addPolyMesh(polyMesh);
     }
 
+    private static void addVertex(VertexConsumer builder, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, Matrix4f matrix4f, Vertex vertex) {
+        TRANSFORM_VECTOR.set(vertex.x, vertex.y, vertex.z, 1);
+        TRANSFORM_VECTOR.transform(matrix4f);
+        builder.vertex(TRANSFORM_VECTOR.x(), TRANSFORM_VECTOR.y(), TRANSFORM_VECTOR.z(), red, green, blue, alpha, vertex.u, vertex.v, packedOverlay, packedLight, NORMAL_VECTOR.x(), NORMAL_VECTOR.y(), NORMAL_VECTOR.z());
+    }
+
     private void addCube(GeometryModelData.Cube cube) {
         boolean empty = true;
         for (Direction direction : Direction.values()) {
@@ -224,12 +230,6 @@ public class BoneModelPart extends ModelPart implements AnimatedModelPart {
 
             matrixStack.popPose();
         }
-    }
-
-    private static void addVertex(VertexConsumer builder, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, Matrix4f matrix4f, Vertex vertex) {
-        TRANSFORM_VECTOR.set(vertex.x, vertex.y, vertex.z, 1);
-        TRANSFORM_VECTOR.transform(matrix4f);
-        builder.vertex(TRANSFORM_VECTOR.x(), TRANSFORM_VECTOR.y(), TRANSFORM_VECTOR.z(), red, green, blue, alpha, vertex.u, vertex.v, packedOverlay, packedLight, NORMAL_VECTOR.x(), NORMAL_VECTOR.y(), NORMAL_VECTOR.z());
     }
 
     @Override

@@ -28,7 +28,7 @@ public interface AnimatedModelPart {
      * @since 1.0.0
      */
     class AnimationPose {
-        
+
         private final Vector3f position;
         private final Vector3f rotation;
         private final Vector3f scale;

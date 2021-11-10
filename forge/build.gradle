@@ -5,11 +5,16 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.0.0"
 }
 
+archivesBaseName = "${rootProject.archivesBaseName}-${project.name}"
+
 loom {
     forge {
         // For some reason gradle doesn't like using rootProject here?
         mixinConfig "${project.mod_id}-common.mixins.json"
         mixinConfig "${project.mod_id}.mixins.json"
+    }
+    mixin {
+        defaultRefmapName = "${project.mod_id}-refmap.json"
     }
 }
 
@@ -26,7 +31,6 @@ configurations {
     developmentForge.extendsFrom common
 }
 
-archivesBaseName = "${rootProject.archivesBaseName}-${project.name}"
 
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"

@@ -13,8 +13,7 @@ import java.util.concurrent.Executor;
  * @author Ocelot
  * @since 1.0.0
  */
-public interface GeometryModelLoader
-{
+public interface GeometryModelLoader {
     /**
      * Reloads all geometry models.
      *

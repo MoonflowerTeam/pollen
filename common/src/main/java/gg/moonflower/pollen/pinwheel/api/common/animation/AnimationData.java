@@ -16,8 +16,7 @@ import java.util.function.Supplier;
  * @author Ocelot
  * @since 1.0.0
  */
-public class AnimationData
-{
+public class AnimationData {
     /**
      * A completely empty animation definition.
      */
@@ -33,8 +32,7 @@ public class AnimationData
     private final ParticleEffect[] particleEffects;
     private final TimelineEffect[] timelineEffects;
 
-    public AnimationData(String name, Loop loop, float blendWeight, float animationLength, boolean overridePreviousAnimation, BoneAnimation[] boneAnimations, SoundEffect[] soundEffects, ParticleEffect[] particleEffects, TimelineEffect[] timelineEffects)
-    {
+    public AnimationData(String name, Loop loop, float blendWeight, float animationLength, boolean overridePreviousAnimation, BoneAnimation[] boneAnimations, SoundEffect[] soundEffects, ParticleEffect[] particleEffects, TimelineEffect[] timelineEffects) {
         this.name = name;
         this.loop = loop;
         this.blendWeight = blendWeight;
@@ -49,78 +47,68 @@ public class AnimationData
     /**
      * @return The name of this animation
      */
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
     /**
      * @return The type of looping this animation uses
      */
-    public Loop getLoop()
-    {
+    public Loop getLoop() {
         return loop;
     }
 
     /**
      * @return How much this animation should be blended with others
      */
-    public float getBlendWeight()
-    {
+    public float getBlendWeight() {
         return blendWeight;
     }
 
     /**
      * @return The overall length of this animation
      */
-    public float getAnimationLength()
-    {
+    public float getAnimationLength() {
         return animationLength;
     }
 
     /**
      * @return Whether all animations leading up to this point should be overridden
      */
-    public boolean isOverridePreviousAnimation()
-    {
+    public boolean isOverridePreviousAnimation() {
         return overridePreviousAnimation;
     }
 
     /**
      * @return The set of bones that are animated in this animation
      */
-    public BoneAnimation[] getBoneAnimations()
-    {
+    public BoneAnimation[] getBoneAnimations() {
         return boneAnimations;
     }
 
     /**
      * @return All sounds that should play at their respective times
      */
-    public SoundEffect[] getSoundEffects()
-    {
+    public SoundEffect[] getSoundEffects() {
         return soundEffects;
     }
 
     /**
      * @return All particles that should be spawned at their respective times
      */
-    public ParticleEffect[] getParticleEffects()
-    {
+    public ParticleEffect[] getParticleEffects() {
         return particleEffects;
     }
 
     /**
      * @return All effects that should be applied at their respective times
      */
-    public TimelineEffect[] getTimelineEffects()
-    {
+    public TimelineEffect[] getTimelineEffects() {
         return timelineEffects;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "AnimationData{" +
                 "name='" + name + '\'' +
                 ", loop=" + loop +
@@ -135,20 +123,38 @@ public class AnimationData
     }
 
     /**
+     * <p>Animation interpolation functions.</p>
+     *
+     * @author Ocelot
+     * @since 1.0.0
+     */
+    public enum LerpMode {
+        LINEAR, CATMULLROM
+    }
+
+    /**
+     * <p>The different types of animations looping that can occur.</p>
+     *
+     * @author Ocelot
+     * @since 1.0.0
+     */
+    public enum Loop {
+        NONE, LOOP, HOLD_ON_LAST_FRAME
+    }
+
+    /**
      * <p>A collection of key frames to animate a single bone.</p>
      *
      * @author Ocelot
      * @since 1.0.0
      */
-    public static class BoneAnimation
-    {
+    public static class BoneAnimation {
         private final String name;
         private final KeyFrame[] positionFrames;
         private final KeyFrame[] rotationFrames;
         private final KeyFrame[] scaleFrames;
 
-        public BoneAnimation(String name, KeyFrame[] positionFrames, KeyFrame[] rotationFrames, KeyFrame[] scaleFrames)
-        {
+        public BoneAnimation(String name, KeyFrame[] positionFrames, KeyFrame[] rotationFrames, KeyFrame[] scaleFrames) {
             this.name = name;
             this.positionFrames = positionFrames;
             this.rotationFrames = rotationFrames;
@@ -158,38 +164,33 @@ public class AnimationData
         /**
          * @return The name of the bone to animate
          */
-        public String getName()
-        {
+        public String getName() {
             return name;
         }
 
         /**
          * @return The position channel of key frames
          */
-        public KeyFrame[] getPositionFrames()
-        {
+        public KeyFrame[] getPositionFrames() {
             return positionFrames;
         }
 
         /**
          * @return The rotation channel of key frames
          */
-        public KeyFrame[] getRotationFrames()
-        {
+        public KeyFrame[] getRotationFrames() {
             return rotationFrames;
         }
 
         /**
          * @return The scale channel of key frames
          */
-        public KeyFrame[] getScaleFrames()
-        {
+        public KeyFrame[] getScaleFrames() {
             return scaleFrames;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "BoneAnimation{" +
                     "name='" + name + '\'' +
                     ", positionFrames=" + Arrays.toString(positionFrames) +
@@ -205,8 +206,7 @@ public class AnimationData
      * @author Ocelot
      * @since 1.0.0
      */
-    public static class KeyFrame
-    {
+    public static class KeyFrame {
         private final float time;
         private final LerpMode lerpMode;
         private final MolangExpression transformPreX;
@@ -216,8 +216,7 @@ public class AnimationData
         private final MolangExpression transformPostY;
         private final MolangExpression transformPostZ;
 
-        public KeyFrame(float time, LerpMode lerpMode, MolangExpression transformPreX, MolangExpression transformPreY, MolangExpression transformPreZ, MolangExpression transformPostX, MolangExpression transformPostY, MolangExpression transformPostZ)
-        {
+        public KeyFrame(float time, LerpMode lerpMode, MolangExpression transformPreX, MolangExpression transformPreY, MolangExpression transformPreZ, MolangExpression transformPostX, MolangExpression transformPostY, MolangExpression transformPostZ) {
             this.time = time;
             this.lerpMode = lerpMode;
             this.transformPreX = transformPreX;
@@ -231,70 +230,61 @@ public class AnimationData
         /**
          * @return The time this frame occur at
          */
-        public float getTime()
-        {
+        public float getTime() {
             return time;
         }
 
         /**
          * @return The function to use when interpolating to and from this frame
          */
-        public LerpMode getLerpMode()
-        {
+        public LerpMode getLerpMode() {
             return lerpMode;
         }
 
         /**
          * @return The position to use when transitioning to this frame in the x-axis
          */
-        public MolangExpression getTransformPreX()
-        {
+        public MolangExpression getTransformPreX() {
             return transformPreX;
         }
 
         /**
          * @return The position to use when transitioning to this frame in the y-axis
          */
-        public MolangExpression getTransformPreY()
-        {
+        public MolangExpression getTransformPreY() {
             return transformPreY;
         }
 
         /**
          * @return The position to use when transitioning to this frame in the z-axis
          */
-        public MolangExpression getTransformPreZ()
-        {
+        public MolangExpression getTransformPreZ() {
             return transformPreZ;
         }
 
         /**
          * @return The position to use when transitioning away from this frame in the x-axis
          */
-        public MolangExpression getTransformPostX()
-        {
+        public MolangExpression getTransformPostX() {
             return transformPostX;
         }
 
         /**
          * @return The position to use when transitioning away from this frame in the y-axis
          */
-        public MolangExpression getTransformPostY()
-        {
+        public MolangExpression getTransformPostY() {
             return transformPostY;
         }
 
         /**
          * @return The position to use when transitioning away from this frame in the z-axis
          */
-        public MolangExpression getTransformPostZ()
-        {
+        public MolangExpression getTransformPostZ() {
             return transformPostZ;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "KeyFrame{" +
                     "time=" + time +
                     ", transformPre=(" + transformPreX + ", " + transformPreY + ", " + transformPreZ + ")" +
@@ -304,32 +294,19 @@ public class AnimationData
     }
 
     /**
-     * <p>Animation interpolation functions.</p>
-     *
-     * @author Ocelot
-     * @since 1.0.0
-     */
-    public enum LerpMode
-    {
-        LINEAR, CATMULLROM
-    }
-
-    /**
      * <p>A sound event that plays during a key frame.</p>
      *
      * @author Ocelot
      * @since 1.0.0
      */
-    public static class SoundEffect
-    {
+    public static class SoundEffect {
         private final float time;
         private final String effect;
         private final MolangExpression pitch;
         private final MolangExpression volume;
         private final boolean loop;
 
-        public SoundEffect(float time, String effect, MolangExpression pitch, MolangExpression volume, boolean loop)
-        {
+        public SoundEffect(float time, String effect, MolangExpression pitch, MolangExpression volume, boolean loop) {
             this.time = time;
             this.effect = effect;
             this.pitch = pitch;
@@ -340,46 +317,40 @@ public class AnimationData
         /**
          * @return The time in seconds this effect plays at
          */
-        public float getTime()
-        {
+        public float getTime() {
             return time;
         }
 
         /**
          * @return The sound event name that should play
          */
-        public String getEffect()
-        {
+        public String getEffect() {
             return effect;
         }
 
         /**
          * @return The pitch multiplier from 0.5 to 2.0
          */
-        public MolangExpression getPitch()
-        {
+        public MolangExpression getPitch() {
             return pitch;
         }
 
         /**
          * @return The distance modifier this sound can be heard from
          */
-        public MolangExpression getVolume()
-        {
+        public MolangExpression getVolume() {
             return volume;
         }
 
         /**
          * @return Whether this sound should be played once and then looped
          */
-        public boolean isLoop()
-        {
+        public boolean isLoop() {
             return loop;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "SoundEffect{" +
                     "time=" + time +
                     ", effect='" + effect + '\'' +
@@ -396,14 +367,12 @@ public class AnimationData
      * @author Ocelot
      * @since 1.0.0
      */
-    public static class ParticleEffect
-    {
+    public static class ParticleEffect {
         private final float time;
         private final String effect;
         private final String locator;
 
-        public ParticleEffect(float time, String effect, String locator)
-        {
+        public ParticleEffect(float time, String effect, String locator) {
             this.time = time;
             this.effect = effect;
             this.locator = locator;
@@ -412,30 +381,26 @@ public class AnimationData
         /**
          * @return The time in seconds this effect plays at
          */
-        public float getTime()
-        {
+        public float getTime() {
             return time;
         }
 
         /**
          * @return The particle name that should be spawned
          */
-        public String getEffect()
-        {
+        public String getEffect() {
             return effect;
         }
 
         /**
          * @return The name of the locator to place the particle at
          */
-        public String getLocator()
-        {
+        public String getLocator() {
             return locator;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "ParticleEffect{" +
                     "time=" + time +
                     ", effect='" + effect + '\'' +
@@ -450,13 +415,11 @@ public class AnimationData
      * @author Ocelot
      * @since 1.0.0
      */
-    public static class TimelineEffect
-    {
+    public static class TimelineEffect {
         private final float time;
         private final String data;
 
-        public TimelineEffect(float time, String data)
-        {
+        public TimelineEffect(float time, String data) {
             this.time = time;
             this.data = data;
         }
@@ -464,22 +427,19 @@ public class AnimationData
         /**
          * @return The time in seconds this effect plays at
          */
-        public float getTime()
-        {
+        public float getTime() {
             return time;
         }
 
         /**
          * @return The data at this time
          */
-        public String getData()
-        {
+        public String getData() {
             return data;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "TimelineEffect{" +
                     "time=" + time +
                     ", data='" + data + '\'' +
@@ -487,27 +447,98 @@ public class AnimationData
         }
     }
 
-    /**
-     * <p>The different types of animations looping that can occur.</p>
-     *
-     * @author Ocelot
-     * @since 1.0.0
-     */
-    public enum Loop
-    {
-        NONE, LOOP, HOLD_ON_LAST_FRAME
-    }
+    public static class Deserializer implements JsonDeserializer<AnimationData[]> {
+        private static Loop parseLoop(JsonElement json) {
+            if (!json.isJsonPrimitive())
+                throw new JsonSyntaxException("Expected Boolean or String, was " + GsonHelper.getType(json));
+            if (json.getAsJsonPrimitive().isBoolean())
+                return json.getAsBoolean() ? Loop.LOOP : Loop.NONE;
+            if (json.getAsJsonPrimitive().isString()) {
+                for (Loop loop : Loop.values())
+                    if (loop.name().equalsIgnoreCase(json.getAsString()))
+                        return loop;
+                throw new JsonSyntaxException("Unsupported loop: " + json.getAsString());
+            }
+            throw new JsonSyntaxException("Expected Boolean or String, was " + GsonHelper.getType(json));
+        }
 
-    public static class Deserializer implements JsonDeserializer<AnimationData[]>
-    {
+        private static void parseEffect(BiConsumer<Float, JsonElement> effectConsumer, JsonObject json, String name) {
+            if (!json.has(name))
+                return;
+
+            for (Map.Entry<String, JsonElement> entry : json.getAsJsonObject(name).entrySet()) {
+                try {
+                    effectConsumer.accept(Float.parseFloat(entry.getKey()), entry.getValue());
+                } catch (NumberFormatException e) {
+                    throw new JsonParseException("Failed to parse " + name + " at time '" + entry.getKey() + "'", e);
+                }
+            }
+        }
+
+        private static void parseTransform(Collection<KeyFrame> frames, JsonObject json, String name, Supplier<MolangExpression[]> defaultValue) throws JsonParseException {
+            if (!json.has(name))
+                return;
+
+            JsonElement transformJson = json.get(name);
+            if (transformJson.isJsonObject()) {
+                for (Map.Entry<String, JsonElement> entry : transformJson.getAsJsonObject().entrySet()) {
+                    try {
+                        float time = Float.parseFloat(entry.getKey());
+                        if (frames.stream().anyMatch(keyFrame -> keyFrame.getTime() == time))
+                            throw new JsonSyntaxException("Duplicate channel time '" + time + "'");
+
+                        ChannelData data = parseChannel(transformJson.getAsJsonObject(), entry.getKey(), defaultValue);
+                        frames.add(new KeyFrame(time, data.lerpMode, data.pre[0], data.pre[1], data.pre[2], data.post[0], data.post[1], data.post[2]));
+                    } catch (NumberFormatException e) {
+                        throw new JsonParseException("Invalid keyframe time '" + entry.getKey() + "'", e);
+                    }
+                }
+            } else {
+                MolangExpression[] values = JSONTupleParser.getExpression(json, name, 3, defaultValue);
+                frames.add(new KeyFrame(0, LerpMode.LINEAR, values[0], values[1], values[2], values[0], values[1], values[2]));
+            }
+        }
+
+        private static ChannelData parseChannel(JsonObject json, String name, Supplier<MolangExpression[]> defaultValue) throws JsonSyntaxException {
+            if (!json.has(name) && !json.get(name).isJsonObject() && !json.get(name).isJsonArray())
+                throw new JsonSyntaxException("Missing " + name + ", expected to find a JsonObject or JsonArray");
+
+            JsonElement transformationElement = json.get(name);
+            if (transformationElement.isJsonObject()) {
+                JsonObject transformationObject = transformationElement.getAsJsonObject();
+
+                // Parse Lerp Mode
+                LerpMode lerpMode = LerpMode.LINEAR;
+                if (transformationObject.has("lerp_mode")) {
+                    lerpMode = null;
+
+                    String mode = GsonHelper.getAsString(transformationObject, "lerp_mode");
+                    for (LerpMode m : LerpMode.values()) {
+                        if (m.name().toLowerCase(Locale.ROOT).equals(mode)) {
+                            lerpMode = m;
+                            break;
+                        }
+                    }
+
+                    if (lerpMode == null)
+                        throw new JsonSyntaxException("Unknown Lerp Mode: " + mode);
+                }
+
+                // Parse channels. Pre will default to post if not present
+                MolangExpression[] post = JSONTupleParser.getExpression(transformationObject, "post", 3, null);
+                return new ChannelData(JSONTupleParser.getExpression(transformationObject, "pre", 3, () -> post), post, lerpMode);
+            }
+
+            MolangExpression[] transformation = JSONTupleParser.getExpression(json, name, 3, defaultValue);
+            return new ChannelData(transformation, transformation, LerpMode.LINEAR);
+        }
+
         @Override
-        public AnimationData[] deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
-        {
+        public AnimationData[] deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             Set<AnimationData> animations = new HashSet<>();
 
             JsonObject jsonObject = json.getAsJsonObject();
-            for (Map.Entry<String, JsonElement> animationEntry : jsonObject.entrySet())
-            {
+            for (Map.Entry<String, JsonElement> animationEntry : jsonObject.entrySet()) {
                 JsonObject animationObject = animationEntry.getValue().getAsJsonObject();
 
                 /* Parse global animation properties */
@@ -525,8 +556,7 @@ public class AnimationData
                 List<KeyFrame> positions = new ArrayList<>();
                 List<KeyFrame> rotations = new ArrayList<>();
                 List<KeyFrame> scales = new ArrayList<>();
-                for (Map.Entry<String, JsonElement> boneAnimationEntry : GsonHelper.getAsJsonObject(animationObject, "bones").entrySet())
-                {
+                for (Map.Entry<String, JsonElement> boneAnimationEntry : GsonHelper.getAsJsonObject(animationObject, "bones").entrySet()) {
                     JsonObject boneAnimationObject = boneAnimationEntry.getValue().getAsJsonObject();
 
                     parseTransform(positions, boneAnimationObject, "position", () -> new MolangExpression[]{MolangExpression.ZERO, MolangExpression.ZERO, MolangExpression.ZERO});
@@ -565,119 +595,12 @@ public class AnimationData
             return animations.toArray(new AnimationData[0]);
         }
 
-        private static Loop parseLoop(JsonElement json)
-        {
-            if (!json.isJsonPrimitive())
-                throw new JsonSyntaxException("Expected Boolean or String, was " + GsonHelper.getType(json));
-            if (json.getAsJsonPrimitive().isBoolean())
-                return json.getAsBoolean() ? Loop.LOOP : Loop.NONE;
-            if (json.getAsJsonPrimitive().isString())
-            {
-                for (Loop loop : Loop.values())
-                    if (loop.name().equalsIgnoreCase(json.getAsString()))
-                        return loop;
-                throw new JsonSyntaxException("Unsupported loop: " + json.getAsString());
-            }
-            throw new JsonSyntaxException("Expected Boolean or String, was " + GsonHelper.getType(json));
-        }
-
-        private static void parseEffect(BiConsumer<Float, JsonElement> effectConsumer, JsonObject json, String name)
-        {
-            if (!json.has(name))
-                return;
-
-            for (Map.Entry<String, JsonElement> entry : json.getAsJsonObject(name).entrySet())
-            {
-                try
-                {
-                    effectConsumer.accept(Float.parseFloat(entry.getKey()), entry.getValue());
-                }
-                catch (NumberFormatException e)
-                {
-                    throw new JsonParseException("Failed to parse " + name + " at time '" + entry.getKey() + "'", e);
-                }
-            }
-        }
-
-        private static void parseTransform(Collection<KeyFrame> frames, JsonObject json, String name, Supplier<MolangExpression[]> defaultValue) throws JsonParseException
-        {
-            if (!json.has(name))
-                return;
-
-            JsonElement transformJson = json.get(name);
-            if (transformJson.isJsonObject())
-            {
-                for (Map.Entry<String, JsonElement> entry : transformJson.getAsJsonObject().entrySet())
-                {
-                    try
-                    {
-                        float time = Float.parseFloat(entry.getKey());
-                        if (frames.stream().anyMatch(keyFrame -> keyFrame.getTime() == time))
-                            throw new JsonSyntaxException("Duplicate channel time '" + time + "'");
-
-                        ChannelData data = parseChannel(transformJson.getAsJsonObject(), entry.getKey(), defaultValue);
-                        frames.add(new KeyFrame(time, data.lerpMode, data.pre[0], data.pre[1], data.pre[2], data.post[0], data.post[1], data.post[2]));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        throw new JsonParseException("Invalid keyframe time '" + entry.getKey() + "'", e);
-                    }
-                }
-            }
-            else
-            {
-                MolangExpression[] values = JSONTupleParser.getExpression(json, name, 3, defaultValue);
-                frames.add(new KeyFrame(0, LerpMode.LINEAR, values[0], values[1], values[2], values[0], values[1], values[2]));
-            }
-        }
-
-        private static ChannelData parseChannel(JsonObject json, String name, Supplier<MolangExpression[]> defaultValue) throws JsonSyntaxException
-        {
-            if (!json.has(name) && !json.get(name).isJsonObject() && !json.get(name).isJsonArray())
-                throw new JsonSyntaxException("Missing " + name + ", expected to find a JsonObject or JsonArray");
-
-            JsonElement transformationElement = json.get(name);
-            if (transformationElement.isJsonObject())
-            {
-                JsonObject transformationObject = transformationElement.getAsJsonObject();
-
-                // Parse Lerp Mode
-                LerpMode lerpMode = LerpMode.LINEAR;
-                if (transformationObject.has("lerp_mode"))
-                {
-                    lerpMode = null;
-
-                    String mode = GsonHelper.getAsString(transformationObject, "lerp_mode");
-                    for (LerpMode m : LerpMode.values())
-                    {
-                        if (m.name().toLowerCase(Locale.ROOT).equals(mode))
-                        {
-                            lerpMode = m;
-                            break;
-                        }
-                    }
-
-                    if (lerpMode == null)
-                        throw new JsonSyntaxException("Unknown Lerp Mode: " + mode);
-                }
-
-                // Parse channels. Pre will default to post if not present
-                MolangExpression[] post = JSONTupleParser.getExpression(transformationObject, "post", 3, null);
-                return new ChannelData(JSONTupleParser.getExpression(transformationObject, "pre", 3, () -> post), post, lerpMode);
-            }
-
-            MolangExpression[] transformation = JSONTupleParser.getExpression(json, name, 3, defaultValue);
-            return new ChannelData(transformation, transformation, LerpMode.LINEAR);
-        }
-
-        private static class ChannelData
-        {
+        private static class ChannelData {
             private final MolangExpression[] pre;
             private final MolangExpression[] post;
             private final LerpMode lerpMode;
 
-            private ChannelData(MolangExpression[] pre, MolangExpression[] post, LerpMode lerpMode)
-            {
+            private ChannelData(MolangExpression[] pre, MolangExpression[] post, LerpMode lerpMode) {
                 this.pre = pre;
                 this.post = post;
                 this.lerpMode = lerpMode;

@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.api.network;
 
-import gg.moonflower.pollen.api.network.message.login.PollinatedLoginPacket;
 import gg.moonflower.pollen.api.network.message.PollinatedPacketDirection;
+import gg.moonflower.pollen.api.network.message.login.PollinatedLoginPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;

@@ -23,6 +23,23 @@ import org.jetbrains.annotations.Nullable;
 public interface AnimatedEntity extends AnimationEffectSource {
 
     /**
+     * Sets the animation for the specified entity on the server side, and syncs with clients.
+     *
+     * @param entity         The entity to sync the animation of
+     * @param animationState The new animation state
+     * @param <T>            The type of entity to set the animation state for
+     */
+    static <T extends Entity & AnimatedEntity> void setAnimation(T entity, AnimationState animationState) {
+        Level level = entity.level;
+        if (level.isClientSide())
+            return;
+        AnimationState before = entity.getAnimationState();
+        entity.setAnimationState(animationState);
+        if (before != animationState)
+            PollenMessages.PLAY.sendToTracking(entity, new ClientboundSyncAnimationPacket(entity));
+    }
+
+    /**
      * Increments the animation tick and automatically handles starting and stopping animations.
      */
     default void animationTick() {
@@ -120,9 +137,23 @@ public interface AnimatedEntity extends AnimationEffectSource {
     int getAnimationTick();
 
     /**
+     * Sets the current tick of animation.
+     *
+     * @param tick The new animation tick
+     */
+    void setAnimationTick(int tick);
+
+    /**
      * @return The current state of animation
      */
     AnimationState getAnimationState();
+
+    /**
+     * Sets the state of animation and resets the animation ticks.
+     *
+     * @param state The new animation state
+     */
+    void setAnimationState(AnimationState state);
 
     /**
      * @return The handler for animation effects on this entity or <code>null</code> to ignore effects
@@ -151,35 +182,4 @@ public interface AnimatedEntity extends AnimationEffectSource {
      * @return All animation states. This is used for syncing the current state with clients
      */
     AnimationState[] getAnimationStates();
-
-    /**
-     * Sets the current tick of animation.
-     *
-     * @param tick The new animation tick
-     */
-    void setAnimationTick(int tick);
-
-    /**
-     * Sets the state of animation and resets the animation ticks.
-     *
-     * @param state The new animation state
-     */
-    void setAnimationState(AnimationState state);
-
-    /**
-     * Sets the animation for the specified entity on the server side, and syncs with clients.
-     *
-     * @param entity         The entity to sync the animation of
-     * @param animationState The new animation state
-     * @param <T>            The type of entity to set the animation state for
-     */
-    static <T extends Entity & AnimatedEntity> void setAnimation(T entity, AnimationState animationState) {
-        Level level = entity.level;
-        if (level.isClientSide())
-            return;
-        AnimationState before = entity.getAnimationState();
-        entity.setAnimationState(animationState);
-        if (before != animationState)
-            PollenMessages.PLAY.sendToTracking(entity, new ClientboundSyncAnimationPacket(entity));
-    }
 }

@@ -12,11 +12,9 @@ import java.io.Reader;
  * @author Ocelot
  * @since 1.0.0
  */
-public class AnimationParser
-{
-    private static final String VERSION = "1.8.0";
-
+public class AnimationParser {
     public static final Gson GSON = new GsonBuilder().registerTypeAdapter(AnimationData[].class, new AnimationData.Deserializer()).create();
+    private static final String VERSION = "1.8.0";
 
     /**
      * Creates a new animation from the specified JSON element.
@@ -24,8 +22,7 @@ public class AnimationParser
      * @param reader The reader to get data from
      * @return A new animation from the json
      */
-    public static AnimationData[] parse(Reader reader) throws JsonSyntaxException, JsonIOException
-    {
+    public static AnimationData[] parse(Reader reader) throws JsonSyntaxException, JsonIOException {
         return parse(new JsonParser().parse(reader));
     }
 
@@ -35,8 +32,7 @@ public class AnimationParser
      * @param reader The reader to get data from
      * @return A new animation from the json
      */
-    public static AnimationData[] parse(JsonReader reader) throws JsonSyntaxException, JsonIOException
-    {
+    public static AnimationData[] parse(JsonReader reader) throws JsonSyntaxException, JsonIOException {
         return parse(new JsonParser().parse(reader));
     }
 
@@ -46,8 +42,7 @@ public class AnimationParser
      * @param json The raw json string
      * @return A new animation from the json
      */
-    public static AnimationData[] parse(String json) throws JsonSyntaxException
-    {
+    public static AnimationData[] parse(String json) throws JsonSyntaxException {
         return parse(new JsonParser().parse(json));
     }
 
@@ -57,8 +52,7 @@ public class AnimationParser
      * @param json The parsed json element
      * @return A new animation from the json
      */
-    public static AnimationData[] parse(JsonElement json) throws JsonSyntaxException
-    {
+    public static AnimationData[] parse(JsonElement json) throws JsonSyntaxException {
         String formatVersion = GsonHelper.getAsString(json.getAsJsonObject(), "format_version");
         if (!formatVersion.equals(VERSION))
             throw new JsonSyntaxException("Unsupported animation version: " + formatVersion);

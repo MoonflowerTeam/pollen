@@ -2,9 +2,9 @@ package gg.moonflower.pollen.api.network.forge;
 
 import gg.moonflower.pollen.api.network.PollinatedLoginNetworkChannel;
 import gg.moonflower.pollen.api.network.PollinatedNetworkChannel;
-import gg.moonflower.pollen.api.network.message.login.PollinatedLoginPacket;
 import gg.moonflower.pollen.api.network.message.PollinatedPacket;
 import gg.moonflower.pollen.api.network.message.PollinatedPacketDirection;
+import gg.moonflower.pollen.api.network.message.login.PollinatedLoginPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.network.FMLHandshakeHandler;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
