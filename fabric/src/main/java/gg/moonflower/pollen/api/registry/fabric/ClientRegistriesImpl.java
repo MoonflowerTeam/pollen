@@ -13,10 +13,11 @@ import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -45,8 +46,23 @@ public class ClientRegistriesImpl {
         return KeyBindingHelper.registerKeyBinding(key);
     }
 
-    public static <T extends Entity> void registerEntityRenderer(EntityType<T> type, Function<EntityRenderDispatcher, EntityRenderer<T>> factory) {
-        EntityRendererRegistry.INSTANCE.register(type, (manager, context) -> factory.apply(manager));
+    public static <T extends Entity> void registerEntityRenderer(EntityType<T> type, ClientRegistries.EntityRendererFactory<T> factory) {
+        EntityRendererRegistry.INSTANCE.register(type, (manager, context) -> factory.create(manager, new ClientRegistries.EntityRendererRegistryContext() {
+            @Override
+            public TextureManager getTextureManager() {
+                return context.getTextureManager();
+            }
+
+            @Override
+            public ReloadableResourceManager getResourceManager() {
+                return context.getResourceManager();
+            }
+
+            @Override
+            public ItemRenderer getItemRenderer() {
+                return context.getItemRenderer();
+            }
+        }));
     }
 
     public static <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, Function<BlockEntityRenderDispatcher, BlockEntityRenderer<? super T>> factory) {
