@@ -15,6 +15,7 @@ import org.jetbrains.annotations.ApiStatus;
  */
 @ApiStatus.Internal
 public class ClientboundSyncAnimationPacket implements PollinatedPacket<PollenClientPlayPacketHandler> {
+
     private final int entityId;
     private final int animationId;
 
@@ -28,19 +29,15 @@ public class ClientboundSyncAnimationPacket implements PollinatedPacket<PollenCl
         this.animationId = buf.readVarInt();
     }
 
-    public void write(FriendlyByteBuf buf) {
+    @Override
+    public void writePacketData(FriendlyByteBuf buf) {
         buf.writeVarInt(this.entityId);
         buf.writeVarInt(this.animationId);
     }
 
     @Override
-    public void writePacketData(FriendlyByteBuf buf) {
-
-    }
-
-    @Override
     public void processPacket(PollenClientPlayPacketHandler handler, PollinatedPacketContext ctx) {
-
+        handler.handleSyncAnimationPacket(this, ctx);
     }
 
     @Environment(EnvType.CLIENT)
