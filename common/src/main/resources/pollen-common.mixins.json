@@ -3,6 +3,8 @@
   "package": "gg.moonflower.pollen.core.mixin",
   "compatibilityLevel": "JAVA_8",
   "client": [
+    "client.AgeableListModelAccessor",
+    "client.WolfAccessor"
   ],
   "mixins": [
   ],

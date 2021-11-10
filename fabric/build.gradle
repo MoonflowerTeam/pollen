@@ -5,9 +5,17 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.0.0"
 }
 
+archivesBaseName = "${rootProject.archivesBaseName}-${project.name}"
+
 architectury {
     platformSetupLoomIde()
     fabric()
+}
+
+loom {
+    mixin {
+        defaultRefmapName = "${project.mod_id}-refmap.json"
+    }
 }
 
 configurations {
@@ -18,7 +26,6 @@ configurations {
     developmentFabric.extendsFrom common
 }
 
-archivesBaseName = "${rootProject.archivesBaseName}-${project.name}"
 
 repositories {
     maven { url "https://maven.terraformersmc.com/" }
@@ -28,6 +35,11 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
     modApi "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
+
+    implementation "net.jodah:typetools:0.8.3"
+    shadowCommon "net.jodah:typetools:0.8.3"
+    implementation "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
+    shadowCommon "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
@@ -55,6 +67,8 @@ processResources {
 
 shadowJar {
     configurations = [project.configurations.shadowCommon]
+    relocate "net.jodah.typetools", "gg.moonflower.pollen.typetools"
+    relocate "io.github.ocelot.molangcompiler", "gg.moonflower.pollen.molangcompiler"
     classifier "dev-shadow"
 }
 

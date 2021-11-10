@@ -6,11 +6,14 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import org.jetbrains.annotations.ApiStatus;
 
-public class ForgePlatform extends Platform {
+@ApiStatus.Internal
+public final class ForgePlatform extends Platform {
+
     private final IEventBus eventBus;
 
-    protected ForgePlatform(String modId, IEventBus eventBus, Runnable commonInit, Runnable clientInit, Runnable commonPostInit, Runnable clientPostInit, Runnable commonNetworkInit, Runnable clientNetworkInit) {
+    ForgePlatform(String modId, IEventBus eventBus, Runnable commonInit, Runnable clientInit, Runnable commonPostInit, Runnable clientPostInit) {
         super(modId);
         this.eventBus = eventBus;
         this.eventBus.<FMLCommonSetupEvent>addListener(e -> e.enqueueWork(commonPostInit));
@@ -18,9 +21,6 @@ public class ForgePlatform extends Platform {
 
         commonInit.run();
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> clientInit::run);
-
-        commonNetworkInit.run();
-        clientNetworkInit.run();
     }
 
     public IEventBus getEventBus() {

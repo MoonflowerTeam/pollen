@@ -3,7 +3,14 @@ package gg.moonflower.pollen.api.platform;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import org.jetbrains.annotations.ApiStatus;
 
+/**
+ * A mod instance for initializing mods on the common side.
+ *
+ * @author Jackson
+ * @since 1.0.0
+ */
 public abstract class Platform {
+
     private final String modId;
 
     protected Platform(String modId) {
@@ -18,10 +25,13 @@ public abstract class Platform {
         throw new AssertionError();
     }
 
+    @ExpectPlatform
+    public static boolean isProduction() {
+        return Platform.error();
+    }
+
     /**
-     * Returns the mod id for the {@link Platform}.
-     *
-     * @return The {@link Platform} mod id.
+     * @return The mod id for the platform.
      */
     public String getModId() {
         return modId;
@@ -29,12 +39,14 @@ public abstract class Platform {
 
     /**
      * Loads the {@link Platform}.
-     * <p>Fabric users should not run this on their client initializer. Running this on the common initializer will handle client initialization too.</p>
+     *
+     * <p>Fabric users should not run this on their client initializer. Running this on the common initializer will handle client initialization too.
      */
     public void setup() {
     }
 
     public static class Builder {
+
         private static final Runnable EMPTY_RUNNABLE = () -> {
         };
 
@@ -44,16 +56,14 @@ public abstract class Platform {
         private Runnable clientInit = Builder.EMPTY_RUNNABLE;
         private Runnable commonPostInit = Builder.EMPTY_RUNNABLE;
         private Runnable clientPostInit = Builder.EMPTY_RUNNABLE;
-        private Runnable commonNetworkInit = Builder.EMPTY_RUNNABLE;
-        private Runnable clientNetworkInit = Builder.EMPTY_RUNNABLE;
 
         private Builder(String modId) {
             this.modId = modId;
         }
 
-        @ExpectPlatform
         @ApiStatus.Internal
-        public static Platform buildImpl(String modId, Runnable commonInit, Runnable clientInit, Runnable commonPostInit, Runnable clientPostInit, Runnable commonNetworkInit, Runnable clientNetworkInit) {
+        @ExpectPlatform
+        public static Platform buildImpl(String modId, Runnable commonInit, Runnable clientInit, Runnable commonPostInit, Runnable clientPostInit) {
             return Platform.error();
         }
 
@@ -77,18 +87,8 @@ public abstract class Platform {
             return this;
         }
 
-        public Builder commonNetworkInit(Runnable onCommonNetworkInit) {
-            this.commonNetworkInit = onCommonNetworkInit;
-            return this;
-        }
-
-        public Builder clientNetworkInit(Runnable onClientNetworkInit) {
-            this.clientNetworkInit = onClientNetworkInit;
-            return this;
-        }
-
         public Platform build() {
-            return buildImpl(this.modId, this.commonInit, this.clientInit, this.commonPostInit, this.clientPostInit, this.commonNetworkInit, this.clientNetworkInit);
+            return buildImpl(this.modId, this.commonInit, this.clientInit, this.commonPostInit, this.clientPostInit);
         }
     }
 }

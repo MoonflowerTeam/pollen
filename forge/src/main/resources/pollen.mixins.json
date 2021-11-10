@@ -4,8 +4,11 @@
   "compatibilityLevel": "JAVA_8",
   "minVersion": "0.8",
   "client": [
+    "client.LevelRendererMixin"
   ],
   "mixins": [
+    "FMLHandshakeHandlerMixin",
+    "SimpleReloadableResourceManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

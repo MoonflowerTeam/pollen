@@ -32,6 +32,10 @@ allprojects {
     group = rootProject.maven_group
 
     repositories {
+        maven {
+            name = "JitPack"
+            url = "https://jitpack.io"
+        }
     }
 
     tasks.withType(JavaCompile) {

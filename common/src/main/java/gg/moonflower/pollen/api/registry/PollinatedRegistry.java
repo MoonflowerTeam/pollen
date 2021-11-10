@@ -8,7 +8,15 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Supplier;
 
+/**
+ * An abstracted registry for wrapping platform-specific registries.
+ *
+ * @param <T> The object type.
+ * @author Jackson
+ * @since 1.0.0
+ */
 public abstract class PollinatedRegistry<T> {
+
     protected final String modId;
     private boolean registered;
 
@@ -18,7 +26,7 @@ public abstract class PollinatedRegistry<T> {
 
     /**
      * Creates an {@link PollinatedRegistry} backed by a platform-specific registry.
-     * <p>Forge users: If there's no {@link IForgeRegistry} for the object type, this will return a {@link PollinatedRegistry.VanillaImpl}.</p>
+     * <p>Forge users: If there's no ForgeRegistry for the object type, this will return a {@link PollinatedRegistry.VanillaImpl}.
      *
      * @param registry The registry to register objects to.
      * @param modId    The mod id to register to.
@@ -32,8 +40,8 @@ public abstract class PollinatedRegistry<T> {
 
     /**
      * Creates an {@link PollinatedRegistry} backed by a {@link Registry}.
-     * <p>Users should always use {@link PollinatedRegistry#create(Registry, String)}.</p>
-     * <p>This is for very specific cases where vanilla registries must strictly be used and {@link PollinatedRegistry#create(Registry, String)} can't do what you need.</p>
+     * <p>Users should always use {@link PollinatedRegistry#create(Registry, String)}.
+     * <p>This is for very specific cases where vanilla registries must strictly be used and {@link PollinatedRegistry#create(Registry, String)} can't do what you need.
      *
      * @param registry The registry to register objects to.
      * @param modId    The mod id to register to.
