@@ -3,6 +3,7 @@ package gg.moonflower.pollen.api.registry.forge;
 import gg.moonflower.pollen.api.registry.ClientRegistries;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
@@ -14,9 +15,8 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ReloadableResourceManager;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -46,21 +46,27 @@ public class ClientRegistriesImpl {
     }
 
     public static <T extends Entity> void registerEntityRenderer(EntityType<T> type, ClientRegistries.EntityRendererFactory<T> factory) {
-        EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
-        dispatcher.register(type, factory.create(dispatcher, new ClientRegistries.EntityRendererRegistryContext() {
+        Minecraft minecraft = Minecraft.getInstance();
+        EntityRenderDispatcher dispatcher = minecraft.getEntityRenderDispatcher();
+        dispatcher.register(type, factory.create(new ClientRegistries.EntityRendererFactory.Context() {
             @Override
-            public TextureManager getTextureManager() {
-                return Minecraft.getInstance().getTextureManager();
-            }
-
-            @Override
-            public ReloadableResourceManager getResourceManager() {
-                return (ReloadableResourceManager) Minecraft.getInstance().getResourceManager();
+            public EntityRenderDispatcher getEntityRenderDispatcher() {
+                return dispatcher;
             }
 
             @Override
             public ItemRenderer getItemRenderer() {
-                return Minecraft.getInstance().getItemRenderer();
+                return minecraft.getItemRenderer();
+            }
+
+            @Override
+            public ResourceManager getResourceManager() {
+                return minecraft.getResourceManager();
+            }
+
+            @Override
+            public Font getFont() {
+                return minecraft.font;
             }
         }));
     }

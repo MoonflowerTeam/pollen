@@ -8,16 +8,19 @@ import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -47,20 +50,25 @@ public class ClientRegistriesImpl {
     }
 
     public static <T extends Entity> void registerEntityRenderer(EntityType<T> type, ClientRegistries.EntityRendererFactory<T> factory) {
-        EntityRendererRegistry.INSTANCE.register(type, (manager, context) -> factory.create(manager, new ClientRegistries.EntityRendererRegistryContext() {
+        EntityRendererRegistry.INSTANCE.register(type, (manager, context) -> factory.create(new ClientRegistries.EntityRendererFactory.Context() {
             @Override
-            public TextureManager getTextureManager() {
-                return context.getTextureManager();
-            }
-
-            @Override
-            public ReloadableResourceManager getResourceManager() {
-                return context.getResourceManager();
+            public EntityRenderDispatcher getEntityRenderDispatcher() {
+                return manager;
             }
 
             @Override
             public ItemRenderer getItemRenderer() {
                 return context.getItemRenderer();
+            }
+
+            @Override
+            public ResourceManager getResourceManager() {
+                return context.getResourceManager();
+            }
+
+            @Override
+            public Font getFont() {
+                return Minecraft.getInstance().font;
             }
         }));
     }
