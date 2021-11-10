@@ -1,8 +1,10 @@
-package gg.moonflower.pollen.api.network;
+package gg.moonflower.pollen.api.registry;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import gg.moonflower.pollen.api.network.message.PollinatedPacket;
-import gg.moonflower.pollen.api.network.message.PollinatedPacketContext;
+import gg.moonflower.pollen.api.network.PollinatedLoginNetworkChannel;
+import gg.moonflower.pollen.api.network.PollinatedPlayNetworkChannel;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.chat.Component;
@@ -20,12 +22,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Supplier;
 
 /**
- * <p>Manages the registering of network messages between the client and server.</p>
+ * <p>Manages the registering of network channels between the client and server.</p>
  *
  * @author Ocelot
- * @since 3.2.0
+ * @since 1.0.0
  */
-public interface PollinatedNetworkChannel {
+public final class NetworkRegistry {
+
+    private NetworkRegistry() {
+    }
 
     /**
      * Creates a new network channel with the specified id and client/server packet handlers that follows the play protocol.
@@ -36,7 +41,7 @@ public interface PollinatedNetworkChannel {
      * @return A multi-platform network channel
      */
     @ExpectPlatform
-    static PollinatedPlayNetworkChannel createPlay(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+    public static PollinatedPlayNetworkChannel createPlay(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
         throw new AssertionError();
     }
 
@@ -49,13 +54,13 @@ public interface PollinatedNetworkChannel {
      * @return A multi-platform network channel
      */
     @ExpectPlatform
-    static PollinatedLoginNetworkChannel createLogin(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+    public static PollinatedLoginNetworkChannel createLogin(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
         throw new AssertionError();
     }
 
     @ApiStatus.Internal
     @SuppressWarnings("unchecked")
-    static <MSG extends PollinatedPacket<T>, T> void processMessage(@NotNull MSG msg, PollinatedPacketContext context, Object handler) {
+    public static <MSG extends PollinatedPacket<T>, T> void processMessage(@NotNull MSG msg, PollinatedPacketContext context, Object handler) {
         try {
             msg.processPacket((T) handler, context);
         } catch (Exception e) {

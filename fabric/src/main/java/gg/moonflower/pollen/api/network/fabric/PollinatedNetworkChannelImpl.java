@@ -1,10 +1,7 @@
 package gg.moonflower.pollen.api.network.fabric;
 
-import gg.moonflower.pollen.api.network.PollinatedLoginNetworkChannel;
-import gg.moonflower.pollen.api.network.PollinatedNetworkChannel;
-import gg.moonflower.pollen.api.network.PollinatedPlayNetworkChannel;
-import gg.moonflower.pollen.api.network.message.PollinatedPacket;
-import gg.moonflower.pollen.api.network.message.PollinatedPacketDirection;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +16,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal
-public class PollinatedNetworkChannelImpl implements PollinatedNetworkChannel {
+public class PollinatedNetworkChannelImpl {
 
     protected final ResourceLocation channelId;
     protected final List<PacketFactory<?, ?>> factories;
@@ -31,14 +28,6 @@ public class PollinatedNetworkChannelImpl implements PollinatedNetworkChannel {
         this.factories = new ArrayList<>();
         this.clientMessageHandler = new LazyLoadedValue<>(() -> new LazyLoadedValue<>(clientFactory.get()));
         this.serverMessageHandler = new LazyLoadedValue<>(() -> new LazyLoadedValue<>(serverFactory.get()));
-    }
-
-    public static PollinatedPlayNetworkChannel createPlay(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
-        return new PollinatedFabricPlayChannel(channelId, clientFactory, serverFactory);
-    }
-
-    public static PollinatedLoginNetworkChannel createLogin(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
-        return new PollinatedFabricLoginChannel(channelId, clientFactory, serverFactory);
     }
 
     protected FriendlyByteBuf serialize(PollinatedPacket<?> message, PollinatedPacketDirection expectedDirection) {

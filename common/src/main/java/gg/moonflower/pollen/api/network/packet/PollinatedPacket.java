@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.network.message;
+package gg.moonflower.pollen.api.network.packet;
 
 import net.minecraft.network.FriendlyByteBuf;
 

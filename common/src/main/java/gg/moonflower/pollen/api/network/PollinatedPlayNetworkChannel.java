@@ -1,7 +1,9 @@
 package gg.moonflower.pollen.api.network;
 
-import gg.moonflower.pollen.api.network.message.PollinatedPacket;
-import gg.moonflower.pollen.api.network.message.PollinatedPacketDirection;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -14,37 +16,99 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Function;
 
 /**
+ * <p>Manages the registering packets between the client and server during normal gameplay.</p>
+ *
  * @author Ocelot
  * @since 1.0.0
  */
 public interface PollinatedPlayNetworkChannel {
 
-    void sendTo(ServerPlayer player, PollinatedPacket<?> message);
-
-    void sendTo(ServerLevel level, PollinatedPacket<?> message);
-
-    void sendToNear(ServerLevel level, double x, double y, double z, double radius, PollinatedPacket<?> message);
-
-    void sendToAll(MinecraftServer server, PollinatedPacket<?> message);
-
-    void sendToServer(PollinatedPacket<?> message);
-
-    void sendToTracking(Entity entity, PollinatedPacket<?> message);
-
-    void sendToTracking(ServerLevel level, BlockPos pos, PollinatedPacket<?> message);
-
-    void sendToTracking(ServerLevel level, ChunkPos pos, PollinatedPacket<?> message);
-
-    void sendToTrackingAndSelf(Entity entity, PollinatedPacket<?> message);
+    /**
+     * Sends the specified packet to the specified player.
+     *
+     * @param player The player to receive the packet
+     * @param packet The packet to send
+     */
+    void sendTo(ServerPlayer player, PollinatedPacket<?> packet);
 
     /**
-     * Registers a message intended to be sent during the play network phase.
+     * Sends the all players in the specified level.
      *
-     * @param clazz        The class of the message
-     * @param deserializer The generator for a new message
-     * @param direction    The direction the message should be able to go or null for bi-directional
-     * @param <MSG>        The type of message to be sent
-     * @param <T>          The handler that will process the message. Should be an interface to avoid loading client classes on server
+     * @param level  The level to broadcast the packet to
+     * @param packet The packet to send
+     */
+    void sendTo(ServerLevel level, PollinatedPacket<?> packet);
+
+    /**
+     * Sends the all players near the specified spot in the specific level.
+     *
+     * @param level  The level to broadcast the packet to
+     * @param x      The x position to target
+     * @param y      The y position to target
+     * @param z      The z position to target
+     * @param radius The circular radius to send the packet in
+     * @param packet The packet to send
+     */
+    void sendToNear(ServerLevel level, double x, double y, double z, double radius, PollinatedPacket<?> packet);
+
+    /**
+     * Sends the all players in the server.
+     *
+     * @param server The minecraft server instance
+     * @param packet The packet to send
+     */
+    void sendToAll(MinecraftServer server, PollinatedPacket<?> packet);
+
+    /**
+     * Sends the all players tracking the specified entity.
+     *
+     * @param entity The entity to get listening players from
+     * @param packet The packet to send
+     */
+    void sendToTracking(Entity entity, PollinatedPacket<?> packet);
+
+    /**
+     * Sends the all players tracking the specified position in the level.
+     *
+     * @param level  The level to broadcast the packet to
+     * @param pos    The pos to get listening players from
+     * @param packet The packet to send
+     */
+    void sendToTracking(ServerLevel level, BlockPos pos, PollinatedPacket<?> packet);
+
+    /**
+     * Sends the all players tracking the specified chunk in the level.
+     *
+     * @param level  The level to broadcast the packet to
+     * @param pos    The pos to get listening players from
+     * @param packet The packet to send
+     */
+    void sendToTracking(ServerLevel level, ChunkPos pos, PollinatedPacket<?> packet);
+
+    /**
+     * Sends the all players tracking the specified entity and the entity itself.
+     *
+     * @param entity The entity to get listening players from
+     * @param packet The packet to send
+     */
+    void sendToTrackingAndSelf(Entity entity, PollinatedPacket<?> packet);
+
+    /**
+     * Sends a packet to the server from the client.
+     *
+     * @param packet THe packet to send
+     */
+    @Environment(EnvType.CLIENT)
+    void sendToServer(PollinatedPacket<?> packet);
+
+    /**
+     * Registers a packet intended to be sent during the play network phase.
+     *
+     * @param clazz        The class of the packet
+     * @param deserializer The generator for a new packet
+     * @param direction    The direction the packet should be able to go or null for bi-directional
+     * @param <MSG>        The type of packet to be sent
+     * @param <T>          The handler that will process the packet. Should be an interface to avoid loading client classes on server
      */
     <MSG extends PollinatedPacket<T>, T> void register(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, @Nullable PollinatedPacketDirection direction);
 }

@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.api.network.fabric.context;
 
-import gg.moonflower.pollen.api.network.message.PollinatedPacketContext;
-import gg.moonflower.pollen.api.network.message.PollinatedPacketDirection;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
 import net.fabricmc.loader.api.FabricLoader;

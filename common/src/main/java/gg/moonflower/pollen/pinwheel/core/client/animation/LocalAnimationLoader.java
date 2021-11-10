@@ -21,6 +21,7 @@ import java.util.concurrent.Executor;
  */
 @ApiStatus.Internal
 public class LocalAnimationLoader implements BackgroundLoader<Map<ResourceLocation, AnimationData>> {
+    
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final String folder;

@@ -1,12 +1,12 @@
 package gg.moonflower.pollen.api.network.fabric;
 
 import gg.moonflower.pollen.api.network.PollinatedLoginNetworkChannel;
-import gg.moonflower.pollen.api.network.PollinatedNetworkChannel;
 import gg.moonflower.pollen.api.network.fabric.context.PollinatedFabricLoginPacketContext;
 import gg.moonflower.pollen.api.network.fabric.context.PollinatedFabricPacketContext;
-import gg.moonflower.pollen.api.network.message.PollinatedPacket;
-import gg.moonflower.pollen.api.network.message.PollinatedPacketDirection;
-import gg.moonflower.pollen.api.network.message.login.PollinatedLoginPacket;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
+import gg.moonflower.pollen.api.network.packet.login.PollinatedLoginPacket;
+import gg.moonflower.pollen.api.registry.NetworkRegistry;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import net.fabricmc.api.EnvType;
@@ -37,7 +37,7 @@ public class PollinatedFabricLoginChannel extends PollinatedNetworkChannelImpl i
 
     private final List<Function<Boolean, ? extends List<? extends Pair<String, ?>>>> loginPackets;
 
-    PollinatedFabricLoginChannel(ResourceLocation channelId, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+    public PollinatedFabricLoginChannel(ResourceLocation channelId, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
         super(channelId, clientFactory, serverFactory);
         this.loginPackets = new ArrayList<>();
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
@@ -48,7 +48,7 @@ public class PollinatedFabricLoginChannel extends PollinatedNetworkChannelImpl i
 
     private CompletableFuture<@Nullable FriendlyByteBuf> processClient(Minecraft client, ClientHandshakePacketListenerImpl listener, FriendlyByteBuf data, Consumer<GenericFutureListener<? extends Future<? super Void>>> listenerAdder) {
         CompletableFuture<FriendlyByteBuf> future = new CompletableFuture<>();
-        PollinatedNetworkChannel.processMessage(this.deserialize(data, PollinatedPacketDirection.LOGIN_CLIENTBOUND), new PollinatedFabricLoginPacketContext(pkt -> {
+        NetworkRegistry.processMessage(this.deserialize(data, PollinatedPacketDirection.LOGIN_CLIENTBOUND), new PollinatedFabricLoginPacketContext(pkt -> {
             try {
                 future.complete(this.serialize(pkt, PollinatedPacketDirection.LOGIN_SERVERBOUND));
             } catch (Throwable t) {
@@ -61,7 +61,7 @@ public class PollinatedFabricLoginChannel extends PollinatedNetworkChannelImpl i
     }
 
     private void processServer(MinecraftServer server, ServerLoginPacketListenerImpl listener, boolean understood, FriendlyByteBuf data, ServerLoginNetworking.LoginSynchronizer synchronizer, PacketSender responseSender) {
-        PollinatedNetworkChannel.processMessage(this.deserialize(data, PollinatedPacketDirection.LOGIN_SERVERBOUND), new PollinatedFabricPacketContext(listener.getConnection(), synchronizer, PollinatedPacketDirection.LOGIN_SERVERBOUND) {
+        NetworkRegistry.processMessage(this.deserialize(data, PollinatedPacketDirection.LOGIN_SERVERBOUND), new PollinatedFabricPacketContext(listener.getConnection(), synchronizer, PollinatedPacketDirection.LOGIN_SERVERBOUND) {
             @Override
             public void reply(PollinatedPacket<?> packet) {
                 throw new UnsupportedOperationException("The server is not allowed to reply during the login phase.");
@@ -70,13 +70,13 @@ public class PollinatedFabricLoginChannel extends PollinatedNetworkChannelImpl i
     }
 
     @Override
-    public <MSG extends PollinatedLoginPacket<T>, T> void registerLoginReply(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, @Nullable PollinatedPacketDirection direction) {
-        super.register(clazz, deserializer, direction);
+    public <MSG extends PollinatedLoginPacket<T>, T> void register(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer) {
+        super.register(clazz, deserializer, PollinatedPacketDirection.LOGIN_SERVERBOUND);
     }
 
     @Override
-    public <MSG extends PollinatedLoginPacket<T>, T> void registerLogin(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, Function<Boolean, List<Pair<String, MSG>>> loginPacketGenerators, @Nullable PollinatedPacketDirection direction) {
-        super.register(clazz, deserializer, direction);
+    public <MSG extends PollinatedLoginPacket<T>, T> void registerLogin(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, Function<Boolean, List<Pair<String, MSG>>> loginPacketGenerators) {
+        super.register(clazz, deserializer, PollinatedPacketDirection.LOGIN_CLIENTBOUND);
         this.loginPackets.add(loginPacketGenerators);
     }
 }

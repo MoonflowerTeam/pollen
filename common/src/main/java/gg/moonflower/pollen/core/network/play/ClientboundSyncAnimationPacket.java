@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.core.network.play;
 
-import gg.moonflower.pollen.api.network.message.PollinatedPacket;
-import gg.moonflower.pollen.api.network.message.PollinatedPacketContext;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
 import gg.moonflower.pollen.pinwheel.api.common.animation.AnimatedEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

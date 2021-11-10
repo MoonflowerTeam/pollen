@@ -1,11 +1,12 @@
 package gg.moonflower.pollen.api.network.fabric;
 
-import gg.moonflower.pollen.api.network.PollinatedNetworkChannel;
 import gg.moonflower.pollen.api.network.PollinatedPlayNetworkChannel;
 import gg.moonflower.pollen.api.network.fabric.context.PollinatedFabricPlayPacketContext;
-import gg.moonflower.pollen.api.network.message.PollinatedPacket;
-import gg.moonflower.pollen.api.network.message.PollinatedPacketDirection;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
+import gg.moonflower.pollen.api.registry.NetworkRegistry;
 import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -32,7 +33,7 @@ import java.util.function.Supplier;
 @ApiStatus.Internal
 public class PollinatedFabricPlayChannel extends PollinatedNetworkChannelImpl implements PollinatedPlayNetworkChannel {
 
-    PollinatedFabricPlayChannel(ResourceLocation channelId, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+    public PollinatedFabricPlayChannel(ResourceLocation channelId, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
         super(channelId, clientFactory, serverFactory);
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
             ClientPlayNetworking.registerGlobalReceiver(this.channelId, this::processClientPlay);
@@ -40,72 +41,73 @@ public class PollinatedFabricPlayChannel extends PollinatedNetworkChannelImpl im
     }
 
     private void processClientPlay(Minecraft client, ClientPacketListener listener, FriendlyByteBuf data, PacketSender responseSender) {
-        PollinatedNetworkChannel.processMessage(this.deserialize(data, PollinatedPacketDirection.PLAY_CLIENTBOUND), new PollinatedFabricPlayPacketContext(listener.getConnection(), pkt -> responseSender.sendPacket(responseSender.createPacket(this.channelId, this.serialize(pkt, PollinatedPacketDirection.PLAY_SERVERBOUND))), PollinatedPacketDirection.PLAY_CLIENTBOUND), this.clientMessageHandler.get().get());
+        NetworkRegistry.processMessage(this.deserialize(data, PollinatedPacketDirection.PLAY_CLIENTBOUND), new PollinatedFabricPlayPacketContext(listener.getConnection(), pkt -> responseSender.sendPacket(responseSender.createPacket(this.channelId, this.serialize(pkt, PollinatedPacketDirection.PLAY_SERVERBOUND))), PollinatedPacketDirection.PLAY_CLIENTBOUND), this.clientMessageHandler.get().get());
     }
 
     private void processServerPlay(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl listener, FriendlyByteBuf data, PacketSender responseSender) {
-        PollinatedNetworkChannel.processMessage(this.deserialize(data, PollinatedPacketDirection.PLAY_SERVERBOUND), new PollinatedFabricPlayPacketContext(listener.getConnection(), pkt -> responseSender.sendPacket(responseSender.createPacket(this.channelId, this.serialize(pkt, PollinatedPacketDirection.PLAY_CLIENTBOUND))), PollinatedPacketDirection.PLAY_SERVERBOUND), this.serverMessageHandler.get().get());
+        NetworkRegistry.processMessage(this.deserialize(data, PollinatedPacketDirection.PLAY_SERVERBOUND), new PollinatedFabricPlayPacketContext(listener.getConnection(), pkt -> responseSender.sendPacket(responseSender.createPacket(this.channelId, this.serialize(pkt, PollinatedPacketDirection.PLAY_CLIENTBOUND))), PollinatedPacketDirection.PLAY_SERVERBOUND), this.serverMessageHandler.get().get());
     }
 
     @Override
-    public void sendTo(ServerPlayer player, PollinatedPacket<?> message) {
-        ServerPlayNetworking.send(player, this.channelId, this.serialize(message, PollinatedPacketDirection.PLAY_CLIENTBOUND));
+    public void sendTo(ServerPlayer player, PollinatedPacket<?> packet) {
+        ServerPlayNetworking.send(player, this.channelId, this.serialize(packet, PollinatedPacketDirection.PLAY_CLIENTBOUND));
     }
 
     @Override
-    public void sendTo(ServerLevel level, PollinatedPacket<?> message) {
-        FriendlyByteBuf data = this.serialize(message, PollinatedPacketDirection.PLAY_CLIENTBOUND);
+    public void sendTo(ServerLevel level, PollinatedPacket<?> packet) {
+        FriendlyByteBuf data = this.serialize(packet, PollinatedPacketDirection.PLAY_CLIENTBOUND);
         for (ServerPlayer player : PlayerLookup.world(level))
             ServerPlayNetworking.send(player, this.channelId, data);
     }
 
     @Override
-    public void sendToNear(ServerLevel level, double x, double y, double z, double radius, PollinatedPacket<?> message) {
-        FriendlyByteBuf data = this.serialize(message, PollinatedPacketDirection.PLAY_CLIENTBOUND);
+    public void sendToNear(ServerLevel level, double x, double y, double z, double radius, PollinatedPacket<?> packet) {
+        FriendlyByteBuf data = this.serialize(packet, PollinatedPacketDirection.PLAY_CLIENTBOUND);
         for (ServerPlayer player : PlayerLookup.around(level, new Vec3(x, y, z), radius))
             ServerPlayNetworking.send(player, this.channelId, data);
     }
 
     @Override
-    public void sendToAll(MinecraftServer server, PollinatedPacket<?> message) {
-        FriendlyByteBuf data = this.serialize(message, PollinatedPacketDirection.PLAY_CLIENTBOUND);
+    public void sendToAll(MinecraftServer server, PollinatedPacket<?> packet) {
+        FriendlyByteBuf data = this.serialize(packet, PollinatedPacketDirection.PLAY_CLIENTBOUND);
         for (ServerPlayer player : PlayerLookup.all(server))
             ServerPlayNetworking.send(player, this.channelId, data);
     }
 
     @Override
-    public void sendToServer(PollinatedPacket<?> message) {
-        ClientPlayNetworking.send(this.channelId, this.serialize(message, PollinatedPacketDirection.PLAY_SERVERBOUND));
-    }
-
-    @Override
-    public void sendToTracking(Entity entity, PollinatedPacket<?> message) {
-        FriendlyByteBuf data = this.serialize(message, PollinatedPacketDirection.PLAY_CLIENTBOUND);
+    public void sendToTracking(Entity entity, PollinatedPacket<?> packet) {
+        FriendlyByteBuf data = this.serialize(packet, PollinatedPacketDirection.PLAY_CLIENTBOUND);
         for (ServerPlayer player : PlayerLookup.tracking(entity))
             ServerPlayNetworking.send(player, this.channelId, data);
     }
 
     @Override
-    public void sendToTracking(ServerLevel level, BlockPos pos, PollinatedPacket<?> message) {
-        FriendlyByteBuf data = this.serialize(message, PollinatedPacketDirection.PLAY_CLIENTBOUND);
+    public void sendToTracking(ServerLevel level, BlockPos pos, PollinatedPacket<?> packet) {
+        FriendlyByteBuf data = this.serialize(packet, PollinatedPacketDirection.PLAY_CLIENTBOUND);
         for (ServerPlayer player : PlayerLookup.tracking(level, pos))
             ServerPlayNetworking.send(player, this.channelId, data);
     }
 
     @Override
-    public void sendToTracking(ServerLevel level, ChunkPos pos, PollinatedPacket<?> message) {
-        FriendlyByteBuf data = this.serialize(message, PollinatedPacketDirection.PLAY_CLIENTBOUND);
+    public void sendToTracking(ServerLevel level, ChunkPos pos, PollinatedPacket<?> packet) {
+        FriendlyByteBuf data = this.serialize(packet, PollinatedPacketDirection.PLAY_CLIENTBOUND);
         for (ServerPlayer player : PlayerLookup.tracking(level, pos))
             ServerPlayNetworking.send(player, this.channelId, data);
     }
 
     @Override
-    public void sendToTrackingAndSelf(Entity entity, PollinatedPacket<?> message) {
-        FriendlyByteBuf data = this.serialize(message, PollinatedPacketDirection.PLAY_CLIENTBOUND);
+    public void sendToTrackingAndSelf(Entity entity, PollinatedPacket<?> packet) {
+        FriendlyByteBuf data = this.serialize(packet, PollinatedPacketDirection.PLAY_CLIENTBOUND);
         if (entity instanceof ServerPlayer)
             ServerPlayNetworking.send((ServerPlayer) entity, this.channelId, data);
         for (ServerPlayer player : PlayerLookup.tracking(entity))
             ServerPlayNetworking.send(player, this.channelId, data);
+    }
+
+    @Override
+    @Environment(EnvType.CLIENT)
+    public void sendToServer(PollinatedPacket<?> packet) {
+        ClientPlayNetworking.send(this.channelId, this.serialize(packet, PollinatedPacketDirection.PLAY_SERVERBOUND));
     }
 
     @Override

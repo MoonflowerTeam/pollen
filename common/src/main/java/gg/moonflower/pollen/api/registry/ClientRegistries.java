@@ -33,7 +33,10 @@ import java.util.function.Function;
  * @since 1.0.0
  */
 @Environment(EnvType.CLIENT)
-public class ClientRegistries {
+public final class ClientRegistries {
+
+    private ClientRegistries() {
+    }
 
     @ExpectPlatform
     public static void setBlockRenderType(Block block, RenderType type) {

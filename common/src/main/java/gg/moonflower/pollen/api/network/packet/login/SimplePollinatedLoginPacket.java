@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.network.message.login;
+package gg.moonflower.pollen.api.network.packet.login;
 
 /**
  * An implementation of {@link PollinatedLoginPacket} that handles login specific data.

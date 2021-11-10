@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
  */
 @ApiStatus.Internal
 public class TimedTextureCache implements FileCache {
+
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Executor executor;

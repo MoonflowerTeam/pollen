@@ -1,8 +1,8 @@
 package gg.moonflower.pollen.api.network.forge;
 
-import gg.moonflower.pollen.api.network.message.PollinatedPacket;
-import gg.moonflower.pollen.api.network.message.PollinatedPacketContext;
-import gg.moonflower.pollen.api.network.message.PollinatedPacketDirection;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import gg.moonflower.pollen.core.extension.forge.FMLHandshakeHandlerExtensions;
 import io.netty.util.AttributeKey;
 import net.minecraft.network.Connection;

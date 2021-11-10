@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.network.message;
+package gg.moonflower.pollen.api.network.packet;
 
 /**
  * Used by the Pollen networking API to determine what direction packets are going. Based on forge's NetworkDirection.

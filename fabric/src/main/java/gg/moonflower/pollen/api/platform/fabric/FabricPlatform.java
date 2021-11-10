@@ -6,7 +6,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-public final class FabricPlatform extends Platform {
+public class FabricPlatform extends Platform {
 
     FabricPlatform(String modId, Runnable commonInit, Runnable clientInit, Runnable commonPostInit, Runnable clientPostInit) {
         super(modId);

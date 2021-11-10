@@ -26,9 +26,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Fluid;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Function;
 
+@ApiStatus.Internal
 public class ClientRegistriesImpl {
 
     public static void setBlockRenderType(Block block, RenderType type) {

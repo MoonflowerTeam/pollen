@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.core.network.play;
 
-import gg.moonflower.pollen.api.network.message.PollinatedPacketContext;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
 import org.jetbrains.annotations.ApiStatus;
 
 /**

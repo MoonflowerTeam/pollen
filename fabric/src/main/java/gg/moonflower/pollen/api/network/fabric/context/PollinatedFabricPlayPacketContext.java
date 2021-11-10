@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.api.network.fabric.context;
 
-import gg.moonflower.pollen.api.network.message.PollinatedPacket;
-import gg.moonflower.pollen.api.network.message.PollinatedPacketDirection;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import net.minecraft.network.Connection;
 import org.jetbrains.annotations.ApiStatus;
 

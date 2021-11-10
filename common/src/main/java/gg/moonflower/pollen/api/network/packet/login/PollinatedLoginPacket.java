@@ -1,6 +1,6 @@
-package gg.moonflower.pollen.api.network.message.login;
+package gg.moonflower.pollen.api.network.packet.login;
 
-import gg.moonflower.pollen.api.network.message.PollinatedPacket;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 
 import java.util.function.IntSupplier;
 

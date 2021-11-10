@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.core.network;
 
-import gg.moonflower.pollen.api.network.message.PollinatedPacketContext;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
 import gg.moonflower.pollen.core.network.play.ClientboundSyncAnimationPacket;
 import gg.moonflower.pollen.core.network.play.PollenClientPlayPacketHandler;
 import gg.moonflower.pollen.pinwheel.api.common.animation.AnimatedEntity;

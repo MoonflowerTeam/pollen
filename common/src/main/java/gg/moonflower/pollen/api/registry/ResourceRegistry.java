@@ -11,7 +11,10 @@ import net.minecraft.server.packs.resources.PreparableReloadListener;
  * @author Ocelot
  * @since 1.0.0
  */
-public class ResourceRegistry {
+public final class ResourceRegistry {
+
+    private ResourceRegistry() {
+    }
 
     /**
      * Registers a resource reload listener for the specified pack type.

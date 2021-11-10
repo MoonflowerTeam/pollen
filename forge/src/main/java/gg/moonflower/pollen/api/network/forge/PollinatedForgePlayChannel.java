@@ -1,8 +1,8 @@
 package gg.moonflower.pollen.api.network.forge;
 
 import gg.moonflower.pollen.api.network.PollinatedPlayNetworkChannel;
-import gg.moonflower.pollen.api.network.message.PollinatedPacket;
-import gg.moonflower.pollen.api.network.message.PollinatedPacketDirection;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -10,6 +10,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import org.jetbrains.annotations.ApiStatus;
@@ -21,7 +23,7 @@ import java.util.function.Supplier;
 @ApiStatus.Internal
 public class PollinatedForgePlayChannel extends PollinatedNetworkChannelImpl implements PollinatedPlayNetworkChannel {
 
-    PollinatedForgePlayChannel(SimpleChannel channel, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+    public PollinatedForgePlayChannel(SimpleChannel channel, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
         super(channel, clientFactory, serverFactory);
     }
 
@@ -46,11 +48,6 @@ public class PollinatedForgePlayChannel extends PollinatedNetworkChannelImpl imp
     }
 
     @Override
-    public void sendToServer(PollinatedPacket<?> message) {
-        this.channel.sendToServer(message);
-    }
-
-    @Override
     public void sendToTracking(Entity entity, PollinatedPacket<?> message) {
         this.channel.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), message);
     }
@@ -68,6 +65,12 @@ public class PollinatedForgePlayChannel extends PollinatedNetworkChannelImpl imp
     @Override
     public void sendToTrackingAndSelf(Entity entity, PollinatedPacket<?> message) {
         this.channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), message);
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void sendToServer(PollinatedPacket<?> message) {
+        this.channel.sendToServer(message);
     }
 
     @Override
