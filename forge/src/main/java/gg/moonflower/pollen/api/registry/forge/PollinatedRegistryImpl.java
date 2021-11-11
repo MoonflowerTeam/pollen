@@ -34,7 +34,7 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
     }
 
     @Override
-    public Supplier<T> register(String id, Supplier<T> object) {
+    public <R extends T> Supplier<R> register(String id, Supplier<R> object) {
         return this.registry.register(id, object);
     }
 

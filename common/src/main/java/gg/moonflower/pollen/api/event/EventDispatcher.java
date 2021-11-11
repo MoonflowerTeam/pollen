@@ -42,7 +42,7 @@ public class EventDispatcher {
      *
      * @param clazz The class to register
      */
-    public static void register(Class<?> clazz) {
+    public static synchronized void register(Class<?> clazz) {
         Method[] methods = clazz.getDeclaredMethods();
 
         for (Method method : methods) {
@@ -80,7 +80,7 @@ public class EventDispatcher {
      * @param eventConsumer The consumer of the event
      * @param <T>           The type of event to receive
      */
-    public static <T extends PollinatedEvent> void register(Consumer<T> eventConsumer) {
+    public static synchronized <T extends PollinatedEvent> void register(Consumer<T> eventConsumer) {
         register(eventConsumer, 1000, false);
     }
 
@@ -91,7 +91,7 @@ public class EventDispatcher {
      * @param priority      The priority of the event according to {@link EventListener#priority()}
      * @param <T>           The type of event to receive
      */
-    public static <T extends PollinatedEvent> void register(Consumer<T> eventConsumer, int priority) {
+    public static synchronized <T extends PollinatedEvent> void register(Consumer<T> eventConsumer, int priority) {
         register(eventConsumer, priority, false);
     }
 
@@ -102,7 +102,7 @@ public class EventDispatcher {
      * @param receiveCancelled Whether to receive events after being canceled according to {@link EventListener#receiveCanceled()}
      * @param <T>              The type of event to receive
      */
-    public static <T extends PollinatedEvent> void register(Consumer<T> eventConsumer, boolean receiveCancelled) {
+    public static synchronized <T extends PollinatedEvent> void register(Consumer<T> eventConsumer, boolean receiveCancelled) {
         register(eventConsumer, 1000, receiveCancelled);
     }
 
@@ -115,7 +115,7 @@ public class EventDispatcher {
      * @param <T>              The type of event to receive
      */
     @SuppressWarnings("unchecked")
-    public static <T extends PollinatedEvent> void register(Consumer<T> eventConsumer, int priority, boolean receiveCancelled) {
+    public static synchronized <T extends PollinatedEvent> void register(Consumer<T> eventConsumer, int priority, boolean receiveCancelled) {
         Class<?> clazz = getEventClass(eventConsumer);
         EVENT_LISTENERS.computeIfAbsent(clazz, key -> new LinkedList<>()).add(new RegisteredEvent((Consumer<PollinatedEvent>) eventConsumer, priority, receiveCancelled));
     }
@@ -125,7 +125,7 @@ public class EventDispatcher {
      *
      * @param clazz The class to unregister
      */
-    public static void unregister(Class<?> clazz) {
+    public static synchronized void unregister(Class<?> clazz) {
         List<Consumer<? extends PollinatedEvent>> list = CLASS_EVENTS.remove(clazz);
         if (list == null || list.isEmpty())
             return;
@@ -138,7 +138,7 @@ public class EventDispatcher {
      * @param eventConsumer The consumer registered. It must be the same consumer added before
      * @param <T>           The type of event to unregister
      */
-    public static <T extends PollinatedEvent> void unregister(Consumer<T> eventConsumer) {
+    public static synchronized <T extends PollinatedEvent> void unregister(Consumer<T> eventConsumer) {
         Class<?> clazz = getEventClass(eventConsumer);
         List<EventDispatcher.RegisteredEvent> list = EVENT_LISTENERS.get(clazz);
         if (list == null)

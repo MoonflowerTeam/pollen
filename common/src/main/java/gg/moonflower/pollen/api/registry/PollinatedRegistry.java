@@ -60,7 +60,7 @@ public abstract class PollinatedRegistry<T> {
      * @param object The object to register.
      * @return The registered object in a supplier.
      */
-    public abstract Supplier<T> register(String id, Supplier<T> object);
+    public abstract <R extends T> Supplier<R> register(String id, Supplier<R> object);
 
     /**
      * @return A codec for this registry's elements
@@ -95,8 +95,8 @@ public abstract class PollinatedRegistry<T> {
         }
 
         @Override
-        public Supplier<T> register(String id, Supplier<T> object) {
-            T registered = Registry.register(this.registry, new ResourceLocation(this.modId, id), object.get());
+        public <R extends T> Supplier<R> register(String id, Supplier<R> object) {
+            R registered = Registry.register(this.registry, new ResourceLocation(this.modId, id), object.get());
             return () -> registered;
         }
 

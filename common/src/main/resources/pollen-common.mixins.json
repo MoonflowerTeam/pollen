@@ -4,10 +4,11 @@
   "compatibilityLevel": "JAVA_8",
   "client": [
     "client.AgeableListModelAccessor",
+    "client.CreativeModeTabAccessor",
     "client.WolfAccessor"
   ],
   "mixins": [
-    "client.CreativeModeTabAccessor"
+    "PotionBrewingMixin"
   ],
   "injectors": {
     "defaultRequire": 1
