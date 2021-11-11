@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.core;
 
 import gg.moonflower.pollen.api.event.EventDispatcher;
-import gg.moonflower.pollen.api.event.events.ServerLifecycleEvent;
+import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
 import gg.moonflower.pollen.core.brewing.PollenBrewingRecipe;

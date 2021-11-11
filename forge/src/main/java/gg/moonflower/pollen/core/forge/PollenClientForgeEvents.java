@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.core.forge;
 
 import gg.moonflower.pollen.api.event.EventDispatcher;
-import gg.moonflower.pollen.api.event.events.TickEvent;
+import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
