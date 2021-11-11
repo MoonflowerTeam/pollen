@@ -2,12 +2,9 @@ package gg.moonflower.pollen.api.network.fabric.context;
 
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
-import net.fabricmc.api.EnvType;
+import gg.moonflower.pollen.api.platform.Platform;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.Connection;
-import net.minecraft.util.thread.BlockableEventLoop;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.CompletableFuture;
@@ -28,8 +25,7 @@ public abstract class PollinatedFabricPacketContext implements PollinatedPacketC
 
     @Override
     public CompletableFuture<Void> enqueueWork(Runnable runnable) {
-        FabricLoader loader = FabricLoader.getInstance();
-        return (loader.getEnvironmentType() == EnvType.CLIENT ? Minecraft.getInstance() : (BlockableEventLoop<?>) loader.getGameInstance()).submit(runnable);
+        return Platform.getGameExecutor().submit(runnable);
     }
 
     @Override

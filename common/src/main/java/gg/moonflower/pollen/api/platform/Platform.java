@@ -1,6 +1,9 @@
 package gg.moonflower.pollen.api.platform;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import dev.architectury.injectables.annotations.PlatformOnly;
+import dev.architectury.injectables.targets.ArchitecturyTarget;
+import net.minecraft.util.thread.BlockableEventLoop;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
@@ -10,6 +13,8 @@ import org.jetbrains.annotations.ApiStatus;
  * @since 1.0.0
  */
 public abstract class Platform {
+
+    private static final boolean FORGE = ArchitecturyTarget.getCurrentTarget().equals(PlatformOnly.FORGE);
 
     private final String modId;
 
@@ -25,9 +30,27 @@ public abstract class Platform {
         throw new AssertionError();
     }
 
+    /**
+     * @return Whether this mod is running in a production environment
+     */
     @ExpectPlatform
     public static boolean isProduction() {
         return Platform.error();
+    }
+
+    /**
+     * @return The main game executor. This is the Minecraft Client or Server instance
+     */
+    @ExpectPlatform
+    public static BlockableEventLoop<?> getGameExecutor() {
+        return Platform.error();
+    }
+
+    /**
+     * @return Whether the currently running platform is Forge
+     */
+    public static boolean isForge() {
+        return FORGE;
     }
 
     /**
