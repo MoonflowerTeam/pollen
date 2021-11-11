@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * <p>A spawn egg that allows for deferred entity types.</p>
+ * A spawn egg that allows for deferred entity types.
  *
  * @author Ocelot
  * @since 1.0.0
@@ -64,6 +64,9 @@ public class SpawnEggItemBase<T extends EntityType<?>> extends SpawnEggItem {
 
     @Override
     public EntityType<?> getType(@Nullable CompoundTag nbt) {
+        if (!Platform.isForge())
+            return super.getType(nbt);
+
         if (nbt != null && nbt.contains("EntityTag", 10)) {
             CompoundTag compoundnbt = nbt.getCompound("EntityTag");
             if (compoundnbt.contains("id", 8)) {

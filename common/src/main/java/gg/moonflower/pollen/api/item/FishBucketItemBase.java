@@ -36,18 +36,15 @@ import java.util.function.Supplier;
 public class FishBucketItemBase extends BucketItemBase {
 
     private final Supplier<? extends EntityType<?>> entityType;
-    private final boolean addToMisc;
 
     public FishBucketItemBase(Supplier<? extends EntityType<?>> entityType, Supplier<? extends Fluid> fluid, boolean addToMisc, Properties builder) {
         super(fluid, addToMisc, builder);
         this.entityType = entityType;
-        this.addToMisc = addToMisc;
     }
 
     public FishBucketItemBase(EntityType<?> entityType, Fluid fluid, boolean addToMisc, Properties builder) {
         super(fluid, addToMisc, builder);
         this.entityType = () -> entityType;
-        this.addToMisc = addToMisc;
     }
 
     @Environment(EnvType.CLIENT)
