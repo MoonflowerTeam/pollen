@@ -2,6 +2,8 @@ package gg.moonflower.pollen.api.registry;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.api.util.PollinatedModContainer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 
@@ -25,5 +27,10 @@ public final class ResourceRegistry {
     @ExpectPlatform
     public static void registerReloadListener(PackType type, PreparableReloadListener listener) {
         Platform.error();
+    }
+
+    @ExpectPlatform
+    public static boolean registerBuiltinResourcePack(ResourceLocation id, PollinatedModContainer container, boolean enabledByDefault) {
+        return Platform.error();
     }
 }

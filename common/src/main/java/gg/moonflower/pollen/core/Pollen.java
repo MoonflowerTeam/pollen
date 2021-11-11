@@ -4,12 +4,15 @@ import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
+import gg.moonflower.pollen.api.registry.ResourceRegistry;
+import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import gg.moonflower.pollen.core.brewing.PollenBrewingRecipe;
 import gg.moonflower.pollen.core.network.PollenMessages;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -40,6 +43,7 @@ public class Pollen {
         GeometryModelManager.init();
         GeometryTextureManager.init();
         AnimationManager.init();
+        ResourceRegistry.registerBuiltinResourcePack(new ResourceLocation(MOD_ID, "test"), PollinatedModContainer.get(MOD_ID).orElseThrow(IllegalStateException::new), true);
     }
 
     private static void onCommon() {

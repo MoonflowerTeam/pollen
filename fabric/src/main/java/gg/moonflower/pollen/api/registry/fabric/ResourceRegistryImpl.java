@@ -1,8 +1,11 @@
 package gg.moonflower.pollen.api.registry.fabric;
 
+import gg.moonflower.pollen.api.util.PollinatedModContainer;
+import gg.moonflower.pollen.api.util.fabric.PollinatedModContainerImpl;
 import gg.moonflower.pollen.core.Pollen;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -31,5 +34,9 @@ public class ResourceRegistryImpl {
                 return listener.reload(preparationBarrier, resourceManager, profilerFiller, profilerFiller2, executor, executor2);
             }
         });
+    }
+
+    public static boolean registerBuiltinResourcePack(ResourceLocation id, PollinatedModContainer container, boolean enabledByDefault) {
+        return ResourceManagerHelper.registerBuiltinResourcePack(id, ((PollinatedModContainerImpl) container).getFabricContainer(), enabledByDefault ? ResourcePackActivationType.DEFAULT_ENABLED : ResourcePackActivationType.NORMAL);
     }
 }
