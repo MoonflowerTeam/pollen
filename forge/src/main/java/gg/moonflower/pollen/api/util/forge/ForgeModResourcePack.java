@@ -1,10 +1,13 @@
 package gg.moonflower.pollen.api.util.forge;
 
+import com.google.common.base.Charsets;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import net.minecraft.ResourceLocationException;
+import net.minecraft.SharedConstants;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.AbstractPackResources;
 import net.minecraft.server.packs.PackType;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -36,7 +39,7 @@ public class ForgeModResourcePack extends AbstractPackResources {
         this.container = container;
         this.basePath = path.toAbsolutePath().normalize();
         this.closer = closer;
-        this.separator = basePath.getFileSystem().getSeparator();
+        this.separator = this.basePath.getFileSystem().getSeparator();
         this.enabledByDefault = enabledByDefault;
     }
 
@@ -52,30 +55,31 @@ public class ForgeModResourcePack extends AbstractPackResources {
 
     @Override
     protected InputStream getResource(String filename) throws IOException {
-        InputStream stream;
-
         Path path = getPath(filename);
-
-        if (path != null && Files.isRegularFile(path)) {
+        if (path != null && Files.isRegularFile(path))
             return Files.newInputStream(path);
+
+        if ("pack.mcmeta".equals(filename)) {
+            String description = this.getName();
+
+            if (description == null) {
+                description = "";
+            } else {
+                description = description.replaceAll("\"", "\\\"");
+            }
+
+            String pack = String.format("{\"pack\":{\"pack_format\":" + SharedConstants.getCurrentVersion().getPackVersion() + ",\"description\":\"%s\"}}", description);
+            return IOUtils.toInputStream(pack, Charsets.UTF_8);
         }
-
-        stream = PollinatedModContainer.openDefault(this.container, filename);
-
-        if (stream != null) {
-            return stream;
-        }
-
-        throw new FileNotFoundException("\"" + filename + "\" in " + this.container.getBrand() + " \"" + this.container.getId() + "\"");
+        throw new FileNotFoundException("\"" + filename + "\" in " + this.container.getBrand() + " Mod \"" + this.container.getId() + "\"");
     }
 
     @Override
     protected boolean hasResource(String filename) {
-        if (PollinatedModContainer.containsDefault(this.container, filename)) {
+        if ("pack.mcmeta".equals(filename))
             return true;
-        }
 
-        Path path = getPath(filename);
+        Path path = this.getPath(filename);
         return path != null && Files.isRegularFile(path);
     }
 
@@ -152,7 +156,7 @@ public class ForgeModResourcePack extends AbstractPackResources {
 
     @Override
     public String getName() {
-        return PollinatedModContainer.getDisplayName(this.container);
+        return this.container.getDisplayName();
     }
 
     public boolean isEnabledByDefault() {

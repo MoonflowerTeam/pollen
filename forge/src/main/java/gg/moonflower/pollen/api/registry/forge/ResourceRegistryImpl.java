@@ -21,7 +21,7 @@ public class ResourceRegistryImpl {
     private static final Map<PackType, Set<PreparableReloadListener>> LISTENERS = new HashMap<>();
     private static final Set<Pair<String, ForgeModResourcePack>> builtinResourcePacks = new HashSet<>();
 
-    public static void registerReloadListener(PackType type, PreparableReloadListener listener) {
+    public static synchronized void registerReloadListener(PackType type, PreparableReloadListener listener) {
         if (!LISTENERS.computeIfAbsent(type, __ -> new HashSet<>()).add(listener))
             throw new RuntimeException("Attempted to add listener twice: " + listener.getName() + "");
     }
@@ -48,17 +48,16 @@ public class ResourceRegistryImpl {
         }
     }
 
-    public static boolean registerBuiltinResourcePack(ResourceLocation id, PollinatedModContainer container, boolean enabledByDefault) {
-        String separator = container.getRootPath().getFileSystem().getSeparator();
+    public static synchronized boolean registerBuiltinResourcePack(ResourceLocation id, PollinatedModContainer container, boolean enabledByDefault) {
+        String separator = container.resolve("").getFileSystem().getSeparator();
         String subPath = ("resourcepacks/" + id.getPath()).replace("/", separator);
 
-        Path resourcePackPath = container.getRootPath().resolve(subPath).toAbsolutePath().normalize();
+        Path resourcePackPath = container.resolve(subPath).toAbsolutePath().normalize();
 
         if (!Files.exists(resourcePackPath))
             return false;
 
         String name = id.getNamespace() + "/" + id.getPath();
-
         builtinResourcePacks.add(Pair.of(name, new ForgeModResourcePack(container, resourcePackPath, null, enabledByDefault) {
             @Override
             public String getName() {

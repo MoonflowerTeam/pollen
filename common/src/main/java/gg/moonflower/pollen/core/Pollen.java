@@ -43,7 +43,6 @@ public class Pollen {
         GeometryModelManager.init();
         GeometryTextureManager.init();
         AnimationManager.init();
-        ResourceRegistry.registerBuiltinResourcePack(new ResourceLocation(MOD_ID, "test"), PollinatedModContainer.get(MOD_ID).orElseThrow(IllegalStateException::new), true);
     }
 
     private static void onCommon() {

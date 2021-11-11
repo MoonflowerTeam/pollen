@@ -23,12 +23,12 @@ public class PollinatedModContainerImpl implements PollinatedModContainer {
 
     @Override
     public String getBrand() {
-        return "Fabric Mod";
+        return "Fabric";
     }
 
     @Override
-    public Path getRootPath() {
-        return this.parent.getRootPath();
+    public Path resolve(String path) {
+        return this.parent.getRootPath().resolve(path);
     }
 
     @Override

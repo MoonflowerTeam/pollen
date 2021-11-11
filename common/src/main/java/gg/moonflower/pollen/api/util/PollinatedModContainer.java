@@ -1,57 +1,63 @@
 package gg.moonflower.pollen.api.util;
 
-import com.google.common.base.Charsets;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.platform.Platform;
-import net.minecraft.SharedConstants;
-import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Optional;
 
+/**
+ * Wraps each mod loader's mod files in a common implementation for querying basic mod info.
+ *
+ * @author Ocelot
+ * @since 1.0.0
+ */
 public interface PollinatedModContainer {
 
+    /**
+     * Retrieves a mod container from the specified mod id.
+     *
+     * @param modId The id of the mdd to fetch
+     * @return A container wrapping each mod loader
+     */
     @ExpectPlatform
     static Optional<PollinatedModContainer> get(String modId) {
         return Platform.error();
     }
 
-    static boolean containsDefault(PollinatedModContainer container, String filename) {
-        return "pack.mcmeta".equals(filename);
-    }
-
-    static InputStream openDefault(PollinatedModContainer container, String filename) {
-        if ("pack.mcmeta".equals(filename)) {
-            String description = container.getName();
-
-            if (description == null) {
-                description = "";
-            } else {
-                description = description.replaceAll("\"", "\\\"");
-            }
-
-            String pack = String.format("{\"pack\":{\"pack_format\":" + SharedConstants.getCurrentVersion().getPackVersion() + ",\"description\":\"%s\"}}", description);
-            return IOUtils.toInputStream(pack, Charsets.UTF_8);
-        }
-        return null;
-    }
-
-    static String getDisplayName(PollinatedModContainer container) {
-        if (container.getName() != null) {
-            return container.getName();
-        } else {
-            return container.getBrand() + " \"" + container.getId() + "\"";
-        }
-    }
-
+    /**
+     * @return The brand of this container
+     */
     String getBrand();
 
-    Path getRootPath();
+    /**
+     * Resolves a path inside the mod.
+     *
+     * @param path The path of the file inside the jar
+     * @return A path inside the jar file
+     */
+    Path resolve(String path);
 
+    /**
+     * @return The id of the mod
+     */
     String getId();
 
+    /**
+     * @return The name of the mod. This can be null and should be
+     */
     @Nullable
     String getName();
+
+    /**
+     * @return The visible display name of the mod
+     */
+    default String getDisplayName() {
+        if (this.getName() != null) {
+            return this.getName();
+        } else {
+            return this.getBrand() + " Mod \"" + this.getId() + "\"";
+        }
+    }
 }

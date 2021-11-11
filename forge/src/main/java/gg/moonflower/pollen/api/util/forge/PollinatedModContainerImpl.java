@@ -24,12 +24,12 @@ public class PollinatedModContainerImpl implements PollinatedModContainer {
 
     @Override
     public String getBrand() {
-        return "Forge Mod";
+        return "Forge";
     }
 
     @Override
-    public Path getRootPath() {
-        return ((ModFileInfo) this.parent.getModInfo().getOwningFile()).getFile().getFilePath();
+    public Path resolve(String path) {
+        return ((ModFileInfo) this.parent.getModInfo().getOwningFile()).getFile().findResource(path);
     }
 
     @Override
