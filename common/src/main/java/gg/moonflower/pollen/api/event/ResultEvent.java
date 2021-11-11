@@ -18,7 +18,7 @@ public class ResultEvent implements PollinatedEvent {
 
     @Override
     public boolean isCancelled() {
-        return this.getResult() == InteractionResult.FAIL;
+        return this.getResult() == InteractionResult.FAIL || this.getResult() == InteractionResult.SUCCESS;
     }
 
     /**
@@ -33,7 +33,7 @@ public class ResultEvent implements PollinatedEvent {
      *
      * @param result The new result
      */
-    void setResult(InteractionResult result) {
+    public void setResult(InteractionResult result) {
         this.result = result;
     }
 }

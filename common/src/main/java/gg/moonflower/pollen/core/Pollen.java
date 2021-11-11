@@ -1,13 +1,15 @@
 package gg.moonflower.pollen.core;
 
 import gg.moonflower.pollen.api.event.EventDispatcher;
-import gg.moonflower.pollen.api.event.events.ServerLifecycleEvent;
+import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
+import gg.moonflower.pollen.api.event.events.player.InteractEvent;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.core.network.PollenMessages;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.InteractionResult;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Optional;

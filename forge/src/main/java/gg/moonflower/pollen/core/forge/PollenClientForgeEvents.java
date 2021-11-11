@@ -16,10 +16,10 @@ public class PollenClientForgeEvents {
     public static void onEvent(TickEvent.ClientTickEvent event) {
         switch (event.phase) {
             case START:
-                EventDispatcher.post(new gg.moonflower.pollen.api.event.events.TickEvent.ClientEvent.Pre());
+                EventDispatcher.post(new gg.moonflower.pollen.api.event.events.lifecycle.TickEvent.ClientEvent.Pre());
                 break;
             case END:
-                EventDispatcher.post(new gg.moonflower.pollen.api.event.events.TickEvent.ClientEvent.Post());
+                EventDispatcher.post(new gg.moonflower.pollen.api.event.events.lifecycle.TickEvent.ClientEvent.Post());
                 break;
         }
     }
