@@ -7,5 +7,5 @@ import java.util.concurrent.Future;
 @ApiStatus.Internal
 public interface FMLHandshakeHandlerExtensions {
 
-    void addWait(Future<?> wait);
+    void pollen_addWait(Future<?> wait);
 }

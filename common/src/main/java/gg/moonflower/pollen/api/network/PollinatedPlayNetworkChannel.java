@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Function;
 
 /**
- * <p>Manages the registering packets between the client and server during normal gameplay.</p>
+ * Manages the registering packets between the client and server during normal gameplay.
  *
  * @author Ocelot
  * @since 1.0.0
