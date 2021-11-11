@@ -7,9 +7,8 @@ import gg.moonflower.pollen.core.extension.forge.FMLHandshakeHandlerExtensions;
 import io.netty.util.AttributeKey;
 import net.minecraft.network.Connection;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.CompletableFuture;
@@ -47,19 +46,12 @@ public class PollinatedForgePacketContext implements PollinatedPacketContext {
 
     @Override
     public PollinatedPacketDirection getDirection() {
-        NetworkDirection direction = this.ctx.get().getDirection();
-        switch (direction) {
-            case PLAY_TO_SERVER:
-                return PollinatedPacketDirection.PLAY_SERVERBOUND;
-            case PLAY_TO_CLIENT:
-                return PollinatedPacketDirection.PLAY_CLIENTBOUND;
-            case LOGIN_TO_SERVER:
-                return PollinatedPacketDirection.LOGIN_SERVERBOUND;
-            case LOGIN_TO_CLIENT:
-                return PollinatedPacketDirection.LOGIN_CLIENTBOUND;
-            default:
-                throw new IllegalStateException("Unknown network direction: " + direction);
-        }
+        return switch (this.ctx.get().getDirection()) {
+            case PLAY_TO_SERVER -> PollinatedPacketDirection.PLAY_SERVERBOUND;
+            case PLAY_TO_CLIENT -> PollinatedPacketDirection.PLAY_CLIENTBOUND;
+            case LOGIN_TO_SERVER -> PollinatedPacketDirection.LOGIN_SERVERBOUND;
+            case LOGIN_TO_CLIENT -> PollinatedPacketDirection.LOGIN_CLIENTBOUND;
+        };
     }
 
     @Override

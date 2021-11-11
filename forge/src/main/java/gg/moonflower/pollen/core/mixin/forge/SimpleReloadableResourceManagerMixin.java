@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.core.mixin.forge;
 
 import gg.moonflower.pollen.api.registry.forge.ResourceRegistryImpl;
+import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.SimpleReloadableResourceManager;
@@ -23,8 +24,12 @@ public class SimpleReloadableResourceManagerMixin {
     @Shadow
     private PackType type;
 
+    @Shadow
+    @Final
+    private List<PreparableReloadListener> listeners;
+
     @Inject(at = @At("HEAD"), method = "createReload")
-    private void reload(Executor var1, Executor var2, List<PreparableReloadListener> listeners, CompletableFuture<Unit> future, CallbackInfoReturnable<CompletableFuture<Unit>> info) {
-        ResourceRegistryImpl.inject(this.type, listeners);
+    private void reload(Executor executor, Executor executor2, CompletableFuture<Unit> completableFuture, List<PackResources> list, CallbackInfoReturnable<CompletableFuture<Unit>> info) {
+        ResourceRegistryImpl.inject(this.type, this.listeners);
     }
 }

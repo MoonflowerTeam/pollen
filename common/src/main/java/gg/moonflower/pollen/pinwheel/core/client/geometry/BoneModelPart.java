@@ -39,7 +39,7 @@ public class BoneModelPart extends ModelPart implements AnimatedModelPart {
     private boolean copyVanilla;
 
     public BoneModelPart(BedrockGeometryModel parent, GeometryModelData.Bone bone) {
-        super(parent, 0, 0);
+        super(Collections.emptyList(), Collections.emptyMap());
         this.parent = parent;
         this.bone = bone;
         this.children = new HashSet<>();
@@ -158,6 +158,10 @@ public class BoneModelPart extends ModelPart implements AnimatedModelPart {
         }
     }
 
+    void addChild(BoneModelPart part) {
+        this.children.add(part);
+    }
+
     /**
      * Resets the transformation of this part.
      *
@@ -178,15 +182,6 @@ public class BoneModelPart extends ModelPart implements AnimatedModelPart {
         if (resetChildren)
             this.children.forEach(boneModelPart -> boneModelPart.resetTransform(true));
         this.copyVanilla = false;
-    }
-
-    @Override
-    public void addChild(ModelPart part) {
-        if (part instanceof BoneModelPart) {
-            this.children.add((BoneModelPart) part);
-        } else {
-            super.addChild(part);
-        }
     }
 
     @Override

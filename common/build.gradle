@@ -11,6 +11,10 @@ architectury {
     common()
 }
 
+loom {
+    accessWidenerPath = file("src/main/resources/pollen-common.accesswidener")
+}
+
 publishing {
     publications {
         mavenCommon(MavenPublication) {

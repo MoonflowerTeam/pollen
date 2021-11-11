@@ -1,12 +1,12 @@
 package gg.moonflower.pollen.api.network.forge;
 
+import com.google.common.base.Suppliers;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import gg.moonflower.pollen.api.registry.NetworkRegistry;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.LazyLoadedValue;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.fmllegacy.network.NetworkDirection;
+import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,31 +17,25 @@ import java.util.function.Supplier;
 public class PollinatedNetworkChannelImpl {
 
     protected final SimpleChannel channel;
-    protected final LazyLoadedValue<LazyLoadedValue<Object>> clientMessageHandler;
-    protected final LazyLoadedValue<LazyLoadedValue<Object>> serverMessageHandler;
+    protected final Supplier<Supplier<Object>> clientMessageHandler;
+    protected final Supplier<Supplier<Object>> serverMessageHandler;
     protected int nextId;
 
     protected PollinatedNetworkChannelImpl(SimpleChannel channel, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
         this.channel = channel;
-        this.clientMessageHandler = new LazyLoadedValue<>(() -> new LazyLoadedValue<>(clientFactory.get()));
-        this.serverMessageHandler = new LazyLoadedValue<>(() -> new LazyLoadedValue<>(serverFactory.get()));
+        this.clientMessageHandler = Suppliers.memoize(() -> Suppliers.memoize(clientFactory::get));
+        this.serverMessageHandler = Suppliers.memoize(() -> Suppliers.memoize(serverFactory::get));
     }
 
     protected static NetworkDirection toNetworkDirection(@Nullable PollinatedPacketDirection direction) {
         if (direction == null)
             return null;
-        switch (direction) {
-            case PLAY_SERVERBOUND:
-                return NetworkDirection.PLAY_TO_SERVER;
-            case PLAY_CLIENTBOUND:
-                return NetworkDirection.PLAY_TO_CLIENT;
-            case LOGIN_SERVERBOUND:
-                return NetworkDirection.LOGIN_TO_SERVER;
-            case LOGIN_CLIENTBOUND:
-                return NetworkDirection.LOGIN_TO_CLIENT;
-            default:
-                throw new IllegalStateException("Unknown network direction: " + direction);
-        }
+        return switch (direction) {
+            case PLAY_SERVERBOUND -> NetworkDirection.PLAY_TO_SERVER;
+            case PLAY_CLIENTBOUND -> NetworkDirection.PLAY_TO_CLIENT;
+            case LOGIN_SERVERBOUND -> NetworkDirection.LOGIN_TO_SERVER;
+            case LOGIN_CLIENTBOUND -> NetworkDirection.LOGIN_TO_CLIENT;
+        };
     }
 
     protected <MSG extends PollinatedPacket<T>, T> SimpleChannel.MessageBuilder<MSG> getMessageBuilder(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, @Nullable PollinatedPacketDirection direction) {

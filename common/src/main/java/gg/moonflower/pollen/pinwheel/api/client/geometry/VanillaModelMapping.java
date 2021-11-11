@@ -50,7 +50,6 @@ public class VanillaModelMapping {
         add(GuardianModel.class, "head", "eye");
         add(HoglinModel.class, "head", "rightEar", "leftEar", "body", "frontRightLeg", "frontLeftLeg", "backRightLeg", "backLeftLeg", "mane");
         add(HorseModel.class, "body", "headParts", "leg1", "leg2", "leg3", "leg4", "babyLeg1", "babyLeg2", "babyLeg3", "babyLeg4", "tail");
-        add(HumanoidHeadModel.class, "hat");
         add(HumanoidModel.class, "head", "hat", "body", "rightArm", "leftArm", "rightLeg", "leftLeg");
         add(IllagerModel.class, "head", "hat", "body", "arms", "leftLeg", "rightLeg", "rightArm", "leftArm");
         add(IronGolemModel.class, "head", "body", "arm0", "arm1", "leg0", "leg1");

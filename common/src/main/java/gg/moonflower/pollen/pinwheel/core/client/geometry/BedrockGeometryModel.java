@@ -38,6 +38,8 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
     private final Set<BoneModelPart> renderParts;
     private final String[] modelKeys;
     private final String[] textureKeys;
+    private final int texWidth;
+    private final int texHeight;
     private String activeMaterial;
 
     public BedrockGeometryModel(int textureWidth, int textureHeight, GeometryModelData.Bone[] bones) {
@@ -84,7 +86,7 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
                     if (!boneLookup.containsKey(parent))
                         throw new IllegalStateException("Unknown bone '" + parent + "'");
 
-                    ModelPart parentRenderer = boneLookup.get(parent).getRight();
+                    BoneModelPart parentRenderer = boneLookup.get(parent).getRight();
                     parentRenderer.addChild(pair.getRight());
                 }
             }

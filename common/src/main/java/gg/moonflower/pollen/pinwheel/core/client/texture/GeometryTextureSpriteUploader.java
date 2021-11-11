@@ -246,6 +246,11 @@ public class GeometryTextureSpriteUploader extends SimplePreparableReloadListene
                 return stream;
             }
 
+            @Override
+            public boolean hasMetadata() {
+                return this.metadataJson != null;
+            }
+
             @Nullable
             @Override
             public <T> T getMetadata(MetadataSectionSerializer<T> serializer) {

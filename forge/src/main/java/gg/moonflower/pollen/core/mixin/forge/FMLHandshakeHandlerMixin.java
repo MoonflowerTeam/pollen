@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.core.mixin.forge;
 
 import gg.moonflower.pollen.core.extension.forge.FMLHandshakeHandlerExtensions;
-import net.minecraftforge.fml.network.FMLHandshakeHandler;
+import net.minecraftforge.fmllegacy.network.FMLHandshakeHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
