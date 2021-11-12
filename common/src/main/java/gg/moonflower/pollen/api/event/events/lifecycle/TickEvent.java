@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.api.event.events.lifecycle;
 
 import gg.moonflower.pollen.api.event.PollinatedEvent;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 
 /**
@@ -72,6 +73,40 @@ public class TickEvent implements PollinatedEvent {
 
             public Post(Level level) {
                 super(level);
+            }
+        }
+    }
+
+    /**
+     * Called each time an entity is ticked server and client side. Use {@link Pre} and {@link Post} for specific tick timeframes.
+     *
+     * @author abigailfails
+     * @since 1.0.0
+     */
+    public static class EntityEvent extends TickEvent {
+
+        private final Entity entity;
+
+        public EntityEvent(Entity entity) {
+            this.entity = entity;
+        }
+
+        /**
+         * @return The entity being ticked
+         */
+        public Entity getEntity() {
+            return entity;
+        }
+
+        public static class Pre extends EntityEvent {
+            public Pre(Entity entity) {
+                super(entity);
+            }
+        }
+
+        public static class Post extends EntityEvent {
+            public Post(Entity entity) {
+                super(entity);
             }
         }
     }
