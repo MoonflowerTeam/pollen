@@ -4,10 +4,16 @@
   "compatibilityLevel": "JAVA_8",
   "minVersion": "0.8",
   "client": [
-    "client.LevelRendererMixin"
+    "client.ClientPackSourceMixin",
+    "client.CreateWorldScreenMixin",
+    "client.LevelRendererMixin",
+    "client.OptionsMixin"
   ],
   "mixins": [
     "FMLHandshakeHandlerMixin",
+    "FolderRepositorySourceAccessor",
+    "PackRepositoryAccessor",
+    "PackRepositoryMixin",
     "SimpleReloadableResourceManagerMixin"
   ],
   "injectors": {

@@ -35,7 +35,7 @@ public class PollinatedForgePacketContext implements PollinatedPacketContext {
     public void waitFor(Future<?> future) {
         Connection connection = this.getNetworkManager();
         if (connection.getPacketListener() instanceof ServerLoginPacketListenerImpl) {
-            ((FMLHandshakeHandlerExtensions) connection.channel().attr(AttributeKey.valueOf("fml:handshake")).get()).addWait(future);
+            ((FMLHandshakeHandlerExtensions) connection.channel().attr(AttributeKey.valueOf("fml:handshake")).get()).pollen_addWait(future);
         }
     }
 

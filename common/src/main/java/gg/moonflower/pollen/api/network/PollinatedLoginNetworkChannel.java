@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- * <p>Manages the registering packets between the client and server during the login phase.</p>
+ * Manages the registering packets between the client and server during the login phase.
  *
  * @author Ocelot
  * @since 1.0.0

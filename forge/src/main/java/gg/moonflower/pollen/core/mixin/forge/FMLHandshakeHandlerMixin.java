@@ -51,7 +51,7 @@ public class FMLHandshakeHandlerMixin implements FMLHandshakeHandlerExtensions {
     }
 
     @Override
-    public void addWait(Future<?> wait) {
+    public void pollen_addWait(Future<?> wait) {
         this.waits.add(wait);
     }
 }

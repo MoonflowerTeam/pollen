@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.api.registry;
 
+import com.mojang.serialization.Codec;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.platform.Platform;
 import net.minecraft.core.Registry;
@@ -11,7 +12,7 @@ import java.util.function.Supplier;
 /**
  * An abstracted registry for wrapping platform-specific registries.
  *
- * @param <T> The object type.
+ * @param <T> The object type
  * @author Jackson
  * @since 1.0.0
  */
@@ -57,10 +58,14 @@ public abstract class PollinatedRegistry<T> {
      *
      * @param id     The id of the object.
      * @param object The object to register.
-     * @param <I>    The type of object.
      * @return The registered object in a supplier.
      */
-    public abstract <I extends T> Supplier<I> register(String id, Supplier<I> object);
+    public abstract <R extends T> Supplier<R> register(String id, Supplier<R> object);
+
+    /**
+     * @return A codec for this registry's elements
+     */
+    public abstract Codec<T> codec();
 
     /**
      * Initializes the registry for a {@link Platform}.
@@ -68,8 +73,7 @@ public abstract class PollinatedRegistry<T> {
      * @param mod The {@link Platform} to register the registry onto.
      * @throws IllegalStateException if the registry has already been registered.
      */
-    @ApiStatus.NonExtendable
-    public void register(Platform mod) {
+    public final void register(Platform mod) {
         if (this.registered)
             throw new IllegalStateException("Cannot register a PollinatedRegistry twice!");
         this.registered = true;
@@ -82,6 +86,7 @@ public abstract class PollinatedRegistry<T> {
 
     @ApiStatus.Internal
     public static class VanillaImpl<T> extends PollinatedRegistry<T> {
+
         private final Registry<T> registry;
 
         private VanillaImpl(Registry<T> registry, String modId) {
@@ -90,9 +95,14 @@ public abstract class PollinatedRegistry<T> {
         }
 
         @Override
-        public <I extends T> Supplier<I> register(String id, Supplier<I> object) {
-            I registered = Registry.register(this.registry, new ResourceLocation(this.modId, id), object.get());
+        public <R extends T> Supplier<R> register(String id, Supplier<R> object) {
+            R registered = Registry.register(this.registry, new ResourceLocation(this.modId, id), object.get());
             return () -> registered;
+        }
+
+        @Override
+        public Codec<T> codec() {
+            return registry;
         }
     }
 }

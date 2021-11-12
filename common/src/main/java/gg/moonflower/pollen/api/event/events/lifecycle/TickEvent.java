@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.event.events;
+package gg.moonflower.pollen.api.event.events.lifecycle;
 
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import net.minecraft.world.level.Level;

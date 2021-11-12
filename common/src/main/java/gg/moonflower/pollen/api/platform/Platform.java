@@ -1,7 +1,14 @@
 package gg.moonflower.pollen.api.platform;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import dev.architectury.injectables.annotations.PlatformOnly;
+import dev.architectury.injectables.targets.ArchitecturyTarget;
+import net.minecraft.util.thread.BlockableEventLoop;
 import org.jetbrains.annotations.ApiStatus;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * A mod instance for initializing mods on the common side.
@@ -10,6 +17,8 @@ import org.jetbrains.annotations.ApiStatus;
  * @since 1.0.0
  */
 public abstract class Platform {
+
+    private static final boolean FORGE = ArchitecturyTarget.getCurrentTarget().equals(PlatformOnly.FORGE);
 
     private final String modId;
 
@@ -25,9 +34,27 @@ public abstract class Platform {
         throw new AssertionError();
     }
 
+    /**
+     * @return Whether this mod is running in a production environment
+     */
     @ExpectPlatform
     public static boolean isProduction() {
         return Platform.error();
+    }
+
+    /**
+     * @return The main game executor. This is the Minecraft Client or Server instance
+     */
+    @ExpectPlatform
+    public static BlockableEventLoop<?> getGameExecutor() {
+        return Platform.error();
+    }
+
+    /**
+     * @return Whether the currently running platform is Forge
+     */
+    public static boolean isForge() {
+        return FORGE;
     }
 
     /**
@@ -42,20 +69,20 @@ public abstract class Platform {
      *
      * <p>Fabric users should not run this on their client initializer. Running this on the common initializer will handle client initialization too.
      */
-    public void setup() {
-    }
+    public abstract void setup();
 
     public static class Builder {
 
-        private static final Runnable EMPTY_RUNNABLE = () -> {
-        };
-
         private final String modId;
 
-        private Runnable commonInit = Builder.EMPTY_RUNNABLE;
-        private Runnable clientInit = Builder.EMPTY_RUNNABLE;
-        private Runnable commonPostInit = Builder.EMPTY_RUNNABLE;
-        private Runnable clientPostInit = Builder.EMPTY_RUNNABLE;
+        private Runnable commonInit = () -> {
+        };
+        private Runnable clientInit = () -> {
+        };
+        private Consumer<ModSetupContext> commonPostInit = __ -> {
+        };
+        private Consumer<ModSetupContext> clientPostInit = __ -> {
+        };
 
         private Builder(String modId) {
             this.modId = modId;
@@ -63,7 +90,7 @@ public abstract class Platform {
 
         @ApiStatus.Internal
         @ExpectPlatform
-        public static Platform buildImpl(String modId, Runnable commonInit, Runnable clientInit, Runnable commonPostInit, Runnable clientPostInit) {
+        public static Platform buildImpl(String modId, Runnable commonInit, Runnable clientInit, Consumer<ModSetupContext> commonPostInit, Consumer<ModSetupContext> clientPostInit) {
             return Platform.error();
         }
 
@@ -77,12 +104,12 @@ public abstract class Platform {
             return this;
         }
 
-        public Builder commonPostInit(Runnable onCommonPostInit) {
+        public Builder commonPostInit(Consumer<ModSetupContext> onCommonPostInit) {
             this.commonPostInit = onCommonPostInit;
             return this;
         }
 
-        public Builder clientPostInit(Runnable onClientPostInit) {
+        public Builder clientPostInit(Consumer<ModSetupContext> onClientPostInit) {
             this.clientPostInit = onClientPostInit;
             return this;
         }
@@ -90,5 +117,32 @@ public abstract class Platform {
         public Platform build() {
             return buildImpl(this.modId, this.commonInit, this.clientInit, this.commonPostInit, this.clientPostInit);
         }
+    }
+
+    /**
+     * Used as context for initializing mods during loading lifecycle.
+     *
+     * @author Ocelot
+     * @since 1.0.0
+     */
+    public interface ModSetupContext {
+
+        /**
+         * Queues work to happen later when it is safe to do so.
+         * <p><i>NOTE: The returned future may execute on the current thread so it is not safe to call {@link CompletableFuture#join()} or {@link CompletableFuture#get()}</i>
+         *
+         * @param work The work to do
+         * @return A future for when the work is done
+         */
+        CompletableFuture<Void> enqueueWork(Runnable work);
+
+        /**
+         * Queues work to happen later when it is safe to do so.
+         * <p><i>NOTE: The returned future may execute on the current thread so it is not safe to call {@link CompletableFuture#join()} or {@link CompletableFuture#get()}</i>
+         *
+         * @param work The work to do
+         * @return A future for when the work is done
+         */
+        <T> CompletableFuture<T> enqueueWork(Supplier<T> work);
     }
 }
