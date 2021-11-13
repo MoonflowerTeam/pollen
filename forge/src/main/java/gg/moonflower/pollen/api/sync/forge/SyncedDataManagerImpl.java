@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameRules;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -92,7 +93,8 @@ public class SyncedDataManagerImpl {
 
             ForgeDataComponent oldHolder = getDataComponent(original);
             ForgeDataComponent newHolder = getDataComponent(player);
-            newHolder.copyForRespawn(oldHolder, !event.isWasDeath());
+            if (oldHolder.shouldCopyForRespawn(!event.isWasDeath(), player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)))
+                newHolder.copyForRespawn(oldHolder, !event.isWasDeath());
 
             if (newHolder.shouldSyncWith(player, player))
                 PollenMessages.PLAY.sendTo(player, new ClientboundUpdateSyncedDataPacket(player, player, true));
@@ -128,7 +130,7 @@ public class SyncedDataManagerImpl {
     }
 
     public static void readPacketData(FriendlyByteBuf buf, Player player) {
-        getDataComponent(player).applyUpdatePacket(buf);
+        getDataComponent(player).applySyncPacket(buf);
     }
 
     public static class Provider implements ICapabilitySerializable<CompoundTag> {
