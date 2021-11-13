@@ -29,6 +29,10 @@ configurations {
 
 repositories {
     maven { url "https://maven.terraformersmc.com/" }
+    maven {
+        name = 'Ladysnake Mods'
+        url = 'https://ladysnake.jfrog.io/artifactory/mods'
+    }
 }
 
 dependencies {
@@ -36,10 +40,17 @@ dependencies {
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
     modApi "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
 
-    implementation "net.jodah:typetools:0.8.3"
-    shadowCommon "net.jodah:typetools:0.8.3"
+    // Common Dependencies
     implementation "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
     shadowCommon "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
+
+    // Fabric-only Dependencies
+    implementation "net.jodah:typetools:0.8.3"
+    include "net.jodah:typetools:0.8.3"
+    modApi "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cardinal_components_version}"
+    modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cardinal_components_version}"
+    include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cardinal_components_version}"
+    include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cardinal_components_version}"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
@@ -67,7 +78,6 @@ processResources {
 
 shadowJar {
     configurations = [project.configurations.shadowCommon]
-    relocate "net.jodah.typetools", "gg.moonflower.pollen.typetools"
     relocate "io.github.ocelot.molangcompiler", "gg.moonflower.pollen.molangcompiler"
     classifier "dev-shadow"
 }

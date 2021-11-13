@@ -52,7 +52,8 @@ public class EventDispatcher {
 
             int modifiers = method.getModifiers();
             if (!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers))
-                throw new IllegalStateException("Event handler methods must be public static");
+                continue;
+
             if (method.getParameterCount() != 1)
                 throw new IllegalStateException("All event handlers must have a single event argument");
             if (!PollinatedEvent.class.isAssignableFrom(method.getParameterTypes()[0]))

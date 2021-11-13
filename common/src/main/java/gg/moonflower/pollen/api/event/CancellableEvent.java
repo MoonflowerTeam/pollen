@@ -16,7 +16,7 @@ public class CancellableEvent implements PollinatedEvent {
     }
 
     /**
-     * Marks this event as cancelled. The event can be un-canceled by setting canceled to <code>true</code>.
+     * Marks this event as cancelled. The event can be un-canceled by setting canceled to <code>false</code>.
      *
      * @param cancelled Whether this event should be canceled
      */

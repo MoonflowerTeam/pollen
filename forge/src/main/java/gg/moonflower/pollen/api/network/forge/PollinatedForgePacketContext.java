@@ -35,7 +35,7 @@ public class PollinatedForgePacketContext implements PollinatedPacketContext {
     @Override
     public void waitFor(Future<?> future) {
         Connection connection = this.getNetworkManager();
-        if (connection.getPacketListener() instanceof ServerLoginPacketListenerImpl) {
+        if (connection.getPacketListener() instanceof FMLHandshakeHandlerExtensions) {
             ((FMLHandshakeHandlerExtensions) connection.channel().attr(AttributeKey.valueOf("fml:handshake")).get()).pollen_addWait(future);
         }
     }
@@ -65,9 +65,5 @@ public class PollinatedForgePacketContext implements PollinatedPacketContext {
     @Override
     public Connection getNetworkManager() {
         return this.ctx.get().getNetworkManager();
-    }
-
-    public NetworkEvent.Context getContext() {
-        return this.ctx.get();
     }
 }
