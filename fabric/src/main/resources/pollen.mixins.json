@@ -3,6 +3,7 @@
   "package": "gg.moonflower.pollen.core.mixin.fabric",
   "compatibilityLevel": "JAVA_8",
   "client": [
+    "client.ClientPacketListenerMixin"
   ],
   "mixins": [
     "LivingEntityMixin"
