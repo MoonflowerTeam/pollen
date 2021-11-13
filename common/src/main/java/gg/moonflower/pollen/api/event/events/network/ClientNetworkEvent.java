@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Events fired for client connection status.
  */
-public class ClientNetworkEvent implements PollinatedEvent {
+public class ClientNetworkEvent extends PollinatedEvent {
 
     private final MultiPlayerGameMode controller;
     private final LocalPlayer player;
@@ -52,7 +52,6 @@ public class ClientNetworkEvent implements PollinatedEvent {
      * @since 1.0.0
      */
     public static class LoggedIn extends ClientNetworkEvent {
-
         public LoggedIn(MultiPlayerGameMode controller, LocalPlayer player, Connection connection) {
             super(controller, player, connection);
         }
@@ -65,7 +64,6 @@ public class ClientNetworkEvent implements PollinatedEvent {
      * @since 1.0.0
      */
     public static class LoggedOut extends ClientNetworkEvent {
-
         public LoggedOut(MultiPlayerGameMode controller, LocalPlayer player, Connection connection) {
             super(controller, player, connection);
         }

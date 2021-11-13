@@ -6,11 +6,11 @@ import net.minecraft.server.MinecraftServer;
 /**
  * Events fired for server lifecycle.
  */
-public class ServerLifecycleEvent implements PollinatedEvent {
+public class ServerLifecycleEvent extends PollinatedEvent {
 
     private final MinecraftServer server;
 
-    protected ServerLifecycleEvent(MinecraftServer server) {
+    private ServerLifecycleEvent(MinecraftServer server) {
         this.server = server;
     }
 
@@ -28,7 +28,6 @@ public class ServerLifecycleEvent implements PollinatedEvent {
      * @since 1.0.0
      */
     public static class Starting extends ServerLifecycleEvent {
-
         public Starting(MinecraftServer server) {
             super(server);
         }
@@ -41,7 +40,6 @@ public class ServerLifecycleEvent implements PollinatedEvent {
      * @since 1.0.0
      */
     public static class Started extends ServerLifecycleEvent {
-
         public Started(MinecraftServer server) {
             super(server);
         }
@@ -54,7 +52,6 @@ public class ServerLifecycleEvent implements PollinatedEvent {
      * @since 1.0.0
      */
     public static class Stopping extends ServerLifecycleEvent {
-
         public Stopping(MinecraftServer server) {
             super(server);
         }
@@ -67,7 +64,6 @@ public class ServerLifecycleEvent implements PollinatedEvent {
      * @since 1.0.0
      */
     public static class Stopped extends ServerLifecycleEvent {
-
         public Stopped(MinecraftServer server) {
             super(server);
         }

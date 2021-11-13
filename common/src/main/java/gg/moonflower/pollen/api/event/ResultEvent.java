@@ -8,7 +8,7 @@ import net.minecraft.world.InteractionResult;
  * @author Ocelot
  * @since 1.0.0
  */
-public class ResultEvent implements PollinatedEvent {
+public class ResultEvent extends PollinatedEvent {
 
     private InteractionResult result;
 
@@ -18,7 +18,7 @@ public class ResultEvent implements PollinatedEvent {
 
     @Override
     public boolean isCancelled() {
-        return this.getResult() == InteractionResult.FAIL || this.getResult() == InteractionResult.SUCCESS;
+        return super.isCancelled() || this.getResult() == InteractionResult.FAIL || this.getResult() == InteractionResult.SUCCESS;
     }
 
     /**
