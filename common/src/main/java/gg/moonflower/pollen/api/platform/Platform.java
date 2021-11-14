@@ -3,9 +3,12 @@ package gg.moonflower.pollen.api.platform;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.injectables.annotations.PlatformOnly;
 import dev.architectury.injectables.targets.ArchitecturyTarget;
+import gg.moonflower.pollen.core.Pollen;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.thread.BlockableEventLoop;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -48,6 +51,13 @@ public abstract class Platform {
     @ExpectPlatform
     public static BlockableEventLoop<?> getGameExecutor() {
         return Platform.error();
+    }
+
+    /**
+     * @return The currently running Minecraft Server instance. This will not be present in a remote client level
+     */
+    public static Optional<MinecraftServer> getRunningServer() {
+        return Optional.ofNullable(Pollen.getRunningServer());
     }
 
     /**

@@ -6,7 +6,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(CreativeModeTab.class)
 public interface CreativeModeTabAccessor {
-
     @Accessor
     String getLangId();
 }

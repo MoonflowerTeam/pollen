@@ -8,8 +8,15 @@
     "client.WolfAccessor"
   ],
   "mixins": [
+    "AdvancementBuilderAccessor",
+    "AdvancementBuilderMixin",
+    "AdvancementRewardsAccessor",
+    "AdvancementRewardsBuilderAccessor",
     "LivingEntityMixin",
-    "PotionBrewingMixin"
+    "PotionBrewingMixin",
+    "ServerAdvancementManagerMixin",
+    "ServerResourcesMixin",
+    "SimpleReloadableResourceManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

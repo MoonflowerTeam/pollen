@@ -1,7 +1,8 @@
 package gg.moonflower.pollen.core.mixin;
 
+import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.core.Pollen;
-import gg.moonflower.pollen.core.brewing.PollenBrewingRecipe;
+import gg.moonflower.pollen.api.crafting.brewing.PollenBrewingRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionBrewing;
@@ -20,7 +21,7 @@ public class PotionBrewingMixin {
 
     @Unique
     private static List<PollenBrewingRecipe> getRecipes() {
-        return Pollen.getRunningServer().map(server -> server.getRecipeManager().getAllRecipesFor(Pollen.BREWING)).orElse(Collections.emptyList());
+        return Platform.getRunningServer().map(server -> server.getRecipeManager().getAllRecipesFor(Pollen.BREWING)).orElse(Collections.emptyList());
     }
 
     @Inject(method = "isPotionIngredient", at = @At("HEAD"), cancellable = true)

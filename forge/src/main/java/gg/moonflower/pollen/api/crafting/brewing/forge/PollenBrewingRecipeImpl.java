@@ -1,7 +1,7 @@
-package gg.moonflower.pollen.core.brewing.forge;
+package gg.moonflower.pollen.api.crafting.brewing.forge;
 
 import com.google.gson.JsonObject;
-import gg.moonflower.pollen.core.brewing.PollenBrewingRecipe;
+import gg.moonflower.pollen.api.crafting.brewing.PollenBrewingRecipe;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;

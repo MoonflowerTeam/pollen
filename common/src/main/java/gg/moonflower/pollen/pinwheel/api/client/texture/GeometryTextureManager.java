@@ -1,6 +1,8 @@
 package gg.moonflower.pollen.pinwheel.api.client.texture;
 
+import gg.moonflower.pollen.api.registry.PollinatedPreparableReloadListener;
 import gg.moonflower.pollen.api.registry.ResourceRegistry;
+import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelRenderer;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
 import gg.moonflower.pollen.pinwheel.core.client.texture.GeometryTextureSpriteUploader;
@@ -10,7 +12,6 @@ import gg.moonflower.pollen.pinwheel.core.client.util.DynamicReloader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Unit;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -114,7 +115,7 @@ public class GeometryTextureManager {
         return DYNAMIC_RELOADER.isReloading();
     }
 
-    private static class Reloader implements PreparableReloadListener {
+    private static class Reloader implements PollinatedPreparableReloadListener {
         @Override
         public CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager, ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor, Executor gameExecutor) {
             return CompletableFuture.allOf(PROVIDERS.stream().map(provider -> provider.reload(stage, resourceManager, preparationsProfiler, reloadProfiler, backgroundExecutor, gameExecutor)).toArray(CompletableFuture[]::new)).thenApplyAsync(a ->
@@ -143,6 +144,11 @@ public class GeometryTextureManager {
                                 LOGGER.warn("Texture at location '" + location + "' already exists and is being overridden.");
                         }));
                     }, gameExecutor);
+        }
+
+        @Override
+        public ResourceLocation getPollenId() {
+            return new ResourceLocation(Pollen.MOD_ID, "geometry_texture_manager");
         }
     }
 }

@@ -1,6 +1,8 @@
 package gg.moonflower.pollen.pinwheel.api.client.geometry;
 
+import gg.moonflower.pollen.api.registry.PollinatedPreparableReloadListener;
 import gg.moonflower.pollen.api.registry.ResourceRegistry;
+import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.pinwheel.api.common.animation.AnimationData;
 import gg.moonflower.pollen.pinwheel.api.common.util.BackgroundLoader;
 import gg.moonflower.pollen.pinwheel.core.client.geometry.LocalGeometryModelLoader;
@@ -87,8 +89,7 @@ public final class GeometryModelManager {
         return DYNAMIC_RELOADER.isReloading();
     }
 
-    private static class Reloader implements PreparableReloadListener {
-
+    private static class Reloader implements PollinatedPreparableReloadListener {
         @Override
         public CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager, ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor, Executor gameExecutor) {
             Map<ResourceLocation, GeometryModel> geometryModels = new HashMap<>();
@@ -103,6 +104,11 @@ public final class GeometryModelManager {
                 MODELS.clear();
                 MODELS.putAll(geometryModels);
             }, gameExecutor);
+        }
+
+        @Override
+        public ResourceLocation getPollenId() {
+            return new ResourceLocation(Pollen.MOD_ID, "geometry_model_manager");
         }
     }
 }
