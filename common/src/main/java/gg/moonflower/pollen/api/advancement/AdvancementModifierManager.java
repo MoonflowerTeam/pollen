@@ -57,11 +57,23 @@ public class AdvancementModifierManager {
         });
     }
 
+    /**
+     * Retrieves a modifier with the specified id.
+     *
+     * @param id The id of the modifier to retrieve
+     * @return The modifier with that id or <code>null</code> if there is no modifier with that id
+     */
     @Nullable
     public static AdvancementModifier getModifier(ResourceLocation id) {
         return ADVANCEMENT_MODIFIERS.get(id);
     }
 
+    /**
+     * Creates a stream of all modifiers that modify the advancement with the specified id.
+     *
+     * @param id The id of the advancement to modify
+     * @return The modifiers for that advancement
+     */
     public static Stream<AdvancementModifier> getModifiersFor(ResourceLocation id) {
         return ADVANCEMENT_MODIFIERS.values().stream().filter(modifier -> ArrayUtils.contains(modifier.getInject(), id));
     }

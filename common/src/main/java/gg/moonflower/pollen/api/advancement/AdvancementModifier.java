@@ -14,6 +14,12 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * Modifies existing advancements to add extra criteria, requirements, and rewards.
+ *
+ * @author Ocelot
+ * @since 1.0.0
+ */
 public class AdvancementModifier {
 
     private final ResourceLocation id;
@@ -40,10 +46,6 @@ public class AdvancementModifier {
         this.removeRecipes = removeRecipes;
     }
 
-    public AdvancementModifier.Builder deconstruct() {
-        return new AdvancementModifier.Builder(this.inject, this.priority, this.addCriteria, this.injectRequirements, this.addRequirements, this.addRewards, this.removeRequirements, this.removeLoot, this.removeRecipes);
-    }
-
     private static <T> T[] insert(T[] a, T[] b) {
         T[] expanded = Arrays.copyOf(a, a.length + b.length);
         System.arraycopy(b, 0, expanded, a.length, b.length);
@@ -68,6 +70,19 @@ public class AdvancementModifier {
         return criteria;
     }
 
+    /**
+     * @return A {@link Builder} that can be reconstructed into this modifier
+     */
+    public AdvancementModifier.Builder deconstruct() {
+        return new AdvancementModifier.Builder(this.inject, this.priority, this.addCriteria, this.injectRequirements, this.addRequirements, this.addRewards, this.removeRequirements, this.removeLoot, this.removeRecipes);
+    }
+
+    /**
+     * Modifies the specified advancement with this modifier's modifications.
+     *
+     * @param advancement The advancement to modify
+     * @throws JsonParseException If this modifier is not valid for the specified advancement
+     */
     public void modify(Advancement.Builder advancement) throws JsonParseException {
         for (String[] requirement : this.injectRequirements)
             for (String criteria : requirement) {
@@ -146,28 +161,25 @@ public class AdvancementModifier {
         ((AdvancementRewardsAccessor) rewards).setExperience(experience);
     }
 
+    /**
+     * @return The id of this modifier
+     */
     public ResourceLocation getId() {
         return this.id;
     }
 
+    /**
+     * @return The advancements to inject into
+     */
     public ResourceLocation[] getInject() {
         return inject;
     }
 
+    /**
+     * @return The injection priority of this modifier. Lower injection priorities are applied first
+     */
     public int getInjectPriority() {
         return priority;
-    }
-
-    public Map<String, Criterion> getAddCriteria() {
-        return addCriteria;
-    }
-
-    public String[][] getInjectRequirements() {
-        return injectRequirements;
-    }
-
-    public String[][] getAddRequirements() {
-        return addRequirements;
     }
 
     @Override
@@ -183,6 +195,9 @@ public class AdvancementModifier {
         return this.id.hashCode();
     }
 
+    /**
+     * @return A new advancement modifier builder
+     */
     public static AdvancementModifier.Builder advancementModifier() {
         return new AdvancementModifier.Builder();
     }
@@ -232,29 +247,61 @@ public class AdvancementModifier {
             this.removeRecipes = new LinkedList<>();
         }
 
+        /**
+         * Adds an advancement to inject into.
+         *
+         * @param id The id of the advancement
+         */
         public AdvancementModifier.Builder injectInto(ResourceLocation id) {
             this.inject.add(id);
             return this;
         }
 
+        /**
+         * Sets the priority of this modifier. Lower injection priorities are applied first.
+         *
+         * @param priority The new priority of this modifier. By default, this is <code>1000</code>.
+         */
         public AdvancementModifier.Builder injectPriority(int priority) {
             this.priority = priority;
             return this;
         }
 
+        /**
+         * Adds the specified rewards to this modifier.
+         *
+         * @param builder The builder of rewards to add
+         */
         public AdvancementModifier.Builder addRewards(AdvancementRewards.Builder builder) {
             return this.addRewards(builder.build());
         }
 
+        /**
+         * Adds the specified rewards to this modifier.
+         *
+         * @param addRewards The rewards to add
+         */
         public AdvancementModifier.Builder addRewards(AdvancementRewards addRewards) {
             this.addRewards = addRewards;
             return this;
         }
 
+        /**
+         * Adds a criterion to this modifier.
+         *
+         * @param name            The name of the criterion
+         * @param triggerInstance The instance of the trigger to add
+         */
         public AdvancementModifier.Builder addCriterion(String name, CriterionTriggerInstance triggerInstance) {
             return this.addCriterion(name, new Criterion(triggerInstance));
         }
 
+        /**
+         * Adds a criterion to this modifier.
+         *
+         * @param name      The name of the criterion
+         * @param criterion The criterion to add
+         */
         public AdvancementModifier.Builder addCriterion(String name, Criterion criterion) {
             if (this.addCriteria.put(name, criterion) != null)
                 throw new IllegalArgumentException("Duplicate criterion " + name);
@@ -262,10 +309,24 @@ public class AdvancementModifier {
             return this;
         }
 
+        /**
+         * Injects a criterion into an existing requirement.
+         *
+         * @param name            The name of the criterion
+         * @param index           The index to insert the criterion into
+         * @param triggerInstance The instance of the trigger to add
+         */
         public AdvancementModifier.Builder injectCriterion(String name, int index, CriterionTriggerInstance triggerInstance) {
             return this.injectCriterion(name, index, new Criterion(triggerInstance));
         }
 
+        /**
+         * Injects a criterion into an existing requirement.
+         *
+         * @param name      The name of the criterion
+         * @param index     The index to insert the criterion into
+         * @param criterion The criterion to add
+         */
         public AdvancementModifier.Builder injectCriterion(String name, int index, Criterion criterion) {
             if (this.addCriteria.put(name, criterion) != null)
                 throw new IllegalArgumentException("Duplicate criterion " + name);
@@ -273,16 +334,31 @@ public class AdvancementModifier {
             return this;
         }
 
+        /**
+         * Removes the specified loot table from the advancement.
+         *
+         * @param lootTable The id of the loot table to remove
+         */
         public AdvancementModifier.Builder removeLoot(ResourceLocation lootTable) {
             this.removeLoot.add(lootTable);
             return this;
         }
 
+        /**
+         * Removes the specified recipe from the advancement.
+         *
+         * @param recipeId The id of the recipe to remove
+         */
         public AdvancementModifier.Builder removeRecipe(ResourceLocation recipeId) {
             this.removeRecipes.add(recipeId);
             return this;
         }
 
+        /**
+         * Sets the strategy for adding requirements.
+         *
+         * @param requirementsStrategy The new strategy
+         */
         public AdvancementModifier.Builder addRequirements(RequirementsStrategy requirementsStrategy) {
             this.requirementsStrategy = requirementsStrategy;
             return this;
@@ -310,6 +386,12 @@ public class AdvancementModifier {
             }
         }
 
+        /**
+         * Constructs a new modifier with the specified id.
+         *
+         * @param id The id of the modifier to construct
+         * @return A new modifier instance
+         */
         public AdvancementModifier build(ResourceLocation id) {
             if (this.inject.isEmpty())
                 throw new IllegalStateException("'inject' must be defined");
@@ -317,12 +399,22 @@ public class AdvancementModifier {
             return new AdvancementModifier(id, this.inject.toArray(new ResourceLocation[0]), this.priority, this.addCriteria, this.injectRequirements, this.addRequirements, this.addRewards, this.removeRequirements.toArray(new String[0]), this.removeLoot.toArray(new ResourceLocation[0]), this.removeRecipes.toArray(new ResourceLocation[0]));
         }
 
-        public AdvancementModifier save(Consumer<AdvancementModifier> consumer, ResourceLocation name) {
-            AdvancementModifier modifier = this.build(name);
+        /**
+         * Saves this modifier into the specified consumer. Used for datagens.
+         *
+         * @param consumer The consumer to accept modifiers
+         * @param id       The id of the modifier to construct
+         * @return A new modifier instance
+         */
+        public AdvancementModifier save(Consumer<AdvancementModifier> consumer, ResourceLocation id) {
+            AdvancementModifier modifier = this.build(id);
             consumer.accept(modifier);
             return modifier;
         }
 
+        /**
+         * @return A JSON representing this modifier
+         */
         public JsonObject serializeToJson() {
             if (this.inject.isEmpty())
                 throw new IllegalStateException("'inject' must be defined");
@@ -424,6 +516,13 @@ public class AdvancementModifier {
             return result;
         }
 
+        /**
+         * Deserializes a new modifier from JSON.
+         *
+         * @param json    The JSON to deserialize.
+         * @param context The context of deserialization
+         * @return The deserialized builder
+         */
         public static Builder fromJson(JsonObject json, DeserializationContext context) {
             if (!json.has("inject"))
                 throw new JsonSyntaxException("Missing inject, expected to find a String or JsonArray");
