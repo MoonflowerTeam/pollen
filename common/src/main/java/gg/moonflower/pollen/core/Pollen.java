@@ -1,12 +1,12 @@
 package gg.moonflower.pollen.core;
 
 import gg.moonflower.pollen.api.advancement.AdvancementModifierManager;
+import gg.moonflower.pollen.api.crafting.brewing.PollenBrewingRecipe;
 import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
 import gg.moonflower.pollen.api.sync.SyncedDataManager;
-import gg.moonflower.pollen.api.crafting.brewing.PollenBrewingRecipe;
 import gg.moonflower.pollen.core.network.PollenMessages;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
@@ -18,7 +18,6 @@ import net.minecraft.world.item.crafting.RecipeType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal

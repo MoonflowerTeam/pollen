@@ -78,10 +78,9 @@ public class FishBucketItemBase extends BucketItemBase {
     }
 
     @Override
-    public void checkExtraContent(Level world, ItemStack stack, BlockPos pos) {
-        if (!world.isClientSide()) {
-            this.spawn((ServerLevel) world, stack, pos);
-        }
+    public void checkExtraContent(@Nullable Player player, Level world, ItemStack stack, BlockPos pos) {
+        if (!world.isClientSide())
+            this.spawn(player, (ServerLevel) world, stack, pos);
     }
 
     @Override

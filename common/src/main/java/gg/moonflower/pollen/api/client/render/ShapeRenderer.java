@@ -99,7 +99,7 @@ public final class ShapeRenderer {
      */
     public static VertexConsumer begin() {
         BufferBuilder buffer = Tesselator.getInstance().getBuilder();
-        buffer.begin(GL_QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
         return buffer;
     }
 
@@ -194,7 +194,7 @@ public final class ShapeRenderer {
      */
     public static void drawSunburst(PoseStack matrixStack, float x, float y, float width, float height, int segments) {
         BufferBuilder builder = Tesselator.getInstance().getBuilder();
-        builder.begin(GL_TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
+        builder.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
 
         Matrix4f matrix4f = matrixStack.last().pose();
         float burstAngleOffset = (float) (Math.PI * (1.0F / segments / 2F));
