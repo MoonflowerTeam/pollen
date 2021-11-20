@@ -1,22 +1,22 @@
 package gg.moonflower.pollen.core;
 
+import gg.moonflower.pollen.api.advancement.AdvancementModifierManager;
 import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
-import gg.moonflower.pollen.api.registry.ResourceRegistry;
-import gg.moonflower.pollen.api.util.PollinatedModContainer;
-import gg.moonflower.pollen.core.brewing.PollenBrewingRecipe;
+import gg.moonflower.pollen.api.sync.SyncedDataManager;
+import gg.moonflower.pollen.api.crafting.brewing.PollenBrewingRecipe;
 import gg.moonflower.pollen.core.network.PollenMessages;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -43,9 +43,11 @@ public class Pollen {
         GeometryModelManager.init();
         GeometryTextureManager.init();
         AnimationManager.init();
+        AdvancementModifierManager.init();
     }
 
     private static void onCommon() {
+        SyncedDataManager.init();
         RECIPE_SERIALIZERS.register(PLATFORM);
     }
 
@@ -53,8 +55,8 @@ public class Pollen {
     }
 
     private static void onCommonPost(Platform.ModSetupContext context) {
-        EventDispatcher.register(Pollen::onServerStarting);
-        EventDispatcher.register(Pollen::onServerStopped);
+        EventDispatcher.register(ServerLifecycleEvent.Starting.class, Pollen::onServerStarting);
+        EventDispatcher.register(ServerLifecycleEvent.Stopped.class, Pollen::onServerStopped);
         PollenMessages.init();
     }
 
@@ -66,7 +68,8 @@ public class Pollen {
         server = null;
     }
 
-    public static Optional<MinecraftServer> getRunningServer() {
-        return Optional.ofNullable(server);
+    @Nullable
+    public static MinecraftServer getRunningServer() {
+        return server;
     }
 }

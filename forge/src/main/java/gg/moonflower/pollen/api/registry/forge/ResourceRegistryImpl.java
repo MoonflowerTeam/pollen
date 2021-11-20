@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.api.registry.forge;
 
 import com.mojang.datafixers.util.Pair;
+import gg.moonflower.pollen.api.registry.PollinatedPreparableReloadListener;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import gg.moonflower.pollen.api.util.forge.ForgeModResourcePack;
 import net.minecraft.resources.ResourceLocation;
@@ -8,6 +9,8 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.nio.file.Files;
@@ -18,21 +21,52 @@ import java.util.function.Consumer;
 @ApiStatus.Internal
 public class ResourceRegistryImpl {
 
-    private static final Map<PackType, Set<PreparableReloadListener>> LISTENERS = new HashMap<>();
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Map<PackType, Set<PollinatedPreparableReloadListener>> LISTENERS = new HashMap<>();
     private static final Set<Pair<String, ForgeModResourcePack>> builtinResourcePacks = new HashSet<>();
 
-    public static synchronized void registerReloadListener(PackType type, PreparableReloadListener listener) {
+    public static synchronized void registerReloadListener(PackType type, PollinatedPreparableReloadListener listener) {
         if (!LISTENERS.computeIfAbsent(type, __ -> new HashSet<>()).add(listener))
             throw new RuntimeException("Attempted to add listener twice: " + listener.getName() + "");
     }
 
     public static void inject(PackType type, List<PreparableReloadListener> listeners) {
-        Set<PreparableReloadListener> addedListeners = LISTENERS.get(type);
+        Set<PollinatedPreparableReloadListener> addedListeners = LISTENERS.get(type);
         if (addedListeners == null)
             return;
 
-        listeners.removeAll(addedListeners);
-        listeners.addAll(addedListeners);
+        List<PollinatedPreparableReloadListener> listenersToAdd = new ArrayList<>(addedListeners);
+        Set<ResourceLocation> resolvedIds = new HashSet<>();
+
+        for (PreparableReloadListener listener : listeners) {
+            if (listener instanceof PollinatedPreparableReloadListener) {
+                resolvedIds.add(((PollinatedPreparableReloadListener) listener).getPollenId());
+            } else {
+                resolvedIds.add(new ResourceLocation(listener.getName())); // Add support for vanilla dependencies
+            }
+        }
+
+        int lastSize = -1;
+
+        while (listeners.size() != lastSize) {
+            lastSize = listeners.size();
+
+            Iterator<PollinatedPreparableReloadListener> it = listenersToAdd.iterator();
+
+            while (it.hasNext()) {
+                PollinatedPreparableReloadListener listener = it.next();
+
+                if (resolvedIds.containsAll(listener.getPollenDependencies())) {
+                    resolvedIds.add(listener.getPollenId());
+                    listeners.add(listener);
+                    it.remove();
+                }
+            }
+        }
+
+        for (PreparableReloadListener listener : listenersToAdd) {
+            LOGGER.warn("Could not resolve dependencies for listener: " + listener.getName() + "!");
+        }
     }
 
     public static void inject(PackType type, Consumer<Pack> consumer, Pack.PackConstructor factory) {

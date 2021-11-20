@@ -23,10 +23,18 @@
     ],
     "client": [
       "gg.moonflower.pollen.core.fabric.PollenFabricClient"
+    ],
+    "cardinal-components-entity": [
+      "gg.moonflower.pollen.core.fabric.PollenComponents"
     ]
   },
   "depends": {
     "fabric": "*",
     "minecraft": "1.17.x"
+  },
+  "custom": {
+    "cardinal-components": [
+      "${id}:synced_data"
+    ]
   }
 }

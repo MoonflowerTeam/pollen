@@ -5,12 +5,11 @@ import gg.moonflower.pollen.api.network.PollinatedLoginNetworkChannel;
 import gg.moonflower.pollen.api.network.PollinatedPlayNetworkChannel;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
+import gg.moonflower.pollen.api.platform.Platform;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.network.protocol.login.ClientLoginPacketListener;
-import net.minecraft.network.protocol.status.ClientStatusPacketListener;
 import net.minecraft.network.protocol.status.ServerStatusPacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -42,7 +41,7 @@ public final class NetworkRegistry {
      */
     @ExpectPlatform
     public static PollinatedPlayNetworkChannel createPlay(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
-        throw new AssertionError();
+        return Platform.error();
     }
 
     /**
@@ -55,7 +54,7 @@ public final class NetworkRegistry {
      */
     @ExpectPlatform
     public static PollinatedLoginNetworkChannel createLogin(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
-        throw new AssertionError();
+        return Platform.error();
     }
 
     @ApiStatus.Internal
@@ -71,17 +70,13 @@ public final class NetworkRegistry {
             PacketListener netHandler = networkManager.getPacketListener();
 
             // Need to check the channel type to determine how to disconnect
-            if (netHandler instanceof ServerStatusPacketListener)
+            if (netHandler instanceof ServerStatusPacketListener) {
                 networkManager.disconnect(reason);
-            if (netHandler instanceof ServerLoginPacketListenerImpl)
+            } else if (netHandler instanceof ServerLoginPacketListenerImpl) {
                 ((ServerLoginPacketListenerImpl) netHandler).disconnect(reason);
-            if (netHandler instanceof ServerGamePacketListenerImpl)
+            } else if (netHandler instanceof ServerGamePacketListenerImpl) {
                 ((ServerGamePacketListenerImpl) netHandler).disconnect(reason);
-            if (netHandler instanceof ClientStatusPacketListener) {
-                networkManager.disconnect(reason);
-                netHandler.onDisconnect(reason);
-            }
-            if (netHandler instanceof ClientLoginPacketListener) {
+            } else {
                 networkManager.disconnect(reason);
                 netHandler.onDisconnect(reason);
             }

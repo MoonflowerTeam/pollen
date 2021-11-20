@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.api.platform.fabric;
 
-import gg.moonflower.pollen.core.Pollen;
+import gg.moonflower.pollen.api.platform.Platform;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
@@ -15,6 +15,6 @@ public class PlatformImpl {
     }
 
     public static BlockableEventLoop<?> getGameExecutor() {
-        return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ? Minecraft.getInstance() : Pollen.getRunningServer().orElseThrow(IllegalStateException::new);
+        return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ? Minecraft.getInstance() : Platform.getRunningServer().orElseThrow(IllegalStateException::new);
     }
 }

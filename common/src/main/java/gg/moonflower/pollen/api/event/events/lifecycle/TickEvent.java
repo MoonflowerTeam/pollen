@@ -2,12 +2,13 @@ package gg.moonflower.pollen.api.event.events.lifecycle;
 
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
 /**
  * Events fired for game updates.
  */
-public class TickEvent implements PollinatedEvent {
+public class TickEvent extends PollinatedEvent {
 
     /**
      * Called each time the client runs a tick. Use {@link .Pre} and {@link Post} for specific tick timeframes.
@@ -18,6 +19,9 @@ public class TickEvent implements PollinatedEvent {
      * @since 1.0.0
      */
     public static class ClientEvent extends TickEvent {
+
+        private ClientEvent() {
+        }
 
         public static class Pre extends ClientEvent {
         }
@@ -34,10 +38,48 @@ public class TickEvent implements PollinatedEvent {
      */
     public static class ServerEvent extends TickEvent {
 
+        private ServerEvent() {
+        }
+
         public static class Pre extends ServerEvent {
         }
 
         public static class Post extends ServerEvent {
+        }
+    }
+
+    /**
+     * Called each time a living entity is ticked server and client side. Use {@link Pre} and {@link Post} for specific tick timeframes.
+     *
+     * @author Ocelot
+     * @since 1.0.0
+     */
+    public static class LivingEntityEvent extends TickEvent {
+
+        private final LivingEntity entity;
+
+        private LivingEntityEvent(LivingEntity entity) {
+            this.entity = entity;
+        }
+
+        /**
+         * @return The entity being ticked
+         */
+        public Entity getEntity() {
+            return entity;
+        }
+
+        @Cancellable
+        public static class Pre extends LivingEntityEvent {
+            public Pre(LivingEntity entity) {
+                super(entity);
+            }
+        }
+
+        public static class Post extends LivingEntityEvent {
+            public Post(LivingEntity entity) {
+                super(entity);
+            }
         }
     }
 
@@ -51,7 +93,7 @@ public class TickEvent implements PollinatedEvent {
 
         private final Level level;
 
-        public LevelEvent(Level level) {
+        private LevelEvent(Level level) {
             this.level = level;
         }
 
@@ -63,14 +105,12 @@ public class TickEvent implements PollinatedEvent {
         }
 
         public static class Pre extends LevelEvent {
-
             public Pre(Level level) {
                 super(level);
             }
         }
 
         public static class Post extends LevelEvent {
-
             public Post(Level level) {
                 super(level);
             }

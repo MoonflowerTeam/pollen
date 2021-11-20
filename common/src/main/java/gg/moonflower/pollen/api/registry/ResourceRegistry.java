@@ -5,7 +5,6 @@ import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
 
 /**
  * A wrapper for the Fabric resource API that also functions on Forge.
@@ -25,7 +24,7 @@ public final class ResourceRegistry {
      * @param listener The resource listener to add
      */
     @ExpectPlatform
-    public static void registerReloadListener(PackType type, PreparableReloadListener listener) {
+    public static void registerReloadListener(PackType type, PollinatedPreparableReloadListener listener) {
         Platform.error();
     }
 

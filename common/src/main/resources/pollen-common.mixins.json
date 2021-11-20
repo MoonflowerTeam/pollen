@@ -10,6 +10,15 @@
   "mixins": [
     "EntityMixin",
     "PotionBrewingMixin"
+    "AdvancementBuilderAccessor",
+    "AdvancementBuilderMixin",
+    "AdvancementRewardsAccessor",
+    "AdvancementRewardsBuilderAccessor",
+    "LivingEntityMixin",
+    "PotionBrewingMixin",
+    "ServerAdvancementManagerMixin",
+    "ServerResourcesMixin",
+    "SimpleReloadableResourceManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

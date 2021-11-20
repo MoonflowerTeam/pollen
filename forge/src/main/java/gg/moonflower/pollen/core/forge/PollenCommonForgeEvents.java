@@ -5,6 +5,7 @@ import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
 import gg.moonflower.pollen.api.event.events.player.InteractEvent;
 import gg.moonflower.pollen.core.Pollen;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -40,6 +41,11 @@ public class PollenCommonForgeEvents {
                 PollenForge.postEvent(event, new TickEvent.LevelEvent.Post(event.world));
                 break;
         }
+    }
+
+    @SubscribeEvent
+    public static void onEvent(LivingEvent.LivingUpdateEvent event) {
+        PollenForge.postEvent(event, new TickEvent.LivingEntityEvent.Pre(event.getEntityLiving()));
     }
 
     @SubscribeEvent

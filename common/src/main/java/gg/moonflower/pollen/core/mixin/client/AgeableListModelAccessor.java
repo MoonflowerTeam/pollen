@@ -7,7 +7,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(AgeableListModel.class)
 public interface AgeableListModelAccessor {
-
     @Invoker
     Iterable<ModelPart> invokeHeadParts();
 

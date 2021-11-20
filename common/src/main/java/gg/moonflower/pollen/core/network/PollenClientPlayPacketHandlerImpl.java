@@ -17,6 +17,7 @@ import org.jetbrains.annotations.ApiStatus;
  */
 @ApiStatus.Internal
 public class PollenClientPlayPacketHandlerImpl implements PollenClientPlayPacketHandler {
+
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Override

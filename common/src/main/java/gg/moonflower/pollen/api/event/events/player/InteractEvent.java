@@ -13,24 +13,34 @@ import net.minecraft.world.phys.BlockHitResult;
  * Events fired for player interactions.
  */
 public class InteractEvent extends ResultEvent {
+
     private final Player player;
     private final Level level;
     private final InteractionHand hand;
 
-    public InteractEvent(Player player, Level level, InteractionHand hand) {
+    private InteractEvent(Player player, Level level, InteractionHand hand) {
         this.player = player;
         this.level = level;
         this.hand = hand;
     }
 
+    /**
+     * @return The player doing the interaction
+     */
     public Player getPlayer() {
         return player;
     }
 
+    /**
+     * @return The level being interacted in
+     */
     public Level getLevel() {
         return level;
     }
 
+    /**
+     * @return The hand of the player
+     */
     public InteractionHand getHand() {
         return hand;
     }
@@ -54,6 +64,7 @@ public class InteractEvent extends ResultEvent {
      * @since 1.0.0
      */
     public static class UseEntity extends InteractEvent {
+
         private final Entity entity;
 
         public UseEntity(Player player, Level level, InteractionHand hand, Entity entity) {
@@ -61,6 +72,9 @@ public class InteractEvent extends ResultEvent {
             this.entity = entity;
         }
 
+        /**
+         * @return The entity being right-clicked
+         */
         public Entity getEntity() {
             return entity;
         }
@@ -73,6 +87,7 @@ public class InteractEvent extends ResultEvent {
      * @since 1.0.0
      */
     public static class UseBlock extends InteractEvent {
+
         private final BlockHitResult hitResult;
 
         public UseBlock(Player player, Level level, InteractionHand hand, BlockHitResult hitResult) {
@@ -80,6 +95,9 @@ public class InteractEvent extends ResultEvent {
             this.hitResult = hitResult;
         }
 
+        /**
+         * @return The result of the block right-clicked
+         */
         public BlockHitResult getHitResult() {
             return hitResult;
         }
@@ -92,6 +110,7 @@ public class InteractEvent extends ResultEvent {
      * @since 1.0.0
      */
     public static class AttackBlock extends InteractEvent {
+
         private final BlockPos pos;
         private final Direction direction;
 
@@ -101,10 +120,16 @@ public class InteractEvent extends ResultEvent {
             this.direction = direction;
         }
 
+        /**
+         * @return The position of the block attacked
+         */
         public BlockPos getPos() {
             return pos;
         }
 
+        /**
+         * @return The face that was attacked
+         */
         public Direction getDirection() {
             return direction;
         }

@@ -8,5 +8,5 @@ import gg.moonflower.pollen.api.event.PollinatedEvent;
  * @author Ocelot
  * @since 1.0.0
  */
-public class ReloadRendersEvent implements PollinatedEvent {
+public class ReloadRendersEvent extends PollinatedEvent {
 }
