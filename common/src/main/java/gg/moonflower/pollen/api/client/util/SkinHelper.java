@@ -36,7 +36,7 @@ import java.util.function.Consumer;
  */
 public class SkinHelper {
 
-    private static final Map<GameProfile, GameProfile> PROFILE_CACHE = new WeakHashMap<>();
+    private static final Map<GameProfile, CompletableFuture<GameProfile>> PROFILE_CACHE = new WeakHashMap<>();
     @Environment(EnvType.CLIENT)
     private static MinecraftSessionService sessionService;
     @Environment(EnvType.CLIENT)
@@ -49,44 +49,35 @@ public class SkinHelper {
         gameProfileCache = new GameProfileCache(authenticationservice.createProfileRepository(), new File(Minecraft.getInstance().gameDirectory, MinecraftServer.USERID_CACHE_FILE.getName()));
     }
 
-    private static GameProfile guiUpdateGameProfile(GameProfile input) {
+    private static CompletableFuture<GameProfile> guiUpdateGameProfile(GameProfile input) {
         if (input.isComplete() && input.getProperties().containsKey("textures"))
-            return input;
+            return CompletableFuture.completedFuture(input);
         if (StringUtil.isNullOrEmpty(input.getName()) && input.getId() == null)
-            return input;
+            return CompletableFuture.completedFuture(input);
 
-        if (StringUtil.isNullOrEmpty(input.getName())) {
-            GameProfile gameProfile2 = gameProfileCache.get(input.getId());
-            if (gameProfile2 == null)
-                return input;
-            Property property = Iterables.getFirst(gameProfile2.getProperties().get("textures"), null);
-            if (property == null)
-                gameProfile2 = sessionService.fillProfileProperties(gameProfile2, true);
-            return gameProfile2;
-        } else {
-            GameProfile gameProfile2 = gameProfileCache.get(input.getName());
-            if (gameProfile2 == null)
-                return input;
-            Property property = Iterables.getFirst(gameProfile2.getProperties().get("textures"), null);
-            if (property == null)
-                gameProfile2 = sessionService.fillProfileProperties(gameProfile2, true);
-            return gameProfile2;
-        }
+        return CompletableFuture.supplyAsync(() -> {
+            if (StringUtil.isNullOrEmpty(input.getName())) {
+                GameProfile profile = gameProfileCache.get(input.getId());
+                if (profile == null)
+                    return input;
+                Property property = Iterables.getFirst(profile.getProperties().get("textures"), null);
+                if (property == null)
+                    profile = sessionService.fillProfileProperties(profile, true);
+                return profile;
+            } else {
+                GameProfile profile = gameProfileCache.get(input.getName());
+                if (profile == null)
+                    return input;
+                Property property = Iterables.getFirst(profile.getProperties().get("textures"), null);
+                if (property == null)
+                    profile = sessionService.fillProfileProperties(profile, true);
+                return profile;
+            }
+        }, Util.backgroundExecutor());
     }
 
-    /**
-     * Caches the results of {@link SkullBlockEntity#updateGameprofile(GameProfile)}. Use {@link SkinHelper#updateGameProfileAsync(GameProfile)} to fill the profile without blocking the current thread.
-     *
-     * @param input The input game profile
-     * @return The filled game profile with properties
-     */
-    @Nullable
-    public static synchronized GameProfile updateGameProfile(@Nullable GameProfile input) {
-        if (input == null)
-            return null;
-        if (Minecraft.getInstance().level == null || StringUtil.isNullOrEmpty(input.getName()))
-            return PROFILE_CACHE.computeIfAbsent(input, SkinHelper::guiUpdateGameProfile);
-        return PROFILE_CACHE.computeIfAbsent(input, SkullBlockEntity::updateGameprofile);
+    private static CompletableFuture<GameProfile> updateGameProfileFuture(GameProfile input) {
+        return CompletableFuture.supplyAsync(() -> SkullBlockEntity.updateGameprofile(input), Util.backgroundExecutor());
     }
 
     /**
@@ -95,10 +86,13 @@ public class SkinHelper {
      * @param input The input game profile
      * @return The filled game profile with properties
      */
-    public static CompletableFuture<GameProfile> updateGameProfileAsync(@Nullable GameProfile input) {
+    @Nullable
+    public static synchronized CompletableFuture<GameProfile> updateGameProfile(@Nullable GameProfile input) {
         if (input == null)
-            return CompletableFuture.completedFuture(null);
-        return CompletableFuture.supplyAsync(() -> updateGameProfile(input));
+            return null;
+        if (Minecraft.getInstance().level == null || StringUtil.isNullOrEmpty(input.getName()))
+            return PROFILE_CACHE.computeIfAbsent(input, SkinHelper::guiUpdateGameProfile);
+        return PROFILE_CACHE.computeIfAbsent(input, SkinHelper::updateGameProfileFuture);
     }
 
     /**
