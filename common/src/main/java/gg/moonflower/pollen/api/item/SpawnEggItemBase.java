@@ -7,6 +7,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
@@ -21,7 +22,7 @@ import java.util.function.Supplier;
  * @author Ocelot
  * @since 1.0.0
  */
-public class SpawnEggItemBase<T extends EntityType<?>> extends SpawnEggItem {
+public class SpawnEggItemBase<T extends EntityType<? extends Mob>> extends SpawnEggItem {
 
     private final boolean addToMisc;
     private final Supplier<T> type;
