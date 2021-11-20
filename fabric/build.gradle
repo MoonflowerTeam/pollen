@@ -45,8 +45,6 @@ dependencies {
     shadowCommon "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
 
     // Fabric-only Dependencies
-    implementation "net.jodah:typetools:0.8.3"
-    include "net.jodah:typetools:0.8.3"
     modApi "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cardinal_components_version}"
     modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cardinal_components_version}"
     include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cardinal_components_version}"

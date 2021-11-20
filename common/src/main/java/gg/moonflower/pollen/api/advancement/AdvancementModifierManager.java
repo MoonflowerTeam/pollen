@@ -38,7 +38,7 @@ public class AdvancementModifierManager {
 
     @ApiStatus.Internal
     public static void init() {
-        EventDispatcher.register(AdvancementModifierManager::modifyAdvancements);
+        EventDispatcher.register(AdvancementConstructingEvent.class, AdvancementModifierManager::modifyAdvancements);
     }
 
     @ApiStatus.Internal

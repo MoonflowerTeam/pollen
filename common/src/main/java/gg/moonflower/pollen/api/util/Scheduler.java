@@ -41,7 +41,7 @@ public class Scheduler implements ScheduledExecutorService {
         this.service = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, (client ? "Client" : "Server") + " Scheduler"));
         this.event = this::onServerStopped;
         if (!client)
-            EventDispatcher.register(this.event);
+            EventDispatcher.register(ServerLifecycleEvent.Stopping.class, this.event);
     }
 
     private void shutdownInternal() {

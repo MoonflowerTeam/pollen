@@ -55,7 +55,7 @@ public class GeometryCache {
                 LOGGER.error("Failed to load cache metadata", e);
             }
         }
-        EventDispatcher.register(GeometryCache::clientTick);
+        EventDispatcher.register(TickEvent.ClientEvent.Post.class, GeometryCache::clientTick);
     }
 
     private static synchronized void writeMetadata() {

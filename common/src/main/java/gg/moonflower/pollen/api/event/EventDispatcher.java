@@ -1,11 +1,8 @@
 package gg.moonflower.pollen.api.event;
 
-import net.jodah.typetools.TypeResolver;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,17 +22,6 @@ public class EventDispatcher {
 
     private static final Map<Class<?>, List<Consumer<? extends PollinatedEvent>>> CLASS_EVENTS = new ConcurrentHashMap<>();
     private static final Map<Class<?>, List<RegisteredEvent>> EVENT_LISTENERS = new ConcurrentHashMap<>();
-    private static final Logger LOGGER = LogManager.getLogger();
-
-    @SuppressWarnings("unchecked")
-    private static <T extends PollinatedEvent> Class<T> getEventClass(Consumer<T> consumer) {
-        Class<T> eventClass = (Class<T>) TypeResolver.resolveRawArgument(Consumer.class, consumer.getClass());
-        if ((Class<?>) eventClass == TypeResolver.Unknown.class) {
-            LOGGER.error("Failed to resolve handler for \"{}\"", consumer.toString());
-            throw new IllegalStateException("Failed to resolve consumer event type: " + consumer);
-        }
-        return eventClass;
-    }
 
     /**
      * Registers all event handlers in the specified class.
@@ -81,8 +67,8 @@ public class EventDispatcher {
      * @param eventConsumer The consumer of the event
      * @param <T>           The type of event to receive
      */
-    public static synchronized <T extends PollinatedEvent> void register(Consumer<T> eventConsumer) {
-        register(eventConsumer, 1000, false);
+    public static synchronized <T extends PollinatedEvent> void register(Class<T> clazz, Consumer<T> eventConsumer) {
+        register(clazz, eventConsumer, 1000, false);
     }
 
     /**
@@ -92,8 +78,8 @@ public class EventDispatcher {
      * @param priority      The priority of the event according to {@link EventListener#priority()}
      * @param <T>           The type of event to receive
      */
-    public static synchronized <T extends PollinatedEvent> void register(Consumer<T> eventConsumer, int priority) {
-        register(eventConsumer, priority, false);
+    public static synchronized <T extends PollinatedEvent> void register(Class<T> clazz, Consumer<T> eventConsumer, int priority) {
+        register(clazz, eventConsumer, priority, false);
     }
 
     /**
@@ -103,8 +89,8 @@ public class EventDispatcher {
      * @param receiveCancelled Whether to receive events after being canceled according to {@link EventListener#receiveCanceled()}
      * @param <T>              The type of event to receive
      */
-    public static synchronized <T extends PollinatedEvent> void register(Consumer<T> eventConsumer, boolean receiveCancelled) {
-        register(eventConsumer, 1000, receiveCancelled);
+    public static synchronized <T extends PollinatedEvent> void register(Class<T> clazz, Consumer<T> eventConsumer, boolean receiveCancelled) {
+        register(clazz, eventConsumer, 1000, receiveCancelled);
     }
 
     /**
@@ -116,8 +102,7 @@ public class EventDispatcher {
      * @param <T>              The type of event to receive
      */
     @SuppressWarnings("unchecked")
-    public static synchronized <T extends PollinatedEvent> void register(Consumer<T> eventConsumer, int priority, boolean receiveCancelled) {
-        Class<?> clazz = getEventClass(eventConsumer);
+    public static synchronized <T extends PollinatedEvent> void register(Class<T> clazz, Consumer<T> eventConsumer, int priority, boolean receiveCancelled) {
         EVENT_LISTENERS.computeIfAbsent(clazz, key -> new LinkedList<>()).add(new RegisteredEvent((Consumer<PollinatedEvent>) eventConsumer, priority, receiveCancelled));
     }
 
@@ -140,13 +125,14 @@ public class EventDispatcher {
      * @param <T>           The type of event to unregister
      */
     public static synchronized <T extends PollinatedEvent> void unregister(Consumer<T> eventConsumer) {
-        Class<?> clazz = getEventClass(eventConsumer);
-        List<EventDispatcher.RegisteredEvent> list = EVENT_LISTENERS.get(clazz);
-        if (list == null)
-            return;
-        list.removeIf(registeredEvent -> registeredEvent.consumer == eventConsumer);
-        if (list.isEmpty())
-            EVENT_LISTENERS.remove(clazz);
+        for (Map.Entry<Class<?>, List<RegisteredEvent>> entry : EVENT_LISTENERS.entrySet()) {
+            List<RegisteredEvent> list = entry.getValue();
+            if (list.removeIf(registeredEvent -> registeredEvent.consumer == eventConsumer)) {
+                if (list.isEmpty())
+                    EVENT_LISTENERS.remove(entry.getKey());
+                return;
+            }
+        }
     }
 
     /**

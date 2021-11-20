@@ -55,8 +55,8 @@ public class Pollen {
     }
 
     private static void onCommonPost(Platform.ModSetupContext context) {
-        EventDispatcher.register(Pollen::onServerStarting);
-        EventDispatcher.register(Pollen::onServerStopped);
+        EventDispatcher.register(ServerLifecycleEvent.Starting.class, Pollen::onServerStarting);
+        EventDispatcher.register(ServerLifecycleEvent.Stopped.class, Pollen::onServerStopped);
         PollenMessages.init();
     }
 
