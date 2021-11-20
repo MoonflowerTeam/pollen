@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Optional;
 import java.util.WeakHashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -57,17 +58,19 @@ public class SkinHelper {
 
         return CompletableFuture.supplyAsync(() -> {
             if (StringUtil.isNullOrEmpty(input.getName())) {
-                GameProfile profile = gameProfileCache.get(input.getId());
-                if (profile == null)
+                Optional<GameProfile> optional = gameProfileCache.get(input.getId());
+                if (optional.isEmpty())
                     return input;
+                GameProfile profile = optional.get();
                 Property property = Iterables.getFirst(profile.getProperties().get("textures"), null);
                 if (property == null)
                     profile = sessionService.fillProfileProperties(profile, true);
                 return profile;
             } else {
-                GameProfile profile = gameProfileCache.get(input.getName());
-                if (profile == null)
+                Optional<GameProfile> optional = gameProfileCache.get(input.getName());
+                if (optional.isEmpty())
                     return input;
+                GameProfile profile = optional.get();
                 Property property = Iterables.getFirst(profile.getProperties().get("textures"), null);
                 if (property == null)
                     profile = sessionService.fillProfileProperties(profile, true);
@@ -77,11 +80,13 @@ public class SkinHelper {
     }
 
     private static CompletableFuture<GameProfile> updateGameProfileFuture(GameProfile input) {
-        return CompletableFuture.supplyAsync(() -> SkullBlockEntity.updateGameprofile(input), Util.backgroundExecutor());
+        CompletableFuture<GameProfile> future = new CompletableFuture<>();
+        SkullBlockEntity.updateGameprofile(input, future::complete);
+        return future;
     }
 
     /**
-     * Caches the results of {@link SkullBlockEntity#updateGameprofile(GameProfile)}.
+     * Caches the results of {@link SkullBlockEntity#updateGameprofile(GameProfile, Consumer)}.
      *
      * @param input The input game profile
      * @return The filled game profile with properties
