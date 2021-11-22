@@ -22,8 +22,8 @@ public class ConfigManagerImpl {
         Pair<T, ForgeConfigSpec> pair = new PollinatedConfigBuilderImpl(new ForgeConfigSpec.Builder()).configure(consumer);
         ModLoadingContext.get().registerConfig(convert(type), pair.getRight(), fileName);
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        bus.<ModConfig.Loading>addListener(event -> Platform.getGameExecutor().execute(() -> PollenForge.postEvent(event, new ConfigEvent.Loading(new PollinatedModConfigImpl(event.getConfig())))));
-        bus.<ModConfig.Reloading>addListener(event -> Platform.getGameExecutor().execute(() -> PollenForge.postEvent(event, new ConfigEvent.Reloading(new PollinatedModConfigImpl(event.getConfig())))));
+        bus.<ModConfig.Loading>addListener(event -> PollenForge.postEvent(event, new ConfigEvent.Loading(new PollinatedModConfigImpl(event.getConfig()))));
+        bus.<ModConfig.Reloading>addListener(event -> PollenForge.postEvent(event, new ConfigEvent.Reloading(new PollinatedModConfigImpl(event.getConfig()))));
         return pair.getLeft();
     }
 

@@ -7,7 +7,6 @@ import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.events.ConfigEvent;
-import gg.moonflower.pollen.api.platform.Platform;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -118,7 +117,7 @@ public class ConfigFileTypeHandler {
                 }
                 LOGGER.debug("Config file {} changed, sending notifies", this.modConfig.getFileName());
                 this.modConfig.getSpec().afterReload();
-                Platform.getGameExecutor().execute(() -> EventDispatcher.post(new ConfigEvent.Reloading(this.modConfig)));
+                EventDispatcher.post(new ConfigEvent.Reloading(this.modConfig));
             }
         }
     }
