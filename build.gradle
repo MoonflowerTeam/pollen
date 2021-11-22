@@ -33,6 +33,12 @@ allprojects {
 
     repositories {
         maven {
+            url "https://www.cursemaven.com"
+            content {
+                includeGroup "curse.maven"
+            }
+        }
+        maven {
             name = "JitPack"
             url = "https://jitpack.io"
         }
