@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.util;
+package gg.moonflower.pollen.api.util.forge;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;

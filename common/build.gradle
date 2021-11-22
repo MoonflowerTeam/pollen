@@ -11,7 +11,7 @@ architectury {
 }
 
 loom {
-    accessWidenerPath = file("src/main/resources/pollen-common.accesswidener")
+    accessWidenerPath.set(file("src/main/resources/${project.mod_id}.accesswidener"))
 }
 
 publishing {
@@ -19,6 +19,14 @@ publishing {
         mavenCommon(MavenPublication) {
             artifactId = project.archivesBaseName
             from components.java
+        }
+    }
+}
+
+afterEvaluate {
+    tasks {
+        remapJar {
+            remapAccessWidener.set(false)
         }
     }
 }

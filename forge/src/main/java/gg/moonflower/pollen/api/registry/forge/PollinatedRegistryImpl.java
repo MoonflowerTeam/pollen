@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.platform.forge.ForgePlatform;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
-import gg.moonflower.pollen.api.util.ForgeRegistryCodec;
+import gg.moonflower.pollen.api.util.forge.ForgeRegistryCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraftforge.registries.DeferredRegister;

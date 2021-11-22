@@ -8,10 +8,15 @@ plugins {
 archivesBaseName = "${rootProject.archivesBaseName}-${project.name}"
 
 loom {
+    accessWidenerPath.set(project(":common").file("src/main/resources/${project.mod_id}.accesswidener"))
+
     forge {
         // For some reason gradle doesn't like using rootProject here?
         mixinConfig "${project.mod_id}-common.mixins.json"
         mixinConfig "${project.mod_id}.mixins.json"
+
+        convertAccessWideners.set(true)
+        extraAccessWideners.add("${project.mod_id}.accesswidener")
     }
     mixin {
         defaultRefmapName = "${project.mod_id}-refmap.json"
@@ -38,7 +43,8 @@ dependencies {
     implementation "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
     shadowCommon "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
 
-    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    implementation(project(path: ":common", configuration: "namedElements")) { transitive false }
+    developmentForge(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 }
 

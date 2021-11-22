@@ -38,13 +38,9 @@ public class ResourceRegistryImpl {
         List<PollinatedPreparableReloadListener> listenersToAdd = new ArrayList<>(addedListeners);
         Set<ResourceLocation> resolvedIds = new HashSet<>();
 
-        for (PreparableReloadListener listener : listeners) {
-            if (listener instanceof PollinatedPreparableReloadListener) {
+        for (PreparableReloadListener listener : listeners)
+            if (listener instanceof PollinatedPreparableReloadListener)
                 resolvedIds.add(((PollinatedPreparableReloadListener) listener).getPollenId());
-            } else {
-                resolvedIds.add(new ResourceLocation(listener.getName())); // Add support for vanilla dependencies
-            }
-        }
 
         int lastSize = -1;
 

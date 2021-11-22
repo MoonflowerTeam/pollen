@@ -16,6 +16,7 @@ loom {
     mixin {
         defaultRefmapName = "${project.mod_id}-refmap.json"
     }
+    accessWidenerPath.set(project(":common").file("src/main/resources/${project.mod_id}.accesswidener"))
 }
 
 configurations {
@@ -50,7 +51,8 @@ dependencies {
     include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cardinal_components_version}"
     include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cardinal_components_version}"
 
-    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    implementation(project(path: ":common", configuration: "namedElements")) { transitive false }
+    developmentFabric(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }
 
