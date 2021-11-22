@@ -4,8 +4,13 @@
   "version": "${version}",
   "name": "${name}",
   "description": "Pollen is a library mod which includes various utilities and platform bridges for Fabric and Forge using Architectury.",
-  "authors": [ "Moonflower" ],
-  "contributors": [ "Jackson", "Ocelot"],
+  "authors": [
+    "Moonflower"
+  ],
+  "contributors": [
+    "Jackson",
+    "Ocelot"
+  ],
   "contact": {
     "homepage": "https://moonflower.gg",
     "issues": "https://github.com/MoonflowerTeam/${repo}/issues",
@@ -26,6 +31,9 @@
     ],
     "cardinal-components-entity": [
       "gg.moonflower.pollen.core.fabric.PollenComponents"
+    ],
+    "modmenu": [
+      "gg.moonflower.pollen.core.fabric.PollenModMenu"
     ]
   },
   "depends": {

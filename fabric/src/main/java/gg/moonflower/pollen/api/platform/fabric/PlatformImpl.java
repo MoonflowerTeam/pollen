@@ -1,11 +1,15 @@
 package gg.moonflower.pollen.api.platform.fabric;
 
 import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.api.util.PollinatedModContainer;
+import gg.moonflower.pollen.api.util.fabric.PollinatedModContainerImpl;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.thread.BlockableEventLoop;
 import org.jetbrains.annotations.ApiStatus;
+
+import java.util.stream.Stream;
 
 @ApiStatus.Internal
 public class PlatformImpl {
@@ -20,5 +24,9 @@ public class PlatformImpl {
 
     public static boolean isModLoaded(String modId) {
         return FabricLoader.getInstance().isModLoaded(modId);
+    }
+
+    public static Stream<PollinatedModContainer> getMods() {
+        return FabricLoader.getInstance().getAllMods().stream().map(PollinatedModContainerImpl::new);
     }
 }

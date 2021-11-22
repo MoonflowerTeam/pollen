@@ -1,14 +1,21 @@
 package gg.moonflower.pollen.core.fabric;
 
+import gg.moonflower.pollen.api.config.PollinatedConfigType;
+import gg.moonflower.pollen.api.config.fabric.ConfigTracker;
 import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
 import gg.moonflower.pollen.api.event.events.player.InteractEvent;
 import gg.moonflower.pollen.core.Pollen;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.event.player.*;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.world.InteractionResultHolder;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -17,6 +24,12 @@ public class PollenFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        Pollen.init();
+
+        ConfigTracker.INSTANCE.loadConfigs(PollinatedConfigType.COMMON, FabricLoader.getInstance().getConfigDir());
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+            ConfigTracker.INSTANCE.loadConfigs(PollinatedConfigType.CLIENT, FabricLoader.getInstance().getConfigDir());
+
         Pollen.PLATFORM.setup();
 
         ServerTickEvents.START_SERVER_TICK.register(level -> EventDispatcher.post(new TickEvent.ServerEvent.Pre()));
@@ -51,5 +64,7 @@ public class PollenFabric implements ModInitializer {
             EventDispatcher.post(event);
             return event.getResult();
         });
+
+        EventDispatcher.register(FabricEvents.class);
     }
 }

@@ -14,7 +14,7 @@ public class PollinatedModContainerImpl implements PollinatedModContainer {
 
     private final ModContainer parent;
 
-    private PollinatedModContainerImpl(ModContainer parent) {
+    public PollinatedModContainerImpl(ModContainer parent) {
         this.parent = parent;
     }
 

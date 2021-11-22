@@ -9,6 +9,7 @@ import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.NetworkRegistry;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.network.login.ClientboundSyncPlayerDataKeysPacket;
+import gg.moonflower.pollen.core.network.login.PollenClientLoginPacketHandler;
 import gg.moonflower.pollen.core.network.play.ClientboundSyncAnimationPacket;
 import gg.moonflower.pollen.core.network.play.PollenClientPlayPacketHandler;
 import net.minecraft.resources.ResourceLocation;
@@ -23,7 +24,7 @@ import java.util.function.Supplier;
 public class PollenMessages {
 
     public static final PollinatedPlayNetworkChannel PLAY = NetworkRegistry.createPlay(new ResourceLocation(Pollen.MOD_ID, "play"), "1", () -> PollenMessages::createClientPlayHandler, () -> Object::new);
-    public static final PollinatedLoginNetworkChannel LOGIN = NetworkRegistry.createLogin(new ResourceLocation(Pollen.MOD_ID, "login"), "1", () -> PollenClientLoginPacketHandlerImpl::new, () -> Object::new);
+    public static final PollinatedLoginNetworkChannel LOGIN = NetworkRegistry.createLogin(new ResourceLocation(Pollen.MOD_ID, "login"), "1", () -> PollenMessages::createClientLoginHandler, () -> Object::new);
 
     public static void init() {
         PLAY.register(ClientboundSyncAnimationPacket.class, ClientboundSyncAnimationPacket::new, PollinatedPacketDirection.PLAY_CLIENTBOUND);
@@ -36,6 +37,11 @@ public class PollenMessages {
 
     @ExpectPlatform
     public static PollenClientPlayPacketHandler createClientPlayHandler() {
+        return Platform.error();
+    }
+
+    @ExpectPlatform
+    public static PollenClientLoginPacketHandler createClientLoginHandler() {
         return Platform.error();
     }
 

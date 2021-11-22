@@ -1,6 +1,10 @@
 package gg.moonflower.pollen.core;
 
 import gg.moonflower.pollen.api.advancement.AdvancementModifierManager;
+import gg.moonflower.pollen.api.command.argument.ColorArgumentType;
+import gg.moonflower.pollen.api.command.argument.EnumArgument;
+import gg.moonflower.pollen.api.command.argument.ModIdArgument;
+import gg.moonflower.pollen.api.command.argument.TimeArgumentType;
 import gg.moonflower.pollen.api.config.ConfigManager;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.crafting.brewing.PollenBrewingRecipe;
@@ -13,12 +17,12 @@ import gg.moonflower.pollen.core.network.PollenMessages;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
+import net.minecraft.commands.synchronization.ArgumentTypes;
+import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.core.Registry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +32,6 @@ import java.util.function.Supplier;
 public class Pollen {
 
     public static final String MOD_ID = "pollen";
-    public static final Marker CORE = MarkerManager.getMarker("POLLEN-CORE");
     public static final Platform PLATFORM = Platform.builder(Pollen.MOD_ID)
             .commonInit(Pollen::onCommon)
             .clientInit(Pollen::onClient)
@@ -44,6 +47,9 @@ public class Pollen {
     public static final PollenConfig CONFIG = ConfigManager.register(MOD_ID, PollinatedConfigType.COMMON, PollenConfig::new);
 
     private static MinecraftServer server;
+
+    public static void init() {
+    }
 
     private static void onClient() {
         GeometryModelManager.init();

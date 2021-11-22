@@ -1,32 +1,28 @@
 package gg.moonflower.pollen.api.config;
 
 import com.electronwill.nightconfig.core.EnumGetMethod;
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import com.electronwill.nightconfig.core.utils.UnmodifiableConfigWrapper;
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import dev.architectury.injectables.annotations.ExpectPlatform;
-import gg.moonflower.pollen.api.platform.Platform;
-import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+/**
+ * Implements Forge methods for creating a config.
+ *
+ * @author Ocelot
+ * @since 1.0.0
+ */
 public interface PollinatedConfigBuilder {
 
     Splitter DOT_SPLITTER = Splitter.on(".");
 
-    @ExpectPlatform
-    static PollinatedConfigBuilder create() {
-        return Platform.error();
-    }
-
+    @ApiStatus.Internal
     static List<String> split(String path) {
         return Lists.newArrayList(DOT_SPLITTER.split(path));
     }
@@ -293,8 +289,4 @@ public interface PollinatedConfigBuilder {
 
         void clearCache();
     }
-
-//    <T> Pair<T, ? extends UnmodifiableConfigWrapper<UnmodifiableConfig>> configure(Function<PollinatedConfigBuilder, T> consumer);
-
-//    PollinatedConfig build();
 }

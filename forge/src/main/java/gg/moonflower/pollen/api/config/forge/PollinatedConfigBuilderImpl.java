@@ -22,10 +22,6 @@ public class PollinatedConfigBuilderImpl implements PollinatedConfigBuilder {
         this.builder = builder;
     }
 
-    public static PollinatedConfigBuilder create() {
-        return new PollinatedConfigBuilderImpl(new ForgeConfigSpec.Builder());
-    }
-
     @Override
     public <T> ConfigValue<T> define(List<String> path, Supplier<T> defaultSupplier, Predicate<Object> validator, Class<?> clazz) {
         return new ForgeConfigValue<>(this.builder.define(path, defaultSupplier, validator, clazz));
@@ -107,7 +103,7 @@ public class PollinatedConfigBuilderImpl implements PollinatedConfigBuilder {
         return this;
     }
 
-    public  <T> Pair<T, ? extends UnmodifiableConfigWrapper<UnmodifiableConfig>> configure(Function<PollinatedConfigBuilder, T> consumer) {
+    public  <T> Pair<T, ForgeConfigSpec> configure(Function<PollinatedConfigBuilder, T> consumer) {
         T o = consumer.apply(this);
         return Pair.of(o, this.builder.build());
     }

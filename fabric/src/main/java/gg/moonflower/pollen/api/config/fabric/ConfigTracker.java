@@ -3,12 +3,18 @@ package gg.moonflower.pollen.api.config.fabric;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.toml.TomlFormat;
+import gg.moonflower.pollen.api.config.PollinatedConfigType;
+import gg.moonflower.pollen.api.event.EventDispatcher;
+import gg.moonflower.pollen.api.event.events.ConfigEvent;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
+import gg.moonflower.pollen.core.network.fabric.ClientboundSyncConfigDataPacket;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -16,97 +22,91 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ConfigTracker {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    static final Marker CONFIG = MarkerManager.getMarker("CONFIG");
     public static final ConfigTracker INSTANCE = new ConfigTracker();
-    private final ConcurrentHashMap<String, ModConfig> fileMap;
-    private final EnumMap<ModConfig.Type, Set<ModConfig>> configSets;
-    private ConcurrentHashMap<String, Map<ModConfig.Type, ModConfig>> configsByMod;
+    private final ConcurrentHashMap<String, PollinatedModConfigImpl> fileMap;
+    private final EnumMap<PollinatedConfigType, Set<PollinatedModConfigImpl>> configSets;
+    private final ConcurrentHashMap<String, Map<PollinatedConfigType, PollinatedModConfigImpl>> configsByMod;
 
     private ConfigTracker() {
         this.fileMap = new ConcurrentHashMap<>();
-        this.configSets = new EnumMap<>(ModConfig.Type.class);
+        this.configSets = new EnumMap<>(PollinatedConfigType.class);
         this.configsByMod = new ConcurrentHashMap<>();
-        this.configSets.put(ModConfig.Type.CLIENT, Collections.synchronizedSet(new LinkedHashSet<>()));
-        this.configSets.put(ModConfig.Type.COMMON, Collections.synchronizedSet(new LinkedHashSet<>()));
-//        this.configSets.put(ModConfig.Type.PLAYER, new ConcurrentSkipListSet<>());
-        this.configSets.put(ModConfig.Type.SERVER, Collections.synchronizedSet(new LinkedHashSet<>()));
+        for (PollinatedConfigType type : PollinatedConfigType.values())
+            this.configSets.put(type, Collections.synchronizedSet(new LinkedHashSet<>()));
     }
 
-    void trackConfig(final ModConfig config) {
+    void trackConfig(PollinatedModConfigImpl config) {
         if (this.fileMap.containsKey(config.getFileName())) {
-            LOGGER.error(CONFIG,"Detected config file conflict {} between {} and {}", config.getFileName(), this.fileMap.get(config.getFileName()).getModId(), config.getModId());
+            LOGGER.error("Detected config file conflict {} between {} and {}", config.getFileName(), this.fileMap.get(config.getFileName()).getModId(), config.getModId());
             throw new RuntimeException("Config conflict detected!");
         }
         this.fileMap.put(config.getFileName(), config);
         this.configSets.get(config.getType()).add(config);
-        this.configsByMod.computeIfAbsent(config.getModId(), (k)->new EnumMap<>(ModConfig.Type.class)).put(config.getType(), config);
-        LOGGER.debug(CONFIG, "Config file {} for {} tracking", config.getFileName(), config.getModId());
+        this.configsByMod.computeIfAbsent(config.getModId(), (k) -> new EnumMap<>(PollinatedConfigType.class)).put(config.getType(), config);
+        LOGGER.debug("Config file {} for {} tracking", config.getFileName(), config.getModId());
     }
 
-    public void loadConfigs(ModConfig.Type type, Path configBasePath) {
-        LOGGER.debug(CONFIG, "Loading configs type {}", type);
+    public void loadConfigs(PollinatedConfigType type, Path configBasePath) {
+        LOGGER.debug("Loading configs type {}", type);
         this.configSets.get(type).forEach(config -> openConfig(config, configBasePath));
     }
 
-    public void unloadConfigs(ModConfig.Type type, Path configBasePath) {
-        LOGGER.debug(CONFIG, "Unloading configs type {}", type);
+    public void unloadConfigs(PollinatedConfigType type, Path configBasePath) {
+        LOGGER.debug("Unloading configs type {}", type);
         this.configSets.get(type).forEach(config -> closeConfig(config, configBasePath));
     }
 
-    public List<Pair<String, FMLHandshakeMessages.S2CConfigData>> syncConfigs(boolean isLocal) {
-        final Map<String, byte[]> configData = configSets.get(ModConfig.Type.SERVER).stream().collect(Collectors.toMap(ModConfig::getFileName, mc -> { //TODO: Test cpw's LambdaExceptionUtils on Oracle javac.
+    public List<Pair<String, ClientboundSyncConfigDataPacket>> syncConfigs(boolean isLocal) {
+        return this.configSets.get(PollinatedConfigType.SERVER).stream().map(mc -> {
             try {
-                return Files.readAllBytes(mc.getFullPath());
+                return Pair.of("Config " + mc.getFileName(), new ClientboundSyncConfigDataPacket(mc.getFileName(), Files.readAllBytes(mc.getFullPath())));
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                LOGGER.error("Failed to sync {} config for {}", mc.getType(), mc.getModId(), e);
+                return null;
             }
-        }));
-        return configData.entrySet().stream().map(e->Pair.of("Config "+e.getKey(), new FMLHandshakeMessages.S2CConfigData(e.getKey(), e.getValue()))).collect(Collectors.toList());
+        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    private void openConfig(final ModConfig config, final Path configBasePath) {
-        LOGGER.trace(CONFIG, "Loading config file type {} at {} for {}", config.getType(), config.getFileName(), config.getModId());
-        final CommentedFileConfig configData = config.getHandler().reader(configBasePath).apply(config);
+    private void openConfig(PollinatedModConfigImpl config, Path configBasePath) {
+        CommentedFileConfig configData = config.getHandler().reader(configBasePath).apply(config);
         config.setConfigData(configData);
-        config.fireEvent(new ModConfig.Loading(config));
+        EventDispatcher.post(new ConfigEvent.Loading(config));
         config.save();
     }
 
-    private void closeConfig(final ModConfig config, final Path configBasePath) {
+    private void closeConfig(PollinatedModConfigImpl config, Path configBasePath) {
         if (config.getConfigData() != null) {
-            LOGGER.trace(CONFIG, "Closing config file type {} at {} for {}", config.getType(), config.getFileName(), config.getModId());
             config.save();
             config.getHandler().unload(configBasePath, config);
             config.setConfigData(null);
         }
     }
 
-    public void receiveSyncedConfig(final FMLHandshakeMessages.S2CConfigData s2CConfigData, final Supplier<NetworkEvent.Context> contextSupplier) {
-        if (!Minecraft.getInstance().isLocalServer()) {
-            Optional.ofNullable(fileMap.get(s2CConfigData.getFileName())).ifPresent(mc-> {
-                mc.setConfigData(TomlFormat.instance().createParser().parse(new ByteArrayInputStream(s2CConfigData.getBytes())));
-                mc.fireEvent(new ModConfig.Reloading(mc));
-            });
+    @Environment(EnvType.CLIENT)
+    public void receiveSyncedConfig(ClientboundSyncConfigDataPacket pkt, PollinatedPacketContext ctx) {
+        if (!Minecraft.getInstance().isLocalServer() && this.fileMap.containsKey(pkt.getFileName())) {
+            PollinatedModConfigImpl config = this.fileMap.get(pkt.getFileName());
+            config.setConfigData(TomlFormat.instance().createParser().parse(new ByteArrayInputStream(pkt.getFileData())));
+            EventDispatcher.post(new ConfigEvent.Reloading(config));
         }
     }
 
     public void loadDefaultServerConfigs() {
-        configSets.get(ModConfig.Type.SERVER).forEach(modConfig -> {
-            final CommentedConfig commentedConfig = CommentedConfig.inMemory();
-            modConfig.getSpec().correct(commentedConfig);
-            modConfig.setConfigData(commentedConfig);
-            modConfig.fireEvent(new ModConfig.Loading(modConfig));
+        this.configSets.get(PollinatedConfigType.SERVER).forEach(config -> {
+            CommentedConfig commentedConfig = CommentedConfig.inMemory();
+            config.getSpec().correct(commentedConfig);
+            config.setConfigData(commentedConfig);
+            EventDispatcher.post(new ConfigEvent.Loading(config));
         });
     }
 
-    public String getConfigFileName(String modId, ModConfig.Type type) {
-        return Optional.ofNullable(configsByMod.getOrDefault(modId, Collections.emptyMap()).getOrDefault(type, null)).
-                map(ModConfig::getFullPath).map(Object::toString).orElse(null);
+    @Nullable
+    public String getConfigFileName(String modId, PollinatedConfigType type) {
+        return Optional.ofNullable(this.configsByMod.getOrDefault(modId, Collections.emptyMap()).getOrDefault(type, null)).map(PollinatedModConfigImpl::getFullPath).map(Object::toString).orElse(null);
     }
 }

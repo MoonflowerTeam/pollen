@@ -3,6 +3,7 @@ package gg.moonflower.pollen.api.config;
 /**
  * Wrapper for Forge config types.
  *
+ * @author Ocelot
  * @since 1.0.0
  */
 public enum PollinatedConfigType {
