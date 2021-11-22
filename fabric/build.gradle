@@ -12,9 +12,21 @@ architectury {
     fabric()
 }
 
+def accessWidener = project(":common").file("src/main/resources/${project.mod_id}.accesswidener")
+def generatedResources = file("src/generated/resources")
+
 loom {
     mixin {
         defaultRefmapName = "${project.mod_id}-refmap.json"
+    }
+//    accessWidenerPath.set(accessWidener)
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir(generatedResources)
+        }
     }
 }
 
@@ -54,11 +66,19 @@ dependencies {
     include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cardinal_components_version}"
     include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cardinal_components_version}"
 
-    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    implementation(project(path: ":common", configuration: "namedElements")) { transitive false }
+    developmentFabric(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }
 
+task copyAccessWidner(type: Copy) {
+    from accessWidener
+    into generatedResources
+}
+
 processResources {
+//    dependsOn(copyAccessWidner)
+
     inputs.property "id", rootProject.mod_id
     inputs.property "name", rootProject.mod_name
     inputs.property "version", rootProject.mod_version

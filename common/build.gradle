@@ -12,11 +12,23 @@ architectury {
     common()
 }
 
+loom {
+//    accessWidenerPath.set(file("src/main/resources/${project.mod_id}.accesswidener"))
+}
+
 publishing {
     publications {
         mavenCommon(MavenPublication) {
             artifactId = project.archivesBaseName
             from components.java
+        }
+    }
+}
+
+afterEvaluate {
+    tasks {
+        remapJar {
+            remapAccessWidener.set(false)
         }
     }
 }
