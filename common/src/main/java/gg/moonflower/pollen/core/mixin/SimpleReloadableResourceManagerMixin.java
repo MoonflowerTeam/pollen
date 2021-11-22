@@ -14,15 +14,10 @@ public class SimpleReloadableResourceManagerMixin implements InjectableResourceM
 
     @Shadow
     @Final
-    private List<PreparableReloadListener> recentlyRegistered;
-
-    @Shadow
-    @Final
     private List<PreparableReloadListener> listeners;
 
     @Override
     public void pollen_registerReloadListenerFirst(PreparableReloadListener preparableReloadListener) {
         this.listeners.add(0, preparableReloadListener);
-        this.recentlyRegistered.add(preparableReloadListener);
     }
 }

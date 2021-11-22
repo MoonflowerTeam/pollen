@@ -88,8 +88,8 @@ public class FishBucketItemBase extends BucketItemBase {
         level.playSound(player, pos, SoundEvents.BUCKET_EMPTY_FISH, SoundSource.NEUTRAL, 1.0F, 1.0F);
     }
 
-    protected void spawn(ServerLevel world, ItemStack stack, BlockPos pos) {
-        Entity entity = this.getEntityType().spawn(world, stack, null, pos, MobSpawnType.BUCKET, true, false);
+    protected void spawn(@Nullable Player player, ServerLevel world, ItemStack stack, BlockPos pos) {
+        Entity entity = this.getEntityType().spawn(world, stack, player, pos, MobSpawnType.BUCKET, true, false);
         if (entity instanceof AbstractFish)
             ((AbstractFish) entity).setFromBucket(true);
     }
