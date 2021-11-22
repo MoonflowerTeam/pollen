@@ -31,7 +31,7 @@ public abstract class PollinatedRegistry<T> {
      *
      * @param registry The registry to register objects to.
      * @param modId    The mod id to register to.
-     * @param <T>      The object type.
+     * @param <T>      The registry type.
      * @return A {@link PollinatedRegistry} backed by a platform-specific registry.
      */
     @ExpectPlatform
@@ -46,7 +46,7 @@ public abstract class PollinatedRegistry<T> {
      *
      * @param registry The registry to register objects to.
      * @param modId    The mod id to register to.
-     * @param <T>      The object type.
+     * @param <T>      The registry type.
      * @return A {@link PollinatedRegistry} backed by a {@link Registry}.
      */
     public static <T> PollinatedRegistry<T> createVanilla(Registry<T> registry, String modId) {
@@ -58,9 +58,24 @@ public abstract class PollinatedRegistry<T> {
      *
      * @param id     The id of the object.
      * @param object The object to register.
-     * @return The registered object in a supplier.
+     * @param <R>    The registry type.
+     * @return The registered object in a {@link Supplier}.
      */
     public abstract <R extends T> Supplier<R> register(String id, Supplier<R> object);
+
+    /**
+     * Registers an object or a dummy object based on a condition.
+     *
+     * @param id       The id of the object.
+     * @param dummy    The object to register if the condition is false.
+     * @param object   The object to register if the condition is true.
+     * @param register Whether the object should be registered or the dummy should be registered.
+     * @param <R>      The registry type.
+     * @return The registered object in a {@link Supplier}
+     */
+    public <R extends T> Supplier<R> registerConditional(String id, Supplier<R> dummy, Supplier<R> object, boolean register) {
+        return this.register(id, register ? object : dummy);
+    }
 
     /**
      * @return A codec for this registry's elements

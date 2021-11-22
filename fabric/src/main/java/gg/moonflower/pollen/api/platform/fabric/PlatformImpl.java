@@ -17,4 +17,8 @@ public class PlatformImpl {
     public static BlockableEventLoop<?> getGameExecutor() {
         return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ? Minecraft.getInstance() : Platform.getRunningServer().orElseThrow(IllegalStateException::new);
     }
+
+    public static boolean isModLoaded(String modId) {
+        return FabricLoader.getInstance().isModLoaded(modId);
+    }
 }

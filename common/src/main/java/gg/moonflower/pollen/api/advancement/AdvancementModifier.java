@@ -156,9 +156,7 @@ public class AdvancementModifier {
             recipes = insert(recipes, addRewards.getRecipes());
         experience += addRewards.getExperience(); // Add Experience
 
-        ((AdvancementRewardsAccessor) rewards).setLoot(loot);
-        ((AdvancementRewardsAccessor) rewards).setRecipes(recipes);
-        ((AdvancementRewardsAccessor) rewards).setExperience(experience);
+        accessor.setRewards(new AdvancementRewards(experience, loot, recipes, ((AdvancementRewardsAccessor) rewards).getFunction()));
     }
 
     /**

@@ -53,6 +53,11 @@ public abstract class Platform {
         return Platform.error();
     }
 
+    @ExpectPlatform
+    public static boolean isModLoaded(String modId) {
+        return Platform.error();
+    }
+
     /**
      * @return The currently running Minecraft Server instance. This will not be present in a remote client level
      */
