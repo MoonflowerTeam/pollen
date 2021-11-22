@@ -36,7 +36,7 @@ public class CreateWorldScreenMixin {
     private static DataPackConfig onNew(DataPackConfig settings) {
         ModResourcePackCreator modResourcePackCreator = new ModResourcePackCreator(PackType.SERVER_DATA);
         List<Pack> moddedResourcePacks = new ArrayList<>();
-        modResourcePackCreator.loadPacks(moddedResourcePacks::add, (id, required, supplier, resources, metadataSection, position, source) -> new Pack(id, required, supplier, resources, metadataSection, position, source, false));
+        modResourcePackCreator.loadPacks(moddedResourcePacks::add, (id, name, required, supplier, metadataSection, position, source, hidden) -> new Pack(id, name, required, supplier, metadataSection, PackType.SERVER_DATA, position, source, hidden));
 
         List<String> enabled = new ArrayList<>(settings.getEnabled());
         List<String> disabled = new ArrayList<>(settings.getDisabled());

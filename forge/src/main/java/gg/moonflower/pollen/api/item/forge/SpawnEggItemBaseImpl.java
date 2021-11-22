@@ -6,7 +6,7 @@ import net.minecraft.world.item.SpawnEggItem;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
@@ -25,7 +25,7 @@ public class SpawnEggItemBaseImpl {
 
     @SubscribeEvent
     public static void onEvent(RegistryEvent.Register<EntityType<?>> event) {
-        Map<EntityType<?>, SpawnEggItem> spawnEggs = ObfuscationReflectionHelper.getPrivateValue(SpawnEggItem.class, null, "field_195987_b");
+        Map<EntityType<?>, SpawnEggItem> spawnEggs = ObfuscationReflectionHelper.getPrivateValue(SpawnEggItem.class, null, "f_43201_");
         if (spawnEggs == null)
             throw new RuntimeException("Failed to inject spawns eggs");
         TYPES.forEach((spawnEggItem, supplier) -> spawnEggs.put(supplier.get(), spawnEggItem));

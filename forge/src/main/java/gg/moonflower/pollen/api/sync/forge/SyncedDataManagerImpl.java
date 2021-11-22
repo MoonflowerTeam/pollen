@@ -15,16 +15,14 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,28 +31,16 @@ import org.jetbrains.annotations.Nullable;
 @Mod.EventBusSubscriber(modid = Pollen.MOD_ID)
 public class SyncedDataManagerImpl {
 
-    @CapabilityInject(ForgeDataComponent.class)
-    public static final Capability<ForgeDataComponent> CAPABILITY = null;
+    public static final Capability<ForgeDataComponent> CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+    });
 
-    @SuppressWarnings("ConstantConditions")
     private static ForgeDataComponent getDataComponent(Player player) {
         return player.getCapability(CAPABILITY).orElseThrow(() -> new IllegalStateException("Failed to get capability"));
     }
 
-    public static void init() {
-        CapabilityManager.INSTANCE.register(ForgeDataComponent.class, new Capability.IStorage<ForgeDataComponent>() {
-            @Override
-            public Tag writeNBT(Capability<ForgeDataComponent> capability, ForgeDataComponent component, Direction direction) {
-                CompoundTag tag = new CompoundTag();
-                component.writeToNbt(tag, DataComponent.NbtWriteMode.SAVE);
-                return tag;
-            }
-
-            @Override
-            public void readNBT(Capability<ForgeDataComponent> capability, ForgeDataComponent component, Direction direction, Tag tag) {
-                component.readFromNbt((CompoundTag) tag);
-            }
-        }, ForgeDataComponent::new);
+    @SubscribeEvent
+    public static void onEvent(RegisterCapabilitiesEvent event) {
+        event.register(ForgeDataComponent.class);
     }
 
     @SubscribeEvent
@@ -150,7 +136,6 @@ public class SyncedDataManagerImpl {
             this.component.readFromNbt(tag);
         }
 
-        @SuppressWarnings("ConstantConditions")
         @NotNull
         @Override
         public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction arg) {

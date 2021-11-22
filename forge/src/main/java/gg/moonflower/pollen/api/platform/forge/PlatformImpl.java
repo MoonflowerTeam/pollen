@@ -1,9 +1,9 @@
 package gg.moonflower.pollen.api.platform.forge;
 
-import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.util.thread.EffectiveSide;
+import net.minecraftforge.fmllegacy.LogicalSidedProvider;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.Executor;

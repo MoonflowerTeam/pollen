@@ -9,11 +9,10 @@
   ],
   "mixins": [
     "EntityMixin",
-    "PotionBrewingMixin"
+    "PotionBrewingMixin",
     "AdvancementBuilderAccessor",
     "AdvancementBuilderMixin",
     "AdvancementRewardsAccessor",
-    "AdvancementRewardsBuilderAccessor",
     "LivingEntityMixin",
     "PotionBrewingMixin",
     "ServerAdvancementManagerMixin",

@@ -20,7 +20,6 @@ public class PollenForge {
     }
 
     private static void init(FMLCommonSetupEvent event) {
-        SyncedDataManagerImpl.init();
     }
 
     public static void postEvent(Event event, PollinatedEvent pollinatedEvent) {
