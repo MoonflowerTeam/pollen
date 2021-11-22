@@ -15,4 +15,7 @@ public interface AdvancementBuilderAccessor {
 
     @Accessor
     void setRequirements(String[][] requirements);
+
+    @Accessor
+    void setRewards(AdvancementRewards rewards);
 }
