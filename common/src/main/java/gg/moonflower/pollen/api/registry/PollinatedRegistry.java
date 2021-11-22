@@ -7,7 +7,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -68,7 +67,7 @@ public abstract class PollinatedRegistry<T> {
      * Registers an object or a dummy object based on a condition.
      *
      * @param id       The id of the object.
-     * @param dummy    The object to reigster if the condition is false.
+     * @param dummy    The object to register if the condition is false.
      * @param object   The object to register if the condition is true.
      * @param register Whether the object should be registered or the dummy should be registered.
      * @param <R>      The registry type.
