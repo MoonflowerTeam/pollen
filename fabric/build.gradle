@@ -19,7 +19,7 @@ loom {
     mixin {
         defaultRefmapName = "${project.mod_id}-refmap.json"
     }
-//    accessWidenerPath.set(accessWidener)
+    accessWidenerPath.set(accessWidener)
 }
 
 sourceSets {
@@ -73,7 +73,7 @@ task copyAccessWidner(type: Copy) {
 }
 
 processResources {
-//    dependsOn(copyAccessWidner)
+    dependsOn(copyAccessWidner)
 
     inputs.property "id", rootProject.mod_id
     inputs.property "name", rootProject.mod_name

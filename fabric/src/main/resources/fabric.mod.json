@@ -17,6 +17,7 @@
     "${id}-common.mixins.json",
     "${id}.mixins.json"
   ],
+  "accessWidener": "${id}.accesswidener",
   "entrypoints": {
     "main": [
       "gg.moonflower.pollen.core.fabric.PollenFabric"
