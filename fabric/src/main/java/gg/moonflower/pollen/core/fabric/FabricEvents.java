@@ -5,6 +5,7 @@ import gg.moonflower.pollen.api.config.fabric.ConfigTracker;
 import gg.moonflower.pollen.api.event.EventListener;
 import gg.moonflower.pollen.api.event.events.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
+import gg.moonflower.pollen.core.command.ConfigCommand;
 import gg.moonflower.pollen.core.mixin.fabric.LevelResourceAccessor;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
