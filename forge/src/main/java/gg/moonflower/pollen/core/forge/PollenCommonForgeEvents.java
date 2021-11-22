@@ -1,10 +1,12 @@
 package gg.moonflower.pollen.core.forge;
 
 import gg.moonflower.pollen.api.event.EventDispatcher;
+import gg.moonflower.pollen.api.event.events.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
 import gg.moonflower.pollen.api.event.events.player.InteractEvent;
 import gg.moonflower.pollen.core.Pollen;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -66,6 +68,11 @@ public class PollenCommonForgeEvents {
     @SubscribeEvent
     public static void onEvent(FMLServerStoppedEvent event) {
         PollenForge.postEvent(event, new ServerLifecycleEvent.Stopped(event.getServer()));
+    }
+
+    @SubscribeEvent
+    public static void onEvent(RegisterCommandsEvent event) {
+        PollenForge.postEvent(event, new CommandRegistryEvent(event.getDispatcher(), event.getEnvironment()));
     }
 
     @SubscribeEvent

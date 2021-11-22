@@ -1,9 +1,9 @@
 package gg.moonflower.pollen.core;
 
 import gg.moonflower.pollen.api.advancement.AdvancementModifierManager;
+import gg.moonflower.pollen.api.command.PollenSuggestionProviders;
 import gg.moonflower.pollen.api.command.argument.ColorArgumentType;
 import gg.moonflower.pollen.api.command.argument.EnumArgument;
-import gg.moonflower.pollen.api.command.argument.ModIdArgument;
 import gg.moonflower.pollen.api.command.argument.TimeArgumentType;
 import gg.moonflower.pollen.api.config.ConfigManager;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
@@ -49,6 +49,7 @@ public class Pollen {
     private static MinecraftServer server;
 
     public static void init() {
+        PollenSuggestionProviders.init();
     }
 
     private static void onClient() {
@@ -67,6 +68,9 @@ public class Pollen {
     }
 
     private static void onCommonPost(Platform.ModSetupContext context) {
+        ArgumentTypes.register(MOD_ID + ":color", ColorArgumentType.class, new EmptyArgumentSerializer<>(ColorArgumentType::new));
+        ArgumentTypes.register(MOD_ID + ":time", TimeArgumentType.class, new TimeArgumentType.Serializer());
+        ArgumentTypes.register(MOD_ID + ":enum", EnumArgument.class, new EnumArgument.Serializer());
         EventDispatcher.register(ServerLifecycleEvent.Starting.class, Pollen::onServerStarting);
         EventDispatcher.register(ServerLifecycleEvent.Stopped.class, Pollen::onServerStopped);
         PollenMessages.init();
