@@ -68,7 +68,7 @@ public class ForgeModResourcePack extends AbstractPackResources {
                 description = description.replaceAll("\"", "\\\"");
             }
 
-            String pack = String.format("{\"pack\":{\"pack_format\":" + SharedConstants.getCurrentVersion().getPackVersion() + ",\"description\":\"%s\"}}", description);
+            String pack = String.format("{\"pack\":{\"pack_format\":" + SharedConstants.getCurrentVersion().getPackVersion(com.mojang.bridge.game.PackType.RESOURCE) + ",\"description\":\"%s\"}}", description);
             return IOUtils.toInputStream(pack, Charsets.UTF_8);
         }
         throw new FileNotFoundException("\"" + filename + "\" in " + this.container.getBrand() + " Mod \"" + this.container.getId() + "\"");
