@@ -27,7 +27,7 @@ public interface PollinatedModConfig {
     /**
      * @return The actual config spec
      */
-    UnmodifiableConfigWrapper<UnmodifiableConfig> getSpec();
+    UnmodifiableConfig getSpec();
 
     /**
      * @return The id of the mod with this config

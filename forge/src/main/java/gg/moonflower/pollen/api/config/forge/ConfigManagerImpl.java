@@ -9,6 +9,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
@@ -22,34 +23,24 @@ public class ConfigManagerImpl {
         Pair<T, ForgeConfigSpec> pair = new PollinatedConfigBuilderImpl(new ForgeConfigSpec.Builder()).configure(consumer);
         ModLoadingContext.get().registerConfig(convert(type), pair.getRight(), fileName);
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        bus.<ModConfig.Loading>addListener(event -> PollenForge.postEvent(event, new ConfigEvent.Loading(new PollinatedModConfigImpl(event.getConfig()))));
-        bus.<ModConfig.Reloading>addListener(event -> PollenForge.postEvent(event, new ConfigEvent.Reloading(new PollinatedModConfigImpl(event.getConfig()))));
+        bus.<ModConfigEvent.Loading>addListener(event -> PollenForge.postEvent(event, new ConfigEvent.Loading(new PollinatedModConfigImpl(event.getConfig()))));
+        bus.<ModConfigEvent.Reloading>addListener(event -> PollenForge.postEvent(event, new ConfigEvent.Reloading(new PollinatedModConfigImpl(event.getConfig()))));
         return pair.getLeft();
     }
 
     public static ModConfig.Type convert(PollinatedConfigType type) {
-        switch (type) {
-            case COMMON:
-                return ModConfig.Type.COMMON;
-            case CLIENT:
-                return ModConfig.Type.CLIENT;
-            case SERVER:
-                return ModConfig.Type.SERVER;
-            default:
-                throw new UnsupportedOperationException("Unknown config type: " + type);
-        }
+        return switch (type) {
+            case COMMON -> ModConfig.Type.COMMON;
+            case CLIENT -> ModConfig.Type.CLIENT;
+            case SERVER -> ModConfig.Type.SERVER;
+        };
     }
 
     public static PollinatedConfigType convert(ModConfig.Type type) {
-        switch (type) {
-            case COMMON:
-                return PollinatedConfigType.COMMON;
-            case CLIENT:
-                return PollinatedConfigType.CLIENT;
-            case SERVER:
-                return PollinatedConfigType.SERVER;
-            default:
-                throw new UnsupportedOperationException("Unknown config type: " + type);
-        }
+        return switch (type) {
+            case COMMON -> PollinatedConfigType.COMMON;
+            case CLIENT -> PollinatedConfigType.CLIENT;
+            case SERVER -> PollinatedConfigType.SERVER;
+        };
     }
 }

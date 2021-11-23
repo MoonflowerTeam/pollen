@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.api.config.forge;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.config.PollinatedModConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -29,7 +30,7 @@ public class PollinatedModConfigImpl implements PollinatedModConfig {
     }
 
     @Override
-    public ForgeConfigSpec getSpec() {
+    public UnmodifiableConfig getSpec() {
         return this.config.getSpec();
     }
 
