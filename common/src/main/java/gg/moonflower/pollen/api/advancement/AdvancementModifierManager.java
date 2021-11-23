@@ -50,7 +50,6 @@ public class AdvancementModifierManager {
         getModifiersFor(event.getContext().getAdvancementId()).sorted(Comparator.comparing(AdvancementModifier::getInjectPriority).reversed()).forEachOrdered(modifier -> {
             try {
                 modifier.modify(event.getBuilder());
-                System.out.println(modifier.deconstruct().serializeToJson());
             } catch (JsonParseException e) {
                 LOGGER.error("Failed to apply advancement modifier {}: {}", modifier.getId(), e.getMessage());
             }

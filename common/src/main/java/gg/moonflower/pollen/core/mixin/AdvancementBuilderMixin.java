@@ -28,7 +28,7 @@ public class AdvancementBuilderMixin {
         throw new AssertionError();
     }
 
-    @Inject(method = "fromJson", at = @At(value = "RETURN"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
+    @Inject(method = "fromJson", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
     private static void modifyBuilder(JsonObject json, DeserializationContext context, CallbackInfoReturnable<Advancement.Builder> info, ResourceLocation resourcelocation, DisplayInfo displayinfo, AdvancementRewards rewards, Map<String, Criterion> map, JsonArray jsonarray, String[][] astring) {
         Advancement.Builder builder = invokeInit(resourcelocation, displayinfo, rewards, map, astring);
         EventDispatcher.post(new AdvancementConstructingEvent(builder, context));
