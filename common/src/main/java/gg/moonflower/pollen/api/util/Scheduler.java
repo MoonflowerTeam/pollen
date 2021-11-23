@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
-import java.util.function.Consumer;
 
 /**
  * Automatically queues tasks into the main loop executor from a {@link ScheduledExecutorService}.
@@ -27,28 +26,37 @@ public class Scheduler implements ScheduledExecutorService {
             SIDED_SCHEDULERS.values().forEach(Scheduler::shutdownInternal);
             SIDED_SCHEDULERS.clear();
         }));
+        ServerLifecycleEvent.STOPPING.register(server -> {
+            if (SIDED_SCHEDULERS.containsKey(false))
+                SIDED_SCHEDULERS.get(false).onServerStopped();
+        });
     }
 
     private final boolean client;
     private final Executor serverExecutor;
     private final ScheduledExecutorService service;
-    private final Consumer<ServerLifecycleEvent.Stopping> event;
 
     private Scheduler(boolean client) {
         this.client = client;
         this.serverExecutor = Platform.getGameExecutor();
         this.service = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, (client ? "Client" : "Server") + " Scheduler"));
-        this.event = this::onServerStopped;
-        if (!client)
-            EventDispatcher.register(ServerLifecycleEvent.Stopping.class, this.event);
+    }
+
+    /**
+     * Retrieves the scheduler for the specified side.
+     *
+     * @param client Whether to retrieve the client scheduler
+     * @return The scheduler for that side
+     */
+    public static ScheduledExecutorService get(boolean client) {
+        return SIDED_SCHEDULERS.computeIfAbsent(client, Scheduler::new);
     }
 
     private void shutdownInternal() {
         this.service.shutdown();
-        EventDispatcher.unregister(this.event);
     }
 
-    private void onServerStopped(ServerLifecycleEvent.Stopping event) {
+    private void onServerStopped() {
         this.shutdownInternal();
         SIDED_SCHEDULERS.remove(this.client);
     }
@@ -136,15 +144,5 @@ public class Scheduler implements ScheduledExecutorService {
     @Override
     public void execute(Runnable command) {
         this.service.execute(() -> this.execute(command));
-    }
-
-    /**
-     * Retrieves the scheduler for the specified side.
-     *
-     * @param client Whether to retrieve the client scheduler
-     * @return The scheduler for that side
-     */
-    public static ScheduledExecutorService get(boolean client) {
-        return SIDED_SCHEDULERS.computeIfAbsent(client, Scheduler::new);
     }
 }

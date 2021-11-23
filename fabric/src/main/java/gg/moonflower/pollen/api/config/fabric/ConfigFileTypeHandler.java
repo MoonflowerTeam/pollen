@@ -20,6 +20,31 @@ public class ConfigFileTypeHandler {
     private static final Logger LOGGER = LogManager.getLogger();
     static ConfigFileTypeHandler TOML = new ConfigFileTypeHandler();
 
+    public static void backUpConfig(final CommentedFileConfig commentedFileConfig) {
+        backUpConfig(commentedFileConfig, 5);
+    }
+
+    public static void backUpConfig(CommentedFileConfig commentedFileConfig, int maxBackups) {
+        Path bakFileLocation = commentedFileConfig.getNioPath().getParent();
+        String bakFileName = FilenameUtils.removeExtension(commentedFileConfig.getFile().getName());
+        String bakFileExtension = FilenameUtils.getExtension(commentedFileConfig.getFile().getName()) + ".bak";
+        Path bakFile = bakFileLocation.resolve(bakFileName + "-1" + "." + bakFileExtension);
+        try {
+            for (int i = maxBackups; i > 0; i--) {
+                Path oldBak = bakFileLocation.resolve(bakFileName + "-" + i + "." + bakFileExtension);
+                if (Files.exists(oldBak)) {
+                    if (i >= maxBackups)
+                        Files.delete(oldBak);
+                    else
+                        Files.move(oldBak, bakFileLocation.resolve(bakFileName + "-" + (i + 1) + "." + bakFileExtension));
+                }
+            }
+            Files.copy(commentedFileConfig.getNioPath(), bakFile);
+        } catch (IOException e) {
+            LOGGER.warn("Failed to back up config file {}", commentedFileConfig.getNioPath(), e);
+        }
+    }
+
     public Function<PollinatedModConfigImpl, CommentedFileConfig> reader(Path configBasePath) {
         return config -> {
             Path configPath = configBasePath.resolve(config.getFileName());
@@ -59,31 +84,6 @@ public class ConfigFileTypeHandler {
         Files.createFile(file);
         conf.initEmptyFile(file);
         return true;
-    }
-
-    public static void backUpConfig(final CommentedFileConfig commentedFileConfig) {
-        backUpConfig(commentedFileConfig, 5);
-    }
-
-    public static void backUpConfig(CommentedFileConfig commentedFileConfig, int maxBackups) {
-        Path bakFileLocation = commentedFileConfig.getNioPath().getParent();
-        String bakFileName = FilenameUtils.removeExtension(commentedFileConfig.getFile().getName());
-        String bakFileExtension = FilenameUtils.getExtension(commentedFileConfig.getFile().getName()) + ".bak";
-        Path bakFile = bakFileLocation.resolve(bakFileName + "-1" + "." + bakFileExtension);
-        try {
-            for (int i = maxBackups; i > 0; i--) {
-                Path oldBak = bakFileLocation.resolve(bakFileName + "-" + i + "." + bakFileExtension);
-                if (Files.exists(oldBak)) {
-                    if (i >= maxBackups)
-                        Files.delete(oldBak);
-                    else
-                        Files.move(oldBak, bakFileLocation.resolve(bakFileName + "-" + (i + 1) + "." + bakFileExtension));
-                }
-            }
-            Files.copy(commentedFileConfig.getNioPath(), bakFile);
-        } catch (IOException e) {
-            LOGGER.warn("Failed to back up config file {}", commentedFileConfig.getNioPath(), e);
-        }
     }
 
     private static class ConfigWatcher implements Runnable {

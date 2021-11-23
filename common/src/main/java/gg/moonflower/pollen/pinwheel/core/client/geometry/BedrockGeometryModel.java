@@ -104,6 +104,70 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
         this.modelKeys = parts.values().toArray(new String[0]);
     }
 
+    private static void get(float animationTime, MolangRuntime.Builder runtime, AnimationData.KeyFrame[] frames, Vector3f result) {
+        if (frames.length == 1) {
+            // TODO figure out what "this" is supposed to be
+            float x = frames[0].getTransformPostX().safeResolve(runtime.create(0));
+            float y = frames[0].getTransformPostY().safeResolve(runtime.create(0));
+            float z = frames[0].getTransformPostZ().safeResolve(runtime.create(0));
+            result.set(x, y, z);
+            return;
+        }
+
+        for (int i = 0; i < frames.length; i++) {
+            AnimationData.KeyFrame to = frames[i];
+            if ((to.getTime() < animationTime && i < frames.length - 1) || to.getTime() == 0)
+                continue;
+
+            AnimationData.KeyFrame from = i == 0 ? null : frames[i - 1];
+            float progress = (from == null ? animationTime / to.getTime() : Math.min(1.0F, (animationTime - from.getTime()) / (to.getTime() - from.getTime())));
+            switch (to.getLerpMode()) {
+                case LINEAR:
+                    lerp(progress, runtime, from, to, result);
+                    break;
+                case CATMULLROM:
+                    catmullRom(progress, runtime, i > 1 ? frames[i - 2] : null, from, to, i < frames.length - 1 ? frames[i + 1] : null, result);
+                    break;
+            }
+            break;
+        }
+    }
+
+    private static void lerp(float progress, MolangRuntime.Builder runtime, @Nullable AnimationData.KeyFrame from, AnimationData.KeyFrame to, Vector3f result) {
+        float fromX = from == null ? 0 : from.getTransformPostX().safeResolve(runtime.create(0));
+        float fromY = from == null ? 0 : from.getTransformPostY().safeResolve(runtime.create(0));
+        float fromZ = from == null ? 0 : from.getTransformPostZ().safeResolve(runtime.create(0));
+
+        float x = Mth.lerp(progress, fromX, to.getTransformPreX().safeResolve(runtime.create(0)));
+        float y = Mth.lerp(progress, fromY, to.getTransformPreY().safeResolve(runtime.create(0)));
+        float z = Mth.lerp(progress, fromZ, to.getTransformPreZ().safeResolve(runtime.create(0)));
+        result.set(x, y, z);
+    }
+
+    private static void catmullRom(float progress, MolangRuntime.Builder runtime, @Nullable AnimationData.KeyFrame before, @Nullable AnimationData.KeyFrame from, AnimationData.KeyFrame to, @Nullable AnimationData.KeyFrame after, Vector3f result) {
+        float fromX = from == null ? 0 : from.getTransformPostX().safeResolve(runtime.create(0));
+        float fromY = from == null ? 0 : from.getTransformPostY().safeResolve(runtime.create(0));
+        float fromZ = from == null ? 0 : from.getTransformPostZ().safeResolve(runtime.create(0));
+
+        float beforeX = before == null ? fromX : before.getTransformPostX().safeResolve(runtime.create(0));
+        float beforeY = before == null ? fromY : before.getTransformPostY().safeResolve(runtime.create(0));
+        float beforeZ = before == null ? fromZ : before.getTransformPostZ().safeResolve(runtime.create(0));
+
+        float toX = to.getTransformPreX().safeResolve(runtime.create(0));
+        float toY = to.getTransformPreY().safeResolve(runtime.create(0));
+        float toZ = to.getTransformPreZ().safeResolve(runtime.create(0));
+
+        float afterX = after == null ? toX : after.getTransformPreX().safeResolve(runtime.create(0));
+        float afterY = after == null ? toY : after.getTransformPreY().safeResolve(runtime.create(0));
+        float afterZ = after == null ? toZ : after.getTransformPreZ().safeResolve(runtime.create(0));
+
+        result.set(catmullRom(beforeX, fromX, toX, afterX, progress), catmullRom(beforeY, fromY, toY, afterY, progress), catmullRom(beforeZ, fromZ, toZ, afterZ, progress));
+    }
+
+    private static float catmullRom(float p0, float p1, float p2, float p3, float t) {
+        return 0.5F * ((2 * p1) + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t + (-p0 + 3 * p1 - 3 * p2 + p3) * t * t * t);
+    }
+
     @Override
     public void renderToBuffer(PoseStack matrixStack, VertexConsumer builder, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
     }
@@ -213,69 +277,5 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
 
     public String getActiveMaterial() {
         return activeMaterial;
-    }
-
-    private static void get(float animationTime, MolangRuntime.Builder runtime, AnimationData.KeyFrame[] frames, Vector3f result) {
-        if (frames.length == 1) {
-            // TODO figure out what "this" is supposed to be
-            float x = frames[0].getTransformPostX().safeResolve(runtime.create(0));
-            float y = frames[0].getTransformPostY().safeResolve(runtime.create(0));
-            float z = frames[0].getTransformPostZ().safeResolve(runtime.create(0));
-            result.set(x, y, z);
-            return;
-        }
-
-        for (int i = 0; i < frames.length; i++) {
-            AnimationData.KeyFrame to = frames[i];
-            if ((to.getTime() < animationTime && i < frames.length - 1) || to.getTime() == 0)
-                continue;
-
-            AnimationData.KeyFrame from = i == 0 ? null : frames[i - 1];
-            float progress = (from == null ? animationTime / to.getTime() : Math.min(1.0F, (animationTime - from.getTime()) / (to.getTime() - from.getTime())));
-            switch (to.getLerpMode()) {
-                case LINEAR:
-                    lerp(progress, runtime, from, to, result);
-                    break;
-                case CATMULLROM:
-                    catmullRom(progress, runtime, i > 1 ? frames[i - 2] : null, from, to, i < frames.length - 1 ? frames[i + 1] : null, result);
-                    break;
-            }
-            break;
-        }
-    }
-
-    private static void lerp(float progress, MolangRuntime.Builder runtime, @Nullable AnimationData.KeyFrame from, AnimationData.KeyFrame to, Vector3f result) {
-        float fromX = from == null ? 0 : from.getTransformPostX().safeResolve(runtime.create(0));
-        float fromY = from == null ? 0 : from.getTransformPostY().safeResolve(runtime.create(0));
-        float fromZ = from == null ? 0 : from.getTransformPostZ().safeResolve(runtime.create(0));
-
-        float x = Mth.lerp(progress, fromX, to.getTransformPreX().safeResolve(runtime.create(0)));
-        float y = Mth.lerp(progress, fromY, to.getTransformPreY().safeResolve(runtime.create(0)));
-        float z = Mth.lerp(progress, fromZ, to.getTransformPreZ().safeResolve(runtime.create(0)));
-        result.set(x, y, z);
-    }
-
-    private static void catmullRom(float progress, MolangRuntime.Builder runtime, @Nullable AnimationData.KeyFrame before, @Nullable AnimationData.KeyFrame from, AnimationData.KeyFrame to, @Nullable AnimationData.KeyFrame after, Vector3f result) {
-        float fromX = from == null ? 0 : from.getTransformPostX().safeResolve(runtime.create(0));
-        float fromY = from == null ? 0 : from.getTransformPostY().safeResolve(runtime.create(0));
-        float fromZ = from == null ? 0 : from.getTransformPostZ().safeResolve(runtime.create(0));
-
-        float beforeX = before == null ? fromX : before.getTransformPostX().safeResolve(runtime.create(0));
-        float beforeY = before == null ? fromY : before.getTransformPostY().safeResolve(runtime.create(0));
-        float beforeZ = before == null ? fromZ : before.getTransformPostZ().safeResolve(runtime.create(0));
-
-        float toX = to.getTransformPreX().safeResolve(runtime.create(0));
-        float toY = to.getTransformPreY().safeResolve(runtime.create(0));
-        float toZ = to.getTransformPreZ().safeResolve(runtime.create(0));
-
-        float afterX = after == null ? toX : after.getTransformPreX().safeResolve(runtime.create(0));
-        float afterY = after == null ? toY : after.getTransformPreY().safeResolve(runtime.create(0));
-        float afterZ = after == null ? toZ : after.getTransformPreZ().safeResolve(runtime.create(0));
-
-        result.set(catmullRom(beforeX, fromX, toX, afterX, progress), catmullRom(beforeY, fromY, toY, afterY, progress), catmullRom(beforeZ, fromZ, toZ, afterZ, progress));
-    }
-
-    private static float catmullRom(float p0, float p1, float p2, float p3, float t) {
-        return 0.5F * ((2 * p1) + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t + (-p0 + 3 * p1 - 3 * p2 + p3) * t * t * t);
     }
 }

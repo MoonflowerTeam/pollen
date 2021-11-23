@@ -17,26 +17,26 @@ public class PollenClientForgeEvents {
     public static void onEvent(net.minecraftforge.event.TickEvent.ClientTickEvent event) {
         switch (event.phase) {
             case START:
-                EventDispatcher.post(new TickEvent.ClientEvent.Pre());
+                TickEvent.CLIENT_PRE.invoker().tick();
                 break;
             case END:
-                EventDispatcher.post(new TickEvent.ClientEvent.Post());
+                TickEvent.CLIENT_POST.invoker().tick();
                 break;
         }
     }
 
     @SubscribeEvent
     public static void onEvent(ClientPlayerNetworkEvent.LoggedInEvent event) {
-        PollenForge.postEvent(event, new ClientNetworkEvent.LoggedIn(event.getController(), event.getPlayer(), event.getNetworkManager()));
+        ClientNetworkEvent.LOGIN.invoker().login(event.getController(), event.getPlayer(), event.getNetworkManager());
     }
 
     @SubscribeEvent
     public static void onEvent(ClientPlayerNetworkEvent.LoggedOutEvent event) {
-        PollenForge.postEvent(event, new ClientNetworkEvent.LoggedOut(event.getController(), event.getPlayer(), event.getNetworkManager()));
+        ClientNetworkEvent.LOGOUT.invoker().logout(event.getController(), event.getPlayer(), event.getNetworkManager());
     }
 
     @SubscribeEvent
     public static void onEvent(ClientPlayerNetworkEvent.RespawnEvent event) {
-        PollenForge.postEvent(event, new ClientNetworkEvent.Respawn(event.getController(), event.getOldPlayer(), event.getPlayer(), event.getNetworkManager()));
+        ClientNetworkEvent.RESPAWN.invoker().respawn(event.getController(), event.getOldPlayer(), event.getPlayer(), event.getNetworkManager());
     }
 }

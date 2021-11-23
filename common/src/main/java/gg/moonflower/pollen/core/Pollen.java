@@ -31,20 +31,15 @@ import java.util.function.Supplier;
 public class Pollen {
 
     public static final String MOD_ID = "pollen";
-    public static final Platform PLATFORM = Platform.builder(Pollen.MOD_ID)
+    public static final RecipeType<PollenBrewingRecipe> BREWING = RecipeType.register(MOD_ID + ":brewing");    public static final Platform PLATFORM = Platform.builder(Pollen.MOD_ID)
             .commonInit(Pollen::onCommon)
             .clientInit(Pollen::onClient)
             .commonPostInit(Pollen::onCommonPost)
             .clientPostInit(Pollen::onClientPost)
             .build();
-
-    private static final PollinatedRegistry<RecipeSerializer<?>> RECIPE_SERIALIZERS = PollinatedRegistry.create(Registry.RECIPE_SERIALIZER, MOD_ID);
-
-    public static final RecipeType<PollenBrewingRecipe> BREWING = RecipeType.register(MOD_ID + ":brewing");
-    public static final Supplier<RecipeSerializer<PollenBrewingRecipe>> BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("brewing", PollenBrewingRecipe::createSerializer);
-
     public static final PollenConfig CONFIG = ConfigManager.register(MOD_ID, PollinatedConfigType.COMMON, PollenConfig::new);
-
+    private static final PollinatedRegistry<RecipeSerializer<?>> RECIPE_SERIALIZERS = PollinatedRegistry.create(Registry.RECIPE_SERIALIZER, MOD_ID);
+    public static final Supplier<RecipeSerializer<PollenBrewingRecipe>> BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("brewing", PollenBrewingRecipe::createSerializer);
     private static MinecraftServer server;
 
     public static void init() {
@@ -70,21 +65,15 @@ public class Pollen {
         ArgumentTypes.register(MOD_ID + ":color", ColorArgumentType.class, new EmptyArgumentSerializer<>(ColorArgumentType::new));
         ArgumentTypes.register(MOD_ID + ":time", TimeArgumentType.class, new TimeArgumentType.Serializer());
         ArgumentTypes.register(MOD_ID + ":enum", EnumArgument.class, new EnumArgument.Serializer());
-        EventDispatcher.register(ServerLifecycleEvent.Starting.class, Pollen::onServerStarting);
-        EventDispatcher.register(ServerLifecycleEvent.Stopped.class, Pollen::onServerStopped);
+        ServerLifecycleEvent.STARTING.register(server -> Pollen.server = server);
+        ServerLifecycleEvent.STOPPED.register(server -> Pollen.server = null);
         PollenMessages.init();
-    }
-
-    private static void onServerStarting(ServerLifecycleEvent.Starting event) {
-        server = event.getServer();
-    }
-
-    private static void onServerStopped(ServerLifecycleEvent.Stopped event) {
-        server = null;
     }
 
     @Nullable
     public static MinecraftServer getRunningServer() {
         return server;
     }
+
+
 }

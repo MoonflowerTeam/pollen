@@ -1,119 +1,68 @@
 package gg.moonflower.pollen.api.event.events.lifecycle;
 
 import gg.moonflower.pollen.api.event.PollinatedEvent;
-import net.minecraft.world.entity.Entity;
+import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
-/**
- * Events fired for game updates.
- */
-public class TickEvent extends PollinatedEvent {
+public interface TickEvent {
 
-    /**
-     * Called each time the client runs a tick. Use {@link .Pre} and {@link Post} for specific tick timeframes.
-     *
-     * <p><b><i>NOTE: This is only when the client runs a tick 20 times per second, not a render frame.</i></b>
-     *
-     * @author Ocelot
-     * @since 1.0.0
-     */
-    public static class ClientEvent extends TickEvent {
+    PollinatedEvent<ClientPre> CLIENT_PRE = EventRegistry.createLoop(ClientPre.class);
+    PollinatedEvent<ClientPost> CLIENT_POST = EventRegistry.createLoop(ClientPost.class);
 
-        private ClientEvent() {
-        }
+    PollinatedEvent<ServerPre> SERVER_PRE = EventRegistry.createLoop(ServerPre.class);
+    PollinatedEvent<ServerPost> SERVER_POST = EventRegistry.createLoop(ServerPost.class);
 
-        public static class Pre extends ClientEvent {
-        }
+    PollinatedEvent<LevelPre> LEVEL_PRE = EventRegistry.createLoop(LevelPre.class);
+    PollinatedEvent<LevelPost> LEVEL_POST = EventRegistry.createLoop(LevelPost.class);
 
-        public static class Post extends ClientEvent {
-        }
+    PollinatedEvent<LivingPre> LIVING_PRE = EventRegistry.create(LivingPre.class, events -> entity -> {
+        for (LivingPre event : events)
+            if (!event.tick(entity))
+                return false;
+        return true;
+    });
+
+    PollinatedEvent<LivingPost> LIVING_POST = EventRegistry.createLoop(LivingPost.class);
+
+    @FunctionalInterface
+    interface ClientPre {
+        void tick();
     }
 
-    /**
-     * Called each time the server runs a tick. Use {@link Pre} and {@link Post} for specific tick timeframes.
-     *
-     * @author Ocelot
-     * @since 1.0.0
-     */
-    public static class ServerEvent extends TickEvent {
-
-        private ServerEvent() {
-        }
-
-        public static class Pre extends ServerEvent {
-        }
-
-        public static class Post extends ServerEvent {
-        }
+    @FunctionalInterface
+    interface ClientPost {
+        void tick();
     }
 
-    /**
-     * Called each time a living entity is ticked server and client side. Use {@link Pre} and {@link Post} for specific tick timeframes.
-     *
-     * @author Ocelot
-     * @since 1.0.0
-     */
-    public static class LivingEntityEvent extends TickEvent {
-
-        private final LivingEntity entity;
-
-        private LivingEntityEvent(LivingEntity entity) {
-            this.entity = entity;
-        }
-
-        /**
-         * @return The entity being ticked
-         */
-        public Entity getEntity() {
-            return entity;
-        }
-
-        @Cancellable
-        public static class Pre extends LivingEntityEvent {
-            public Pre(LivingEntity entity) {
-                super(entity);
-            }
-        }
-
-        public static class Post extends LivingEntityEvent {
-            public Post(LivingEntity entity) {
-                super(entity);
-            }
-        }
+    @FunctionalInterface
+    interface ServerPre {
+        void tick();
     }
 
-    /**
-     * Called each time a level is ticked server and client side. Use {@link Pre} and {@link Post} for specific tick timeframes.
-     *
-     * @author Ocelot
-     * @since 1.0.0
-     */
-    public static class LevelEvent extends TickEvent {
-
-        private final Level level;
-
-        private LevelEvent(Level level) {
-            this.level = level;
-        }
-
-        /**
-         * @return The level being ticked
-         */
-        public Level getLevel() {
-            return level;
-        }
-
-        public static class Pre extends LevelEvent {
-            public Pre(Level level) {
-                super(level);
-            }
-        }
-
-        public static class Post extends LevelEvent {
-            public Post(Level level) {
-                super(level);
-            }
-        }
+    @FunctionalInterface
+    interface ServerPost {
+        void tick();
     }
+
+    @FunctionalInterface
+    interface LevelPre {
+        void tick(Level level);
+    }
+
+    @FunctionalInterface
+    interface LevelPost {
+        void tick(Level level);
+    }
+
+    @FunctionalInterface
+    interface LivingPre {
+        boolean tick(LivingEntity entity);
+    }
+
+    @FunctionalInterface
+    interface LivingPost {
+        void tick(LivingEntity entity);
+    }
+
 }

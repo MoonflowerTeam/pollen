@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 
 public class ConfigTracker {
 
-    private static final Logger LOGGER = LogManager.getLogger();
     public static final ConfigTracker INSTANCE = new ConfigTracker();
+    private static final Logger LOGGER = LogManager.getLogger();
     private final ConcurrentHashMap<String, PollinatedModConfigImpl> fileMap;
     private final EnumMap<PollinatedConfigType, Set<PollinatedModConfigImpl>> configSets;
     private final ConcurrentHashMap<String, Map<PollinatedConfigType, PollinatedModConfigImpl>> configsByMod;

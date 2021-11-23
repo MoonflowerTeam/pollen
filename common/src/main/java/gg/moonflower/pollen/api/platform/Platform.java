@@ -102,6 +102,33 @@ public abstract class Platform {
      */
     public abstract void setup();
 
+    /**
+     * Used as context for initializing mods during loading lifecycle.
+     *
+     * @author Ocelot
+     * @since 1.0.0
+     */
+    public interface ModSetupContext {
+
+        /**
+         * Queues work to happen later when it is safe to do so.
+         * <p><i>NOTE: The returned future may execute on the current thread so it is not safe to call {@link CompletableFuture#join()} or {@link CompletableFuture#get()}</i>
+         *
+         * @param work The work to do
+         * @return A future for when the work is done
+         */
+        CompletableFuture<Void> enqueueWork(Runnable work);
+
+        /**
+         * Queues work to happen later when it is safe to do so.
+         * <p><i>NOTE: The returned future may execute on the current thread so it is not safe to call {@link CompletableFuture#join()} or {@link CompletableFuture#get()}</i>
+         *
+         * @param work The work to do
+         * @return A future for when the work is done
+         */
+        <T> CompletableFuture<T> enqueueWork(Supplier<T> work);
+    }
+
     public static class Builder {
 
         private final String modId;
@@ -148,32 +175,5 @@ public abstract class Platform {
         public Platform build() {
             return buildImpl(this.modId, this.commonInit, this.clientInit, this.commonPostInit, this.clientPostInit);
         }
-    }
-
-    /**
-     * Used as context for initializing mods during loading lifecycle.
-     *
-     * @author Ocelot
-     * @since 1.0.0
-     */
-    public interface ModSetupContext {
-
-        /**
-         * Queues work to happen later when it is safe to do so.
-         * <p><i>NOTE: The returned future may execute on the current thread so it is not safe to call {@link CompletableFuture#join()} or {@link CompletableFuture#get()}</i>
-         *
-         * @param work The work to do
-         * @return A future for when the work is done
-         */
-        CompletableFuture<Void> enqueueWork(Runnable work);
-
-        /**
-         * Queues work to happen later when it is safe to do so.
-         * <p><i>NOTE: The returned future may execute on the current thread so it is not safe to call {@link CompletableFuture#join()} or {@link CompletableFuture#get()}</i>
-         *
-         * @param work The work to do
-         * @return A future for when the work is done
-         */
-        <T> CompletableFuture<T> enqueueWork(Supplier<T> work);
     }
 }

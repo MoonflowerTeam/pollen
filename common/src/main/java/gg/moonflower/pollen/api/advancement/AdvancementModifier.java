@@ -62,6 +62,13 @@ public class AdvancementModifier {
         return array;
     }
 
+    /**
+     * @return A new advancement modifier builder
+     */
+    public static AdvancementModifier.Builder advancementModifier() {
+        return new AdvancementModifier.Builder();
+    }
+
     private String getCriteriaName(String criteria) {
         if (criteria.contains(":"))
             return criteria;
@@ -193,27 +200,20 @@ public class AdvancementModifier {
         return this.id.hashCode();
     }
 
-    /**
-     * @return A new advancement modifier builder
-     */
-    public static AdvancementModifier.Builder advancementModifier() {
-        return new AdvancementModifier.Builder();
-    }
-
     public static class Builder {
 
         private final List<ResourceLocation> inject;
-        private int priority;
         private final Map<String, Criterion> addCriteria;
         private final Map<String, Integer> injectRequirementsKeys;
         private final List<String> addRequirementsKeys;
+        private final List<String> removeRequirements;
+        private final List<ResourceLocation> removeLoot;
+        private final List<ResourceLocation> removeRecipes;
+        private int priority;
         private String[][] injectRequirements;
         private String[][] addRequirements;
         private RequirementsStrategy requirementsStrategy;
         private AdvancementRewards addRewards;
-        private final List<String> removeRequirements;
-        private final List<ResourceLocation> removeLoot;
-        private final List<ResourceLocation> removeRecipes;
 
         private Builder(ResourceLocation[] inject, int priority, Map<String, Criterion> addCriteria, String[][] injectRequirements, String[][] addRequirements, AdvancementRewards addRewards, String[] removeRequirements, ResourceLocation[] removeLoot, ResourceLocation[] removeRecipes) {
             this.inject = new LinkedList<>(Arrays.asList(inject));
@@ -243,6 +243,107 @@ public class AdvancementModifier {
             this.removeRequirements = new LinkedList<>();
             this.removeLoot = new LinkedList<>();
             this.removeRecipes = new LinkedList<>();
+        }
+
+        private static <T> T[] getArray(JsonObject json, String name, T[] array, int minSize, Function<String, T> getter) {
+            if (!json.has(name))
+                return array;
+
+            JsonArray jsonArray = GsonHelper.getAsJsonArray(json, name);
+            if (jsonArray.size() < minSize)
+                throw new JsonSyntaxException("Expected " + name + " to have at least " + minSize + "elements");
+            if (array.length != jsonArray.size())
+                array = Arrays.copyOf(array, jsonArray.size());
+
+            for (int i = 0; i < jsonArray.size(); ++i)
+                array[i] = getter.apply(GsonHelper.convertToString(jsonArray.get(i), name + "[" + i + "]"));
+
+            return array;
+        }
+
+        private static Map<String, Criterion> getCriteriaName(Map<String, Criterion> criteria, DeserializationContext context) {
+            Map<String, Criterion> result = new HashMap<>(criteria.size());
+            criteria.forEach((name, criterion) -> result.put(name.contains(":") ? name : context.getAdvancementId().getNamespace() + ":" + name, criterion));
+            return result;
+        }
+
+        /**
+         * Deserializes a new modifier from JSON.
+         *
+         * @param json    The JSON to deserialize.
+         * @param context The context of deserialization
+         * @return The deserialized builder
+         */
+        public static Builder fromJson(JsonObject json, DeserializationContext context) {
+            if (!json.has("inject"))
+                throw new JsonSyntaxException("Missing inject, expected to find a String or JsonArray");
+            JsonElement injectElement = json.get("inject");
+            if (!(injectElement.isJsonPrimitive() && injectElement.getAsJsonPrimitive().isString()) && !injectElement.isJsonArray())
+                throw new JsonSyntaxException("Expected inject to be a String or JsonArray, was " + GsonHelper.getType(injectElement));
+            ResourceLocation[] inject = injectElement.isJsonPrimitive() && injectElement.getAsJsonPrimitive().isString() ? new ResourceLocation[]{new ResourceLocation(GsonHelper.convertToString(injectElement, "inject"))} : getArray(json, "inject", new ResourceLocation[0], 1, ResourceLocation::new);
+
+            int priority = GsonHelper.getAsInt(json, "injectPriority", 1000);
+            AdvancementRewards addRewards = json.has("addRewards") ? AdvancementRewards.deserialize(GsonHelper.getAsJsonObject(json, "addRewards")) : AdvancementRewards.EMPTY;
+
+            Map<String, Criterion> addCriteria;
+            if (json.has("addCriteria")) {
+                addCriteria = getCriteriaName(Criterion.criteriaFromJson(GsonHelper.getAsJsonObject(json, "addCriteria"), context), context);
+                if (addCriteria.isEmpty())
+                    throw new JsonSyntaxException("'addCriteria' cannot be empty if it's present");
+            } else {
+                addCriteria = Collections.emptyMap();
+            }
+
+            JsonArray injectRequirementsJson = Objects.requireNonNull(GsonHelper.getAsJsonArray(json, "injectRequirements", new JsonArray()));
+            String[][] injectRequirements = new String[injectRequirementsJson.size()][];
+
+            for (int i = 0; i < injectRequirementsJson.size(); ++i) {
+                JsonArray requirementsJson = GsonHelper.convertToJsonArray(injectRequirementsJson.get(i), "injectRequirements[" + i + "]");
+                injectRequirements[i] = new String[requirementsJson.size()];
+
+                for (int j = 0; j < requirementsJson.size(); ++j) {
+                    injectRequirements[i][j] = GsonHelper.convertToString(requirementsJson.get(j), "injectRequirements[" + i + "][" + j + "]");
+                }
+            }
+
+            JsonArray addRequirementsJson = Objects.requireNonNull(GsonHelper.getAsJsonArray(json, "addRequirements", new JsonArray()));
+            String[][] addRequirements = new String[addRequirementsJson.size()][];
+
+            for (int i = 0; i < addRequirementsJson.size(); ++i) {
+                JsonArray requirementsJson = GsonHelper.convertToJsonArray(addRequirementsJson.get(i), "addRequirements[" + i + "]");
+                addRequirements[i] = new String[requirementsJson.size()];
+
+                for (int j = 0; j < requirementsJson.size(); ++j) {
+                    addRequirements[i][j] = GsonHelper.convertToString(requirementsJson.get(j), "addRequirements[" + i + "][" + j + "]");
+                }
+            }
+
+            if (injectRequirements.length == 0 && addRequirements.length == 0) {
+                addRequirements = new String[addCriteria.size()][];
+                int i = 0;
+
+                for (String string : addCriteria.keySet()) {
+                    addRequirements[i++] = new String[]{string};
+                }
+            }
+
+            for (String[] requirement : addRequirements)
+                if (requirement.length == 0)
+                    throw new JsonSyntaxException("Requirement entry cannot be empty");
+
+            String[] removeRequirements = getArray(json, "removeRequirements", new String[0], 0, Function.identity());
+            ResourceLocation[] removeLoot;
+            ResourceLocation[] removeRecipes;
+            if (json.has("removeRewards")) {
+                JsonObject removeRewardsJson = GsonHelper.getAsJsonObject(json, "removeRewards");
+                removeLoot = getArray(removeRewardsJson, "loot", new ResourceLocation[0], 0, ResourceLocation::new);
+                removeRecipes = getArray(removeRewardsJson, "recipes", new ResourceLocation[0], 0, ResourceLocation::new);
+            } else {
+                removeLoot = new ResourceLocation[0];
+                removeRecipes = new ResourceLocation[0];
+            }
+
+            return new Builder(inject, priority, addCriteria, injectRequirements, addRequirements, addRewards, removeRequirements, removeLoot, removeRecipes);
         }
 
         /**
@@ -490,107 +591,6 @@ public class AdvancementModifier {
             }
 
             return jsonObject;
-        }
-
-        private static <T> T[] getArray(JsonObject json, String name, T[] array, int minSize, Function<String, T> getter) {
-            if (!json.has(name))
-                return array;
-
-            JsonArray jsonArray = GsonHelper.getAsJsonArray(json, name);
-            if (jsonArray.size() < minSize)
-                throw new JsonSyntaxException("Expected " + name + " to have at least " + minSize + "elements");
-            if (array.length != jsonArray.size())
-                array = Arrays.copyOf(array, jsonArray.size());
-
-            for (int i = 0; i < jsonArray.size(); ++i)
-                array[i] = getter.apply(GsonHelper.convertToString(jsonArray.get(i), name + "[" + i + "]"));
-
-            return array;
-        }
-
-        private static Map<String, Criterion> getCriteriaName(Map<String, Criterion> criteria, DeserializationContext context) {
-            Map<String, Criterion> result = new HashMap<>(criteria.size());
-            criteria.forEach((name, criterion) -> result.put(name.contains(":") ? name : context.getAdvancementId().getNamespace() + ":" + name, criterion));
-            return result;
-        }
-
-        /**
-         * Deserializes a new modifier from JSON.
-         *
-         * @param json    The JSON to deserialize.
-         * @param context The context of deserialization
-         * @return The deserialized builder
-         */
-        public static Builder fromJson(JsonObject json, DeserializationContext context) {
-            if (!json.has("inject"))
-                throw new JsonSyntaxException("Missing inject, expected to find a String or JsonArray");
-            JsonElement injectElement = json.get("inject");
-            if (!(injectElement.isJsonPrimitive() && injectElement.getAsJsonPrimitive().isString()) && !injectElement.isJsonArray())
-                throw new JsonSyntaxException("Expected inject to be a String or JsonArray, was " + GsonHelper.getType(injectElement));
-            ResourceLocation[] inject = injectElement.isJsonPrimitive() && injectElement.getAsJsonPrimitive().isString() ? new ResourceLocation[]{new ResourceLocation(GsonHelper.convertToString(injectElement, "inject"))} : getArray(json, "inject", new ResourceLocation[0], 1, ResourceLocation::new);
-
-            int priority = GsonHelper.getAsInt(json, "injectPriority", 1000);
-            AdvancementRewards addRewards = json.has("addRewards") ? AdvancementRewards.deserialize(GsonHelper.getAsJsonObject(json, "addRewards")) : AdvancementRewards.EMPTY;
-
-            Map<String, Criterion> addCriteria;
-            if (json.has("addCriteria")) {
-                addCriteria = getCriteriaName(Criterion.criteriaFromJson(GsonHelper.getAsJsonObject(json, "addCriteria"), context), context);
-                if (addCriteria.isEmpty())
-                    throw new JsonSyntaxException("'addCriteria' cannot be empty if it's present");
-            } else {
-                addCriteria = Collections.emptyMap();
-            }
-
-            JsonArray injectRequirementsJson = Objects.requireNonNull(GsonHelper.getAsJsonArray(json, "injectRequirements", new JsonArray()));
-            String[][] injectRequirements = new String[injectRequirementsJson.size()][];
-
-            for (int i = 0; i < injectRequirementsJson.size(); ++i) {
-                JsonArray requirementsJson = GsonHelper.convertToJsonArray(injectRequirementsJson.get(i), "injectRequirements[" + i + "]");
-                injectRequirements[i] = new String[requirementsJson.size()];
-
-                for (int j = 0; j < requirementsJson.size(); ++j) {
-                    injectRequirements[i][j] = GsonHelper.convertToString(requirementsJson.get(j), "injectRequirements[" + i + "][" + j + "]");
-                }
-            }
-
-            JsonArray addRequirementsJson = Objects.requireNonNull(GsonHelper.getAsJsonArray(json, "addRequirements", new JsonArray()));
-            String[][] addRequirements = new String[addRequirementsJson.size()][];
-
-            for (int i = 0; i < addRequirementsJson.size(); ++i) {
-                JsonArray requirementsJson = GsonHelper.convertToJsonArray(addRequirementsJson.get(i), "addRequirements[" + i + "]");
-                addRequirements[i] = new String[requirementsJson.size()];
-
-                for (int j = 0; j < requirementsJson.size(); ++j) {
-                    addRequirements[i][j] = GsonHelper.convertToString(requirementsJson.get(j), "addRequirements[" + i + "][" + j + "]");
-                }
-            }
-
-            if (injectRequirements.length == 0 && addRequirements.length == 0) {
-                addRequirements = new String[addCriteria.size()][];
-                int i = 0;
-
-                for (String string : addCriteria.keySet()) {
-                    addRequirements[i++] = new String[]{string};
-                }
-            }
-
-            for (String[] requirement : addRequirements)
-                if (requirement.length == 0)
-                    throw new JsonSyntaxException("Requirement entry cannot be empty");
-
-            String[] removeRequirements = getArray(json, "removeRequirements", new String[0], 0, Function.identity());
-            ResourceLocation[] removeLoot;
-            ResourceLocation[] removeRecipes;
-            if (json.has("removeRewards")) {
-                JsonObject removeRewardsJson = GsonHelper.getAsJsonObject(json, "removeRewards");
-                removeLoot = getArray(removeRewardsJson, "loot", new ResourceLocation[0], 0, ResourceLocation::new);
-                removeRecipes = getArray(removeRewardsJson, "recipes", new ResourceLocation[0], 0, ResourceLocation::new);
-            } else {
-                removeLoot = new ResourceLocation[0];
-                removeRecipes = new ResourceLocation[0];
-            }
-
-            return new Builder(inject, priority, addCriteria, injectRequirements, addRequirements, addRewards, removeRequirements, removeLoot, removeRecipes);
         }
     }
 }

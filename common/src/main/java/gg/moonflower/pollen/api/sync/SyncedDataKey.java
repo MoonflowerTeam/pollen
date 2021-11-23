@@ -23,6 +23,10 @@ public class SyncedDataKey<T> {
         this.syncStrategy = syncStrategy;
     }
 
+    public static <T> SyncedDataKey.Builder<T> builder(ResourceLocation id, Codec<T> codec, Supplier<T> defaultValueSupplier) {
+        return new Builder<>(id, codec, defaultValueSupplier);
+    }
+
     public ResourceLocation getKey() {
         return key;
     }
@@ -47,8 +51,40 @@ public class SyncedDataKey<T> {
         return syncStrategy;
     }
 
-    public static <T> SyncedDataKey.Builder<T> builder(ResourceLocation id, Codec<T> codec, Supplier<T> defaultValueSupplier) {
-        return new Builder<>(id, codec, defaultValueSupplier);
+    public enum SyncStrategy {
+
+        /**
+         * Stops the synced key from syncing at all. The data will only be present on the server.
+         */
+        NONE(false, false),
+        /**
+         * Only syncs the data to the client with the data. The data will only be present on the server and for the client with the data.
+         */
+        ENTITY(true, false),
+        /**
+         * Only syncs the data to the clients tracking the client with the data. The data will only be present on the server and for the clients tracking the client with the data.
+         */
+        TRACKING(false, true),
+        /**
+         * Fully syncs the data. The data will be present on the server, the client with the data, and all players tracking the client with the data.
+         */
+        TRACKING_AND_SELF(true, true);
+
+        private final boolean syncEntity;
+        private final boolean syncTracking;
+
+        SyncStrategy(boolean syncEntity, boolean syncTracking) {
+            this.syncEntity = syncEntity;
+            this.syncTracking = syncTracking;
+        }
+
+        public boolean isSyncEntity() {
+            return syncEntity;
+        }
+
+        public boolean isSyncTracking() {
+            return syncTracking;
+        }
     }
 
     public static class Builder<T> {
@@ -97,42 +133,6 @@ public class SyncedDataKey<T> {
         public Builder<T> syncStrategy(SyncStrategy syncStrategy) {
             this.syncStrategy = syncStrategy;
             return this;
-        }
-    }
-
-    public enum SyncStrategy {
-
-        /**
-         * Stops the synced key from syncing at all. The data will only be present on the server.
-         */
-        NONE(false, false),
-        /**
-         * Only syncs the data to the client with the data. The data will only be present on the server and for the client with the data.
-         */
-        ENTITY(true, false),
-        /**
-         * Only syncs the data to the clients tracking the client with the data. The data will only be present on the server and for the clients tracking the client with the data.
-         */
-        TRACKING(false, true),
-        /**
-         * Fully syncs the data. The data will be present on the server, the client with the data, and all players tracking the client with the data.
-         */
-        TRACKING_AND_SELF(true, true);
-
-        private final boolean syncEntity;
-        private final boolean syncTracking;
-
-        SyncStrategy(boolean syncEntity, boolean syncTracking) {
-            this.syncEntity = syncEntity;
-            this.syncTracking = syncTracking;
-        }
-
-        public boolean isSyncEntity() {
-            return syncEntity;
-        }
-
-        public boolean isSyncTracking() {
-            return syncTracking;
         }
     }
 }

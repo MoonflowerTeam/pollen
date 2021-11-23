@@ -27,11 +27,6 @@ public class CreateWorldScreenMixin {
     @Shadow
     private PackRepository tempDataPackRepository;
 
-    @Inject(method = "getDataPackSelectionSettings", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;reload()V", shift = At.Shift.BEFORE))
-    private void onScanPacks(CallbackInfoReturnable<Pair<File, PackRepository>> cir) {
-        ((PackRepositoryAccessor) this.tempDataPackRepository).getSources().add(new ModResourcePackCreator(PackType.SERVER_DATA));
-    }
-
     @ModifyArg(method = "create", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/worldselection/CreateWorldScreen;<init>(Lnet/minecraft/client/gui/screens/Screen;Lnet/minecraft/world/level/DataPackConfig;Lnet/minecraft/client/gui/screens/worldselection/WorldGenSettingsComponent;)V"), index = 1)
     private static DataPackConfig onNew(DataPackConfig settings) {
         ModResourcePackCreator modResourcePackCreator = new ModResourcePackCreator(PackType.SERVER_DATA);
@@ -52,5 +47,10 @@ public class CreateWorldScreenMixin {
         }
 
         return new DataPackConfig(enabled, disabled);
+    }
+
+    @Inject(method = "getDataPackSelectionSettings", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;reload()V", shift = At.Shift.BEFORE))
+    private void onScanPacks(CallbackInfoReturnable<Pair<File, PackRepository>> cir) {
+        ((PackRepositoryAccessor) this.tempDataPackRepository).getSources().add(new ModResourcePackCreator(PackType.SERVER_DATA));
     }
 }

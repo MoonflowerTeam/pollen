@@ -1,71 +1,34 @@
 package gg.moonflower.pollen.api.event.events.lifecycle;
 
 import gg.moonflower.pollen.api.event.PollinatedEvent;
+import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.server.MinecraftServer;
 
-/**
- * Events fired for server lifecycle.
- */
-public class ServerLifecycleEvent extends PollinatedEvent {
+public interface ServerLifecycleEvent {
 
-    private final MinecraftServer server;
+    PollinatedEvent<Starting> STARTING = EventRegistry.createLoop(Starting.class);
+    PollinatedEvent<Started> STARTED = EventRegistry.createLoop(Started.class);
+    PollinatedEvent<Stopping> STOPPING = EventRegistry.createLoop(Stopping.class);
+    PollinatedEvent<Stopped> STOPPED = EventRegistry.createLoop(Stopped.class);
 
-    private ServerLifecycleEvent(MinecraftServer server) {
-        this.server = server;
+    @FunctionalInterface
+    interface Starting {
+        void starting(MinecraftServer server);
     }
 
-    /**
-     * @return The main server instance
-     */
-    public MinecraftServer getServer() {
-        return server;
+    @FunctionalInterface
+    interface Started {
+        void started(MinecraftServer server);
     }
 
-    /**
-     * Called at the beginning of the server start phase.
-     *
-     * @author Ocelot
-     * @since 1.0.0
-     */
-    public static class Starting extends ServerLifecycleEvent {
-        public Starting(MinecraftServer server) {
-            super(server);
-        }
+    @FunctionalInterface
+    interface Stopping {
+        void stopping(MinecraftServer server);
     }
 
-    /**
-     * Called after the server fully loads.
-     *
-     * @author Ocelot
-     * @since 1.0.0
-     */
-    public static class Started extends ServerLifecycleEvent {
-        public Started(MinecraftServer server) {
-            super(server);
-        }
+    @FunctionalInterface
+    interface Stopped {
+        void stopped(MinecraftServer server);
     }
 
-    /**
-     * Called at the beginning of the server stop phase.
-     *
-     * @author Ocelot
-     * @since 1.0.0
-     */
-    public static class Stopping extends ServerLifecycleEvent {
-        public Stopping(MinecraftServer server) {
-            super(server);
-        }
-    }
-
-    /**
-     * Called after the server fully stops.
-     *
-     * @author Ocelot
-     * @since 1.0.0
-     */
-    public static class Stopped extends ServerLifecycleEvent {
-        public Stopped(MinecraftServer server) {
-            super(server);
-        }
-    }
 }

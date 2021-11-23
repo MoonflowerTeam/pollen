@@ -2,7 +2,6 @@ package gg.moonflower.pollen.pinwheel.api.common.animation;
 
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimatedModel;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
-import gg.moonflower.pollen.pinwheel.core.client.geometry.BedrockGeometryModel;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 

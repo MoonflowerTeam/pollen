@@ -2,13 +2,17 @@ package gg.moonflower.pollen.core.fabric;
 
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.config.fabric.ConfigTracker;
+import gg.moonflower.pollen.api.event.events.CommandRegistryEvent;
+import gg.moonflower.pollen.api.event.events.entity.player.InteractEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
-import gg.moonflower.pollen.api.event.events.player.InteractEvent;
+import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.core.Pollen;
-import jdk.internal.ref.Cleaner;
+import gg.moonflower.pollen.core.command.ConfigCommand;
+import gg.moonflower.pollen.core.mixin.fabric.LevelResourceAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
@@ -16,11 +20,31 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.commands.Commands;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.storage.LevelResource;
 import org.jetbrains.annotations.ApiStatus;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @ApiStatus.Internal
 public class PollenFabric implements ModInitializer {
+
+    private static final LevelResource SERVERCONFIG = LevelResourceAccessor.init("serverconfig");
+
+    private static Path getServerConfigPath(MinecraftServer server) {
+        Path serverConfig = server.getWorldPath(SERVERCONFIG);
+        if (!Files.isDirectory(serverConfig)) {
+            try {
+                Files.createDirectories(serverConfig);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to create " + serverConfig, e);
+            }
+        }
+        return serverConfig;
+    }
 
     @Override
     public void onInitialize() {
@@ -32,39 +56,26 @@ public class PollenFabric implements ModInitializer {
 
         Pollen.PLATFORM.setup();
 
-        ServerTickEvents.START_SERVER_TICK.register(level -> EventDispatcher.post(new TickEvent.ServerEvent.Pre()));
-        ServerTickEvents.END_SERVER_TICK.register(level -> EventDispatcher.post(new TickEvent.ServerEvent.Post()));
-        ServerTickEvents.START_WORLD_TICK.register(level -> EventDispatcher.post(new TickEvent.LevelEvent.Pre(level)));
-        ServerTickEvents.END_WORLD_TICK.register(level -> EventDispatcher.post(new TickEvent.LevelEvent.Post(level)));
+        ServerTickEvents.START_SERVER_TICK.register(level -> TickEvent.SERVER_PRE.invoker().tick());
+        ServerTickEvents.END_SERVER_TICK.register(level -> TickEvent.SERVER_POST.invoker().tick());
+        ServerTickEvents.START_WORLD_TICK.register(TickEvent.LEVEL_PRE.invoker()::tick);
+        ServerTickEvents.END_WORLD_TICK.register(TickEvent.LEVEL_POST.invoker()::tick);
 
-        ServerLifecycleEvents.SERVER_STARTING.register(server -> EventDispatcher.post(new ServerLifecycleEvent.Starting(server)));
-        ServerLifecycleEvents.SERVER_STARTED.register(server -> EventDispatcher.post(new ServerLifecycleEvent.Started(server)));
-        ServerLifecycleEvents.SERVER_STOPPING.register(server -> EventDispatcher.post(new ServerLifecycleEvent.Stopping(server)));
-        ServerLifecycleEvents.SERVER_STOPPED.register(server -> EventDispatcher.post(new ServerLifecycleEvent.Stopped(server)));
+        ServerLifecycleEvents.SERVER_STARTING.register(ServerLifecycleEvent.STARTING.invoker()::starting);
+        ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvent.STARTED.invoker()::started);
+        ServerLifecycleEvents.SERVER_STOPPING.register(ServerLifecycleEvent.STOPPING.invoker()::stopping);
+        ServerLifecycleEvents.SERVER_STOPPED.register(ServerLifecycleEvent.STOPPED.invoker()::stopped);
 
-        UseItemCallback.EVENT.register((player, world, hand) -> {
-            InteractEvent.UseItem event = new InteractEvent.UseItem(player, world, hand);
-            EventDispatcher.post(event);
-            return new InteractionResultHolder<>(event.getResult(), event.getPlayer().getItemInHand(event.getHand()));
-        });
+        UseItemCallback.EVENT.register(InteractEvent.RIGHT_CLICK_ITEM.invoker()::interaction);
+        UseBlockCallback.EVENT.register(InteractEvent.RIGHT_CLICK_BLOCK.invoker()::interaction);
+        AttackBlockCallback.EVENT.register(InteractEvent.LEFT_CLICK_BLOCK.invoker()::interaction);
+        UseEntityCallback.EVENT.register((player, world, hand, entity, entityHitResult) -> InteractEvent.RIGHT_CLICK_ENTITY.invoker().interaction(player, world, hand, entity));
 
-        UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            InteractEvent.UseBlock event = new InteractEvent.UseBlock(player, world, hand, hitResult);
-            EventDispatcher.post(event);
-            return event.getResult();
-        });
-        AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> {
-            InteractEvent.AttackBlock event = new InteractEvent.AttackBlock(player, world, hand, pos, direction);
-            EventDispatcher.post(event);
-            return event.getResult();
-        });
+        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> CommandRegistryEvent.EVENT.invoker().registerCommands(dispatcher, dedicated ? Commands.CommandSelection.DEDICATED : Platform.getRunningServer().isPresent() ? Commands.CommandSelection.INTEGRATED : Commands.CommandSelection.ALL));
 
-        UseEntityCallback.EVENT.register((player, world, hand, entity, entityHitResult) -> {
-            InteractEvent.UseEntity event = new InteractEvent.UseEntity(player, world, hand, entity);
-            EventDispatcher.post(event);
-            return event.getResult();
-        });
-
-        EventDispatcher.register(FabricEvents.class);
+        // Pollen Events
+        ServerLifecycleEvent.STARTING.register(server -> ConfigTracker.INSTANCE.loadConfigs(PollinatedConfigType.SERVER, getServerConfigPath(server)));
+        ServerLifecycleEvent.STOPPED.register(server -> ConfigTracker.INSTANCE.unloadConfigs(PollinatedConfigType.SERVER, getServerConfigPath(server)));
+        CommandRegistryEvent.EVENT.register((dispatcher, selection) -> ConfigCommand.register(dispatcher, selection == Commands.CommandSelection.DEDICATED));
     }
 }

@@ -5,8 +5,6 @@ import gg.moonflower.pollen.api.config.fabric.ConfigTracker;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-
 @ApiStatus.Internal
 public class ConfigCommandImpl {
 

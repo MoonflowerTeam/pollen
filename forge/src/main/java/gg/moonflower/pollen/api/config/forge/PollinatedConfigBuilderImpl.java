@@ -1,8 +1,6 @@
 package gg.moonflower.pollen.api.config.forge;
 
 import com.electronwill.nightconfig.core.EnumGetMethod;
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import com.electronwill.nightconfig.core.utils.UnmodifiableConfigWrapper;
 import gg.moonflower.pollen.api.config.PollinatedConfigBuilder;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
@@ -103,7 +101,7 @@ public class PollinatedConfigBuilderImpl implements PollinatedConfigBuilder {
         return this;
     }
 
-    public  <T> Pair<T, ForgeConfigSpec> configure(Function<PollinatedConfigBuilder, T> consumer) {
+    public <T> Pair<T, ForgeConfigSpec> configure(Function<PollinatedConfigBuilder, T> consumer) {
         T o = consumer.apply(this);
         return Pair.of(o, this.builder.build());
     }

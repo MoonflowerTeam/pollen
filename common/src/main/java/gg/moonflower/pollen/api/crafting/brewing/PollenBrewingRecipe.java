@@ -37,6 +37,38 @@ public class PollenBrewingRecipe implements Recipe<Container> {
         this.result = result;
     }
 
+    @ApiStatus.Internal
+    @ExpectPlatform
+    public static RecipeSerializer<PollenBrewingRecipe> createSerializer() {
+        return Platform.error();
+    }
+
+    @ApiStatus.Internal
+    public static PollenBrewingRecipe fromJson(ResourceLocation resourceLocation, JsonObject jsonObject) {
+        String group = GsonHelper.getAsString(jsonObject, "group", "");
+        Potion from = Registry.POTION.get(new ResourceLocation(GsonHelper.getAsString(jsonObject, "from")));
+        Ingredient ingredient = Ingredient.fromJson(GsonHelper.getAsJsonObject(jsonObject, "ingredient"));
+        Potion result = Registry.POTION.get(new ResourceLocation(GsonHelper.getAsString(jsonObject, "result")));
+        return new PollenBrewingRecipe(resourceLocation, group, from, ingredient, result);
+    }
+
+    @ApiStatus.Internal
+    public static PollenBrewingRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
+        String group = buf.readUtf();
+        Potion from = Registry.POTION.get(buf.readResourceLocation());
+        Ingredient ingredient = Ingredient.fromNetwork(buf);
+        Potion result = Registry.POTION.get(buf.readResourceLocation());
+        return new PollenBrewingRecipe(id, group, from, ingredient, result);
+    }
+
+    @ApiStatus.Internal
+    public static void toNetwork(FriendlyByteBuf buf, PollenBrewingRecipe recipe) {
+        buf.writeUtf(recipe.group);
+        buf.writeResourceLocation(Registry.POTION.getKey(recipe.from));
+        recipe.ingredient.toNetwork(buf);
+        buf.writeResourceLocation(Registry.POTION.getKey(recipe.result));
+    }
+
     public Potion getFrom() {
         return from;
     }
@@ -87,37 +119,5 @@ public class PollenBrewingRecipe implements Recipe<Container> {
     @Override
     public RecipeType<?> getType() {
         return Pollen.BREWING;
-    }
-
-    @ApiStatus.Internal
-    @ExpectPlatform
-    public static RecipeSerializer<PollenBrewingRecipe> createSerializer() {
-        return Platform.error();
-    }
-
-    @ApiStatus.Internal
-    public static PollenBrewingRecipe fromJson(ResourceLocation resourceLocation, JsonObject jsonObject) {
-        String group = GsonHelper.getAsString(jsonObject, "group", "");
-        Potion from = Registry.POTION.get(new ResourceLocation(GsonHelper.getAsString(jsonObject, "from")));
-        Ingredient ingredient = Ingredient.fromJson(GsonHelper.getAsJsonObject(jsonObject, "ingredient"));
-        Potion result = Registry.POTION.get(new ResourceLocation(GsonHelper.getAsString(jsonObject, "result")));
-        return new PollenBrewingRecipe(resourceLocation, group, from, ingredient, result);
-    }
-
-    @ApiStatus.Internal
-    public static PollenBrewingRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-        String group = buf.readUtf();
-        Potion from = Registry.POTION.get(buf.readResourceLocation());
-        Ingredient ingredient = Ingredient.fromNetwork(buf);
-        Potion result = Registry.POTION.get(buf.readResourceLocation());
-        return new PollenBrewingRecipe(id, group, from, ingredient, result);
-    }
-
-    @ApiStatus.Internal
-    public static void toNetwork(FriendlyByteBuf buf, PollenBrewingRecipe recipe) {
-        buf.writeUtf(recipe.group);
-        buf.writeResourceLocation(Registry.POTION.getKey(recipe.from));
-        recipe.ingredient.toNetwork(buf);
-        buf.writeResourceLocation(Registry.POTION.getKey(recipe.result));
     }
 }

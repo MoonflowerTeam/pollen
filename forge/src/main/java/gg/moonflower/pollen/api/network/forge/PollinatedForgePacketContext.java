@@ -6,7 +6,6 @@ import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import gg.moonflower.pollen.core.extension.forge.FMLHandshakeHandlerExtensions;
 import io.netty.util.AttributeKey;
 import net.minecraft.network.Connection;
-import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.simple.SimpleChannel;

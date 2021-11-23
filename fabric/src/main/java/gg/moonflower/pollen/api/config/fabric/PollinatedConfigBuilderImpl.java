@@ -25,8 +25,8 @@ public class PollinatedConfigBuilderImpl implements PollinatedConfigBuilder {
     private final Config storage = Config.of(LinkedHashMap::new, InMemoryFormat.withUniversalSupport()); // Use LinkedHashMap for consistent ordering
     private final Map<List<String>, String> levelComments = new HashMap<>();
     private final List<String> currentPath = new ArrayList<>();
-    private BuilderContext context = new BuilderContext();
     List<FabricConfigSpec.FabricConfigValue<?>> values = new ArrayList<>();
+    private BuilderContext context = new BuilderContext();
 
     private <T> ConfigValue<T> define(List<String> path, FabricConfigSpec.ValueSpec value, Supplier<T> defaultSupplier) { // This is the root where everything at the end of the day ends up.
         if (!this.currentPath.isEmpty()) {
@@ -206,11 +206,6 @@ public class PollinatedConfigBuilderImpl implements PollinatedConfigBuilder {
         private boolean worldRestart = false;
         private Class<?> clazz;
 
-        public void setComment(String... value) {
-            Preconditions.checkNotNull(value, "Comments must not be null");
-            this.comment = value;
-        }
-
         public boolean hasComment() {
             return this.comment.length > 0;
         }
@@ -219,26 +214,31 @@ public class PollinatedConfigBuilderImpl implements PollinatedConfigBuilder {
             return this.comment;
         }
 
-        public String buildComment() {
-            return FabricConfigSpec.LINE_JOINER.join(this.comment);
+        public void setComment(String... value) {
+            Preconditions.checkNotNull(value, "Comments must not be null");
+            this.comment = value;
         }
 
-        public void setTranslationKey(String value) {
-            this.langKey = value;
+        public String buildComment() {
+            return FabricConfigSpec.LINE_JOINER.join(this.comment);
         }
 
         public String getTranslationKey() {
             return this.langKey;
         }
 
-        public <V extends Comparable<? super V>> void setRange(FabricConfigSpec.Range<V> value) {
-            this.range = value;
-            this.setClazz(value.getClazz());
+        public void setTranslationKey(String value) {
+            this.langKey = value;
         }
 
         @SuppressWarnings("unchecked")
         public <V extends Comparable<? super V>> FabricConfigSpec.Range<V> getRange() {
             return (FabricConfigSpec.Range<V>) this.range;
+        }
+
+        public <V extends Comparable<? super V>> void setRange(FabricConfigSpec.Range<V> value) {
+            this.range = value;
+            this.setClazz(value.getClazz());
         }
 
         public void worldRestart() {
@@ -249,12 +249,12 @@ public class PollinatedConfigBuilderImpl implements PollinatedConfigBuilder {
             return this.worldRestart;
         }
 
-        public void setClazz(Class<?> clazz) {
-            this.clazz = clazz;
-        }
-
         public Class<?> getClazz() {
             return this.clazz;
+        }
+
+        public void setClazz(Class<?> clazz) {
+            this.clazz = clazz;
         }
 
         public void ensureEmpty() {

@@ -12,6 +12,6 @@ public class LivingEntityMixin {
 
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {
-        EventDispatcher.post(new TickEvent.LivingEntityEvent.Post((LivingEntity) (Object) this));
+        TickEvent.LIVING_POST.invoker().tick((LivingEntity) (Object) this);
     }
 }

@@ -21,10 +21,9 @@ import static com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction.*;
 
 public class FabricConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfig> {
 
-    private static final Marker CORE = MarkerManager.getMarker("CORE");
     static final Joiner LINE_JOINER = Joiner.on("\n");
     static final Joiner DOT_JOINER = Joiner.on(".");
-
+    private static final Marker CORE = MarkerManager.getMarker("CORE");
     private final Map<List<String>, String> levelComments;
     private final UnmodifiableConfig values;
     private Config childConfig;
@@ -349,10 +348,8 @@ public class FabricConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConf
         private final PollinatedConfigBuilderImpl parent;
         private final List<String> path;
         private final Supplier<T> defaultSupplier;
-
-        private T cachedValue = null;
-
         FabricConfigSpec spec;
+        private T cachedValue = null;
 
         FabricConfigValue(PollinatedConfigBuilderImpl parent, List<String> path, Supplier<T> defaultSupplier) {
             this.parent = parent;

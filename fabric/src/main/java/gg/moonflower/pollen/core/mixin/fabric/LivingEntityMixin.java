@@ -12,7 +12,7 @@ public class LivingEntityMixin {
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     public void tick(CallbackInfo ci) {
-        if (EventDispatcher.post(new TickEvent.LivingEntityEvent.Pre((LivingEntity) (Object) this)))
+        if (!TickEvent.LIVING_PRE.invoker().tick((LivingEntity) (Object) this))
             ci.cancel();
     }
 }

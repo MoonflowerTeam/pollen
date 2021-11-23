@@ -38,24 +38,13 @@ public class SyncedDataManager {
 
     @ApiStatus.Internal
     public static void init() {
-        EventDispatcher.register(SyncedDataManager.class);
-    }
-
-    @ApiStatus.Internal
-    public static void onClientDisconnect(ClientNetworkEvent.LoggedOut event) {
-        CLIENT_KEY_LOOKUP.clear();
-    }
-
-    @ApiStatus.Internal
-    public static void onPlayerTick(TickEvent.LivingEntityEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer) || !dirty)
-            return;
-        sync((ServerPlayer) event.getEntity());
-    }
-
-    @ApiStatus.Internal
-    public static void onServerTick(TickEvent.ServerEvent.Post event) {
-        dirty = false;
+        TickEvent.SERVER_POST.register(() -> SyncedDataManager.dirty = false);
+        TickEvent.LIVING_POST.register(entity -> {
+            if (!(entity instanceof ServerPlayer) || !dirty)
+                return;
+            sync((ServerPlayer) entity);
+        });
+        ClientNetworkEvent.LOGOUT.register((controller, player, connection) -> CLIENT_KEY_LOOKUP.clear());
     }
 
     @ApiStatus.Internal

@@ -24,6 +24,10 @@ public class ForgeRegistryCodec<T extends IForgeRegistryEntry<T>> implements Cod
 
     private final IForgeRegistry<T> registry;
 
+    private ForgeRegistryCodec(IForgeRegistry<T> registry) {
+        this.registry = registry;
+    }
+
     /**
      * Creates a new forge registry codec for the specified forge registry.
      *
@@ -33,10 +37,6 @@ public class ForgeRegistryCodec<T extends IForgeRegistryEntry<T>> implements Cod
      */
     public static <T extends IForgeRegistryEntry<T>> ForgeRegistryCodec<T> create(IForgeRegistry<T> registry) {
         return new ForgeRegistryCodec<T>(registry);
-    }
-
-    private ForgeRegistryCodec(IForgeRegistry<T> registry) {
-        this.registry = registry;
     }
 
     @Override

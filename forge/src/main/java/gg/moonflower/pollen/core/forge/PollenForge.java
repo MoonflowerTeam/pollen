@@ -1,9 +1,7 @@
 package gg.moonflower.pollen.core.forge;
 
-import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.api.sync.forge.SyncedDataManagerImpl;
 import gg.moonflower.pollen.core.Pollen;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -20,11 +18,5 @@ public class PollenForge {
 
     private static void init(FMLCommonSetupEvent event) {
         SyncedDataManagerImpl.init();
-    }
-
-    public static void postEvent(Event event, PollinatedEvent pollinatedEvent) {
-        boolean result = EventDispatcher.post(pollinatedEvent);
-        if (event.isCancelable())
-            event.setCanceled(result);
     }
 }

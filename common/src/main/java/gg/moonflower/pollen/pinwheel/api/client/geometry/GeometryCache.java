@@ -54,7 +54,15 @@ public class GeometryCache {
                 LOGGER.error("Failed to load cache metadata", e);
             }
         }
-        EventDispatcher.register(TickEvent.ClientEvent.Post.class, GeometryCache::clientTick);
+        TickEvent.CLIENT_POST.register(() -> {
+            if (nextWriteTime == Long.MAX_VALUE)
+                return;
+
+            if (System.currentTimeMillis() - nextWriteTime > 0) {
+                nextWriteTime = Long.MAX_VALUE;
+                Util.backgroundExecutor().execute(GeometryCache::writeMetadata);
+            }
+        });
     }
 
     private static synchronized void writeMetadata() {
@@ -209,15 +217,5 @@ public class GeometryCache {
         }
 
         return null;
-    }
-
-    private static void clientTick(TickEvent.ClientEvent.Post event) {
-        if (nextWriteTime == Long.MAX_VALUE)
-            return;
-
-        if (System.currentTimeMillis() - nextWriteTime > 0) {
-            nextWriteTime = Long.MAX_VALUE;
-            Util.backgroundExecutor().execute(GeometryCache::writeMetadata);
-        }
     }
 }

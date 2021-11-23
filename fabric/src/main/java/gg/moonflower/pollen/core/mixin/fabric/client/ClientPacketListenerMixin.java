@@ -23,6 +23,6 @@ public class ClientPacketListenerMixin {
 
     @Inject(method = "handleRespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;setServerBrand(Ljava/lang/String;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
     public void handleRespawn(ClientboundRespawnPacket pkt, CallbackInfo ci, ResourceKey<Level> dimensionKey, DimensionType dimensionType, LocalPlayer oldPlayer, int oldPlayerId, String serverBrand, LocalPlayer newPlayer) {
-        EventDispatcher.post(new ClientNetworkEvent.Respawn(this.minecraft.gameMode, oldPlayer, newPlayer, newPlayer.connection.getConnection()));
+        ClientNetworkEvent.RESPAWN.invoker().respawn(this.minecraft.gameMode, oldPlayer, newPlayer, newPlayer.connection.getConnection());
     }
 }
