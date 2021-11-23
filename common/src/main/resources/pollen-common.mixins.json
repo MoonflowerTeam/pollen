@@ -8,8 +8,6 @@
     "client.WolfAccessor"
   ],
   "mixins": [
-    "EntityMixin",
-    "PotionBrewingMixin",
     "AdvancementBuilderAccessor",
     "AdvancementBuilderMixin",
     "AdvancementRewardsAccessor",

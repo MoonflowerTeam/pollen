@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.core.forge;
 
-import gg.moonflower.pollen.api.sync.forge.SyncedDataManagerImpl;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;

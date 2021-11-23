@@ -2,12 +2,9 @@ package gg.moonflower.pollen.pinwheel.core.client.geometry;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTexture;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
-
-import static org.lwjgl.opengl.GL11.*;
 
 /**
  * @author Ocelot

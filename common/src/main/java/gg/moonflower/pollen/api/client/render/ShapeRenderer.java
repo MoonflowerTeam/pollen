@@ -7,9 +7,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Mth;
 import org.lwjgl.opengl.GL11C;
 
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11C.GL_QUADS;
-
 /**
  * Renders {@link GL11C#GL_QUADS} to the screen using enhanced precision and {@link BufferBuilder}.
  * <p>To use chain rendering, use {@link #begin()} to start rendering and {@link #end()} to complete a batch.

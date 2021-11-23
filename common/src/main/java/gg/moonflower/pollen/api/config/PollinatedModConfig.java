@@ -2,7 +2,6 @@ package gg.moonflower.pollen.api.config;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import com.electronwill.nightconfig.core.utils.UnmodifiableConfigWrapper;
 
 import java.nio.file.Path;
 

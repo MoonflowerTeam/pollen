@@ -82,7 +82,7 @@ public class BucketItemBase extends BucketItem {
                         level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
                         ItemStack itemStack3 = ItemUtils.createFilledResult(itemStack, player, itemStack2);
                         if (player instanceof ServerPlayer)
-                            CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer)player, itemStack2);
+                            CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer) player, itemStack2);
 
                         return InteractionResultHolder.sidedSuccess(itemStack3, level.isClientSide());
                     }
