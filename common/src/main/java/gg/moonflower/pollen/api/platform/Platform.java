@@ -3,6 +3,7 @@ package gg.moonflower.pollen.api.platform;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.injectables.annotations.PlatformOnly;
 import dev.architectury.injectables.targets.ArchitecturyTarget;
+import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.thread.BlockableEventLoop;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * A mod instance for initializing mods on the common side.
@@ -53,8 +55,22 @@ public abstract class Platform {
         return Platform.error();
     }
 
+    /**
+     * Checks to see if the specified mod is loaded.
+     *
+     * @param modId The id of the mod to check
+     * @return Whether that mod is loaded
+     */
     @ExpectPlatform
     public static boolean isModLoaded(String modId) {
+        return Platform.error();
+    }
+
+    /**
+     * @return A stream of all loaded mods
+     */
+    @ExpectPlatform
+    public static Stream<PollinatedModContainer> getMods() {
         return Platform.error();
     }
 

@@ -1,6 +1,12 @@
 package gg.moonflower.pollen.core;
 
 import gg.moonflower.pollen.api.advancement.AdvancementModifierManager;
+import gg.moonflower.pollen.api.command.PollenSuggestionProviders;
+import gg.moonflower.pollen.api.command.argument.ColorArgumentType;
+import gg.moonflower.pollen.api.command.argument.EnumArgument;
+import gg.moonflower.pollen.api.command.argument.TimeArgumentType;
+import gg.moonflower.pollen.api.config.ConfigManager;
+import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.crafting.brewing.PollenBrewingRecipe;
 import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
@@ -11,6 +17,8 @@ import gg.moonflower.pollen.core.network.PollenMessages;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
+import net.minecraft.commands.synchronization.ArgumentTypes;
+import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.core.Registry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -36,7 +44,13 @@ public class Pollen {
     public static final RecipeType<PollenBrewingRecipe> BREWING = RecipeType.register(MOD_ID + ":brewing");
     public static final Supplier<RecipeSerializer<PollenBrewingRecipe>> BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("brewing", PollenBrewingRecipe::createSerializer);
 
+    public static final PollenConfig CONFIG = ConfigManager.register(MOD_ID, PollinatedConfigType.COMMON, PollenConfig::new);
+
     private static MinecraftServer server;
+
+    public static void init() {
+        PollenSuggestionProviders.init();
+    }
 
     private static void onClient() {
         GeometryModelManager.init();
@@ -54,6 +68,9 @@ public class Pollen {
     }
 
     private static void onCommonPost(Platform.ModSetupContext context) {
+        ArgumentTypes.register(MOD_ID + ":color", ColorArgumentType.class, new EmptyArgumentSerializer<>(ColorArgumentType::new));
+        ArgumentTypes.register(MOD_ID + ":time", TimeArgumentType.class, new TimeArgumentType.Serializer());
+        ArgumentTypes.register(MOD_ID + ":enum", EnumArgument.class, new EnumArgument.Serializer());
         EventDispatcher.register(ServerLifecycleEvent.Starting.class, Pollen::onServerStarting);
         EventDispatcher.register(ServerLifecycleEvent.Stopped.class, Pollen::onServerStopped);
         PollenMessages.init();

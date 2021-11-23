@@ -3,9 +3,11 @@
   "package": "gg.moonflower.pollen.core.mixin.fabric",
   "compatibilityLevel": "JAVA_8",
   "client": [
+    "client.ClientHandshakePacketListenerImplMixin",
     "client.ClientPacketListenerMixin"
   ],
   "mixins": [
+    "LevelResourceAccessor",
     "LivingEntityMixin"
   ],
   "injectors": {

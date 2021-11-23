@@ -1,0 +1,9 @@
+{
+  "argument.pollen.enum.invalid": "Invalid Enum Value",
+  "argument.pollen.color.invalid": "Invalid Color String",
+  "argument.pollen.time.unknown_unit": "Invalid Time Unit",
+  "argument.pollen.time.low": "Time must not be less than %s); found %s",
+  "argument.pollen.time.big": "Time must not be more than %s); found %s",
+  "commands.pollen.config.success": "Config for %s of type %s found at %s",
+  "commands.pollen.config.fail": "Config for %s of type %s not found"
+}

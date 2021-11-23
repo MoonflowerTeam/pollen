@@ -12,6 +12,7 @@
   "mixins": [
     "FMLHandshakeHandlerMixin",
     "FolderRepositorySourceAccessor",
+    "ForgeInternalHandlerMixin",
     "PackRepositoryAccessor",
     "PackRepositoryMixin",
     "SimpleReloadableResourceManagerMixin"
