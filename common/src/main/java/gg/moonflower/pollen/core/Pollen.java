@@ -31,7 +31,8 @@ import java.util.function.Supplier;
 public class Pollen {
 
     public static final String MOD_ID = "pollen";
-    public static final RecipeType<PollenBrewingRecipe> BREWING = RecipeType.register(MOD_ID + ":brewing");    public static final Platform PLATFORM = Platform.builder(Pollen.MOD_ID)
+    public static final RecipeType<PollenBrewingRecipe> BREWING = RecipeType.register(MOD_ID + ":brewing");
+    public static final Platform PLATFORM = Platform.builder(Pollen.MOD_ID)
             .commonInit(Pollen::onCommon)
             .clientInit(Pollen::onClient)
             .commonPostInit(Pollen::onCommonPost)
@@ -74,6 +75,4 @@ public class Pollen {
     public static MinecraftServer getRunningServer() {
         return server;
     }
-
-
 }
