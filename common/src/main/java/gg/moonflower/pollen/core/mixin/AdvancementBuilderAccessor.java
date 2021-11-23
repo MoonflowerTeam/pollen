@@ -11,10 +11,10 @@ public interface AdvancementBuilderAccessor {
     String[][] getRequirements();
 
     @Accessor
-    AdvancementRewards getRewards();
+    void setRequirements(String[][] requirements);
 
     @Accessor
-    void setRequirements(String[][] requirements);
+    AdvancementRewards getRewards();
 
     @Accessor
     void setRewards(AdvancementRewards rewards);

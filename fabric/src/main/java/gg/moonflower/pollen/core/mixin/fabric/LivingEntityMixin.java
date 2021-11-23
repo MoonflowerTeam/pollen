@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.core.mixin.fabric;
 
-import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
 import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +12,7 @@ public class LivingEntityMixin {
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     public void tick(CallbackInfo ci) {
-        if (EventDispatcher.post(new TickEvent.LivingEntityEvent.Pre((LivingEntity) (Object) this)))
+        if (!TickEvent.LIVING_PRE.invoker().tick((LivingEntity) (Object) this))
             ci.cancel();
     }
 }

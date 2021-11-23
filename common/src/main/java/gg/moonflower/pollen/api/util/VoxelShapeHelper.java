@@ -19,10 +19,8 @@ import java.util.function.Function;
  * @see VoxelShape
  * @since 1.0.0
  */
-public final class VoxelShapeHelper
-{
-    private VoxelShapeHelper()
-    {
+public final class VoxelShapeHelper {
+    private VoxelShapeHelper() {
     }
 
     /**
@@ -37,10 +35,8 @@ public final class VoxelShapeHelper
      * @param axis The axis to rotate on
      * @return The rotated box shape
      */
-    public static VoxelShape makeCuboidShape(double x1, double y1, double z1, double x2, double y2, double z2, Direction.Axis axis)
-    {
-        switch (axis)
-        {
+    public static VoxelShape makeCuboidShape(double x1, double y1, double z1, double x2, double y2, double z2, Direction.Axis axis) {
+        switch (axis) {
             case X:
                 return makeCuboidShape(x1, y1, z1, x2, y2, z2, Direction.EAST);
             case Y:
@@ -64,10 +60,8 @@ public final class VoxelShapeHelper
      * @param direction The direction to rotate towards
      * @return The rotated box shape
      */
-    public static VoxelShape makeCuboidShape(double x1, double y1, double z1, double x2, double y2, double z2, Direction direction)
-    {
-        switch (direction)
-        {
+    public static VoxelShape makeCuboidShape(double x1, double y1, double z1, double x2, double y2, double z2, Direction direction) {
+        switch (direction) {
             case UP:
                 return Block.box(x1, z1, y1, x2, z2, y2);
             case DOWN:
@@ -92,33 +86,26 @@ public final class VoxelShapeHelper
      * @see VoxelShape
      * @since 2.0.0
      */
-    public static final class Builder
-    {
+    public static final class Builder {
         private final Set<VoxelShape> shapes;
 
-        public Builder()
-        {
+        public Builder() {
             this.shapes = new HashSet<>();
         }
 
-        public Builder(Builder other)
-        {
+        public Builder(Builder other) {
             this.shapes = new HashSet<>(other.shapes);
         }
 
-        private Builder transformRaw(Function<AABB, VoxelShape> transformer)
-        {
+        private Builder transformRaw(Function<AABB, VoxelShape> transformer) {
             Builder newBuilder = new Builder();
-            for (VoxelShape shape : this.shapes)
-            {
+            for (VoxelShape shape : this.shapes) {
                 Set<VoxelShape> rotatedShapes = new HashSet<>();
-                for (AABB box : shape.toAabbs())
-                {
+                for (AABB box : shape.toAabbs()) {
                     rotatedShapes.add(transformer.apply(box));
                 }
                 VoxelShape result = Shapes.empty();
-                for (VoxelShape rotatedShape : rotatedShapes)
-                {
+                for (VoxelShape rotatedShape : rotatedShapes) {
                     result = Shapes.joinUnoptimized(result, rotatedShape, BooleanOp.OR);
                 }
                 newBuilder.append(result.optimize());
@@ -132,8 +119,7 @@ public final class VoxelShapeHelper
          * @param shapes The shapes to add
          * @return The builder instance for chaining
          */
-        public Builder append(VoxelShape... shapes)
-        {
+        public Builder append(VoxelShape... shapes) {
             this.shapes.addAll(Arrays.asList(shapes));
             return this;
         }
@@ -144,8 +130,7 @@ public final class VoxelShapeHelper
          * @param other The other builder with shapes to add
          * @return The builder instance for chaining
          */
-        public Builder append(Builder other)
-        {
+        public Builder append(Builder other) {
             this.shapes.addAll(other.shapes);
             return this;
         }
@@ -158,8 +143,7 @@ public final class VoxelShapeHelper
          * @param z The amount in the z direction to add
          * @return The translated builder
          */
-        public Builder translate(double x, double y, double z)
-        {
+        public Builder translate(double x, double y, double z) {
             return transformRaw(box -> Block.box(box.minX * 16.0 + x, box.minY * 16.0 + y, box.minZ * 16.0 + z, box.maxX * 16.0 + x, box.maxY * 16.0 + y, box.maxZ * 16.0 + z));
         }
 
@@ -169,8 +153,7 @@ public final class VoxelShapeHelper
          * @param axis The axis to rotate on
          * @return The rotated builder
          */
-        public Builder rotate(Direction.Axis axis)
-        {
+        public Builder rotate(Direction.Axis axis) {
             return transformRaw(box -> VoxelShapeHelper.makeCuboidShape(box.minX * 16.0, box.minY * 16.0, box.minZ * 16.0, box.maxX * 16.0, box.maxY * 16.0, box.maxZ * 16.0, axis));
         }
 
@@ -180,8 +163,7 @@ public final class VoxelShapeHelper
          * @param direction The direction to rotate on
          * @return The rotated builder
          */
-        public Builder rotate(Direction direction)
-        {
+        public Builder rotate(Direction direction) {
             return transformRaw(box -> VoxelShapeHelper.makeCuboidShape(box.minX * 16.0, box.minY * 16.0, box.minZ * 16.0, box.maxX * 16.0, box.maxY * 16.0, box.maxZ * 16.0, direction));
         }
 
@@ -193,16 +175,14 @@ public final class VoxelShapeHelper
          * @param z The amount in the z direction to scale
          * @return The scaled builder
          */
-        public Builder scale(double x, double y, double z)
-        {
+        public Builder scale(double x, double y, double z) {
             return transformRaw(box -> Block.box(box.minX * 16.0 * x, box.minY * 16.0 * y, box.minZ * 16.0 * z, box.maxX * 16.0 * x, box.maxY * 16.0 * y, box.maxZ * 16.0 * z));
         }
 
         /**
          * @return A combined shape using {@link BooleanOp#OR}
          */
-        public VoxelShape build()
-        {
+        public VoxelShape build() {
             return this.build(BooleanOp.OR);
         }
 
@@ -212,13 +192,11 @@ public final class VoxelShapeHelper
          * @param combineFunction The function to use when combining the shapes together
          * @return A combined shape using the provided function
          */
-        public VoxelShape build(BooleanOp combineFunction)
-        {
+        public VoxelShape build(BooleanOp combineFunction) {
             if (this.shapes.isEmpty())
                 return Shapes.empty();
             VoxelShape result = Shapes.empty();
-            for (VoxelShape shape : this.shapes)
-            {
+            for (VoxelShape shape : this.shapes) {
                 result = Shapes.joinUnoptimized(result, shape, combineFunction);
             }
             return result.optimize();

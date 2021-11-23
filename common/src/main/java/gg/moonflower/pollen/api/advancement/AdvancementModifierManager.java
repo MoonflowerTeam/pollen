@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.events.AdvancementConstructingEvent;
 import net.minecraft.advancements.critereon.DeserializationContext;
 import net.minecraft.resources.ResourceLocation;
@@ -38,22 +37,18 @@ public class AdvancementModifierManager {
 
     @ApiStatus.Internal
     public static void init() {
-        EventDispatcher.register(AdvancementConstructingEvent.class, AdvancementModifierManager::modifyAdvancements);
+        AdvancementConstructingEvent.EVENT.register((builder, context) -> getModifiersFor(context.getAdvancementId()).sorted(Comparator.comparing(AdvancementModifier::getInjectPriority).reversed()).forEachOrdered(modifier -> {
+            try {
+                modifier.modify(builder);
+            } catch (JsonParseException e) {
+                LOGGER.error("Failed to apply advancement modifier {}: {}", modifier.getId(), e.getMessage());
+            }
+        }));
     }
 
     @ApiStatus.Internal
     public static PreparableReloadListener createReloader(PredicateManager predicateManager) {
         return new Reloader(predicateManager);
-    }
-
-    private static void modifyAdvancements(AdvancementConstructingEvent event) {
-        getModifiersFor(event.getContext().getAdvancementId()).sorted(Comparator.comparing(AdvancementModifier::getInjectPriority).reversed()).forEachOrdered(modifier -> {
-            try {
-                modifier.modify(event.getBuilder());
-            } catch (JsonParseException e) {
-                LOGGER.error("Failed to apply advancement modifier {}: {}", modifier.getId(), e.getMessage());
-            }
-        });
     }
 
     /**

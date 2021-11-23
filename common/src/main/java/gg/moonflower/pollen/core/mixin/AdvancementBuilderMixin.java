@@ -2,7 +2,6 @@ package gg.moonflower.pollen.core.mixin;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.events.AdvancementConstructingEvent;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
@@ -31,7 +30,7 @@ public class AdvancementBuilderMixin {
     @Inject(method = "fromJson", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
     private static void modifyBuilder(JsonObject json, DeserializationContext context, CallbackInfoReturnable<Advancement.Builder> info, ResourceLocation resourcelocation, DisplayInfo displayinfo, AdvancementRewards rewards, Map<String, Criterion> map, JsonArray jsonarray, String[][] astring) {
         Advancement.Builder builder = invokeInit(resourcelocation, displayinfo, rewards, map, astring);
-        EventDispatcher.post(new AdvancementConstructingEvent(builder, context));
+        AdvancementConstructingEvent.EVENT.invoker().modifyAdvancement(builder, context);
         info.setReturnValue(builder);
     }
 }

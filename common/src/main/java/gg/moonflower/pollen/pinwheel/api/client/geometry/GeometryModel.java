@@ -80,6 +80,65 @@ public interface GeometryModel {
     };
 
     /**
+     * Creates a new {@link GeometryModel} from the specified model data.
+     *
+     * @param data The data deserialized from JSON
+     * @return A new model from the data
+     */
+    static GeometryModel create(GeometryModelData data) {
+        return new BedrockGeometryModel(data.getDescription().getTextureWidth(), data.getDescription().getTextureHeight(), data.getBones());
+    }
+
+    /**
+     * Creates a new {@link GeometryModel} from the specified model data.
+     *
+     * @param textureWidth  The width of the texture in pixels
+     * @param textureHeight The height of the texture in pixels
+     * @param bones         The bones in the model
+     * @return A new model from the data
+     */
+    static GeometryModel create(int textureWidth, int textureHeight, GeometryModelData.Bone... bones) {
+        return new BedrockGeometryModel(textureWidth, textureHeight, bones);
+    }
+
+    /**
+     * Creates a new {@link GeometryModel} from the specified model data. This should be used for all models that don't extend {@link ListModel} or {@link AgeableListModel}
+     *
+     * @param textureWidth  The width of the texture in pixels
+     * @param textureHeight The height of the texture in pixels
+     * @param bones         The parent bones in a Java model. These are expected to be the individual parts that are rendered
+     * @return A new model from the data
+     */
+    static GeometryModel create(int textureWidth, int textureHeight, ModelPart... bones) {
+        return new BedrockGeometryModel(textureWidth, textureHeight, JavaModelConverter.convert(bones));
+    }
+
+    /**
+     * Creates a new {@link GeometryModel} from the specified model data.
+     *
+     * @param textureWidth  The width of the texture in pixels
+     * @param textureHeight The height of the texture in pixels
+     * @param model         The model to get the bones from
+     * @return A new model from the data
+     */
+    static GeometryModel create(int textureWidth, int textureHeight, ListModel<?> model) {
+        return new BedrockGeometryModel(textureWidth, textureHeight, JavaModelConverter.convert(Iterables.toArray(model.parts(), ModelPart.class)));
+    }
+
+    /**
+     * Creates a new {@link GeometryModel} from the specified model data.
+     *
+     * @param textureWidth  The width of the texture in pixels
+     * @param textureHeight The height of the texture in pixels
+     * @param model         The model to get the bones from
+     * @return A new model from the data
+     */
+    static GeometryModel create(int textureWidth, int textureHeight, AgeableListModel<?> model) {
+        AgeableListModelAccessor accessor = (AgeableListModelAccessor) model;
+        return new BedrockGeometryModel(textureWidth, textureHeight, JavaModelConverter.convert(Iterables.toArray(Iterables.concat(accessor.invokeHeadParts(), accessor.invokeBodyParts()), ModelPart.class)));
+    }
+
+    /**
      * Renders a specific part with the specified texture key.
      *
      * @param material      The name of the material being rendered
@@ -159,64 +218,5 @@ public interface GeometryModel {
      */
     default VertexConsumer getBuffer(MultiBufferSource buffer, GeometryAtlasTexture atlas, GeometryModelTexture texture) {
         return atlas.getSprite(texture.getLocation()).wrap(buffer.getBuffer(texture.getLayer().getRenderType(atlas.getAtlasLocation())));
-    }
-
-    /**
-     * Creates a new {@link GeometryModel} from the specified model data.
-     *
-     * @param data The data deserialized from JSON
-     * @return A new model from the data
-     */
-    static GeometryModel create(GeometryModelData data) {
-        return new BedrockGeometryModel(data.getDescription().getTextureWidth(), data.getDescription().getTextureHeight(), data.getBones());
-    }
-
-    /**
-     * Creates a new {@link GeometryModel} from the specified model data.
-     *
-     * @param textureWidth  The width of the texture in pixels
-     * @param textureHeight The height of the texture in pixels
-     * @param bones         The bones in the model
-     * @return A new model from the data
-     */
-    static GeometryModel create(int textureWidth, int textureHeight, GeometryModelData.Bone... bones) {
-        return new BedrockGeometryModel(textureWidth, textureHeight, bones);
-    }
-
-    /**
-     * Creates a new {@link GeometryModel} from the specified model data. This should be used for all models that don't extend {@link ListModel} or {@link AgeableListModel}
-     *
-     * @param textureWidth  The width of the texture in pixels
-     * @param textureHeight The height of the texture in pixels
-     * @param bones         The parent bones in a Java model. These are expected to be the individual parts that are rendered
-     * @return A new model from the data
-     */
-    static GeometryModel create(int textureWidth, int textureHeight, ModelPart... bones) {
-        return new BedrockGeometryModel(textureWidth, textureHeight, JavaModelConverter.convert(bones));
-    }
-
-    /**
-     * Creates a new {@link GeometryModel} from the specified model data.
-     *
-     * @param textureWidth  The width of the texture in pixels
-     * @param textureHeight The height of the texture in pixels
-     * @param model         The model to get the bones from
-     * @return A new model from the data
-     */
-    static GeometryModel create(int textureWidth, int textureHeight, ListModel<?> model) {
-        return new BedrockGeometryModel(textureWidth, textureHeight, JavaModelConverter.convert(Iterables.toArray(model.parts(), ModelPart.class)));
-    }
-
-    /**
-     * Creates a new {@link GeometryModel} from the specified model data.
-     *
-     * @param textureWidth  The width of the texture in pixels
-     * @param textureHeight The height of the texture in pixels
-     * @param model         The model to get the bones from
-     * @return A new model from the data
-     */
-    static GeometryModel create(int textureWidth, int textureHeight, AgeableListModel<?> model) {
-        AgeableListModelAccessor accessor = (AgeableListModelAccessor) model;
-        return new BedrockGeometryModel(textureWidth, textureHeight, JavaModelConverter.convert(Iterables.toArray(Iterables.concat(accessor.invokeHeadParts(), accessor.invokeBodyParts()), ModelPart.class)));
     }
 }

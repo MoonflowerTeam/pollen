@@ -95,6 +95,17 @@ public final class ScrollHandler {
     }
 
     /**
+     * Sets the height of the scrolling area.
+     *
+     * @param height The total height of the scroll area
+     */
+    public ScrollHandler setHeight(int height) {
+        this.height = height;
+        this.setScroll(this.scroll);
+        return this;
+    }
+
+    /**
      * @return The height visible at one time
      */
     public int getVisibleHeight() {
@@ -102,10 +113,33 @@ public final class ScrollHandler {
     }
 
     /**
+     * Sets the height visible at one time.
+     *
+     * @param visibleHeight The maximum height that can be displayed at one moment
+     */
+    public ScrollHandler setVisibleHeight(int visibleHeight) {
+        this.visibleHeight = visibleHeight;
+        this.setScroll(this.scroll);
+        return this;
+    }
+
+    /**
      * @return The position of the scroll bar
      */
     public double getScroll() {
         return scroll;
+    }
+
+    /**
+     * Sets the position of the scroll bar.
+     *
+     * @param scroll The new scroll value
+     */
+    public ScrollHandler setScroll(double scroll) {
+        this.scroll = Mth.clamp(scroll, 0, this.height - this.visibleHeight);
+        this.nextScroll = this.scroll;
+        this.lastScroll = this.scroll;
+        return this;
     }
 
     /**
@@ -133,6 +167,16 @@ public final class ScrollHandler {
     }
 
     /**
+     * Sets the speed at which scrolling occurs.
+     *
+     * @param scrollSpeed The new scrolling speed
+     */
+    public ScrollHandler setScrollSpeed(float scrollSpeed) {
+        this.scrollSpeed = Math.max(scrollSpeed, 0);
+        return this;
+    }
+
+    /**
      * @return The scrolling value last tick
      */
     public double getLastScroll() {
@@ -144,40 +188,6 @@ public final class ScrollHandler {
      */
     public double getNextScroll() {
         return nextScroll;
-    }
-
-    /**
-     * Sets the height of the scrolling area.
-     *
-     * @param height The total height of the scroll area
-     */
-    public ScrollHandler setHeight(int height) {
-        this.height = height;
-        this.setScroll(this.scroll);
-        return this;
-    }
-
-    /**
-     * Sets the height visible at one time.
-     *
-     * @param visibleHeight The maximum height that can be displayed at one moment
-     */
-    public ScrollHandler setVisibleHeight(int visibleHeight) {
-        this.visibleHeight = visibleHeight;
-        this.setScroll(this.scroll);
-        return this;
-    }
-
-    /**
-     * Sets the position of the scroll bar.
-     *
-     * @param scroll The new scroll value
-     */
-    public ScrollHandler setScroll(double scroll) {
-        this.scroll = Mth.clamp(scroll, 0, this.height - this.visibleHeight);
-        this.nextScroll = this.scroll;
-        this.lastScroll = this.scroll;
-        return this;
     }
 
     /**
@@ -197,16 +207,6 @@ public final class ScrollHandler {
      */
     public ScrollHandler setMinSnap(double minSnap) {
         this.minSnap = minSnap;
-        return this;
-    }
-
-    /**
-     * Sets the speed at which scrolling occurs.
-     *
-     * @param scrollSpeed The new scrolling speed
-     */
-    public ScrollHandler setScrollSpeed(float scrollSpeed) {
-        this.scrollSpeed = Math.max(scrollSpeed, 0);
         return this;
     }
 }

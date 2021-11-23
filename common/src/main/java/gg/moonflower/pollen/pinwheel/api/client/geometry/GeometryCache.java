@@ -3,7 +3,6 @@ package gg.moonflower.pollen.pinwheel.api.client.geometry;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.core.Pollen;
@@ -55,7 +54,15 @@ public class GeometryCache {
                 LOGGER.error("Failed to load cache metadata", e);
             }
         }
-        EventDispatcher.register(TickEvent.ClientEvent.Post.class, GeometryCache::clientTick);
+        TickEvent.CLIENT_POST.register(() -> {
+            if (nextWriteTime == Long.MAX_VALUE)
+                return;
+
+            if (System.currentTimeMillis() - nextWriteTime > 0) {
+                nextWriteTime = Long.MAX_VALUE;
+                Util.backgroundExecutor().execute(GeometryCache::writeMetadata);
+            }
+        });
     }
 
     private static synchronized void writeMetadata() {
@@ -210,15 +217,5 @@ public class GeometryCache {
         }
 
         return null;
-    }
-
-    private static void clientTick(TickEvent.ClientEvent.Post event) {
-        if (nextWriteTime == Long.MAX_VALUE)
-            return;
-
-        if (System.currentTimeMillis() - nextWriteTime > 0) {
-            nextWriteTime = Long.MAX_VALUE;
-            Util.backgroundExecutor().execute(GeometryCache::writeMetadata);
-        }
     }
 }

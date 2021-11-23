@@ -20,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
  */
 @ApiStatus.Internal
 public class DynamicReloader {
-    
+
     private static final Logger LOGGER = LogManager.getLogger();
     private final List<PreparableReloadListener> reloadListeners;
     private ReloadInstance asyncReloader;

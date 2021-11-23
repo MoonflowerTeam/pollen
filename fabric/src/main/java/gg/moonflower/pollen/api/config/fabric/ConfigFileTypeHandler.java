@@ -5,7 +5,6 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.file.FileWatcher;
 import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.events.ConfigEvent;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
@@ -20,6 +19,31 @@ public class ConfigFileTypeHandler {
 
     private static final Logger LOGGER = LogManager.getLogger();
     static ConfigFileTypeHandler TOML = new ConfigFileTypeHandler();
+
+    public static void backUpConfig(final CommentedFileConfig commentedFileConfig) {
+        backUpConfig(commentedFileConfig, 5);
+    }
+
+    public static void backUpConfig(CommentedFileConfig commentedFileConfig, int maxBackups) {
+        Path bakFileLocation = commentedFileConfig.getNioPath().getParent();
+        String bakFileName = FilenameUtils.removeExtension(commentedFileConfig.getFile().getName());
+        String bakFileExtension = FilenameUtils.getExtension(commentedFileConfig.getFile().getName()) + ".bak";
+        Path bakFile = bakFileLocation.resolve(bakFileName + "-1" + "." + bakFileExtension);
+        try {
+            for (int i = maxBackups; i > 0; i--) {
+                Path oldBak = bakFileLocation.resolve(bakFileName + "-" + i + "." + bakFileExtension);
+                if (Files.exists(oldBak)) {
+                    if (i >= maxBackups)
+                        Files.delete(oldBak);
+                    else
+                        Files.move(oldBak, bakFileLocation.resolve(bakFileName + "-" + (i + 1) + "." + bakFileExtension));
+                }
+            }
+            Files.copy(commentedFileConfig.getNioPath(), bakFile);
+        } catch (IOException e) {
+            LOGGER.warn("Failed to back up config file {}", commentedFileConfig.getNioPath(), e);
+        }
+    }
 
     public Function<PollinatedModConfigImpl, CommentedFileConfig> reader(Path configBasePath) {
         return config -> {
@@ -62,31 +86,6 @@ public class ConfigFileTypeHandler {
         return true;
     }
 
-    public static void backUpConfig(final CommentedFileConfig commentedFileConfig) {
-        backUpConfig(commentedFileConfig, 5);
-    }
-
-    public static void backUpConfig(CommentedFileConfig commentedFileConfig, int maxBackups) {
-        Path bakFileLocation = commentedFileConfig.getNioPath().getParent();
-        String bakFileName = FilenameUtils.removeExtension(commentedFileConfig.getFile().getName());
-        String bakFileExtension = FilenameUtils.getExtension(commentedFileConfig.getFile().getName()) + ".bak";
-        Path bakFile = bakFileLocation.resolve(bakFileName + "-1" + "." + bakFileExtension);
-        try {
-            for (int i = maxBackups; i > 0; i--) {
-                Path oldBak = bakFileLocation.resolve(bakFileName + "-" + i + "." + bakFileExtension);
-                if (Files.exists(oldBak)) {
-                    if (i >= maxBackups)
-                        Files.delete(oldBak);
-                    else
-                        Files.move(oldBak, bakFileLocation.resolve(bakFileName + "-" + (i + 1) + "." + bakFileExtension));
-                }
-            }
-            Files.copy(commentedFileConfig.getNioPath(), bakFile);
-        } catch (IOException e) {
-            LOGGER.warn("Failed to back up config file {}", commentedFileConfig.getNioPath(), e);
-        }
-    }
-
     private static class ConfigWatcher implements Runnable {
 
         private final PollinatedModConfigImpl modConfig;
@@ -117,7 +116,7 @@ public class ConfigFileTypeHandler {
                 }
                 LOGGER.debug("Config file {} changed, sending notifies", this.modConfig.getFileName());
                 this.modConfig.getSpec().afterReload();
-                EventDispatcher.post(new ConfigEvent.Reloading(this.modConfig));
+                ConfigEvent.RELOADING.invoker().configChanged(this.modConfig);
             }
         }
     }

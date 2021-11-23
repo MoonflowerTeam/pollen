@@ -1,11 +1,13 @@
 package gg.moonflower.pollen.core.forge;
 
-import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.events.CommandRegistryEvent;
+import gg.moonflower.pollen.api.event.events.entity.player.InteractEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
-import gg.moonflower.pollen.api.event.events.player.InteractEvent;
 import gg.moonflower.pollen.core.Pollen;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -25,10 +27,10 @@ public class PollenCommonForgeEvents {
     public static void onEvent(net.minecraftforge.event.TickEvent.ServerTickEvent event) {
         switch (event.phase) {
             case START:
-                PollenForge.postEvent(event, new TickEvent.ServerEvent.Pre());
+                TickEvent.SERVER_PRE.invoker().tick();
                 break;
             case END:
-                PollenForge.postEvent(event, new TickEvent.ServerEvent.Post());
+                TickEvent.SERVER_POST.invoker().tick();
                 break;
         }
     }
@@ -37,81 +39,77 @@ public class PollenCommonForgeEvents {
     public static void onEvent(net.minecraftforge.event.TickEvent.WorldTickEvent event) {
         switch (event.phase) {
             case START:
-                PollenForge.postEvent(event, new TickEvent.LevelEvent.Pre(event.world));
+                TickEvent.LEVEL_PRE.invoker().tick(event.world);
                 break;
             case END:
-                PollenForge.postEvent(event, new TickEvent.LevelEvent.Post(event.world));
+                TickEvent.LEVEL_POST.invoker().tick(event.world);
                 break;
         }
     }
 
     @SubscribeEvent
     public static void onEvent(LivingEvent.LivingUpdateEvent event) {
-        PollenForge.postEvent(event, new TickEvent.LivingEntityEvent.Pre(event.getEntityLiving()));
+        event.setCanceled(!TickEvent.LIVING_PRE.invoker().tick(event.getEntityLiving()));
     }
 
     @SubscribeEvent
     public static void onEvent(FMLServerStartingEvent event) {
-        PollenForge.postEvent(event, new ServerLifecycleEvent.Starting(event.getServer()));
+        ServerLifecycleEvent.STARTING.invoker().starting(event.getServer());
     }
 
     @SubscribeEvent
     public static void onEvent(FMLServerStartedEvent event) {
-        PollenForge.postEvent(event, new ServerLifecycleEvent.Started(event.getServer()));
+        ServerLifecycleEvent.STARTED.invoker().started(event.getServer());
     }
 
     @SubscribeEvent
     public static void onEvent(FMLServerStoppingEvent event) {
-        PollenForge.postEvent(event, new ServerLifecycleEvent.Stopping(event.getServer()));
+        ServerLifecycleEvent.STOPPING.invoker().stopping(event.getServer());
     }
 
     @SubscribeEvent
     public static void onEvent(FMLServerStoppedEvent event) {
-        PollenForge.postEvent(event, new ServerLifecycleEvent.Stopped(event.getServer()));
+        ServerLifecycleEvent.STOPPED.invoker().stopped(event.getServer());
     }
 
     @SubscribeEvent
     public static void onEvent(RegisterCommandsEvent event) {
-        PollenForge.postEvent(event, new CommandRegistryEvent(event.getDispatcher(), event.getEnvironment()));
+        CommandRegistryEvent.EVENT.invoker().registerCommands(event.getDispatcher(), event.getEnvironment());
     }
 
     @SubscribeEvent
     public static void onEvent(PlayerInteractEvent.RightClickItem event) {
-        InteractEvent.UseItem pollenEvent = new InteractEvent.UseItem(event.getPlayer(), event.getWorld(), event.getHand());
-        EventDispatcher.post(pollenEvent);
-        if (pollenEvent.isCancelled()) {
-            event.setCanceled(pollenEvent.isCancelled());
-            event.setCancellationResult(pollenEvent.getResult());
+        InteractionResultHolder<ItemStack> result = InteractEvent.RIGHT_CLICK_ITEM.invoker().interaction(event.getPlayer(), event.getWorld(), event.getHand());
+        if (result.getResult() != InteractionResult.PASS) {
+            event.setCanceled(true);
+            event.setCancellationResult(result.getResult());
         }
     }
 
     @SubscribeEvent
     public static void onEvent(PlayerInteractEvent.RightClickBlock event) {
-        InteractEvent.UseBlock pollenEvent = new InteractEvent.UseBlock(event.getPlayer(), event.getWorld(), event.getHand(), event.getHitVec());
-        EventDispatcher.post(pollenEvent);
-        if (pollenEvent.isCancelled()) {
-            event.setCanceled(pollenEvent.isCancelled());
-            event.setCancellationResult(pollenEvent.getResult());
+        InteractionResult result = InteractEvent.RIGHT_CLICK_BLOCK.invoker().interaction(event.getPlayer(), event.getWorld(), event.getHand(), event.getHitVec());
+        if (result != InteractionResult.PASS) {
+            event.setCanceled(true);
+            event.setCancellationResult(result);
         }
     }
 
     @SubscribeEvent
     public static void onEvent(PlayerInteractEvent.LeftClickBlock event) {
-        InteractEvent.AttackBlock pollenEvent = new InteractEvent.AttackBlock(event.getPlayer(), event.getWorld(), event.getHand(), event.getPos(), event.getFace());
-        EventDispatcher.post(pollenEvent);
-        if (pollenEvent.isCancelled()) {
-            event.setCanceled(pollenEvent.isCancelled());
-            event.setCancellationResult(pollenEvent.getResult());
+        InteractionResult result = InteractEvent.LEFT_CLICK_BLOCK.invoker().interaction(event.getPlayer(), event.getWorld(), event.getHand(), event.getPos(), event.getFace());
+        if (result != InteractionResult.PASS) {
+            event.setCanceled(true);
+            event.setCancellationResult(result);
         }
     }
 
     @SubscribeEvent
     public static void onEvent(PlayerInteractEvent.EntityInteract event) {
-        InteractEvent.UseEntity pollenEvent = new InteractEvent.UseEntity(event.getPlayer(), event.getWorld(), event.getHand(), event.getEntity());
-        EventDispatcher.post(pollenEvent);
-        if (pollenEvent.isCancelled()) {
-            event.setCanceled(pollenEvent.isCancelled());
-            event.setCancellationResult(pollenEvent.getResult());
+        InteractionResult result = InteractEvent.RIGHT_CLICK_ENTITY.invoker().interaction(event.getPlayer(), event.getWorld(), event.getHand(), event.getEntity());
+        if (result != InteractionResult.PASS) {
+            event.setCanceled(true);
+            event.setCancellationResult(result);
         }
     }
 }
