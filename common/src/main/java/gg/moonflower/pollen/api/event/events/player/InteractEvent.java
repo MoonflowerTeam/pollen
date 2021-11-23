@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.api.event.events.player;
 
-import gg.moonflower.pollen.api.event.ResultEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;

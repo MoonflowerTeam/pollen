@@ -3,8 +3,6 @@ package gg.moonflower.pollen.api.config.forge;
 import gg.moonflower.pollen.api.config.PollinatedConfigBuilder;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.event.events.ConfigEvent;
-import gg.moonflower.pollen.api.platform.Platform;
-import gg.moonflower.pollen.core.forge.PollenForge;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -22,8 +20,8 @@ public class ConfigManagerImpl {
         Pair<T, ForgeConfigSpec> pair = new PollinatedConfigBuilderImpl(new ForgeConfigSpec.Builder()).configure(consumer);
         ModLoadingContext.get().registerConfig(convert(type), pair.getRight(), fileName);
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        bus.<ModConfig.Loading>addListener(event -> PollenForge.postEvent(event, new ConfigEvent.Loading(new PollinatedModConfigImpl(event.getConfig()))));
-        bus.<ModConfig.Reloading>addListener(event -> PollenForge.postEvent(event, new ConfigEvent.Reloading(new PollinatedModConfigImpl(event.getConfig()))));
+        bus.<ModConfig.Loading>addListener(event -> ConfigEvent.LOADING.invoker().configChanged(new PollinatedModConfigImpl(event.getConfig())));
+        bus.<ModConfig.Reloading>addListener(event -> ConfigEvent.RELOADING.invoker().configChanged(new PollinatedModConfigImpl(event.getConfig())));
         return pair.getLeft();
     }
 

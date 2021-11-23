@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.core.mixin.fabric.client;
 
-import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;

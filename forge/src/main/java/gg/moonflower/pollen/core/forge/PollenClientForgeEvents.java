@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.core.forge;
 
-import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
 import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvent;
 import gg.moonflower.pollen.core.Pollen;

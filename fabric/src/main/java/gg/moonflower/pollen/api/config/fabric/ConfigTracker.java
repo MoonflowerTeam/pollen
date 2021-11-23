@@ -4,7 +4,6 @@ import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.toml.TomlFormat;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
-import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.events.ConfigEvent;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
 import gg.moonflower.pollen.core.network.fabric.ClientboundSyncConfigDataPacket;
@@ -75,7 +74,7 @@ public class ConfigTracker {
     private void openConfig(PollinatedModConfigImpl config, Path configBasePath) {
         CommentedFileConfig configData = config.getHandler().reader(configBasePath).apply(config);
         config.setConfigData(configData);
-        EventDispatcher.post(new ConfigEvent.Loading(config));
+        ConfigEvent.LOADING.invoker().configChanged(config);
         config.save();
     }
 
@@ -92,7 +91,7 @@ public class ConfigTracker {
         if (!Minecraft.getInstance().isLocalServer() && this.fileMap.containsKey(pkt.getFileName())) {
             PollinatedModConfigImpl config = this.fileMap.get(pkt.getFileName());
             config.setConfigData(TomlFormat.instance().createParser().parse(new ByteArrayInputStream(pkt.getFileData())));
-            EventDispatcher.post(new ConfigEvent.Reloading(config));
+            ConfigEvent.RELOADING.invoker().configChanged(config);
         }
     }
 
@@ -101,7 +100,7 @@ public class ConfigTracker {
             CommentedConfig commentedConfig = CommentedConfig.inMemory();
             config.getSpec().correct(commentedConfig);
             config.setConfigData(commentedConfig);
-            EventDispatcher.post(new ConfigEvent.Loading(config));
+            ConfigEvent.LOADING.invoker().configChanged(config);
         });
     }
 

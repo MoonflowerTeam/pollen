@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.core.fabric;
 
-import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.events.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.client.render.ReloadRendersEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
@@ -24,11 +23,11 @@ public class PollenFabricClient implements ClientModInitializer {
         ClientTickEvents.START_WORLD_TICK.register(level -> EventDispatcher.post(new TickEvent.LevelEvent.Pre(level)));
         ClientTickEvents.END_WORLD_TICK.register(level -> EventDispatcher.post(new TickEvent.LevelEvent.Post(level)));
 
-        InvalidateRenderStateCallback.EVENT.register(() -> EventDispatcher.post(new ReloadRendersEvent()));
+        InvalidateRenderStateCallback.EVENT.register(() -> ReloadRendersEvent.EVENT.invoker().reloadRenders());
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> EventDispatcher.post(new ClientNetworkEvent.LoggedIn(client.gameMode, client.player, handler.getConnection())));
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> EventDispatcher.post(new ClientNetworkEvent.LoggedOut(client.gameMode, client.player, handler.getConnection())));
 
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> EventDispatcher.post(new CommandRegistryEvent(dispatcher, dedicated ? Commands.CommandSelection.DEDICATED : Platform.getRunningServer().isPresent() ? Commands.CommandSelection.INTEGRATED : Commands.CommandSelection.ALL)));
+        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> CommandRegistryEvent.EVENT.invoker().registerCommands(dispatcher, dedicated ? Commands.CommandSelection.DEDICATED : Platform.getRunningServer().isPresent() ? Commands.CommandSelection.INTEGRATED : Commands.CommandSelection.ALL));
     }
 }

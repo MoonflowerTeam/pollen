@@ -2,7 +2,6 @@ package gg.moonflower.pollen.core.fabric;
 
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.config.fabric.ConfigTracker;
-import gg.moonflower.pollen.api.event.EventListener;
 import gg.moonflower.pollen.api.event.events.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.core.command.ConfigCommand;
@@ -31,17 +30,14 @@ public class FabricEvents {
         return serverConfig;
     }
 
-    @EventListener
     public static void onEvent(ServerLifecycleEvent.Starting event) {
         ConfigTracker.INSTANCE.loadConfigs(PollinatedConfigType.SERVER, getServerConfigPath(event.getServer()));
     }
 
-    @EventListener
     public static void onEvent(ServerLifecycleEvent.Stopped event) {
         ConfigTracker.INSTANCE.unloadConfigs(PollinatedConfigType.SERVER, getServerConfigPath(event.getServer()));
     }
 
-    @EventListener
     public static void onEvent(CommandRegistryEvent event) {
         ConfigCommand.register(event.getDispatcher(), event.getSelection() == Commands.CommandSelection.DEDICATED);
     }

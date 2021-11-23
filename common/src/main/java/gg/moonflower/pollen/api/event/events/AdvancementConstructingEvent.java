@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.api.event.events;
 
 import gg.moonflower.pollen.api.event.PollinatedEvent;
+import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.critereon.DeserializationContext;
 
@@ -10,27 +11,17 @@ import net.minecraft.advancements.critereon.DeserializationContext;
  * @author Ocelot
  * @since 1.0.0
  */
-public class AdvancementConstructingEvent extends PollinatedEvent {
+@FunctionalInterface
+public interface AdvancementConstructingEvent {
 
-    private final Advancement.Builder builder;
-    private final DeserializationContext context;
-
-    public AdvancementConstructingEvent(Advancement.Builder builder, DeserializationContext context) {
-        this.builder = builder;
-        this.context = context;
-    }
+    PollinatedEvent<AdvancementConstructingEvent> EVENT = EventRegistry.create(AdvancementConstructingEvent.class, events -> (builder, context) -> {
+        for (AdvancementConstructingEvent event : events)
+            event.modifyAdvancement(builder, context);
+    });
 
     /**
-     * @return The builder for the advancement. Modify the builder just before the advancement is deserialized from JSON
+     * @param builder The builder for the advancement. Modify the builder just before the advancement is deserialized from JSON
+     * @param context The context for deserialization
      */
-    public Advancement.Builder getBuilder() {
-        return builder;
-    }
-
-    /**
-     * @return The context for deserialization
-     */
-    public DeserializationContext getContext() {
-        return context;
-    }
+    void modifyAdvancement(Advancement.Builder builder, DeserializationContext context);
 }

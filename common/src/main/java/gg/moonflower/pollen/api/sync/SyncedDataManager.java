@@ -2,8 +2,6 @@ package gg.moonflower.pollen.api.sync;
 
 import com.mojang.serialization.Codec;
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import gg.moonflower.pollen.api.event.EventDispatcher;
-import gg.moonflower.pollen.api.event.EventListener;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
 import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvent;
 import gg.moonflower.pollen.api.platform.Platform;
@@ -43,13 +41,11 @@ public class SyncedDataManager {
         EventDispatcher.register(SyncedDataManager.class);
     }
 
-    @EventListener
     @ApiStatus.Internal
     public static void onClientDisconnect(ClientNetworkEvent.LoggedOut event) {
         CLIENT_KEY_LOOKUP.clear();
     }
 
-    @EventListener
     @ApiStatus.Internal
     public static void onPlayerTick(TickEvent.LivingEntityEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer) || !dirty)
@@ -57,7 +53,6 @@ public class SyncedDataManager {
         sync((ServerPlayer) event.getEntity());
     }
 
-    @EventListener
     @ApiStatus.Internal
     public static void onServerTick(TickEvent.ServerEvent.Post event) {
         dirty = false;

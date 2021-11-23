@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.core.forge;
 
-import gg.moonflower.pollen.api.event.EventDispatcher;
 import gg.moonflower.pollen.api.event.events.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
@@ -72,7 +71,7 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(RegisterCommandsEvent event) {
-        PollenForge.postEvent(event, new CommandRegistryEvent(event.getDispatcher(), event.getEnvironment()));
+        CommandRegistryEvent.EVENT.invoker().registerCommands(event.getDispatcher(), event.getEnvironment());
     }
 
     @SubscribeEvent

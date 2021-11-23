@@ -2,47 +2,29 @@ package gg.moonflower.pollen.api.event.events;
 
 import gg.moonflower.pollen.api.config.PollinatedModConfig;
 import gg.moonflower.pollen.api.event.PollinatedEvent;
+import gg.moonflower.pollen.api.registry.EventRegistry;
 
 /**
  * Events fired for config data changes.
+ *
+ * @author Ocelot
+ * @since 1.0.0
  */
-public class ConfigEvent extends PollinatedEvent {
+@FunctionalInterface
+public interface ConfigEvent {
 
-    private final PollinatedModConfig config;
+    PollinatedEvent<ConfigEvent> LOADING = EventRegistry.create(ConfigEvent.class, events -> config -> {
+        for (ConfigEvent event : events)
+            event.configChanged(config);
+    });
 
-    private ConfigEvent(PollinatedModConfig config) {
-        this.config = config;
-    }
-
-    public String getModId() {
-        return this.config.getModId();
-    }
-
-    public PollinatedModConfig getConfig() {
-        return config;
-    }
+    PollinatedEvent<ConfigEvent> RELOADING = EventRegistry.create(ConfigEvent.class, events -> (config) -> {
+        for (ConfigEvent event : events)
+            event.configChanged(config);
+    });
 
     /**
-     * Called each time the config is loaded from disc.
-     *
-     * @author Ocelot
-     * @since 1.0.0
+     * @param config The config that was updated
      */
-    public static class Loading extends ConfigEvent {
-        public Loading(PollinatedModConfig config) {
-            super(config);
-        }
-    }
-
-    /**
-     * Called each time the config is reloaded from disc. Usually from updating the config file in some way.
-     *
-     * @author Ocelot
-     * @since 1.0.0
-     */
-    public static class Reloading extends ConfigEvent {
-        public Reloading(PollinatedModConfig config) {
-            super(config);
-        }
-    }
+    void configChanged(PollinatedModConfig config);
 }
