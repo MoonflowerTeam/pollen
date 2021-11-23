@@ -43,8 +43,8 @@ dependencies {
     implementation "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
     shadowCommon "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
 
-    modRuntimeOnly "curse.maven:configured-457570:3533860"
-    modRuntimeOnly "curse.maven:catalogue-459701:3529457"
+    modRuntimeOnly "curse.maven:configured-457570:3533864"
+    modRuntimeOnly "curse.maven:catalogue-459701:3529459"
 
     implementation(project(path: ":common", configuration: "namedElements")) { transitive false }
     developmentForge(project(path: ":common", configuration: "namedElements")) { transitive false }
