@@ -1,11 +1,11 @@
 package gg.moonflower.pollen.api.network.fabric;
 
+import com.google.common.base.Suppliers;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.LazyLoadedValue;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,19 +20,19 @@ public class PollinatedNetworkChannelImpl {
 
     protected final ResourceLocation channelId;
     protected final List<PacketFactory<?, ?>> factories;
-    protected final LazyLoadedValue<LazyLoadedValue<Object>> clientMessageHandler;
-    protected final LazyLoadedValue<LazyLoadedValue<Object>> serverMessageHandler;
+    protected final Supplier<Object> clientMessageHandler;
+    protected final Supplier<Object> serverMessageHandler;
 
-    protected PollinatedNetworkChannelImpl(ResourceLocation channelId, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+    protected PollinatedNetworkChannelImpl(ResourceLocation channelId, Supplier<Object> clientFactory, Supplier<Object> serverFactory) {
         this.channelId = channelId;
         this.factories = new ArrayList<>();
-        this.clientMessageHandler = new LazyLoadedValue<>(() -> new LazyLoadedValue<>(clientFactory.get()));
-        this.serverMessageHandler = new LazyLoadedValue<>(() -> new LazyLoadedValue<>(serverFactory.get()));
+        this.clientMessageHandler = Suppliers.memoize(clientFactory::get);
+        this.serverMessageHandler = Suppliers.memoize(serverFactory::get);
     }
 
     protected FriendlyByteBuf serialize(PollinatedPacket<?> message, PollinatedPacketDirection expectedDirection) {
         Optional<PacketFactory<?, ?>> factoryOptional = this.factories.stream().filter(factory -> factory.clazz == message.getClass()).findFirst();
-        if (!factoryOptional.isPresent())
+        if (factoryOptional.isEmpty())
             throw new IllegalStateException("Unregistered packet: " + message.getClass() + " on channel: " + this.channelId);
 
         int id = this.factories.indexOf(factoryOptional.get());
@@ -61,15 +61,8 @@ public class PollinatedNetworkChannelImpl {
         this.factories.add(new PacketFactory<>(clazz, deserializer, direction));
     }
 
-    private static class PacketFactory<MSG extends PollinatedPacket<T>, T> {
-        private final Class<MSG> clazz;
-        private final Function<FriendlyByteBuf, MSG> deserializer;
-        private final PollinatedPacketDirection direction;
-
-        private PacketFactory(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, PollinatedPacketDirection direction) {
-            this.clazz = clazz;
-            this.deserializer = deserializer;
-            this.direction = direction;
-        }
+    private record PacketFactory<MSG extends PollinatedPacket<T>, T>(Class<MSG> clazz,
+                                                                     Function<FriendlyByteBuf, MSG> deserializer,
+                                                                     PollinatedPacketDirection direction) {
     }
 }

@@ -40,7 +40,7 @@ public final class NetworkRegistry {
      * @return A multi-platform network channel
      */
     @ExpectPlatform
-    public static PollinatedPlayNetworkChannel createPlay(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+    public static PollinatedPlayNetworkChannel createPlay(ResourceLocation channelId, String version, Supplier<Object> clientFactory, Supplier<Object> serverFactory) {
         return Platform.error();
     }
 
@@ -53,15 +53,15 @@ public final class NetworkRegistry {
      * @return A multi-platform network channel
      */
     @ExpectPlatform
-    public static PollinatedLoginNetworkChannel createLogin(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+    public static PollinatedLoginNetworkChannel createLogin(ResourceLocation channelId, String version, Supplier<Object> clientFactory, Supplier<Object> serverFactory) {
         return Platform.error();
     }
 
     @ApiStatus.Internal
     @SuppressWarnings("unchecked")
-    public static <MSG extends PollinatedPacket<T>, T> void processMessage(@NotNull MSG msg, PollinatedPacketContext context, Object handler) {
+    public static <MSG extends PollinatedPacket<T>, T> void processMessage(@NotNull MSG msg, PollinatedPacketContext context, Supplier<Object> handler) {
         try {
-            msg.processPacket((T) handler, context);
+            msg.processPacket((T) handler.get(), context);
         } catch (Exception e) {
             LogManager.getLogger().error("Failed to process packet for class: " + msg.getClass().getName(), e);
 

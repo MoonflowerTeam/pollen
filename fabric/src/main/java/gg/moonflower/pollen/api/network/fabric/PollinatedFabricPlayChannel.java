@@ -33,7 +33,7 @@ import java.util.function.Supplier;
 @ApiStatus.Internal
 public class PollinatedFabricPlayChannel extends PollinatedNetworkChannelImpl implements PollinatedPlayNetworkChannel {
 
-    public PollinatedFabricPlayChannel(ResourceLocation channelId, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+    public PollinatedFabricPlayChannel(ResourceLocation channelId, Supplier<Object> clientFactory, Supplier<Object> serverFactory) {
         super(channelId, clientFactory, serverFactory);
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
             ClientPlayNetworking.registerGlobalReceiver(this.channelId, this::processClientPlay);
@@ -41,11 +41,11 @@ public class PollinatedFabricPlayChannel extends PollinatedNetworkChannelImpl im
     }
 
     private void processClientPlay(Minecraft client, ClientPacketListener listener, FriendlyByteBuf data, PacketSender responseSender) {
-        NetworkRegistry.processMessage(this.deserialize(data, PollinatedPacketDirection.PLAY_CLIENTBOUND), new PollinatedFabricPlayPacketContext(listener.getConnection(), pkt -> responseSender.sendPacket(responseSender.createPacket(this.channelId, this.serialize(pkt, PollinatedPacketDirection.PLAY_SERVERBOUND))), PollinatedPacketDirection.PLAY_CLIENTBOUND), this.clientMessageHandler.get().get());
+        NetworkRegistry.processMessage(this.deserialize(data, PollinatedPacketDirection.PLAY_CLIENTBOUND), new PollinatedFabricPlayPacketContext(listener.getConnection(), pkt -> responseSender.sendPacket(responseSender.createPacket(this.channelId, this.serialize(pkt, PollinatedPacketDirection.PLAY_SERVERBOUND))), PollinatedPacketDirection.PLAY_CLIENTBOUND), this.clientMessageHandler);
     }
 
     private void processServerPlay(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl listener, FriendlyByteBuf data, PacketSender responseSender) {
-        NetworkRegistry.processMessage(this.deserialize(data, PollinatedPacketDirection.PLAY_SERVERBOUND), new PollinatedFabricPlayPacketContext(listener.getConnection(), pkt -> responseSender.sendPacket(responseSender.createPacket(this.channelId, this.serialize(pkt, PollinatedPacketDirection.PLAY_CLIENTBOUND))), PollinatedPacketDirection.PLAY_SERVERBOUND), this.serverMessageHandler.get().get());
+        NetworkRegistry.processMessage(this.deserialize(data, PollinatedPacketDirection.PLAY_SERVERBOUND), new PollinatedFabricPlayPacketContext(listener.getConnection(), pkt -> responseSender.sendPacket(responseSender.createPacket(this.channelId, this.serialize(pkt, PollinatedPacketDirection.PLAY_CLIENTBOUND))), PollinatedPacketDirection.PLAY_SERVERBOUND), this.serverMessageHandler);
     }
 
     @Override

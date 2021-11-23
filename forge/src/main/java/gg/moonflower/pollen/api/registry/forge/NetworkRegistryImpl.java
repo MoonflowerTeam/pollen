@@ -13,11 +13,11 @@ import java.util.function.Supplier;
 @ApiStatus.Internal
 public class NetworkRegistryImpl {
 
-    public static PollinatedPlayNetworkChannel createPlay(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+    public static PollinatedPlayNetworkChannel createPlay(ResourceLocation channelId, String version, Supplier<Object> clientFactory,Supplier<Object> serverFactory) {
         return new PollinatedForgePlayChannel(NetworkRegistry.newSimpleChannel(channelId, () -> version, version::equals, version::equals), clientFactory, serverFactory);
     }
 
-    public static PollinatedLoginNetworkChannel createLogin(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+    public static PollinatedLoginNetworkChannel createLogin(ResourceLocation channelId, String version,Supplier<Object> clientFactory,Supplier<Object> serverFactory) {
         return new PollinatedForgeLoginChannel(NetworkRegistry.newSimpleChannel(channelId, () -> version, version::equals, version::equals), clientFactory, serverFactory);
     }
 }

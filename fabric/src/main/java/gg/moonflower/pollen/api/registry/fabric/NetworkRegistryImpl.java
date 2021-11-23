@@ -12,11 +12,11 @@ import java.util.function.Supplier;
 @ApiStatus.Internal
 public class NetworkRegistryImpl {
 
-    public static PollinatedPlayNetworkChannel createPlay(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+    public static PollinatedPlayNetworkChannel createPlay(ResourceLocation channelId, String version, Supplier<Object> clientFactory, Supplier<Object> serverFactory) {
         return new PollinatedFabricPlayChannel(channelId, clientFactory, serverFactory);
     }
 
-    public static PollinatedLoginNetworkChannel createLogin(ResourceLocation channelId, String version, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+    public static PollinatedLoginNetworkChannel createLogin(ResourceLocation channelId, String version, Supplier<Object> clientFactory, Supplier<Object> serverFactory) {
         return new PollinatedFabricLoginChannel(channelId, clientFactory, serverFactory);
     }
 }

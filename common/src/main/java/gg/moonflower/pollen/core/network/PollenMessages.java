@@ -23,8 +23,8 @@ import java.util.function.Supplier;
 @ApiStatus.Internal
 public class PollenMessages {
 
-    public static final PollinatedPlayNetworkChannel PLAY = NetworkRegistry.createPlay(new ResourceLocation(Pollen.MOD_ID, "play"), "1", () -> PollenMessages::createClientPlayHandler, () -> Object::new);
-    public static final PollinatedLoginNetworkChannel LOGIN = NetworkRegistry.createLogin(new ResourceLocation(Pollen.MOD_ID, "login"), "1", () -> PollenMessages::createClientLoginHandler, () -> Object::new);
+    public static final PollinatedPlayNetworkChannel PLAY = NetworkRegistry.createPlay(new ResourceLocation(Pollen.MOD_ID, "play"), "1", PollenMessages::createClientPlayHandler, Object::new);
+    public static final PollinatedLoginNetworkChannel LOGIN = NetworkRegistry.createLogin(new ResourceLocation(Pollen.MOD_ID, "login"), "1", PollenMessages::createClientLoginHandler, Object::new);
 
     public static void init() {
         PLAY.register(ClientboundSyncAnimationPacket.class, ClientboundSyncAnimationPacket::new, PollinatedPacketDirection.PLAY_CLIENTBOUND);

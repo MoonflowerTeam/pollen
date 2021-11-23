@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 @ApiStatus.Internal
 public class PollinatedForgeLoginChannel extends PollinatedNetworkChannelImpl implements PollinatedLoginNetworkChannel {
 
-    public PollinatedForgeLoginChannel(SimpleChannel channel, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+    public PollinatedForgeLoginChannel(SimpleChannel channel, Supplier<Object> clientFactory, Supplier<Object> serverFactory) {
         super(channel, clientFactory, serverFactory);
     }
 
@@ -28,7 +28,7 @@ public class PollinatedForgeLoginChannel extends PollinatedNetworkChannelImpl im
         this.channel.messageBuilder(clazz, this.nextId++, NetworkDirection.LOGIN_TO_SERVER).encoder(PollinatedPacket::writePacketData).decoder(deserializer)
                 .consumer(FMLHandshakeHandler.indexFirst((__, msg, ctx) ->
                 {
-                    NetworkRegistry.processMessage(msg, new PollinatedForgePacketContext(this.channel, ctx), ctx.get().getDirection().getReceptionSide().isClient() ? this.clientMessageHandler.get().get() : this.serverMessageHandler.get().get());
+                    NetworkRegistry.processMessage(msg, new PollinatedForgePacketContext(this.channel, ctx), ctx.get().getDirection().getReceptionSide().isClient() ? this.clientMessageHandler : this.serverMessageHandler);
                     ctx.get().setPacketHandled(true);
                 }))
                 .loginIndex(PollinatedLoginPacket::getAsInt, PollinatedLoginPacket::setLoginIndex)

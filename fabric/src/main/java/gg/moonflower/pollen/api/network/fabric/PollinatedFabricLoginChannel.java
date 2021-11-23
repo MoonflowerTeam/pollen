@@ -37,7 +37,7 @@ public class PollinatedFabricLoginChannel extends PollinatedNetworkChannelImpl i
 
     private final List<Function<Boolean, ? extends List<? extends Pair<String, ?>>>> loginPackets;
 
-    public PollinatedFabricLoginChannel(ResourceLocation channelId, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+    public PollinatedFabricLoginChannel(ResourceLocation channelId, Supplier<Object> clientFactory, Supplier<Object> serverFactory) {
         super(channelId, clientFactory, serverFactory);
         this.loginPackets = new ArrayList<>();
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
@@ -56,7 +56,7 @@ public class PollinatedFabricLoginChannel extends PollinatedNetworkChannelImpl i
                 future.completeExceptionally(t);
             }
         }, listener.getConnection(), __ -> {
-        }, PollinatedPacketDirection.LOGIN_CLIENTBOUND), this.clientMessageHandler.get().get());
+        }, PollinatedPacketDirection.LOGIN_CLIENTBOUND), this.clientMessageHandler);
         return future;
     }
 
@@ -66,7 +66,7 @@ public class PollinatedFabricLoginChannel extends PollinatedNetworkChannelImpl i
             public void reply(PollinatedPacket<?> packet) {
                 throw new UnsupportedOperationException("The server is not allowed to reply during the login phase.");
             }
-        }, this.serverMessageHandler.get().get());
+        }, this.serverMessageHandler);
     }
 
     @Override

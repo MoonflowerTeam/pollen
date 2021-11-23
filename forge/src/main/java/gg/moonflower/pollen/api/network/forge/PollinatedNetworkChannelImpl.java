@@ -17,14 +17,14 @@ import java.util.function.Supplier;
 public class PollinatedNetworkChannelImpl {
 
     protected final SimpleChannel channel;
-    protected final Supplier<Supplier<Object>> clientMessageHandler;
-    protected final Supplier<Supplier<Object>> serverMessageHandler;
+    protected final Supplier<Object> clientMessageHandler;
+    protected final Supplier<Object> serverMessageHandler;
     protected int nextId;
 
-    protected PollinatedNetworkChannelImpl(SimpleChannel channel, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+    protected PollinatedNetworkChannelImpl(SimpleChannel channel, Supplier<Object> clientFactory, Supplier<Object> serverFactory) {
         this.channel = channel;
-        this.clientMessageHandler = Suppliers.memoize(() -> Suppliers.memoize(clientFactory::get));
-        this.serverMessageHandler = Suppliers.memoize(() -> Suppliers.memoize(serverFactory::get));
+        this.clientMessageHandler = Suppliers.memoize(clientFactory::get);
+        this.serverMessageHandler = Suppliers.memoize(serverFactory::get);
     }
 
     protected static NetworkDirection toNetworkDirection(@Nullable PollinatedPacketDirection direction) {
@@ -41,7 +41,7 @@ public class PollinatedNetworkChannelImpl {
     protected <MSG extends PollinatedPacket<T>, T> SimpleChannel.MessageBuilder<MSG> getMessageBuilder(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, @Nullable PollinatedPacketDirection direction) {
         return this.channel.messageBuilder(clazz, this.nextId++, toNetworkDirection(direction)).encoder(PollinatedPacket::writePacketData).decoder(deserializer).consumer((msg, ctx) ->
         {
-            NetworkRegistry.processMessage(msg, new PollinatedForgePacketContext(this.channel, ctx), ctx.get().getDirection().getReceptionSide().isClient() ? this.clientMessageHandler.get().get() : this.serverMessageHandler.get().get());
+            NetworkRegistry.processMessage(msg, new PollinatedForgePacketContext(this.channel, ctx), ctx.get().getDirection().getReceptionSide().isClient() ? this.clientMessageHandler : this.serverMessageHandler);
             ctx.get().setPacketHandled(true);
         });
     }

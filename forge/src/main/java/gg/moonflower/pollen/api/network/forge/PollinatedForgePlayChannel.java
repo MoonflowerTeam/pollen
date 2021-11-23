@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 @ApiStatus.Internal
 public class PollinatedForgePlayChannel extends PollinatedNetworkChannelImpl implements PollinatedPlayNetworkChannel {
 
-    public PollinatedForgePlayChannel(SimpleChannel channel, Supplier<Supplier<Object>> clientFactory, Supplier<Supplier<Object>> serverFactory) {
+    public PollinatedForgePlayChannel(SimpleChannel channel, Supplier<Object> clientFactory, Supplier<Object> serverFactory) {
         super(channel, clientFactory, serverFactory);
     }
 
