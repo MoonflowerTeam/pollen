@@ -1,6 +1,8 @@
 package gg.moonflower.pollen.core;
 
 import gg.moonflower.pollen.api.advancement.AdvancementModifierManager;
+import gg.moonflower.pollen.api.client.shader.ShaderConst;
+import gg.moonflower.pollen.api.client.shader.ShaderLoader;
 import gg.moonflower.pollen.api.command.PollenSuggestionProviders;
 import gg.moonflower.pollen.api.command.argument.ColorArgumentType;
 import gg.moonflower.pollen.api.command.argument.EnumArgument;
@@ -8,6 +10,7 @@ import gg.moonflower.pollen.api.command.argument.TimeArgumentType;
 import gg.moonflower.pollen.api.config.ConfigManager;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.crafting.brewing.PollenBrewingRecipe;
+import gg.moonflower.pollen.api.event.events.client.render.InitRendererEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
@@ -52,6 +55,7 @@ public class Pollen {
         GeometryTextureManager.init();
         AnimationManager.init();
         AdvancementModifierManager.init();
+        ShaderLoader.init();
     }
 
     private static void onCommon() {
@@ -60,6 +64,7 @@ public class Pollen {
     }
 
     private static void onClientPost(Platform.ModSetupContext context) {
+        InitRendererEvent.EVENT.register(ShaderConst::init);
     }
 
     private static void onCommonPost(Platform.ModSetupContext context) {

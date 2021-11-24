@@ -6,6 +6,7 @@
   "client": [
     "client.AgeableListModelAccessor",
     "client.CreativeModeTabAccessor",
+    "client.MinecraftMixin",
     "client.WolfAccessor"
   ],
   "mixins": [
