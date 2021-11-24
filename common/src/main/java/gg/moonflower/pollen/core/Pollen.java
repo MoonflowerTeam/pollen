@@ -41,7 +41,7 @@ public class Pollen {
             .commonPostInit(Pollen::onCommonPost)
             .clientPostInit(Pollen::onClientPost)
             .build();
-    public static final PollenConfig CONFIG = ConfigManager.register(MOD_ID, PollinatedConfigType.COMMON, PollenConfig::new);
+
     private static final PollinatedRegistry<RecipeSerializer<?>> RECIPE_SERIALIZERS = PollinatedRegistry.create(Registry.RECIPE_SERIALIZER, MOD_ID);
     public static final Supplier<RecipeSerializer<PollenBrewingRecipe>> BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("brewing", PollenBrewingRecipe::createSerializer);
     private static MinecraftServer server;
