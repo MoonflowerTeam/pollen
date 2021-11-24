@@ -5,6 +5,7 @@
   "minVersion": "0.8",
   "client": [
     "client.AgeableListModelAccessor",
+    "client.ClientChunkCacheMixin",
     "client.CreativeModeTabAccessor",
     "client.WolfAccessor"
   ],
@@ -16,6 +17,7 @@
     "LivingEntityMixin",
     "PotionBrewingMixin",
     "ServerAdvancementManagerMixin",
+    "ServerPlayerMixin",
     "ServerResourcesMixin",
     "SimpleReloadableResourceManagerMixin"
   ],

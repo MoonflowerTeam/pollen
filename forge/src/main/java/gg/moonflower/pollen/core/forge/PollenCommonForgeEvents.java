@@ -1,16 +1,16 @@
 package gg.moonflower.pollen.core.forge;
 
 import gg.moonflower.pollen.api.event.events.CommandRegistryEvent;
-import gg.moonflower.pollen.api.event.events.entity.player.InteractEvent;
+import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
+import gg.moonflower.pollen.api.event.events.world.ChunkEvent;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
@@ -78,8 +78,8 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
-    public static void onEvent(PlayerInteractEvent.RightClickItem event) {
-        InteractionResultHolder<ItemStack> result = InteractEvent.RIGHT_CLICK_ITEM.invoker().interaction(event.getPlayer(), event.getWorld(), event.getHand());
+    public static void onEvent(net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickItem event) {
+        InteractionResultHolder<ItemStack> result = PlayerInteractEvent.RIGHT_CLICK_ITEM.invoker().interaction(event.getPlayer(), event.getWorld(), event.getHand());
         if (result.getResult() != InteractionResult.PASS) {
             event.setCanceled(true);
             event.setCancellationResult(result.getResult());
@@ -87,8 +87,8 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
-    public static void onEvent(PlayerInteractEvent.RightClickBlock event) {
-        InteractionResult result = InteractEvent.RIGHT_CLICK_BLOCK.invoker().interaction(event.getPlayer(), event.getWorld(), event.getHand(), event.getHitVec());
+    public static void onEvent(net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event) {
+        InteractionResult result = PlayerInteractEvent.RIGHT_CLICK_BLOCK.invoker().interaction(event.getPlayer(), event.getWorld(), event.getHand(), event.getHitVec());
         if (result != InteractionResult.PASS) {
             event.setCanceled(true);
             event.setCancellationResult(result);
@@ -96,8 +96,8 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
-    public static void onEvent(PlayerInteractEvent.LeftClickBlock event) {
-        InteractionResult result = InteractEvent.LEFT_CLICK_BLOCK.invoker().interaction(event.getPlayer(), event.getWorld(), event.getHand(), event.getPos(), event.getFace());
+    public static void onEvent(net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event) {
+        InteractionResult result = PlayerInteractEvent.LEFT_CLICK_BLOCK.invoker().interaction(event.getPlayer(), event.getWorld(), event.getHand(), event.getPos(), event.getFace());
         if (result != InteractionResult.PASS) {
             event.setCanceled(true);
             event.setCancellationResult(result);
@@ -105,11 +105,21 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
-    public static void onEvent(PlayerInteractEvent.EntityInteract event) {
-        InteractionResult result = InteractEvent.RIGHT_CLICK_ENTITY.invoker().interaction(event.getPlayer(), event.getWorld(), event.getHand(), event.getEntity());
+    public static void onEvent(net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract event) {
+        InteractionResult result = PlayerInteractEvent.RIGHT_CLICK_ENTITY.invoker().interaction(event.getPlayer(), event.getWorld(), event.getHand(), event.getEntity());
         if (result != InteractionResult.PASS) {
             event.setCanceled(true);
             event.setCancellationResult(result);
         }
+    }
+
+    @SubscribeEvent
+    public static void onEvent(net.minecraftforge.event.world.ChunkEvent.Load event) {
+        ChunkEvent.LOAD.invoker().load(event.getWorld(), event.getChunk());
+    }
+
+    @SubscribeEvent
+    public static void onEvent(net.minecraftforge.event.world.ChunkEvent.Unload event) {
+        ChunkEvent.UNLOAD.invoker().unload(event.getWorld(), event.getChunk());
     }
 }

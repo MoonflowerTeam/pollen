@@ -3,10 +3,13 @@ package gg.moonflower.pollen.core.fabric;
 import gg.moonflower.pollen.api.event.events.client.render.ReloadRendersEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
 import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvent;
+import gg.moonflower.pollen.api.event.events.world.ChunkEvent;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.InvalidateRenderStateCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
@@ -18,6 +21,9 @@ public class PollenFabricClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> TickEvent.CLIENT_POST.invoker().tick());
         ClientTickEvents.START_WORLD_TICK.register(TickEvent.LEVEL_PRE.invoker()::tick);
         ClientTickEvents.END_WORLD_TICK.register(TickEvent.LEVEL_POST.invoker()::tick);
+
+        ClientChunkEvents.CHUNK_LOAD.register(ChunkEvent.LOAD.invoker()::load);
+        ClientChunkEvents.CHUNK_UNLOAD.register(ChunkEvent.UNLOAD.invoker()::unload);
 
         InvalidateRenderStateCallback.EVENT.register(() -> ReloadRendersEvent.EVENT.invoker().reloadRenders());
 
