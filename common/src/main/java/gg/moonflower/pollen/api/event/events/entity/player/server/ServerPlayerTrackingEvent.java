@@ -5,7 +5,7 @@ import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 
-public interface PlayerTrackingEvent {
+public interface ServerPlayerTrackingEvent {
 
     PollinatedEvent<StartTrackingChunk> START_TRACKING_CHUNK = EventRegistry.createLoop(StartTrackingChunk.class);
     PollinatedEvent<StopTrackingChunk> STOP_TRACKING_CHUNK = EventRegistry.createLoop(StopTrackingChunk.class);
