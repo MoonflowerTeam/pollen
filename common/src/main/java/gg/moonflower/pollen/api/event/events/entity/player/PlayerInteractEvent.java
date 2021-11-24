@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 
-public interface InteractEvent {
+public interface PlayerInteractEvent {
 
     PollinatedEvent<RightClickItem> RIGHT_CLICK_ITEM = EventRegistry.create(RightClickItem.class, events -> (player, level, hand) -> {
         for (RightClickItem event : events) {

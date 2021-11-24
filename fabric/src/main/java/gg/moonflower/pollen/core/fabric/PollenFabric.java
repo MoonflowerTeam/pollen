@@ -3,9 +3,10 @@ package gg.moonflower.pollen.core.fabric;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.config.fabric.ConfigTracker;
 import gg.moonflower.pollen.api.event.events.CommandRegistryEvent;
-import gg.moonflower.pollen.api.event.events.entity.player.InteractEvent;
+import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
+import gg.moonflower.pollen.api.event.events.world.ChunkEvent;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.command.ConfigCommand;
@@ -13,6 +14,7 @@ import gg.moonflower.pollen.core.mixin.fabric.LevelResourceAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
@@ -66,10 +68,13 @@ public class PollenFabric implements ModInitializer {
         ServerLifecycleEvents.SERVER_STOPPING.register(ServerLifecycleEvent.STOPPING.invoker()::stopping);
         ServerLifecycleEvents.SERVER_STOPPED.register(ServerLifecycleEvent.STOPPED.invoker()::stopped);
 
-        UseItemCallback.EVENT.register(InteractEvent.RIGHT_CLICK_ITEM.invoker()::interaction);
-        UseBlockCallback.EVENT.register(InteractEvent.RIGHT_CLICK_BLOCK.invoker()::interaction);
-        AttackBlockCallback.EVENT.register(InteractEvent.LEFT_CLICK_BLOCK.invoker()::interaction);
-        UseEntityCallback.EVENT.register((player, world, hand, entity, entityHitResult) -> InteractEvent.RIGHT_CLICK_ENTITY.invoker().interaction(player, world, hand, entity));
+        ServerChunkEvents.CHUNK_LOAD.register(ChunkEvent.LOAD.invoker()::load);
+        ServerChunkEvents.CHUNK_UNLOAD.register(ChunkEvent.UNLOAD.invoker()::unload);
+
+        UseItemCallback.EVENT.register(PlayerInteractEvent.RIGHT_CLICK_ITEM.invoker()::interaction);
+        UseBlockCallback.EVENT.register(PlayerInteractEvent.RIGHT_CLICK_BLOCK.invoker()::interaction);
+        AttackBlockCallback.EVENT.register(PlayerInteractEvent.LEFT_CLICK_BLOCK.invoker()::interaction);
+        UseEntityCallback.EVENT.register((player, world, hand, entity, entityHitResult) -> PlayerInteractEvent.RIGHT_CLICK_ENTITY.invoker().interaction(player, world, hand, entity));
 
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> CommandRegistryEvent.EVENT.invoker().registerCommands(dispatcher, dedicated ? Commands.CommandSelection.DEDICATED : Platform.getRunningServer().isPresent() ? Commands.CommandSelection.INTEGRATED : Commands.CommandSelection.ALL));
 
