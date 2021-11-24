@@ -10,7 +10,10 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +29,7 @@ import java.util.stream.Stream;
  **/
 public class SyncedDataManager {
 
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final Map<ResourceLocation, SyncedDataKey<?>> REGISTERED_KEYS = new HashMap<>();
     private static final Map<Integer, SyncedDataKey<?>> KEY_LOOKUP = new Int2ObjectArrayMap<>();
     private static final Map<Integer, SyncedDataKey<?>> CLIENT_KEY_LOOKUP = new Int2ObjectArrayMap<>();
@@ -44,6 +48,10 @@ public class SyncedDataManager {
                 return;
             sync((ServerPlayer) entity);
         });
+    }
+
+    @ApiStatus.Internal
+    public static void initClient() {
         ClientNetworkEvent.LOGOUT.register((controller, player, connection) -> CLIENT_KEY_LOOKUP.clear());
     }
 
@@ -56,7 +64,14 @@ public class SyncedDataManager {
     @ApiStatus.Internal
     public static void syncKeys(ClientboundSyncPlayerDataKeysPacket pkt) {
         CLIENT_KEY_LOOKUP.clear();
-        pkt.getMappings().forEach((name, id) -> CLIENT_KEY_LOOKUP.put(id, byName(name)));
+        pkt.getMappings().forEach((name, id) -> {
+            SyncedDataKey<?> key = byName(name);
+            if (key == null) {
+                LOGGER.error("Server sent mapping for unknown key: " + name);
+                return;
+            }
+            CLIENT_KEY_LOOKUP.put(id, key);
+        });
     }
 
     @ApiStatus.Internal
@@ -100,9 +115,14 @@ public class SyncedDataManager {
         return Platform.error();
     }
 
+    /**
+     * Retrieves a synced data key by id.
+     *
+     * @param name The id of the key
+     * @return The key with that id or <code>null</code> if there is no registered key
+     */
+    @Nullable
     public static SyncedDataKey<?> byName(ResourceLocation name) {
-        if (!REGISTERED_KEYS.containsKey(name))
-            throw new IllegalStateException("Unknown synced data key: " + name);
         return REGISTERED_KEYS.get(name);
     }
 

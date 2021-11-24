@@ -51,6 +51,7 @@ public class Pollen {
     }
 
     private static void onClient() {
+        SyncedDataManager.initClient();
         GeometryModelManager.init();
         GeometryTextureManager.init();
         AnimationManager.init();

@@ -51,6 +51,29 @@ public class SyncedDataKey<T> {
         return syncStrategy;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SyncedDataKey<?> that = (SyncedDataKey<?>) o;
+        return this.key.equals(that.key);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.key.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "SyncedDataKey{" +
+                "key=" + key +
+                ", save=" + save +
+                ", persistent=" + persistent +
+                ", syncStrategy=" + syncStrategy +
+                '}';
+    }
+
     public enum SyncStrategy {
 
         /**
