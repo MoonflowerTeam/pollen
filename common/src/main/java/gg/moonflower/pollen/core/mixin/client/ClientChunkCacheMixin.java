@@ -14,11 +14,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import java.util.BitSet;
+
 @Mixin(ClientChunkCache.class)
 public class ClientChunkCacheMixin {
 
     @Inject(method = "replaceWithPacketData", at = @At("TAIL"))
-    public void trackChunk(int i, int j, ChunkBiomeContainer chunkBiomeContainer, FriendlyByteBuf friendlyByteBuf, CompoundTag compoundTag, int k, boolean bl, CallbackInfoReturnable<LevelChunk> cir) {
+    public void trackChunk(int i, int j, ChunkBiomeContainer chunkBiomeContainer, FriendlyByteBuf friendlyByteBuf, CompoundTag compoundTag, BitSet bitSet, CallbackInfoReturnable<LevelChunk> cir) {
         PlayerTrackingEvent.START_TRACKING_CHUNK.invoker().track(Minecraft.getInstance().player, cir.getReturnValue().getPos());
     }
 
