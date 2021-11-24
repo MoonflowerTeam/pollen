@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.core.mixin;
 
-import gg.moonflower.pollen.api.event.events.entity.player.server.PlayerTrackingEvent;
+import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
@@ -14,11 +14,11 @@ public class ServerPlayerMixin {
 
     @Inject(method = "trackChunk", at = @At("HEAD"))
     public void trackChunk(ChunkPos chunkPos, Packet<?> packet, Packet<?> packet2, CallbackInfo ci) {
-        PlayerTrackingEvent.START_TRACKING_CHUNK.invoker().track((ServerPlayer) (Object) this, chunkPos);
+        ServerPlayerTrackingEvent.START_TRACKING_CHUNK.invoker().track((ServerPlayer) (Object) this, chunkPos);
     }
 
     @Inject(method = "untrackChunk", at = @At("HEAD"))
     public void untrackChunk(ChunkPos chunkPos, CallbackInfo ci) {
-        PlayerTrackingEvent.STOP_TRACKING_CHUNK.invoker().track((ServerPlayer) (Object) this, chunkPos);
+        ServerPlayerTrackingEvent.STOP_TRACKING_CHUNK.invoker().track((ServerPlayer) (Object) this, chunkPos);
     }
 }
