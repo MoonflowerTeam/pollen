@@ -8,6 +8,8 @@ import net.minecraft.world.entity.Entity;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.io.IOException;
+
 /**
  * @author Ocelot
  */
@@ -22,13 +24,13 @@ public class ClientboundSyncAnimationPacket implements PollinatedPacket<PollenCl
         this.animationId = ArrayUtils.indexOf(entity.getAnimationStates(), entity.getAnimationState());
     }
 
-    public ClientboundSyncAnimationPacket(FriendlyByteBuf buf) {
+    public ClientboundSyncAnimationPacket(FriendlyByteBuf buf) throws IOException {
         this.entityId = buf.readVarInt();
         this.animationId = buf.readVarInt();
     }
 
     @Override
-    public void writePacketData(FriendlyByteBuf buf) {
+    public void writePacketData(FriendlyByteBuf buf) throws IOException {
         buf.writeVarInt(this.entityId);
         buf.writeVarInt(this.animationId);
     }

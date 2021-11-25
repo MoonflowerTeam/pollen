@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.api.network.fabric;
 
+import gg.moonflower.pollen.api.network.PacketDeserializer;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -9,10 +10,10 @@ import net.minecraft.util.LazyLoadedValue;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal
@@ -41,7 +42,11 @@ public class PollinatedNetworkChannelImpl {
 
         FriendlyByteBuf buf = PacketByteBufs.create();
         buf.writeVarInt(id);
-        message.writePacketData(buf);
+        try {
+            message.writePacketData(buf);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to write packet data", e);
+        }
         return buf;
     }
 
@@ -54,19 +59,23 @@ public class PollinatedNetworkChannelImpl {
         if (factory.direction != null && factory.direction != expectedDirection)
             throw new IllegalStateException("Received unexpected packet with id: " + id + ". Expected " + expectedDirection + ", got " + factory.direction);
 
-        return factory.deserializer.apply(buf);
+        try {
+            return factory.deserializer.deserialize(buf);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to read packet data", e);
+        }
     }
 
-    protected <MSG extends PollinatedPacket<T>, T> void register(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, @Nullable PollinatedPacketDirection direction) {
+    protected <MSG extends PollinatedPacket<T>, T> void register(Class<MSG> clazz, PacketDeserializer<MSG, T> deserializer, @Nullable PollinatedPacketDirection direction) {
         this.factories.add(new PacketFactory<>(clazz, deserializer, direction));
     }
 
     private static class PacketFactory<MSG extends PollinatedPacket<T>, T> {
         private final Class<MSG> clazz;
-        private final Function<FriendlyByteBuf, MSG> deserializer;
+        private final PacketDeserializer<MSG, T> deserializer;
         private final PollinatedPacketDirection direction;
 
-        private PacketFactory(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, PollinatedPacketDirection direction) {
+        private PacketFactory(Class<MSG> clazz, PacketDeserializer<MSG, T> deserializer, PollinatedPacketDirection direction) {
             this.clazz = clazz;
             this.deserializer = deserializer;
             this.direction = direction;

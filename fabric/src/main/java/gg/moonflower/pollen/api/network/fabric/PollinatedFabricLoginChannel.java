@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.api.network.fabric;
 
+import gg.moonflower.pollen.api.network.PacketDeserializer;
 import gg.moonflower.pollen.api.network.PollinatedLoginNetworkChannel;
 import gg.moonflower.pollen.api.network.fabric.context.PollinatedFabricLoginPacketContext;
 import gg.moonflower.pollen.api.network.fabric.context.PollinatedFabricPacketContext;
@@ -74,12 +75,12 @@ public class PollinatedFabricLoginChannel extends PollinatedNetworkChannelImpl i
     }
 
     @Override
-    public <MSG extends PollinatedLoginPacket<T>, T> void register(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer) {
+    public <MSG extends PollinatedLoginPacket<T>, T> void register(Class<MSG> clazz, PacketDeserializer<MSG, T> deserializer) {
         super.register(clazz, deserializer, PollinatedPacketDirection.LOGIN_SERVERBOUND);
     }
 
     @Override
-    public <MSG extends PollinatedLoginPacket<T>, T> void registerLogin(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, Function<Boolean, List<Pair<String, MSG>>> loginPacketGenerators) {
+    public <MSG extends PollinatedLoginPacket<T>, T> void registerLogin(Class<MSG> clazz, PacketDeserializer<MSG, T> deserializer, Function<Boolean, List<Pair<String, MSG>>> loginPacketGenerators) {
         super.register(clazz, deserializer, PollinatedPacketDirection.LOGIN_CLIENTBOUND);
         this.loginPackets.add(loginPacketGenerators);
     }

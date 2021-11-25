@@ -3,7 +3,6 @@ package gg.moonflower.pollen.api.network;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -12,8 +11,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Function;
 
 /**
  * Manages the registering packets between the client and server during normal gameplay.
@@ -119,7 +116,7 @@ public interface PollinatedPlayNetworkChannel {
      * @param <MSG>        The type of packet to be sent
      * @param <T>          The handler that will process the packet. Should be an interface to avoid loading client classes on server
      */
-    <MSG extends PollinatedPacket<T>, T> void register(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, @Nullable PollinatedPacketDirection direction);
+    <MSG extends PollinatedPacket<T>, T> void register(Class<MSG> clazz, PacketDeserializer<MSG, T> deserializer, @Nullable PollinatedPacketDirection direction);
 
     /**
      * Translates the specified packet into a vanilla packet.

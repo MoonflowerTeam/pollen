@@ -1,10 +1,10 @@
 package gg.moonflower.pollen.api.network.forge;
 
+import gg.moonflower.pollen.api.network.PacketDeserializer;
 import gg.moonflower.pollen.api.network.PollinatedPlayNetworkChannel;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -18,7 +18,6 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal
@@ -75,7 +74,7 @@ public class PollinatedForgePlayChannel extends PollinatedNetworkChannelImpl imp
     }
 
     @Override
-    public <MSG extends PollinatedPacket<T>, T> void register(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, @Nullable PollinatedPacketDirection direction) {
+    public <MSG extends PollinatedPacket<T>, T> void register(Class<MSG> clazz, PacketDeserializer<MSG, T> deserializer, @Nullable PollinatedPacketDirection direction) {
         this.getMessageBuilder(clazz, deserializer, direction).add();
     }
 

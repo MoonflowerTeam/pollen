@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.api.network.fabric;
 
+import gg.moonflower.pollen.api.network.PacketDeserializer;
 import gg.moonflower.pollen.api.network.PollinatedPlayNetworkChannel;
 import gg.moonflower.pollen.api.network.fabric.context.PollinatedFabricPlayPacketContext;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
@@ -124,7 +125,7 @@ public class PollinatedFabricPlayChannel extends PollinatedNetworkChannelImpl im
     }
 
     @Override
-    public <MSG extends PollinatedPacket<T>, T> void register(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, @Nullable PollinatedPacketDirection direction) {
+    public <MSG extends PollinatedPacket<T>, T> void register(Class<MSG> clazz, PacketDeserializer<MSG, T> deserializer, @Nullable PollinatedPacketDirection direction) {
         super.register(clazz, deserializer, direction);
     }
 }
