@@ -53,6 +53,7 @@ public class Pollen {
         AnimationManager.init();
         AdvancementModifierManager.init();
         ShaderLoader.init();
+        InitRendererEvent.EVENT.register(ShaderConst::init);
     }
 
     private static void onCommon() {
@@ -61,7 +62,6 @@ public class Pollen {
     }
 
     private static void onClientPost(Platform.ModSetupContext context) {
-        InitRendererEvent.EVENT.register(ShaderConst::init);
     }
 
     private static void onCommonPost(Platform.ModSetupContext context) {
