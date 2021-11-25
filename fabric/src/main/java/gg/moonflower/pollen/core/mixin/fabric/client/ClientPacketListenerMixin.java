@@ -15,7 +15,6 @@ import net.minecraft.network.protocol.game.ClientboundRespawnPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.chunk.ChunkBiomeContainer;
 import net.minecraft.world.level.dimension.DimensionType;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
@@ -25,6 +24,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.util.Iterator;
 
 @Mixin(ClientPacketListener.class)
 public abstract class ClientPacketListenerMixin {
@@ -60,7 +61,7 @@ public abstract class ClientPacketListenerMixin {
     }
 
     @Inject(method = "handleLevelChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;load(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/nbt/CompoundTag;)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILEXCEPTION, cancellable = true)
-    public void handleLevelChunk(ClientboundLevelChunkPacket packet, CallbackInfo ci, int i, int j, ChunkBiomeContainer chunkBiomeContainer, CompoundTag compoundTag, BlockPos pos, BlockEntity blockEntity) {
+    public void handleLevelChunk(ClientboundLevelChunkPacket packet, CallbackInfo ci, Iterator<CompoundTag> blockEntityNbtList, CompoundTag compoundTag, BlockPos pos, BlockEntity blockEntity) {
         if (blockEntity instanceof PollenBlockEntity) {
             ci.cancel();
             ((PollenBlockEntity) blockEntity).handleUpdateTag(this.level.getBlockState(pos), compoundTag);
