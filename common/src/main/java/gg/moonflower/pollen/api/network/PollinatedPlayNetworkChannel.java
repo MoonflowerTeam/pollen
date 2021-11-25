@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
@@ -76,6 +77,16 @@ public interface PollinatedPlayNetworkChannel {
      * @param packet The packet to send
      */
     void sendToTracking(ServerLevel level, BlockPos pos, PollinatedPacket<?> packet);
+
+    /**
+     * Sends the all players tracking the specified chunk in the level.
+     *
+     * @param chunk  The chunk to track
+     * @param packet The packet to send
+     */
+    default void sendToTracking(LevelChunk chunk, PollinatedPacket<?> packet) {
+        this.sendToTracking((ServerLevel) chunk.getLevel(), chunk.getPos(), packet);
+    }
 
     /**
      * Sends the all players tracking the specified chunk in the level.
