@@ -2,7 +2,7 @@ package gg.moonflower.pollen.core.fabric;
 
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.config.fabric.ConfigTracker;
-import gg.moonflower.pollen.api.event.events.CommandRegistryEvent;
+import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;

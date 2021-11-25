@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.core.forge;
 
-import gg.moonflower.pollen.api.event.events.CommandRegistryEvent;
+import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;

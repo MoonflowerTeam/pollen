@@ -1,13 +1,19 @@
 package gg.moonflower.pollen.api.registry;
 
-import com.mojang.serialization.Codec;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.*;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.platform.Platform;
+import net.minecraft.core.DefaultedRegistry;
+import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
+import net.minecraft.core.WritableRegistry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * An abstracted registry for wrapping platform-specific registries.
@@ -16,7 +22,7 @@ import java.util.function.Supplier;
  * @author Jackson
  * @since 1.0.0
  */
-public abstract class PollinatedRegistry<T> {
+public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable {
 
     protected final String modId;
     private boolean registered;
@@ -78,11 +84,6 @@ public abstract class PollinatedRegistry<T> {
     }
 
     /**
-     * @return A codec for this registry's elements
-     */
-    public abstract Codec<T> codec();
-
-    /**
      * Initializes the registry for a {@link Platform}.
      *
      * @param mod The {@link Platform} to register the registry onto.
@@ -116,8 +117,40 @@ public abstract class PollinatedRegistry<T> {
         }
 
         @Override
-        public Codec<T> codec() {
-            return registry;
+        public <T1> DataResult<Pair<T, T1>> decode(DynamicOps<T1> ops, T1 input) {
+            return this.registry.decode(ops, input);
         }
+
+        @Override
+        public <T1> DataResult<T1> encode(T input, DynamicOps<T1> ops, T1 prefix) {
+            return this.registry.encode(input, ops, prefix);
+        }
+
+        @Override
+        public <T1> Stream<T1> keys(DynamicOps<T1> ops) {
+            return this.registry.keys(ops);
+        }
+    }
+
+    /**
+     * Creates a new simple registry
+     * @param registryId The registry {@link ResourceLocation} used as the registry id
+     * @param <T> The type stored in the Registry
+     * @return An instance of FabricRegistryBuilder
+     */
+    @ExpectPlatform
+    public static <T> PollinatedRegistry<T> createSimple(Class<T> type, ResourceLocation registryId) {
+        return Platform.error();
+    }
+
+    /**
+     * @param registryId The registry {@link ResourceLocation} used as the registry id
+     * @param defaultId The default registry id
+     * @param <T> The type stored in the Registry
+     * @return An instance of FabricRegistryBuilder
+     */
+    @ExpectPlatform
+    public static <T> PollinatedRegistry<T> createDefaulted(Class<T> type, ResourceLocation registryId, ResourceLocation defaultId) {
+        return Platform.error();
     }
 }

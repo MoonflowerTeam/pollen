@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.api.registry.forge;
 
 import gg.moonflower.pollen.api.registry.ClientRegistries;
+import gg.moonflower.pollen.api.registry.ResourceRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -100,5 +101,8 @@ public class ClientRegistriesImpl {
 
     public static <M extends AbstractContainerMenu, S extends Screen & MenuAccess<M>> void registerScreenFactory(MenuType<M> type, ClientRegistries.ScreenFactory<M, S> factory) {
         MenuScreens.register(type, factory::create);
+    }
+
+    public static void registerAtlasSprite(ResourceLocation atlas, ResourceRegistry name) {
     }
 }

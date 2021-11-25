@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.event.events;
+package gg.moonflower.pollen.api.event.events.registry;
 
 import com.mojang.brigadier.CommandDispatcher;
 import gg.moonflower.pollen.api.event.PollinatedEvent;

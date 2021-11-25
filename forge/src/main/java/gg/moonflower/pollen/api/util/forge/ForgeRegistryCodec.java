@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -22,9 +23,9 @@ import java.util.stream.Stream;
  */
 public class ForgeRegistryCodec<T extends IForgeRegistryEntry<T>> implements Codec<T>, Keyable {
 
-    private final IForgeRegistry<T> registry;
+    private final Supplier<IForgeRegistry<T>> registry;
 
-    private ForgeRegistryCodec(IForgeRegistry<T> registry) {
+    private ForgeRegistryCodec(Supplier<IForgeRegistry<T>> registry) {
         this.registry = registry;
     }
 
@@ -36,21 +37,32 @@ public class ForgeRegistryCodec<T extends IForgeRegistryEntry<T>> implements Cod
      * @return A new codec for that registry
      */
     public static <T extends IForgeRegistryEntry<T>> ForgeRegistryCodec<T> create(IForgeRegistry<T> registry) {
-        return new ForgeRegistryCodec<T>(registry);
+        return new ForgeRegistryCodec<>(() -> registry);
+    }
+
+    /**
+     * Creates a new forge registry codec for the specified forge registry.
+     *
+     * @param registry The registry to wrap
+     * @param <T>      The type of object the registry registers
+     * @return A new codec for that registry
+     */
+    public static <T extends IForgeRegistryEntry<T>> ForgeRegistryCodec<T> create(Supplier<IForgeRegistry<T>> registry) {
+        return new ForgeRegistryCodec<>(registry);
     }
 
     @Override
     public <U> DataResult<Pair<T, U>> decode(DynamicOps<U> ops, U input) {
         return ResourceLocation.CODEC.decode(ops, input).flatMap(pair ->
         {
-            T t = this.registry.getValue(pair.getFirst());
+            T t = this.registry.get().getValue(pair.getFirst());
             return t == null ? DataResult.error("Unknown registry key: " + pair.getFirst()) : DataResult.success(Pair.of(t, pair.getSecond()));
         });
     }
 
     @Override
     public <U> DataResult<U> encode(T input, DynamicOps<U> ops, U prefix) {
-        ResourceLocation resourcelocation = this.registry.getKey(input);
+        ResourceLocation resourcelocation = this.registry.get().getKey(input);
         if (resourcelocation == null)
             return DataResult.error("Unknown registry element " + input);
         return ops.mergeToPrimitive(prefix, ops.createString(resourcelocation.toString()));
@@ -58,6 +70,6 @@ public class ForgeRegistryCodec<T extends IForgeRegistryEntry<T>> implements Cod
 
     @Override
     public <T1> Stream<T1> keys(DynamicOps<T1> ops) {
-        return this.registry.getKeys().stream().map(location -> ops.createString(location.toString()));
+        return this.registry.get().getKeys().stream().map(location -> ops.createString(location.toString()));
     }
 }
