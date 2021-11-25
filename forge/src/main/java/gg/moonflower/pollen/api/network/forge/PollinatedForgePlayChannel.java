@@ -5,6 +5,7 @@ import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -76,5 +77,10 @@ public class PollinatedForgePlayChannel extends PollinatedNetworkChannelImpl imp
     @Override
     public <MSG extends PollinatedPacket<T>, T> void register(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, @Nullable PollinatedPacketDirection direction) {
         this.getMessageBuilder(clazz, deserializer, direction).add();
+    }
+
+    @Override
+    public Packet<?> toVanillaPacket(PollinatedPacket<?> packet, PollinatedPacketDirection direction) {
+        return this.channel.toVanillaPacket(packet, toNetworkDirection(direction));
     }
 }

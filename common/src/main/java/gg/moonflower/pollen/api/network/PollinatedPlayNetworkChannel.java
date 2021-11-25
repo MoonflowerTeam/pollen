@@ -6,6 +6,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -111,4 +112,13 @@ public interface PollinatedPlayNetworkChannel {
      * @param <T>          The handler that will process the packet. Should be an interface to avoid loading client classes on server
      */
     <MSG extends PollinatedPacket<T>, T> void register(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, @Nullable PollinatedPacketDirection direction);
+
+    /**
+     * Translates the specified packet into a vanilla packet.
+     *
+     * @param packet    The packet to send
+     * @param direction The direction to send it in
+     * @return A new vanilla packet
+     */
+    Packet<?> toVanillaPacket(PollinatedPacket<?> packet, PollinatedPacketDirection direction);
 }

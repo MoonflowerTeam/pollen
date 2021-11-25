@@ -6,6 +6,7 @@ import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import gg.moonflower.pollen.api.network.packet.login.PollinatedLoginPacket;
 import gg.moonflower.pollen.api.registry.NetworkRegistry;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
 import net.minecraftforge.fml.network.FMLHandshakeHandler;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -41,5 +42,10 @@ public class PollinatedForgeLoginChannel extends PollinatedNetworkChannelImpl im
                 .loginIndex(PollinatedLoginPacket::getAsInt, PollinatedLoginPacket::setLoginIndex)
                 .buildLoginPacketList(loginPacketGenerators)
                 .add();
+    }
+
+    @Override
+    public Packet<?> toVanillaPacket(PollinatedPacket<?> packet, int transactionId, PollinatedPacketDirection direction) {
+        return this.channel.toVanillaPacket(packet, toNetworkDirection(direction));
     }
 }

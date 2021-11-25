@@ -16,6 +16,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
+import net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -108,6 +111,18 @@ public class PollinatedFabricPlayChannel extends PollinatedNetworkChannelImpl im
     @Environment(EnvType.CLIENT)
     public void sendToServer(PollinatedPacket<?> packet) {
         ClientPlayNetworking.send(this.channelId, this.serialize(packet, PollinatedPacketDirection.PLAY_SERVERBOUND));
+    }
+
+    @Override
+    public Packet<?> toVanillaPacket(PollinatedPacket<?> packet, PollinatedPacketDirection direction) {
+        switch (direction){
+            case PLAY_SERVERBOUND:
+                return new ServerboundCustomPayloadPacket(this.channelId, this.serialize(packet, direction));
+            case PLAY_CLIENTBOUND:
+                return new ClientboundCustomPayloadPacket(this.channelId, this.serialize(packet, direction));
+            default:
+                throw new IllegalStateException("Unsupported packet direction: " + direction);
+        }
     }
 
     @Override

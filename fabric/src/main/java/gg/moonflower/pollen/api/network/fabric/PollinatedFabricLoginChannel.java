@@ -14,10 +14,14 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
+import net.fabricmc.fabric.mixin.networking.accessor.LoginQueryRequestS2CPacketAccessor;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientHandshakePacketListenerImpl;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
+import net.minecraft.network.protocol.login.ServerboundCustomQueryPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
@@ -78,5 +82,22 @@ public class PollinatedFabricLoginChannel extends PollinatedNetworkChannelImpl i
     public <MSG extends PollinatedLoginPacket<T>, T> void registerLogin(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, Function<Boolean, List<Pair<String, MSG>>> loginPacketGenerators) {
         super.register(clazz, deserializer, PollinatedPacketDirection.LOGIN_CLIENTBOUND);
         this.loginPackets.add(loginPacketGenerators);
+    }
+
+    @Override
+    public Packet<?> toVanillaPacket(PollinatedPacket<?> packet, int transactionId, PollinatedPacketDirection direction) {
+        switch (direction) {
+            case LOGIN_SERVERBOUND:
+                return new ServerboundCustomQueryPacket(transactionId, this.serialize(packet, direction));
+            case LOGIN_CLIENTBOUND:
+                ClientboundCustomQueryPacket value = new ClientboundCustomQueryPacket();
+                LoginQueryRequestS2CPacketAccessor access = (LoginQueryRequestS2CPacketAccessor) value;
+                access.setQueryId(transactionId);
+                access.setChannel(this.channelId);
+                access.setPayload(this.serialize(packet, direction));
+                return value;
+            default:
+                throw new IllegalStateException("Unsupported packet direction: " + direction);
+        }
     }
 }

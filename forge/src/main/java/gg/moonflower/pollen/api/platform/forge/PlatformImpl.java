@@ -29,4 +29,8 @@ public class PlatformImpl {
     public static Stream<PollinatedModContainer> getMods() {
         return ModList.get().applyForEachModContainer(PollinatedModContainerImpl::new);
     }
+
+    public static boolean isClient() {
+        return FMLLoader.getDist().isClient();
+    }
 }
