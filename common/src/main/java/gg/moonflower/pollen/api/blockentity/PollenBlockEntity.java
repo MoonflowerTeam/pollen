@@ -7,12 +7,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Allows Fabric to have the same BlockEntity functionality as Forge.
+ * Allows Fabric to have similar BlockEntity functionality as Forge.
  *
  * @author Ocelot
  * @since 1.0.0
  */
-public interface SyncedBlockEntity {
+public interface PollenBlockEntity {
 
     /**
      * Called when the server syncs this BlockEntity with the server.

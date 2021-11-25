@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.core.mixin.fabric.client;
 
-import gg.moonflower.pollen.api.blockentity.SyncedBlockEntity;
+import gg.moonflower.pollen.api.blockentity.PollenBlockEntity;
 import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -55,15 +55,15 @@ public abstract class ClientPacketListenerMixin {
             return;
         }
 
-        if (blockEntity instanceof SyncedBlockEntity)
-            ((SyncedBlockEntity) blockEntity).onDataPacket(this.connection, packet);
+        if (blockEntity instanceof PollenBlockEntity)
+            ((PollenBlockEntity) blockEntity).onDataPacket(this.connection, packet);
     }
 
     @Inject(method = "handleLevelChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;load(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/nbt/CompoundTag;)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILEXCEPTION, cancellable = true)
     public void handleLevelChunk(ClientboundLevelChunkPacket packet, CallbackInfo ci, int i, int j, ChunkBiomeContainer chunkBiomeContainer, CompoundTag compoundTag, BlockPos pos, BlockEntity blockEntity) {
-        if (blockEntity instanceof SyncedBlockEntity) {
+        if (blockEntity instanceof PollenBlockEntity) {
             ci.cancel();
-            ((SyncedBlockEntity) blockEntity).handleUpdateTag(this.level.getBlockState(pos), compoundTag);
+            ((PollenBlockEntity) blockEntity).handleUpdateTag(this.level.getBlockState(pos), compoundTag);
         }
     }
 }

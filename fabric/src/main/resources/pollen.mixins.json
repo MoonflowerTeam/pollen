@@ -6,6 +6,7 @@
   "client": [
     "client.CameraAccessor",
     "client.ClientHandshakePacketListenerImplMixin",
+    "client.ClientLevelMixin",
     "client.ClientPacketListenerMixin",
     "client.GameRendererMixin",
     "client.KeyboardInputMixin",
@@ -13,7 +14,8 @@
   ],
   "mixins": [
     "LevelResourceAccessor",
-    "LivingEntityMixin"
+    "LivingEntityMixin",
+    "ServerLevelMixin"
   ],
   "injectors": {
     "defaultRequire": 1
