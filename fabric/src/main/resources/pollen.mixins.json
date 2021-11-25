@@ -10,6 +10,7 @@
     "client.ClientPacketListenerMixin",
     "client.GameRendererMixin",
     "client.KeyboardInputMixin",
+    "client.LivingEntityRendererMixin",
     "client.MouseHandlerMixin"
   ],
   "mixins": [
