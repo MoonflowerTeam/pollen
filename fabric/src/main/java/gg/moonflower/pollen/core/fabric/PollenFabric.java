@@ -3,6 +3,7 @@ package gg.moonflower.pollen.core.fabric;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.config.fabric.ConfigTracker;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractEvent;
+import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
 import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
@@ -21,6 +22,7 @@ import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
@@ -77,6 +79,9 @@ public class PollenFabric implements ModInitializer {
         UseEntityCallback.EVENT.register((player, world, hand, entity, entityHitResult) -> PlayerInteractEvent.RIGHT_CLICK_ENTITY.invoker().interaction(player, world, hand, entity));
 
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> CommandRegistryEvent.EVENT.invoker().registerCommands(dispatcher, dedicated ? Commands.CommandSelection.DEDICATED : Platform.getRunningServer().isPresent() ? Commands.CommandSelection.INTEGRATED : Commands.CommandSelection.ALL));
+
+        EntityTrackingEvents.START_TRACKING.register((entity, player) -> ServerPlayerTrackingEvents.START_TRACKING_ENTITY.invoker().startTracking(player, entity));
+        EntityTrackingEvents.STOP_TRACKING.register((entity, player) -> ServerPlayerTrackingEvents.STOP_TRACKING_ENTITY.invoker().stopTracking(player, entity));
 
         // Pollen Events
         ServerLifecycleEvent.STARTING.register(server -> ConfigTracker.INSTANCE.loadConfigs(PollinatedConfigType.SERVER, getServerConfigPath(server)));
