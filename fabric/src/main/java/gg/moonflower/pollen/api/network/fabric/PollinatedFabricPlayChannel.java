@@ -115,7 +115,7 @@ public class PollinatedFabricPlayChannel extends PollinatedNetworkChannelImpl im
 
     @Override
     public Packet<?> toVanillaPacket(PollinatedPacket<?> packet, PollinatedPacketDirection direction) {
-        switch (direction){
+        switch (direction) {
             case PLAY_SERVERBOUND:
                 return new ServerboundCustomPayloadPacket(this.channelId, this.serialize(packet, direction));
             case PLAY_CLIENTBOUND:

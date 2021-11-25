@@ -36,23 +36,23 @@ public abstract class GameRendererMixin {
             }
 
             @Override
-            public float getYRotation() {
-                return CAMERA_STORAGE[1];
-            }
-
-            @Override
-            public float getZRotation() {
-                return CAMERA_STORAGE[2];
-            }
-
-            @Override
             public void setXRotation(float pitch) {
                 CAMERA_STORAGE[0] = pitch;
             }
 
             @Override
+            public float getYRotation() {
+                return CAMERA_STORAGE[1];
+            }
+
+            @Override
             public void setYRotation(float yaw) {
                 CAMERA_STORAGE[1] = yaw;
+            }
+
+            @Override
+            public float getZRotation() {
+                return CAMERA_STORAGE[2];
             }
 
             @Override

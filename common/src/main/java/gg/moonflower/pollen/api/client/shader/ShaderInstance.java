@@ -36,6 +36,13 @@ public class ShaderInstance implements NativeResource {
     }
 
     /**
+     * Unbinds the current shader and sets it back to the compatibility pipeline.
+     */
+    public static void unbind() {
+        glUseProgram(0);
+    }
+
+    /**
      * Checks for a uniform with the specified name.
      *
      * @param uniformName The name of the uniform to fetch
@@ -264,13 +271,6 @@ public class ShaderInstance implements NativeResource {
         glUseProgram(this.program);
     }
 
-    /**
-     * Unbinds the current shader and sets it back to the compatibility pipeline.
-     */
-    public static void unbind() {
-        glUseProgram(0);
-    }
-
     @Override
     public void free() {
         if (this.program == 0)
@@ -280,15 +280,15 @@ public class ShaderInstance implements NativeResource {
         this.setProgram(0);
     }
 
-    void setProgram(int program) {
-        this.program = program;
-        this.uniforms.clear();
-    }
-
     /**
      * @return The OpenGL id of the program
      */
     public int getProgram() {
         return program;
+    }
+
+    void setProgram(int program) {
+        this.program = program;
+        this.uniforms.clear();
     }
 }
