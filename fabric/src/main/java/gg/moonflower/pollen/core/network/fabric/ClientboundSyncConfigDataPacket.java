@@ -2,8 +2,6 @@ package gg.moonflower.pollen.core.network.fabric;
 
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
 import gg.moonflower.pollen.api.network.packet.login.SimplePollinatedLoginPacket;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -37,12 +35,10 @@ public class ClientboundSyncConfigDataPacket extends SimplePollinatedLoginPacket
         handler.handleClientboundSyncConfigDataPacket(this, ctx);
     }
 
-    @Environment(EnvType.CLIENT)
     public String getFileName() {
         return fileName;
     }
 
-    @Environment(EnvType.CLIENT)
     public byte[] getFileData() {
         return fileData;
     }

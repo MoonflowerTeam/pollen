@@ -1,8 +1,5 @@
 package gg.moonflower.pollen.pinwheel.api.common.animation;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 /**
  * <p>Handles effects played by animations.</p>
  *
@@ -16,7 +13,6 @@ public interface AnimationEffectSource {
      * @param animation   The animation the effect is playing for
      * @param soundEffect The effect to play
      */
-    @Environment(EnvType.CLIENT)
     void handleSoundEffect(AnimationData animation, AnimationData.SoundEffect soundEffect);
 
     /**
@@ -28,7 +24,6 @@ public interface AnimationEffectSource {
      * @param yOffset        The y offset of the effect from the origin of the model
      * @param zOffset        The z offset of the effect from the origin of the model
      */
-    @Environment(EnvType.CLIENT)
     void handleParticleEffect(AnimationData animation, AnimationData.ParticleEffect particleEffect, double xOffset, double yOffset, double zOffset);
 
     /**
@@ -37,6 +32,5 @@ public interface AnimationEffectSource {
      * @param animation      The animation the effect is playing for
      * @param timelineEffect The effect on the timeline
      */
-    @Environment(EnvType.CLIENT)
     void handleTimelineEffect(AnimationData animation, AnimationData.TimelineEffect timelineEffect);
 }

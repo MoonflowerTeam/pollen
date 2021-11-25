@@ -3,8 +3,6 @@ package gg.moonflower.pollen.core.network.login;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
 import gg.moonflower.pollen.api.network.packet.login.SimplePollinatedLoginPacket;
 import gg.moonflower.pollen.api.sync.SyncedDataManager;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
@@ -46,7 +44,6 @@ public class ClientboundSyncPlayerDataKeysPacket extends SimplePollinatedLoginPa
         handler.handleSyncPlayerDataKeysPacket(this, ctx);
     }
 
-    @Environment(EnvType.CLIENT)
     public Map<ResourceLocation, Integer> getMappings() {
         return mappings;
     }

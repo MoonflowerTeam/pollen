@@ -2,8 +2,6 @@ package gg.moonflower.pollen.api.registry;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.platform.Platform;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
@@ -34,7 +32,6 @@ import net.minecraft.world.level.material.Fluid;
  * @author Jackson
  * @since 1.0.0
  */
-@Environment(EnvType.CLIENT)
 public final class ClientRegistries {
 
     private ClientRegistries() {

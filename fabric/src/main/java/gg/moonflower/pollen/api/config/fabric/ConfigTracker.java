@@ -7,8 +7,6 @@ import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.event.events.ConfigEvent;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
 import gg.moonflower.pollen.core.network.fabric.ClientboundSyncConfigDataPacket;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -86,7 +84,6 @@ public class ConfigTracker {
         }
     }
 
-    @Environment(EnvType.CLIENT)
     public void receiveSyncedConfig(ClientboundSyncConfigDataPacket pkt, PollinatedPacketContext ctx) {
         if (!Minecraft.getInstance().isLocalServer() && this.fileMap.containsKey(pkt.getFileName())) {
             PollinatedModConfigImpl config = this.fileMap.get(pkt.getFileName());

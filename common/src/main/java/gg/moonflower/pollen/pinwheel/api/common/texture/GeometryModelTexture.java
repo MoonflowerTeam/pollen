@@ -5,8 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModel;
 import gg.moonflower.pollen.pinwheel.core.client.geometry.GeometryRenderTypes;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.codec.binary.Base32;
@@ -242,7 +240,6 @@ public class GeometryModelTexture {
          * @param atlasLocation The location of the texture atlas to use
          * @return The render type for this layer
          */
-        @Environment(EnvType.CLIENT)
         public RenderType getRenderType(ResourceLocation atlasLocation) {
             return this.renderTypeGetter.get().apply(atlasLocation);
         }

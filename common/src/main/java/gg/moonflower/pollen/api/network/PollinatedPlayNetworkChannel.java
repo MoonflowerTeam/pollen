@@ -2,8 +2,6 @@ package gg.moonflower.pollen.api.network;
 
 import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
@@ -110,7 +108,6 @@ public interface PollinatedPlayNetworkChannel {
      *
      * @param packet THe packet to send
      */
-    @Environment(EnvType.CLIENT)
     void sendToServer(PollinatedPacket<?> packet);
 
     /**
