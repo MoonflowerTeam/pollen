@@ -15,6 +15,7 @@
   "mixins": [
     "LevelResourceAccessor",
     "LivingEntityMixin",
+    "PlayerListMixin",
     "ServerLevelMixin"
   ],
   "injectors": {
