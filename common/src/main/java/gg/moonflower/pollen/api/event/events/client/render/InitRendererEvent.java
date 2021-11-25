@@ -12,10 +12,7 @@ import gg.moonflower.pollen.api.registry.EventRegistry;
 @FunctionalInterface
 public interface InitRendererEvent {
 
-    PollinatedEvent<InitRendererEvent> EVENT = EventRegistry.create(InitRendererEvent.class, events -> () -> {
-        for (InitRendererEvent event : events)
-            event.initRenderer();
-    });
+    PollinatedEvent<InitRendererEvent> EVENT = EventRegistry.createLoop(InitRendererEvent.class);
 
     /**
      * Sets up any initial rendering pipeline.

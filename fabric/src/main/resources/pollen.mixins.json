@@ -4,8 +4,10 @@
   "compatibilityLevel": "JAVA_8",
   "minVersion": "0.8",
   "client": [
+    "client.CameraAccessor",
     "client.ClientHandshakePacketListenerImplMixin",
-    "client.ClientPacketListenerMixin"
+    "client.ClientPacketListenerMixin",
+    "client.GameRendererMixin"
   ],
   "mixins": [
     "LevelResourceAccessor",
