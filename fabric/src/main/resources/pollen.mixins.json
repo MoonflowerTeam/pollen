@@ -7,7 +7,9 @@
     "client.CameraAccessor",
     "client.ClientHandshakePacketListenerImplMixin",
     "client.ClientPacketListenerMixin",
-    "client.GameRendererMixin"
+    "client.GameRendererMixin",
+    "client.KeyboardInputMixin",
+    "client.MouseHandlerMixin"
   ],
   "mixins": [
     "LevelResourceAccessor",
