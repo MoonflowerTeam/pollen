@@ -11,10 +11,12 @@ public interface PollenEntity {
     /**
      * Called after this entity has been added to the ticking list.
      */
-    void onAddedToWorld();
+    default void onAddedToLevel() {
+    }
 
     /**
      * Called after this entity has been removed from the ticking list.
      */
-    void onRemovedFromWorld();
+    default void onRemovedFromLevel() {
+    }
 }

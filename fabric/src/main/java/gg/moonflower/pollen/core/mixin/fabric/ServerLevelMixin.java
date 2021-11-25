@@ -14,12 +14,12 @@ public class ServerLevelMixin {
     @Inject(method = "add", at = @At("TAIL"))
     public void add(Entity entity, CallbackInfo ci) {
         if (entity instanceof PollenEntity)
-            ((PollenEntity) entity).onAddedToWorld();
+            ((PollenEntity) entity).onAddedToLevel();
     }
 
     @Inject(method = "onEntityRemoved", at = @At("TAIL"))
     public void onEntityRemoved(Entity entity, CallbackInfo ci) {
         if (entity instanceof PollenEntity)
-            ((PollenEntity) entity).onRemovedFromWorld();
+            ((PollenEntity) entity).onRemovedFromLevel();
     }
 }

@@ -14,12 +14,12 @@ public class ClientLevelMixin {
     @Inject(method = "addEntity", at = @At("TAIL"))
     public void addEntity(int entityId, Entity entityToSpawn, CallbackInfo ci) {
         if (entityToSpawn instanceof PollenEntity)
-            ((PollenEntity) entityToSpawn).onAddedToWorld();
+            ((PollenEntity) entityToSpawn).onAddedToLevel();
     }
 
     @Inject(method = "onEntityRemoved", at = @At("TAIL"))
     public void onEntityRemoved(Entity entity, CallbackInfo ci) {
         if (entity instanceof PollenEntity)
-            ((PollenEntity) entity).onRemovedFromWorld();
+            ((PollenEntity) entity).onRemovedFromLevel();
     }
 }
