@@ -2,6 +2,7 @@ package gg.moonflower.pollen.api.platform.forge;
 
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import gg.moonflower.pollen.api.util.forge.PollinatedModContainerImpl;
+import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
@@ -18,7 +19,7 @@ public class PlatformImpl {
         return FMLLoader.isProduction();
     }
 
-    public static Executor getGameExecutor() {
+    public static BlockableEventLoop<?> getGameExecutor() {
         return LogicalSidedProvider.WORKQUEUE.get(EffectiveSide.get());
     }
 
