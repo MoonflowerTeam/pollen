@@ -7,8 +7,6 @@ import gg.moonflower.pollen.api.command.PollenSuggestionProviders;
 import gg.moonflower.pollen.api.command.argument.ColorArgumentType;
 import gg.moonflower.pollen.api.command.argument.EnumArgument;
 import gg.moonflower.pollen.api.command.argument.TimeArgumentType;
-import gg.moonflower.pollen.api.config.ConfigManager;
-import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.crafting.brewing.PollenBrewingRecipe;
 import gg.moonflower.pollen.api.event.events.client.render.InitRendererEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
@@ -35,14 +33,12 @@ public class Pollen {
 
     public static final String MOD_ID = "pollen";
     public static final RecipeType<PollenBrewingRecipe> BREWING = RecipeType.register(MOD_ID + ":brewing");
-    public static final Platform PLATFORM = Platform.builder(Pollen.MOD_ID)
+    private static final PollinatedRegistry<RecipeSerializer<?>> RECIPE_SERIALIZERS = PollinatedRegistry.create(Registry.RECIPE_SERIALIZER, MOD_ID);    public static final Platform PLATFORM = Platform.builder(Pollen.MOD_ID)
             .commonInit(Pollen::onCommon)
             .clientInit(Pollen::onClient)
             .commonPostInit(Pollen::onCommonPost)
             .clientPostInit(Pollen::onClientPost)
             .build();
-
-    private static final PollinatedRegistry<RecipeSerializer<?>> RECIPE_SERIALIZERS = PollinatedRegistry.create(Registry.RECIPE_SERIALIZER, MOD_ID);
     public static final Supplier<RecipeSerializer<PollenBrewingRecipe>> BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("brewing", PollenBrewingRecipe::createSerializer);
     private static MinecraftServer server;
 
@@ -81,4 +77,6 @@ public class Pollen {
     public static MinecraftServer getRunningServer() {
         return server;
     }
+
+
 }

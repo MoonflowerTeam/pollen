@@ -41,16 +41,6 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
         return forgeRegistry != null ? new PollinatedRegistryImpl(forgeRegistry, modId) : PollinatedRegistry.createVanilla(registry, modId);
     }
 
-    @Override
-    public <R extends T> Supplier<R> register(String id, Supplier<R> object) {
-        return this.registry.register(id, object);
-    }
-
-    @Override
-    protected void onRegister(Platform mod) {
-        this.registry.register(((ForgePlatform) mod).getEventBus());
-    }
-
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> PollinatedRegistry<T> createSimple(Class<T> type, ResourceLocation registryId) {
         DeferredRegister<?> deferredRegister = createDeferredRegister((Class<? extends IForgeRegistryEntry>) type, registryId);
@@ -70,6 +60,16 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
     @SuppressWarnings("unchecked")
     private static <T extends IForgeRegistryEntry<T>> Supplier<IForgeRegistry<T>> makeRegistry(DeferredRegister<?> deferredRegister, ResourceLocation registryId, @Nullable ResourceLocation defaultKey) {
         return ((DeferredRegister<T>) deferredRegister).makeRegistry(registryId.getPath(), () -> new RegistryBuilder<T>().setDefaultKey(defaultKey));
+    }
+
+    @Override
+    public <R extends T> Supplier<R> register(String id, Supplier<R> object) {
+        return this.registry.register(id, object);
+    }
+
+    @Override
+    protected void onRegister(Platform mod) {
+        this.registry.register(((ForgePlatform) mod).getEventBus());
     }
 
     @Override

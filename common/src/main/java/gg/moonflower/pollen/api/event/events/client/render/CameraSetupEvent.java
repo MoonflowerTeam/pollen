@@ -39,16 +39,6 @@ public interface CameraSetupEvent {
         float getXRotation();
 
         /**
-         * @return The camera yaw
-         */
-        float getYRotation();
-
-        /**
-         * @return The camera roll
-         */
-        float getZRotation();
-
-        /**
          * Sets the camera pitch.
          *
          * @param pitch The new X rotation
@@ -56,11 +46,21 @@ public interface CameraSetupEvent {
         void setXRotation(float pitch);
 
         /**
+         * @return The camera yaw
+         */
+        float getYRotation();
+
+        /**
          * Sets the camera yaw.
          *
          * @param yaw The new Y rotation
          */
         void setYRotation(float yaw);
+
+        /**
+         * @return The camera roll
+         */
+        float getZRotation();
 
         /**
          * Sets the camera roll.

@@ -19,8 +19,7 @@ import static org.lwjgl.opengl.GL43C.GL_COMPUTE_SHADER;
  * @author Ocelot
  * @since 1.0.0
  */
-public class ShaderProgram
-{
+public class ShaderProgram {
     public static final Codec<ShaderProgram> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.optionalFieldOf("vertex").forGetter(ShaderProgram::getVertexShader),
             ResourceLocation.CODEC.optionalFieldOf("fragment").forGetter(ShaderProgram::getFragmentShader),
@@ -33,31 +32,26 @@ public class ShaderProgram
     private final ResourceLocation geometryShader;
     private final ResourceLocation[] computeShaders;
 
-    public ShaderProgram(@Nullable ResourceLocation vertexShader, @Nullable ResourceLocation fragmentShader, @Nullable ResourceLocation geometryShader, ResourceLocation[] computeShaders)
-    {
+    public ShaderProgram(@Nullable ResourceLocation vertexShader, @Nullable ResourceLocation fragmentShader, @Nullable ResourceLocation geometryShader, ResourceLocation[] computeShaders) {
         this.vertexShader = vertexShader;
         this.fragmentShader = fragmentShader;
         this.geometryShader = geometryShader;
         this.computeShaders = computeShaders;
     }
 
-    public Optional<ResourceLocation> getVertexShader()
-    {
+    public Optional<ResourceLocation> getVertexShader() {
         return Optional.ofNullable(this.vertexShader);
     }
 
-    public Optional<ResourceLocation> getFragmentShader()
-    {
+    public Optional<ResourceLocation> getFragmentShader() {
         return Optional.ofNullable(this.fragmentShader);
     }
 
-    public Optional<ResourceLocation> getGeometryShader()
-    {
+    public Optional<ResourceLocation> getGeometryShader() {
         return Optional.ofNullable(this.geometryShader);
     }
 
-    public Optional<ResourceLocation[]> getComputeShaders()
-    {
+    public Optional<ResourceLocation[]> getComputeShaders() {
         return this.computeShaders.length == 0 ? Optional.empty() : Optional.of(this.computeShaders);
     }
 
@@ -66,8 +60,7 @@ public class ShaderProgram
      *
      * @author Ocelot
      */
-    public enum Shader
-    {
+    public enum Shader {
         VERTEX("Vertex", ".vert", GL_VERTEX_SHADER),
         FRAGMENT("Fragment", ".frag", GL_FRAGMENT_SHADER),
         GEOMETRY("Geometry", ".geom", GL_GEOMETRY_SHADER, ShaderConst.isGeometrySupported()),
@@ -78,49 +71,15 @@ public class ShaderProgram
         private final int type;
         private final boolean supported;
 
-        Shader(String displayName, String extension, int type, boolean supported)
-        {
+        Shader(String displayName, String extension, int type, boolean supported) {
             this.displayName = displayName;
             this.extension = extension;
             this.type = type;
             this.supported = supported;
         }
 
-        Shader(String displayName, String extension, int type)
-        {
+        Shader(String displayName, String extension, int type) {
             this(displayName, extension, type, true);
-        }
-
-        /**
-         * @return The visible name of this shader type
-         */
-        public String getDisplayName()
-        {
-            return displayName;
-        }
-
-        /**
-         * @return The file name extension of this shader type
-         */
-        public String getExtension()
-        {
-            return extension;
-        }
-
-        /**
-         * @return The OpenGL enum type
-         */
-        public int getGLType()
-        {
-            return type;
-        }
-
-        /**
-         * @return Whether this shader type is supported
-         */
-        public boolean isSupported()
-        {
-            return supported;
         }
 
         /**
@@ -130,12 +89,39 @@ public class ShaderProgram
          * @return The type of shader based on extension
          */
         @Nullable
-        public static ShaderProgram.Shader byExtension(String fileName)
-        {
+        public static ShaderProgram.Shader byExtension(String fileName) {
             for (Shader type : values())
                 if (fileName.endsWith(type.extension))
                     return type;
             return null;
+        }
+
+        /**
+         * @return The visible name of this shader type
+         */
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        /**
+         * @return The file name extension of this shader type
+         */
+        public String getExtension() {
+            return extension;
+        }
+
+        /**
+         * @return The OpenGL enum type
+         */
+        public int getGLType() {
+            return type;
+        }
+
+        /**
+         * @return Whether this shader type is supported
+         */
+        public boolean isSupported() {
+            return supported;
         }
     }
 }

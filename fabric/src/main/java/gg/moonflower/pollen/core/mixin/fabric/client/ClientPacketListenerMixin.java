@@ -31,12 +31,10 @@ import java.util.Iterator;
 public abstract class ClientPacketListenerMixin {
 
     @Shadow
-    private Minecraft minecraft;
-
-    @Shadow
     @Final
     private static Logger LOGGER;
-
+    @Shadow
+    private Minecraft minecraft;
     @Shadow
     @Final
     private Connection connection;

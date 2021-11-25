@@ -3,7 +3,6 @@ package gg.moonflower.pollen.api.event.events.registry;
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.core.event.registry.RegisterAtlasSpriteEventImpl;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Consumer;

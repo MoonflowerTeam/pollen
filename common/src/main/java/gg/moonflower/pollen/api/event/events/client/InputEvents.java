@@ -72,8 +72,8 @@ public final class InputEvents {
          * Handles the mouse being scrolled.
          *
          * @param mouseHandler The handler for mouse input
-         * @param xOffset     The delta X movement in the wheel
-         * @param yOffset     The delta Y movement in the wheel
+         * @param xOffset      The delta X movement in the wheel
+         * @param yOffset      The delta Y movement in the wheel
          * @return Whether the event was consumed
          */
         boolean mouseScrolled(MouseHandler mouseHandler, double xOffset, double yOffset);

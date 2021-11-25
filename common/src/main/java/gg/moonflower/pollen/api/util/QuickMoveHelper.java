@@ -22,77 +22,6 @@ public class QuickMoveHelper {
     }
 
     /**
-     * Adds a new action to the move helper.
-     *
-     * @param fromStart The slot index to move items from
-     * @param fromSize  The amount of slots to include in the starting area
-     * @param toStart   The slot index to move items to
-     * @param toSize    The amount of slots to include in the ending area
-     * @param reverse   Whether to start from the last slot of the to area
-     */
-    public QuickMoveHelper add(int fromStart, int fromSize, int toStart, int toSize, boolean reverse) {
-        this.actions.add(new Action(fromStart, fromSize, toStart, toSize, reverse));
-        return this;
-    }
-
-    /**
-     * Performs a quick move for the specified menu from the specified slot.
-     *
-     * @param menu The menu to quick move for
-     * @param slot The slot to move from
-     * @return The remaining items after the move
-     */
-    public ItemStack performAction(AbstractContainerMenu menu, int slot) {
-        ItemStack lv = ItemStack.EMPTY;
-        Slot lv2 = menu.getSlot(slot);
-        if (lv2 != null && lv2.hasItem()) {
-            ItemStack lv3 = lv2.getItem();
-            lv = lv3.copy();
-
-            for (Action action : this.actions) {
-                if (slot < action.fromStart || slot >= action.fromEnd)
-                    continue;
-                if (!mergeItemStack(menu, lv3, action.toStart, action.toEnd, action.reverse))
-                    return ItemStack.EMPTY;
-            }
-
-            if (lv3.isEmpty()) {
-                lv2.set(ItemStack.EMPTY);
-            } else {
-                lv2.setChanged();
-            }
-
-            if (lv3.getCount() == lv.getCount()) {
-                return ItemStack.EMPTY;
-            }
-        }
-
-        return lv;
-    }
-
-    /**
-     * <p>An action that can take place for stacks.</p>
-     *
-     * @author Ocelot
-     * @since 1.0.0
-     */
-    public static class Action {
-        private final int fromStart;
-        private final int fromEnd;
-        private final int toStart;
-        private final int toEnd;
-        private final boolean reverse;
-
-        public Action(int fromStart, int fromSize, int toStart, int toSize, boolean reverse) {
-            this.fromStart = fromStart;
-            this.fromEnd = fromStart + fromSize;
-            this.toStart = toStart;
-            this.toEnd = toStart + toSize;
-            this.reverse = reverse;
-        }
-    }
-
-    /**
      * Custom implementation of {@link AbstractContainerMenu#moveItemStackTo(ItemStack, int, int, boolean)} that respects slot restrictions.
      */
     private static boolean mergeItemStack(AbstractContainerMenu menu, ItemStack stack, int startIndex, int endIndex, boolean reverse) {
@@ -177,5 +106,76 @@ public class QuickMoveHelper {
         }
 
         return flag;
+    }
+
+    /**
+     * Adds a new action to the move helper.
+     *
+     * @param fromStart The slot index to move items from
+     * @param fromSize  The amount of slots to include in the starting area
+     * @param toStart   The slot index to move items to
+     * @param toSize    The amount of slots to include in the ending area
+     * @param reverse   Whether to start from the last slot of the to area
+     */
+    public QuickMoveHelper add(int fromStart, int fromSize, int toStart, int toSize, boolean reverse) {
+        this.actions.add(new Action(fromStart, fromSize, toStart, toSize, reverse));
+        return this;
+    }
+
+    /**
+     * Performs a quick move for the specified menu from the specified slot.
+     *
+     * @param menu The menu to quick move for
+     * @param slot The slot to move from
+     * @return The remaining items after the move
+     */
+    public ItemStack performAction(AbstractContainerMenu menu, int slot) {
+        ItemStack lv = ItemStack.EMPTY;
+        Slot lv2 = menu.getSlot(slot);
+        if (lv2 != null && lv2.hasItem()) {
+            ItemStack lv3 = lv2.getItem();
+            lv = lv3.copy();
+
+            for (Action action : this.actions) {
+                if (slot < action.fromStart || slot >= action.fromEnd)
+                    continue;
+                if (!mergeItemStack(menu, lv3, action.toStart, action.toEnd, action.reverse))
+                    return ItemStack.EMPTY;
+            }
+
+            if (lv3.isEmpty()) {
+                lv2.set(ItemStack.EMPTY);
+            } else {
+                lv2.setChanged();
+            }
+
+            if (lv3.getCount() == lv.getCount()) {
+                return ItemStack.EMPTY;
+            }
+        }
+
+        return lv;
+    }
+
+    /**
+     * <p>An action that can take place for stacks.</p>
+     *
+     * @author Ocelot
+     * @since 1.0.0
+     */
+    public static class Action {
+        private final int fromStart;
+        private final int fromEnd;
+        private final int toStart;
+        private final int toEnd;
+        private final boolean reverse;
+
+        public Action(int fromStart, int fromSize, int toStart, int toSize, boolean reverse) {
+            this.fromStart = fromStart;
+            this.fromEnd = fromStart + fromSize;
+            this.toStart = toStart;
+            this.toEnd = toStart + toSize;
+            this.reverse = reverse;
+        }
     }
 }
