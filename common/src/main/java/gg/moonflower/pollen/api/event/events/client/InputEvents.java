@@ -5,6 +5,9 @@ import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.client.MouseHandler;
 import org.lwjgl.glfw.GLFW;
 
+/**
+ * Basic events for passing GLFW inputs to the game.
+ */
 public final class InputEvents {
 
     public static final PollinatedEvent<MouseInputEvent> MOUSE_INPUT_EVENT = EventRegistry.create(MouseInputEvent.class, events -> (mouseHandler, button, action, modifiers) -> {
