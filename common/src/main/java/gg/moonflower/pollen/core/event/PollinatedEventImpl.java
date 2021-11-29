@@ -28,14 +28,21 @@ public class PollinatedEventImpl<T> extends PollinatedEvent<T> {
     public PollinatedEventImpl(Class<? super T> type, Function<T[], T> factory) {
         this.factory = factory;
         this.handlers = (T[]) Array.newInstance(type, 0);
+        this.invoker = this.factory.apply(this.handlers);
     }
 
-    @Override
-    public T invoker() {
-        if (this.invoker == null)
-            this.invoker = this.factory.apply(this.handlers);
-        return super.invoker();
-    }
+//    @Override
+//    public T invoker() {
+//        if (this.invoker == null) {
+//            this.lock.lock();
+//            try {
+//                this.invoker = this.factory.apply(this.handlers);
+//            } finally {
+//                this.lock.unlock();
+//            }
+//        }
+//        return super.invoker();
+//    }
 
     @Override
     public void register(T listener) {
@@ -45,7 +52,7 @@ public class PollinatedEventImpl<T> extends PollinatedEvent<T> {
         try {
             this.handlers = Arrays.copyOf(this.handlers, this.handlers.length + 1); // Expands the array by 1 and inserts the listener into it
             this.handlers[this.handlers.length - 1] = listener;
-            this.invoker = null;
+            this.invoker = this.factory.apply(this.handlers);
         } finally {
             this.lock.unlock();
         }
