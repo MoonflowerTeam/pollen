@@ -11,7 +11,8 @@
     "client.GameRendererMixin",
     "client.KeyboardInputMixin",
     "client.LivingEntityRendererMixin",
-    "client.MouseHandlerMixin"
+    "client.MouseHandlerMixin",
+    "client.ParticleEngineMixin"
   ],
   "mixins": [
     "LevelResourceAccessor",
