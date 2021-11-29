@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.api.util;
 
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -125,36 +126,38 @@ public class QuickMoveHelper {
     /**
      * Performs a quick move for the specified menu from the specified slot.
      *
-     * @param menu The menu to quick move for
-     * @param slot The slot to move from
+     * @param menu   The menu to quick move for
+     * @param player The player moving the stack
+     * @param slotId The slot to move from
      * @return The remaining items after the move
      */
-    public ItemStack performAction(AbstractContainerMenu menu, int slot) {
-        ItemStack lv = ItemStack.EMPTY;
-        Slot lv2 = menu.getSlot(slot);
-        if (lv2 != null && lv2.hasItem()) {
-            ItemStack lv3 = lv2.getItem();
-            lv = lv3.copy();
+    public ItemStack quickMoveStack(AbstractContainerMenu menu, Player player, int slotId) {
+        ItemStack oldStack = ItemStack.EMPTY;
+        Slot slot = menu.getSlot(slotId);
+        if (slot != null && slot.hasItem()) {
+            ItemStack slotItem = slot.getItem();
+            oldStack = slotItem.copy();
 
             for (Action action : this.actions) {
-                if (slot < action.fromStart || slot >= action.fromEnd)
+                if (slotId < action.fromStart || slotId >= action.fromEnd)
                     continue;
-                if (!mergeItemStack(menu, lv3, action.toStart, action.toEnd, action.reverse))
+                if (!mergeItemStack(menu, slotItem, action.toStart, action.toEnd, action.reverse))
                     return ItemStack.EMPTY;
             }
 
-            if (lv3.isEmpty()) {
-                lv2.set(ItemStack.EMPTY);
+            if (slotItem.isEmpty()) {
+                slot.set(ItemStack.EMPTY);
             } else {
-                lv2.setChanged();
+                slot.setChanged();
             }
 
-            if (lv3.getCount() == lv.getCount()) {
+            if (slotItem.getCount() == oldStack.getCount())
                 return ItemStack.EMPTY;
-            }
+
+            slot.onTake(player, slotItem);
         }
 
-        return lv;
+        return oldStack;
     }
 
     /**
