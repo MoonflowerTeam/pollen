@@ -17,10 +17,14 @@ public class PollinatedRegistryImpl<T> {
     }
 
     public static <T> PollinatedRegistry<T> createSimple(Class<T> type, ResourceLocation registryId) {
-        return create(new MappedRegistry<T>(ResourceKey.createRegistryKey(registryId), Lifecycle.stable()), registryId.getNamespace());
+        return create(new MappedRegistry<>(ResourceKey.createRegistryKey(registryId), Lifecycle.stable()), registryId.getNamespace());
     }
 
     public static <T> PollinatedRegistry<T> createDefaulted(Class<T> type, ResourceLocation registryId, ResourceLocation defaultId) {
-        return create(new DefaultedRegistry<T>(defaultId.toString(), ResourceKey.createRegistryKey(registryId), Lifecycle.stable()), registryId.getNamespace());
+        return create(new DefaultedRegistry<>(defaultId.toString(), ResourceKey.createRegistryKey(registryId), Lifecycle.stable()), registryId.getNamespace());
+    }
+
+    public static <T> PollinatedRegistry<T> create(PollinatedRegistry<T> registry, String modId) {
+        return create(((PollinatedRegistry.VanillaImpl<T>) registry).getRegistry(), modId);
     }
 }

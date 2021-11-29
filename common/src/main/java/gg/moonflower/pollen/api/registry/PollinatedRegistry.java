@@ -45,6 +45,19 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable {
     }
 
     /**
+     * Creates an {@link PollinatedRegistry} backed by a platform-specific registry. This should only be used to register to another mod's registry.
+     *
+     * @param registry The registry to register objects to.
+     * @param modId    The mod id to register to.
+     * @param <T>      The registry type.
+     * @return A {@link PollinatedRegistry} backed by a platform-specific registry.
+     */
+    @ExpectPlatform
+    public static <T> PollinatedRegistry<T> create(PollinatedRegistry<T> registry, String modId) {
+        return Platform.error();
+    }
+
+    /**
      * Creates an {@link PollinatedRegistry} backed by a {@link Registry}.
      * <p>Users should always use {@link PollinatedRegistry#create(Registry, String)}.
      * <p>This is for very specific cases where vanilla registries must strictly be used and {@link PollinatedRegistry#create(Registry, String)} can't do what you need.
@@ -151,6 +164,10 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable {
         @Override
         public <T1> Stream<T1> keys(DynamicOps<T1> ops) {
             return this.registry.keys(ops);
+        }
+
+        public Registry<T> getRegistry() {
+            return registry;
         }
     }
 }
