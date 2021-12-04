@@ -10,6 +10,7 @@
     "client.OptionsMixin"
   ],
   "mixins": [
+    "EntityMixin",
     "FMLHandshakeHandlerMixin",
     "FolderRepositorySourceAccessor",
     "ForgeInternalHandlerMixin",
