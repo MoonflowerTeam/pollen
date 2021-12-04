@@ -33,7 +33,7 @@ public final class EventRegistry {
         return new PollinatedEventImpl<>(type, invokerFactory);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "SuspiciousInvocationHandlerImplementation"})
     public static <T> PollinatedEvent<T> createLoop(Class<? super T> type) {
         return create(type, events -> (T) Proxy.newProxyInstance(EventRegistry.class.getClassLoader(), new Class[]{type}, (proxy, method, args) -> {
             for (Object event : events) {
@@ -43,7 +43,7 @@ public final class EventRegistry {
         }));
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "SuspiciousInvocationHandlerImplementation"})
     public static <T> PollinatedEvent<T> createResult(Class<? super T> type) {
         return create(type, events -> (T) Proxy.newProxyInstance(EventRegistry.class.getClassLoader(), new Class[]{type}, (proxy, method, args) -> {
             for (Object event : events) {
@@ -56,6 +56,7 @@ public final class EventRegistry {
         }));
     }
 
+    @SuppressWarnings("unchecked")
     private static <T, S> S invokeFast(T object, Method method, Object[] args) throws Throwable {
         return (S) MethodHandles.lookup().unreflect(method).bindTo(object).invokeWithArguments(args);
     }

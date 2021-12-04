@@ -3,7 +3,6 @@ package gg.moonflower.pollen.api.registry;
 import com.google.common.base.Suppliers;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.platform.Platform;
-import gg.moonflower.pollen.core.mixin.client.CreativeModeTabAccessor;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -63,7 +62,7 @@ public final class CreativeModeTabBuilder {
     public static SortedCreativeModeTab sorted(CreativeModeTab tab) {
         if (SortedCreativeModeTab.class.isAssignableFrom(tab.getClass()))
             throw new IllegalStateException("Tab is already sorted!");
-        return new SortedCreativeModeTab(tab, tab.getId(), ((CreativeModeTabAccessor) tab).getLangId());
+        return new SortedCreativeModeTab(tab, tab.getId(), tab.getRecipeFolderName());
     }
 
     /**

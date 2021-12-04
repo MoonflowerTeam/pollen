@@ -2,8 +2,6 @@ package gg.moonflower.pollen.api.registry;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.platform.Platform;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
@@ -23,12 +21,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Fluid;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Jackson
  * @since 1.0.0
  */
-@Environment(EnvType.CLIENT)
 public final class ClientRegistries {
 
     private ClientRegistries() {
@@ -71,6 +69,6 @@ public final class ClientRegistries {
 
     @FunctionalInterface
     public interface ScreenFactory<M extends AbstractContainerMenu, S extends Screen & MenuAccess<M>> {
-        S create(M menu, Inventory inventory, Component title);
+        @NotNull S create(M menu, Inventory inventory, Component title);
     }
 }

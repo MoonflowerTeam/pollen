@@ -32,4 +32,8 @@ public class PlatformImpl {
     public static Stream<PollinatedModContainer> getMods() {
         return FabricLoader.getInstance().getAllMods().stream().map(PollinatedModContainerImpl::new);
     }
+
+    public static boolean isClient() {
+        return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
+    }
 }

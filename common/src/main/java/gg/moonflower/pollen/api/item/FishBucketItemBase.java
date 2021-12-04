@@ -1,7 +1,5 @@
 package gg.moonflower.pollen.api.item;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -47,7 +45,6 @@ public class FishBucketItemBase extends BucketItemBase {
         this.entityType = () -> entityType;
     }
 
-    @Environment(EnvType.CLIENT)
     @Override
     public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag tooltipFlag) {
         if (this.getEntityType() == EntityType.TROPICAL_FISH) {

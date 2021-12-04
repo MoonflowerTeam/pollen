@@ -4,12 +4,21 @@
   "compatibilityLevel": "JAVA_8",
   "minVersion": "0.8",
   "client": [
+    "client.CameraAccessor",
     "client.ClientHandshakePacketListenerImplMixin",
-    "client.ClientPacketListenerMixin"
+    "client.ClientLevelMixin",
+    "client.ClientPacketListenerMixin",
+    "client.GameRendererMixin",
+    "client.KeyboardInputMixin",
+    "client.LivingEntityRendererMixin",
+    "client.MouseHandlerMixin",
+    "client.ParticleEngineMixin"
   ],
   "mixins": [
     "LevelResourceAccessor",
-    "LivingEntityMixin"
+    "LivingEntityMixin",
+    "PlayerListMixin",
+    "ServerLevelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

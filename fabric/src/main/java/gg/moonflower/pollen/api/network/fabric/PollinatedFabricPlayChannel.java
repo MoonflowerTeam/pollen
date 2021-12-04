@@ -1,12 +1,12 @@
 package gg.moonflower.pollen.api.network.fabric;
 
+import gg.moonflower.pollen.api.network.PacketDeserializer;
 import gg.moonflower.pollen.api.network.PollinatedPlayNetworkChannel;
 import gg.moonflower.pollen.api.network.fabric.context.PollinatedFabricPlayPacketContext;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import gg.moonflower.pollen.api.registry.NetworkRegistry;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -16,6 +16,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
+import net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -105,13 +108,24 @@ public class PollinatedFabricPlayChannel extends PollinatedNetworkChannelImpl im
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public void sendToServer(PollinatedPacket<?> packet) {
         ClientPlayNetworking.send(this.channelId, this.serialize(packet, PollinatedPacketDirection.PLAY_SERVERBOUND));
     }
 
     @Override
-    public <MSG extends PollinatedPacket<T>, T> void register(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, @Nullable PollinatedPacketDirection direction) {
+    public Packet<?> toVanillaPacket(PollinatedPacket<?> packet, PollinatedPacketDirection direction) {
+        switch (direction) {
+            case PLAY_SERVERBOUND:
+                return new ServerboundCustomPayloadPacket(this.channelId, this.serialize(packet, direction));
+            case PLAY_CLIENTBOUND:
+                return new ClientboundCustomPayloadPacket(this.channelId, this.serialize(packet, direction));
+            default:
+                throw new IllegalStateException("Unsupported packet direction: " + direction);
+        }
+    }
+
+    @Override
+    public <MSG extends PollinatedPacket<T>, T> void register(Class<MSG> clazz, PacketDeserializer<MSG, T> deserializer, @Nullable PollinatedPacketDirection direction) {
         super.register(clazz, deserializer, direction);
     }
 }

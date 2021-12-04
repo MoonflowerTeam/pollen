@@ -8,8 +8,6 @@ import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
@@ -38,9 +36,7 @@ import java.util.function.Consumer;
 public class SkinHelper {
 
     private static final Map<GameProfile, CompletableFuture<GameProfile>> PROFILE_CACHE = new WeakHashMap<>();
-    @Environment(EnvType.CLIENT)
     private static MinecraftSessionService sessionService;
-    @Environment(EnvType.CLIENT)
     private static GameProfileCache gameProfileCache;
 
     @ApiStatus.Internal
@@ -107,7 +103,6 @@ public class SkinHelper {
      * @param type     The type of texture to load
      * @param consumer The listener for when the player texture has been loaded and is ready
      */
-    @Environment(EnvType.CLIENT)
     public static void loadPlayerTexture(@Nullable GameProfile input, MinecraftProfileTexture.Type type, Consumer<ResourceLocation> consumer) {
         CompletableFuture.runAsync(() ->
         {

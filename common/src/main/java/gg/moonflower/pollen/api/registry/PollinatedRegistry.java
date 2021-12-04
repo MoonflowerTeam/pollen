@@ -1,6 +1,10 @@
 package gg.moonflower.pollen.api.registry;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.Keyable;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.platform.Platform;
 import net.minecraft.core.Registry;
@@ -8,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * An abstracted registry for wrapping platform-specific registries.
@@ -16,7 +21,7 @@ import java.util.function.Supplier;
  * @author Jackson
  * @since 1.0.0
  */
-public abstract class PollinatedRegistry<T> {
+public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable {
 
     protected final String modId;
     private boolean registered;
@@ -40,6 +45,19 @@ public abstract class PollinatedRegistry<T> {
     }
 
     /**
+     * Creates an {@link PollinatedRegistry} backed by a platform-specific registry. This should only be used to register to another mod's registry.
+     *
+     * @param registry The registry to register objects to.
+     * @param modId    The mod id to register to.
+     * @param <T>      The registry type.
+     * @return A {@link PollinatedRegistry} backed by a platform-specific registry.
+     */
+    @ExpectPlatform
+    public static <T> PollinatedRegistry<T> create(PollinatedRegistry<T> registry, String modId) {
+        return Platform.error();
+    }
+
+    /**
      * Creates an {@link PollinatedRegistry} backed by a {@link Registry}.
      * <p>Users should always use {@link PollinatedRegistry#create(Registry, String)}.
      * <p>This is for very specific cases where vanilla registries must strictly be used and {@link PollinatedRegistry#create(Registry, String)} can't do what you need.
@@ -51,6 +69,29 @@ public abstract class PollinatedRegistry<T> {
      */
     public static <T> PollinatedRegistry<T> createVanilla(Registry<T> registry, String modId) {
         return new VanillaImpl<>(registry, modId);
+    }
+
+    /**
+     * Creates a new simple registry
+     *
+     * @param registryId The registry {@link ResourceLocation} used as the registry id
+     * @param <T>        The type stored in the Registry
+     * @return An instance of FabricRegistryBuilder
+     */
+    @ExpectPlatform
+    public static <T> PollinatedRegistry<T> createSimple(Class<T> type, ResourceLocation registryId) {
+        return Platform.error();
+    }
+
+    /**
+     * @param registryId The registry {@link ResourceLocation} used as the registry id
+     * @param defaultId  The default registry id
+     * @param <T>        The type stored in the Registry
+     * @return An instance of FabricRegistryBuilder
+     */
+    @ExpectPlatform
+    public static <T> PollinatedRegistry<T> createDefaulted(Class<T> type, ResourceLocation registryId, ResourceLocation defaultId) {
+        return Platform.error();
     }
 
     /**
@@ -76,11 +117,6 @@ public abstract class PollinatedRegistry<T> {
     public <R extends T> Supplier<R> registerConditional(String id, Supplier<R> dummy, Supplier<R> object, boolean register) {
         return this.register(id, register ? object : dummy);
     }
-
-    /**
-     * @return A codec for this registry's elements
-     */
-    public abstract Codec<T> codec();
 
     /**
      * Initializes the registry for a {@link Platform}.
@@ -116,7 +152,21 @@ public abstract class PollinatedRegistry<T> {
         }
 
         @Override
-        public Codec<T> codec() {
+        public <T1> DataResult<Pair<T, T1>> decode(DynamicOps<T1> ops, T1 input) {
+            return this.registry.decode(ops, input);
+        }
+
+        @Override
+        public <T1> DataResult<T1> encode(T input, DynamicOps<T1> ops, T1 prefix) {
+            return this.registry.encode(input, ops, prefix);
+        }
+
+        @Override
+        public <T1> Stream<T1> keys(DynamicOps<T1> ops) {
+            return this.registry.keys(ops);
+        }
+
+        public Registry<T> getRegistry() {
             return registry;
         }
     }

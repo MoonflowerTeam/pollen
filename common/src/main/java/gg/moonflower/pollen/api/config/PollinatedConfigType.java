@@ -31,5 +31,5 @@ public enum PollinatedConfigType {
      * <p>Synced to clients during connection.
      * <p>Suffix is "-server".
      */
-    SERVER;
+    SERVER
 }

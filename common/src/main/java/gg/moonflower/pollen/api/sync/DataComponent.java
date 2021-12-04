@@ -67,6 +67,8 @@ public abstract class DataComponent {
             try {
                 ResourceLocation name = new ResourceLocation(key);
                 SyncedDataKey<?> syncedDataKey = SyncedDataManager.byName(name);
+                if (syncedDataKey == null)
+                    throw new IllegalStateException("Unknown synced data key: " + name);
                 this.values.put(syncedDataKey, this.readWithCodec(syncedDataKey, tag));
             } catch (Exception e) {
                 LOGGER.error("Failed to decode " + key + " from NBT: " + tag, e);

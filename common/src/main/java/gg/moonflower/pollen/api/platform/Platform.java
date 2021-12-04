@@ -48,6 +48,14 @@ public abstract class Platform {
     }
 
     /**
+     * @return Whether the current environment is a client
+     */
+    @ExpectPlatform
+    public static boolean isClient() {
+        return Platform.error();
+    }
+
+    /**
      * @return The main game executor. This is the Minecraft Client or Server instance
      */
     @ExpectPlatform

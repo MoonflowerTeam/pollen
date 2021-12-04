@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.api.network.fabric;
 
+import gg.moonflower.pollen.api.network.PacketDeserializer;
 import gg.moonflower.pollen.api.network.PollinatedLoginNetworkChannel;
 import gg.moonflower.pollen.api.network.fabric.context.PollinatedFabricLoginPacketContext;
 import gg.moonflower.pollen.api.network.fabric.context.PollinatedFabricPacketContext;
@@ -18,6 +19,9 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientHandshakePacketListenerImpl;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
+import net.minecraft.network.protocol.login.ServerboundCustomQueryPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
@@ -70,13 +74,22 @@ public class PollinatedFabricLoginChannel extends PollinatedNetworkChannelImpl i
     }
 
     @Override
-    public <MSG extends PollinatedLoginPacket<T>, T> void register(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer) {
+    public <MSG extends PollinatedLoginPacket<T>, T> void register(Class<MSG> clazz, PacketDeserializer<MSG, T> deserializer) {
         super.register(clazz, deserializer, PollinatedPacketDirection.LOGIN_SERVERBOUND);
     }
 
     @Override
-    public <MSG extends PollinatedLoginPacket<T>, T> void registerLogin(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, Function<Boolean, List<Pair<String, MSG>>> loginPacketGenerators) {
+    public <MSG extends PollinatedLoginPacket<T>, T> void registerLogin(Class<MSG> clazz, PacketDeserializer<MSG, T> deserializer, Function<Boolean, List<Pair<String, MSG>>> loginPacketGenerators) {
         super.register(clazz, deserializer, PollinatedPacketDirection.LOGIN_CLIENTBOUND);
         this.loginPackets.add(loginPacketGenerators);
+    }
+
+    @Override
+    public Packet<?> toVanillaPacket(PollinatedPacket<?> packet, int transactionId, PollinatedPacketDirection direction) {
+        return switch (direction) {
+            case LOGIN_SERVERBOUND -> new ServerboundCustomQueryPacket(transactionId, this.serialize(packet, direction));
+            case LOGIN_CLIENTBOUND -> new ClientboundCustomQueryPacket(transactionId, this.channelId, this.serialize(packet, direction));
+            default -> throw new IllegalStateException("Unsupported packet direction: " + direction);
+        };
     }
 }

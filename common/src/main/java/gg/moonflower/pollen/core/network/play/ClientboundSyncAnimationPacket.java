@@ -3,12 +3,12 @@ package gg.moonflower.pollen.core.network.play;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
 import gg.moonflower.pollen.pinwheel.api.common.animation.AnimatedEntity;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.ApiStatus;
+
+import java.io.IOException;
 
 /**
  * @author Ocelot
@@ -24,13 +24,13 @@ public class ClientboundSyncAnimationPacket implements PollinatedPacket<PollenCl
         this.animationId = ArrayUtils.indexOf(entity.getAnimationStates(), entity.getAnimationState());
     }
 
-    public ClientboundSyncAnimationPacket(FriendlyByteBuf buf) {
+    public ClientboundSyncAnimationPacket(FriendlyByteBuf buf) throws IOException {
         this.entityId = buf.readVarInt();
         this.animationId = buf.readVarInt();
     }
 
     @Override
-    public void writePacketData(FriendlyByteBuf buf) {
+    public void writePacketData(FriendlyByteBuf buf) throws IOException {
         buf.writeVarInt(this.entityId);
         buf.writeVarInt(this.animationId);
     }
@@ -40,12 +40,10 @@ public class ClientboundSyncAnimationPacket implements PollinatedPacket<PollenCl
         handler.handleSyncAnimationPacket(this, ctx);
     }
 
-    @Environment(EnvType.CLIENT)
     public int getEntityId() {
         return entityId;
     }
 
-    @Environment(EnvType.CLIENT)
     public int getAnimationId() {
         return animationId;
     }

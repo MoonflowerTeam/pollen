@@ -1,13 +1,14 @@
 package gg.moonflower.pollen.core;
 
 import gg.moonflower.pollen.api.advancement.AdvancementModifierManager;
+import gg.moonflower.pollen.api.client.shader.ShaderConst;
+import gg.moonflower.pollen.api.client.shader.ShaderLoader;
 import gg.moonflower.pollen.api.command.PollenSuggestionProviders;
 import gg.moonflower.pollen.api.command.argument.ColorArgumentType;
 import gg.moonflower.pollen.api.command.argument.EnumArgument;
 import gg.moonflower.pollen.api.command.argument.TimeArgumentType;
-import gg.moonflower.pollen.api.config.ConfigManager;
-import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.crafting.brewing.PollenBrewingRecipe;
+import gg.moonflower.pollen.api.event.events.client.render.InitRendererEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
@@ -32,14 +33,16 @@ public class Pollen {
 
     public static final String MOD_ID = "pollen";
     public static final RecipeType<PollenBrewingRecipe> BREWING = RecipeType.register(MOD_ID + ":brewing");
-    public static final PollenConfig CONFIG = ConfigManager.register(MOD_ID, PollinatedConfigType.COMMON, PollenConfig::new);
+
+    private static final PollinatedRegistry<RecipeSerializer<?>> RECIPE_SERIALIZERS = PollinatedRegistry.create(Registry.RECIPE_SERIALIZER, MOD_ID);
+
     public static final Platform PLATFORM = Platform.builder(Pollen.MOD_ID)
             .commonInit(Pollen::onCommon)
             .clientInit(Pollen::onClient)
             .commonPostInit(Pollen::onCommonPost)
             .clientPostInit(Pollen::onClientPost)
             .build();
-    private static final PollinatedRegistry<RecipeSerializer<?>> RECIPE_SERIALIZERS = PollinatedRegistry.create(Registry.RECIPE_SERIALIZER, MOD_ID);
+
     public static final Supplier<RecipeSerializer<PollenBrewingRecipe>> BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("brewing", PollenBrewingRecipe::createSerializer);
     private static MinecraftServer server;
 
@@ -48,10 +51,13 @@ public class Pollen {
     }
 
     private static void onClient() {
+        SyncedDataManager.initClient();
         GeometryModelManager.init();
         GeometryTextureManager.init();
         AnimationManager.init();
         AdvancementModifierManager.init();
+        ShaderLoader.init();
+        InitRendererEvent.EVENT.register(ShaderConst::init);
     }
 
     private static void onCommon() {
@@ -75,4 +81,6 @@ public class Pollen {
     public static MinecraftServer getRunningServer() {
         return server;
     }
+
+
 }

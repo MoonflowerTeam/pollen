@@ -5,7 +5,10 @@
   "minVersion": "0.8",
   "client": [
     "client.AgeableListModelAccessor",
-    "client.CreativeModeTabAccessor",
+    "client.LevelRendererMixin",
+    "client.MinecraftMixin",
+    "client.MouseHandlerMixin",
+    "client.TextureAtlasMixin",
     "client.WolfAccessor"
   ],
   "mixins": [

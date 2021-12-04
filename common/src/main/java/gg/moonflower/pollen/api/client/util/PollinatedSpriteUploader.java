@@ -1,7 +1,5 @@
 package gg.moonflower.pollen.api.client.util;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -23,7 +21,6 @@ import java.util.stream.Stream;
  * @author Ocelot
  * @since 1.0.0
  */
-@Environment(EnvType.CLIENT)
 public class PollinatedSpriteUploader extends SimplePreparableReloadListener<TextureAtlas.Preparations> implements AutoCloseable {
 
     private final TextureAtlas textureAtlas;

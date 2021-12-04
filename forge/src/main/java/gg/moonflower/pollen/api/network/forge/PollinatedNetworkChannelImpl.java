@@ -1,16 +1,16 @@
 package gg.moonflower.pollen.api.network.forge;
 
 import com.google.common.base.Suppliers;
+import gg.moonflower.pollen.api.network.PacketDeserializer;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import gg.moonflower.pollen.api.registry.NetworkRegistry;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fmllegacy.network.NetworkDirection;
 import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
+import java.io.IOException;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal
@@ -38,8 +38,20 @@ public class PollinatedNetworkChannelImpl {
         };
     }
 
-    protected <MSG extends PollinatedPacket<T>, T> SimpleChannel.MessageBuilder<MSG> getMessageBuilder(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, @Nullable PollinatedPacketDirection direction) {
-        return this.channel.messageBuilder(clazz, this.nextId++, toNetworkDirection(direction)).encoder(PollinatedPacket::writePacketData).decoder(deserializer).consumer((msg, ctx) ->
+    protected <MSG extends PollinatedPacket<T>, T> SimpleChannel.MessageBuilder<MSG> getMessageBuilder(Class<MSG> clazz, PacketDeserializer<MSG, T> deserializer, @Nullable PollinatedPacketDirection direction) {
+        return this.channel.messageBuilder(clazz, this.nextId++, toNetworkDirection(direction)).encoder((msg, buf) -> {
+            try {
+                msg.writePacketData(buf);
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to write packet data", e);
+            }
+        }).decoder(buf -> {
+            try {
+                return deserializer.deserialize(buf);
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to read packet data", e);
+            }
+        }).consumer((msg, ctx) ->
         {
             NetworkRegistry.processMessage(msg, new PollinatedForgePacketContext(this.channel, ctx), ctx.get().getDirection().getReceptionSide().isClient() ? this.clientMessageHandler : this.serverMessageHandler);
             ctx.get().setPacketHandled(true);

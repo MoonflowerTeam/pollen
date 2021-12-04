@@ -2,6 +2,8 @@ package gg.moonflower.pollen.api.network.packet;
 
 import net.minecraft.network.FriendlyByteBuf;
 
+import java.io.IOException;
+
 /**
  * A message intended for the specified message handler.
  *
@@ -16,7 +18,7 @@ public interface PollinatedPacket<T> {
      *
      * @param buf The buffer to write to
      */
-    void writePacketData(FriendlyByteBuf buf);
+    void writePacketData(FriendlyByteBuf buf) throws IOException;
 
     /**
      * Passes this message into the specified handler to process the message.

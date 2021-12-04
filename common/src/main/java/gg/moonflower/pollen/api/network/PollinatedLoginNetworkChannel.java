@@ -1,7 +1,10 @@
 package gg.moonflower.pollen.api.network;
 
+import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
+import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import gg.moonflower.pollen.api.network.packet.login.PollinatedLoginPacket;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Collections;
@@ -25,7 +28,7 @@ public interface PollinatedLoginNetworkChannel {
      * @param <MSG>        The type of packet to be sent
      * @param <T>          The handler that will process the packet. Should be an interface to avoid loading client classes on server
      */
-    <MSG extends PollinatedLoginPacket<T>, T> void register(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer);
+    <MSG extends PollinatedLoginPacket<T>, T> void register(Class<MSG> clazz, PacketDeserializer<MSG, T> deserializer);
 
     /**
      * Registers a packet intended to be sent during the login network phase. These packets should be intended for a client audience.
@@ -36,7 +39,7 @@ public interface PollinatedLoginNetworkChannel {
      * @param <MSG>                The type of packet to be sent
      * @param <T>                  The handler that will process the packet. Should be an interface to avoid loading client classes on server
      */
-    default <MSG extends PollinatedLoginPacket<T>, T> void registerLogin(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, Supplier<MSG> loginPacketGenerator) {
+    default <MSG extends PollinatedLoginPacket<T>, T> void registerLogin(Class<MSG> clazz, PacketDeserializer<MSG, T> deserializer, Supplier<MSG> loginPacketGenerator) {
         this.registerLogin(clazz, deserializer, localChannel -> Collections.singletonList(Pair.of(clazz.getSimpleName(), loginPacketGenerator.get())));
     }
 
@@ -49,5 +52,15 @@ public interface PollinatedLoginNetworkChannel {
      * @param <MSG>                 The type of packet to be sent
      * @param <T>                   The handler that will process the packet. Should be an interface to avoid loading client classes on server
      */
-    <MSG extends PollinatedLoginPacket<T>, T> void registerLogin(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, Function<Boolean, List<Pair<String, MSG>>> loginPacketGenerators);
+    <MSG extends PollinatedLoginPacket<T>, T> void registerLogin(Class<MSG> clazz, PacketDeserializer<MSG, T> deserializer, Function<Boolean, List<Pair<String, MSG>>> loginPacketGenerators);
+
+    /**
+     * Translates the specified packet into a vanilla packet.
+     *
+     * @param transactionId The id of the current transaction
+     * @param packet        The packet to send
+     * @param direction     The direction to send it in
+     * @return A new vanilla packet
+     */
+    Packet<?> toVanillaPacket(PollinatedPacket<?> packet, int transactionId, PollinatedPacketDirection direction);
 }

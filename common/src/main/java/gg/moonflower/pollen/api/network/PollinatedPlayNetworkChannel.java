@@ -2,18 +2,15 @@ package gg.moonflower.pollen.api.network;
 
 import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Function;
 
 /**
  * Manages the registering packets between the client and server during normal gameplay.
@@ -79,6 +76,16 @@ public interface PollinatedPlayNetworkChannel {
     /**
      * Sends the all players tracking the specified chunk in the level.
      *
+     * @param chunk  The chunk to track
+     * @param packet The packet to send
+     */
+    default void sendToTracking(LevelChunk chunk, PollinatedPacket<?> packet) {
+        this.sendToTracking((ServerLevel) chunk.getLevel(), chunk.getPos(), packet);
+    }
+
+    /**
+     * Sends the all players tracking the specified chunk in the level.
+     *
      * @param level  The level to broadcast the packet to
      * @param pos    The pos to get listening players from
      * @param packet The packet to send
@@ -98,7 +105,6 @@ public interface PollinatedPlayNetworkChannel {
      *
      * @param packet THe packet to send
      */
-    @Environment(EnvType.CLIENT)
     void sendToServer(PollinatedPacket<?> packet);
 
     /**
@@ -110,5 +116,14 @@ public interface PollinatedPlayNetworkChannel {
      * @param <MSG>        The type of packet to be sent
      * @param <T>          The handler that will process the packet. Should be an interface to avoid loading client classes on server
      */
-    <MSG extends PollinatedPacket<T>, T> void register(Class<MSG> clazz, Function<FriendlyByteBuf, MSG> deserializer, @Nullable PollinatedPacketDirection direction);
+    <MSG extends PollinatedPacket<T>, T> void register(Class<MSG> clazz, PacketDeserializer<MSG, T> deserializer, @Nullable PollinatedPacketDirection direction);
+
+    /**
+     * Translates the specified packet into a vanilla packet.
+     *
+     * @param packet    The packet to send
+     * @param direction The direction to send it in
+     * @return A new vanilla packet
+     */
+    Packet<?> toVanillaPacket(PollinatedPacket<?> packet, PollinatedPacketDirection direction);
 }
