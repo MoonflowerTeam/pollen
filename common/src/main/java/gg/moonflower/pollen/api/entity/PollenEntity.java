@@ -1,7 +1,5 @@
 package gg.moonflower.pollen.api.entity;
 
-import net.minecraft.world.entity.Entity;
-
 /**
  * Allows Fabric to have similar Entity functionality as Forge.
  *
