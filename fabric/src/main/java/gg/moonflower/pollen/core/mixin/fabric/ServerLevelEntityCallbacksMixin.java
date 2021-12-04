@@ -8,17 +8,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ServerLevel.class)
-public class ServerLevelMixin {
+@Mixin(targets = "net/minecraft/server/level/ServerLevel$EntityCallbacks")
+public class ServerLevelEntityCallbacksMixin {
 
-    @Inject(method = "add", at = @At("TAIL"))
-    public void add(Entity entity, CallbackInfo ci) {
+    @Inject(method = "onCreated(Lnet/minecraft/world/entity/Entity;)V", at = @At("TAIL"))
+    public void onCreated(Entity entity, CallbackInfo ci) {
         if (entity instanceof PollenEntity)
             ((PollenEntity) entity).onAddedToLevel();
     }
 
-    @Inject(method = "onEntityRemoved", at = @At("TAIL"))
-    public void onEntityRemoved(Entity entity, CallbackInfo ci) {
+    @Inject(method = "onDestroyed(Lnet/minecraft/world/entity/Entity;)V", at = @At("TAIL"))
+    public void onDestroyed(Entity entity, CallbackInfo ci) {
         if (entity instanceof PollenEntity)
             ((PollenEntity) entity).onRemovedFromLevel();
     }

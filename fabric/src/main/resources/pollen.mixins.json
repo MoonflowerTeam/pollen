@@ -18,7 +18,7 @@
     "LevelResourceAccessor",
     "LivingEntityMixin",
     "PlayerListMixin",
-    "ServerLevelMixin"
+    "ServerLevelEntityCallbacksMixin"
   ],
   "injectors": {
     "defaultRequire": 1
