@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "gg.moonflower.pollen.core.mixin.fabric",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_16",
   "minVersion": "0.8",
   "client": [
     "client.CameraAccessor",
@@ -12,7 +12,8 @@
     "client.KeyboardInputMixin",
     "client.LivingEntityRendererMixin",
     "client.MouseHandlerMixin",
-    "client.ParticleEngineMixin"
+    "client.ParticleEngineMixin",
+    "client.RenderSystemMixin"
   ],
   "mixins": [
     "LevelResourceAccessor",

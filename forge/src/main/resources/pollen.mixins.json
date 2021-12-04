@@ -1,13 +1,14 @@
 {
   "required": true,
   "package": "gg.moonflower.pollen.core.mixin.forge",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_16",
   "minVersion": "0.8",
   "client": [
     "client.ClientPackSourceMixin",
     "client.CreateWorldScreenMixin",
     "client.LevelRendererMixin",
-    "client.OptionsMixin"
+    "client.OptionsMixin",
+    "client.RenderSystemMixin"
   ],
   "mixins": [
     "EntityMixin",

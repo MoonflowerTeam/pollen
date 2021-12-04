@@ -15,6 +15,8 @@ import net.minecraft.network.protocol.game.ClientboundRespawnPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.ChunkBiomeContainer;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.dimension.DimensionType;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
@@ -33,6 +35,7 @@ public abstract class ClientPacketListenerMixin {
     @Shadow
     @Final
     private static Logger LOGGER;
+    @Final
     @Shadow
     private Minecraft minecraft;
     @Shadow
@@ -47,7 +50,7 @@ public abstract class ClientPacketListenerMixin {
         ClientNetworkEvent.RESPAWN.invoker().respawn(this.minecraft.gameMode, oldPlayer, newPlayer, newPlayer.connection.getConnection());
     }
 
-    @Inject(method = "handleBlockEntityData", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
+    @Inject(method = "handleBlockEntityData", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
     public void handleBlockEntityData(ClientboundBlockEntityDataPacket packet, CallbackInfo ci, BlockPos blockpos, BlockEntity blockEntity) {
         if (blockEntity == null) {
             LOGGER.error("Received invalid update packet for null tile entity at {} with data: {}", packet.getPos(), packet.getTag());
@@ -58,8 +61,8 @@ public abstract class ClientPacketListenerMixin {
             ((PollenBlockEntity) blockEntity).onDataPacket(this.connection, packet);
     }
 
-    @Inject(method = "handleLevelChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;load(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/nbt/CompoundTag;)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILEXCEPTION, cancellable = true)
-    public void handleLevelChunk(ClientboundLevelChunkPacket packet, CallbackInfo ci, Iterator<CompoundTag> blockEntityNbtList, CompoundTag compoundTag, BlockPos pos, BlockEntity blockEntity) {
+    @Inject(method = "handleLevelChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;load(Lnet/minecraft/nbt/CompoundTag;)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
+    public void handleLevelChunk(ClientboundLevelChunkPacket packet, CallbackInfo ci, int chunkX, int chunkZ, ChunkBiomeContainer chunkBiomeContainer, LevelChunk chunk, Iterator<CompoundTag> blockEntityNbtList, CompoundTag compoundTag, BlockPos pos, BlockEntity blockEntity) {
         if (blockEntity instanceof PollenBlockEntity) {
             ci.cancel();
             ((PollenBlockEntity) blockEntity).handleUpdateTag(compoundTag);

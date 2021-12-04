@@ -22,9 +22,9 @@ public class LevelRendererMixin {
 
     @Shadow
     private int ticks;
-
     @Shadow
     private ClientLevel level;
+
     @Unique
     private PoseStack captureMatrixStack;
     @Unique
@@ -45,7 +45,7 @@ public class LevelRendererMixin {
     }
 
     @Inject(method = "renderClouds", at = @At("HEAD"), cancellable = true)
-    public void renderClouds(PoseStack poseStack, float partialTicks, double x, double y, double z, CallbackInfo ci) {
+    public void renderClouds(PoseStack poseStack, Matrix4f projectionMatrix, float partialTick, double camX, double camY, double camZ, CallbackInfo ci) {
         DimensionSpecialEffects specialEffects = this.level.effects();
         if (specialEffects instanceof PollenDimensionSpecialEffects) {
             PollenDimensionSpecialEffects.Renderer renderer = ((PollenDimensionSpecialEffects) specialEffects).getCloudRenderer();
@@ -81,7 +81,7 @@ public class LevelRendererMixin {
     }
 
     @Inject(method = "renderSky", at = @At("HEAD"), cancellable = true)
-    public void renderSky(PoseStack poseStack, float partialTicks, CallbackInfo ci) {
+    public void renderSky(PoseStack poseStack, Matrix4f projectionMatrix, float partialTick, Runnable skyFogSetup, CallbackInfo ci) {
         DimensionSpecialEffects specialEffects = this.level.effects();
         if (specialEffects instanceof PollenDimensionSpecialEffects) {
             PollenDimensionSpecialEffects.Renderer renderer = ((PollenDimensionSpecialEffects) specialEffects).getSkyRenderer();
