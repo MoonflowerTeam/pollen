@@ -38,8 +38,8 @@
     ]
   },
   "depends": {
-    "fabric": "*",
-    "minecraft": "1.17.x"
+    "fabric": ">=0.44",
+    "minecraft": "1.18.x"
   },
   "custom": {
     "cardinal-components": [

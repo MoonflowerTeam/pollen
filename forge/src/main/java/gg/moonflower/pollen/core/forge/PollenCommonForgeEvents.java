@@ -12,12 +12,12 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fmlserverevents.FMLServerStartedEvent;
-import net.minecraftforge.fmlserverevents.FMLServerStartingEvent;
-import net.minecraftforge.fmlserverevents.FMLServerStoppedEvent;
-import net.minecraftforge.fmlserverevents.FMLServerStoppingEvent;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
@@ -54,22 +54,22 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
-    public static void onEvent(FMLServerStartingEvent event) {
+    public static void onEvent(ServerStartingEvent event) {
         ServerLifecycleEvent.STARTING.invoker().starting(event.getServer());
     }
 
     @SubscribeEvent
-    public static void onEvent(FMLServerStartedEvent event) {
+    public static void onEvent(ServerStartedEvent event) {
         ServerLifecycleEvent.STARTED.invoker().started(event.getServer());
     }
 
     @SubscribeEvent
-    public static void onEvent(FMLServerStoppingEvent event) {
+    public static void onEvent(ServerStoppingEvent event) {
         ServerLifecycleEvent.STOPPING.invoker().stopping(event.getServer());
     }
 
     @SubscribeEvent
-    public static void onEvent(FMLServerStoppedEvent event) {
+    public static void onEvent(ServerStoppedEvent event) {
         ServerLifecycleEvent.STOPPED.invoker().stopped(event.getServer());
     }
 

@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ServerPlayerMixin {
 
     @Inject(method = "trackChunk", at = @At("HEAD"))
-    public void trackChunk(ChunkPos chunkPos, Packet<?> packet, Packet<?> packet2, CallbackInfo ci) {
+    public void trackChunk(ChunkPos chunkPos, Packet<?> packet, CallbackInfo ci) {
         ServerPlayerTrackingEvents.START_TRACKING_CHUNK.invoker().startTracking((ServerPlayer) (Object) this, chunkPos);
     }
 

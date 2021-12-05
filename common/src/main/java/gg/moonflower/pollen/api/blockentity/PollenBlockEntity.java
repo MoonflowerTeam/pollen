@@ -21,6 +21,10 @@ public interface PollenBlockEntity {
      * @param packet     The packet received
      */
     default void onDataPacket(Connection connection, ClientboundBlockEntityDataPacket packet) {
+        CompoundTag compoundtag = packet.getTag();
+        if (compoundtag != null) {
+            ((BlockEntity) this).load(compoundtag);
+        }
     }
 
     /**

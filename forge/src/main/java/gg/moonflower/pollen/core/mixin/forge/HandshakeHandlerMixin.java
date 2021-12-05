@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.core.mixin.forge;
 
 import gg.moonflower.pollen.core.extension.forge.FMLHandshakeHandlerExtensions;
-import net.minecraftforge.fmllegacy.network.FMLHandshakeHandler;
+import net.minecraftforge.network.HandshakeHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,8 +15,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
-@Mixin(FMLHandshakeHandler.class)
-public class FMLHandshakeHandlerMixin implements FMLHandshakeHandlerExtensions {
+@Mixin(HandshakeHandler.class)
+public class HandshakeHandlerMixin implements FMLHandshakeHandlerExtensions {
 
     @Unique
     private final Collection<Future<?>> waits = new ConcurrentLinkedQueue<>();

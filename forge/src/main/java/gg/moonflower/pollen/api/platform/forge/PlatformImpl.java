@@ -3,10 +3,10 @@ package gg.moonflower.pollen.api.platform.forge;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import gg.moonflower.pollen.api.util.forge.PollinatedModContainerImpl;
 import net.minecraft.util.thread.BlockableEventLoop;
+import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
-import net.minecraftforge.fmllegacy.LogicalSidedProvider;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.stream.Stream;

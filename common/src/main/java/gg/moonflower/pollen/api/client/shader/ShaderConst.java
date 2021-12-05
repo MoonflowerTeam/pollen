@@ -20,7 +20,7 @@ public class ShaderConst {
 
     @ApiStatus.Internal
     public static void init() {
-        RenderSystem.assertThread(RenderSystem::isInInitPhase);
+        RenderSystem.assertInInitPhase();
         GLCapabilities gLCapabilities = GL.getCapabilities();
 
         if (gLCapabilities.OpenGL43) {

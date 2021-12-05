@@ -76,7 +76,7 @@ public final class ShaderLoader {
      * @return A new shader ready to use
      */
     public static ShaderInstance create(ResourceLocation program) {
-        RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+        RenderSystem.assertOnRenderThreadOrInit();
         try {
             int programId = linkShaders(program, 0);
             ShaderInstance instance = new ShaderInstance(programId);

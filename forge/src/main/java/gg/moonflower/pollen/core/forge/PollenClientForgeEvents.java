@@ -16,6 +16,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.ApiStatus;
@@ -38,28 +39,28 @@ public class PollenClientForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(ClientPlayerNetworkEvent.LoggedInEvent event) {
-        ClientNetworkEvent.LOGIN.invoker().login(event.getController(), event.getPlayer(), event.getNetworkManager());
+        ClientNetworkEvent.LOGIN.invoker().login(event.getMultiPlayerGameMode(), event.getPlayer(), event.getConnection());
     }
 
     @SubscribeEvent
     public static void onEvent(ClientPlayerNetworkEvent.LoggedOutEvent event) {
-        ClientNetworkEvent.LOGOUT.invoker().logout(event.getController(), event.getPlayer(), event.getNetworkManager());
+        ClientNetworkEvent.LOGOUT.invoker().logout(event.getMultiPlayerGameMode(), event.getPlayer(), event.getConnection());
     }
 
     @SubscribeEvent
     public static void onEvent(ClientPlayerNetworkEvent.RespawnEvent event) {
-        ClientNetworkEvent.RESPAWN.invoker().respawn(event.getController(), event.getOldPlayer(), event.getPlayer(), event.getNetworkManager());
+        ClientNetworkEvent.RESPAWN.invoker().respawn(event.getMultiPlayerGameMode(), event.getOldPlayer(), event.getPlayer(), event.getConnection());
     }
 
     @SubscribeEvent
-    public static void onEvent(net.minecraftforge.client.event.GuiScreenEvent.MouseScrollEvent.Pre event) {
+    public static void onEvent(ScreenEvent.MouseScrollEvent.Pre event) {
         MouseHandler mouseHandler = Minecraft.getInstance().mouseHandler;
         if (InputEvents.GUI_MOUSE_SCROLL_EVENT_PRE.invoker().mouseScrolled(mouseHandler, ((MouseHandlerExtension) mouseHandler).getXOffset(), event.getScrollDelta()))
             event.setCanceled(true);
     }
 
     @SubscribeEvent
-    public static void onEvent(net.minecraftforge.client.event.GuiScreenEvent.MouseScrollEvent.Post event) {
+    public static void onEvent(ScreenEvent.MouseScrollEvent.Post event) {
         MouseHandler mouseHandler = Minecraft.getInstance().mouseHandler;
         InputEvents.GUI_MOUSE_SCROLL_EVENT_POST.invoker().mouseScrolled(mouseHandler, ((MouseHandlerExtension) mouseHandler).getXOffset(), event.getScrollDelta());
     }
@@ -73,7 +74,7 @@ public class PollenClientForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(InputEvent.MouseInputEvent event) {
-        InputEvents.MOUSE_INPUT_EVENT.invoker().mouseInput(Minecraft.getInstance().mouseHandler, event.getButton(), event.getAction(), event.getMods());
+        InputEvents.MOUSE_INPUT_EVENT.invoker().mouseInput(Minecraft.getInstance().mouseHandler, event.getButton(), event.getAction(), event.getModifiers());
     }
 
     @SubscribeEvent

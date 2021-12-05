@@ -5,7 +5,7 @@ import gg.moonflower.pollen.api.network.PollinatedPlayNetworkChannel;
 import gg.moonflower.pollen.api.network.forge.PollinatedForgeLoginChannel;
 import gg.moonflower.pollen.api.network.forge.PollinatedForgePlayChannel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fmllegacy.network.NetworkRegistry;
+import net.minecraftforge.network.NetworkRegistry;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Supplier;

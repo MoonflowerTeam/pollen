@@ -139,10 +139,12 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable {
     public static class VanillaImpl<T> extends PollinatedRegistry<T> {
 
         private final Registry<T> registry;
+        private final Codec<T> codec;
 
         private VanillaImpl(Registry<T> registry, String modId) {
             super(modId);
             this.registry = registry;
+            this.codec = this.registry.byNameCodec();
         }
 
         @Override
@@ -153,12 +155,12 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable {
 
         @Override
         public <T1> DataResult<Pair<T, T1>> decode(DynamicOps<T1> ops, T1 input) {
-            return this.registry.decode(ops, input);
+            return this.codec.decode(ops, input);
         }
 
         @Override
         public <T1> DataResult<T1> encode(T input, DynamicOps<T1> ops, T1 prefix) {
-            return this.registry.encode(input, ops, prefix);
+            return this.codec.encode(input, ops, prefix);
         }
 
         @Override

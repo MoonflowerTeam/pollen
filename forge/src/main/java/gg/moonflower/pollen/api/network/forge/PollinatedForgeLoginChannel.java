@@ -7,9 +7,10 @@ import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import gg.moonflower.pollen.api.network.packet.login.PollinatedLoginPacket;
 import gg.moonflower.pollen.api.registry.NetworkRegistry;
 import net.minecraft.network.protocol.Packet;
-import net.minecraftforge.fmllegacy.network.FMLHandshakeHandler;
-import net.minecraftforge.fmllegacy.network.NetworkDirection;
-import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
+
+import net.minecraftforge.network.HandshakeHandler;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.simple.SimpleChannel;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -42,7 +43,7 @@ public class PollinatedForgeLoginChannel extends PollinatedNetworkChannelImpl im
                         throw new IllegalStateException("Failed to read packet data", e);
                     }
                 })
-                .consumer(FMLHandshakeHandler.indexFirst((__, msg, ctx) ->
+                .consumer(HandshakeHandler.indexFirst((__, msg, ctx) ->
                 {
                     NetworkRegistry.processMessage(msg, new PollinatedForgePacketContext(this.channel, ctx), ctx.get().getDirection().getReceptionSide().isClient() ? this.clientMessageHandler : this.serverMessageHandler);
                     ctx.get().setPacketHandled(true);
