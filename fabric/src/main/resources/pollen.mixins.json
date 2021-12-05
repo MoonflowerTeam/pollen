@@ -6,19 +6,16 @@
   "client": [
     "client.CameraAccessor",
     "client.ClientHandshakePacketListenerImplMixin",
-    "client.ClientLevelMixin",
     "client.ClientPacketListenerMixin",
     "client.GameRendererMixin",
     "client.KeyboardInputMixin",
-    "client.LivingEntityRendererMixin",
     "client.MouseHandlerMixin",
     "client.ParticleEngineMixin"
   ],
   "mixins": [
     "LevelResourceAccessor",
     "LivingEntityMixin",
-    "PlayerListMixin",
-    "ServerLevelMixin"
+    "PlayerListMixin"
   ],
   "injectors": {
     "defaultRequire": 1
