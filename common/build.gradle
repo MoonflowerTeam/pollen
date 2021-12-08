@@ -13,7 +13,7 @@ architectury {
 }
 
 loom {
-//    accessWidenerPath.set(file("src/main/resources/${project.mod_id}.accesswidener"))
+    accessWidenerPath.set(file("src/main/resources/${project.mod_id}.accesswidener"))
 }
 
 publishing {
