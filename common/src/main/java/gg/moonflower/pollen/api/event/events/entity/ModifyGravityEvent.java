@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.event.events.entity.player;
+package gg.moonflower.pollen.api.event.events.entity;
 
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.api.registry.EventRegistry;
