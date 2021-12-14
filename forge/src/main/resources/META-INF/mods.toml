@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[38,)"
+loaderVersion = "[39,)"
 issueTrackerURL = "https://github.com/MoonflowerTeam/${repo}/issues"
 license = "GPLv3"
 
@@ -16,7 +16,7 @@ updateJSONURL = "https://github.com/MoonflowerTeam/${repo}/update.json"
 [[dependencies.${id}]]
 modId = "forge"
 mandatory = true
-versionRange = "[38,)"
+versionRange = "[39,)"
 ordering = "NONE"
 side = "BOTH"
 
