@@ -10,12 +10,17 @@
     "client.GameRendererMixin",
     "client.KeyboardInputMixin",
     "client.MouseHandlerMixin",
-    "client.ParticleEngineMixin"
+    "client.ParticleEngineMixin",
+    "client.ClientLevelMixin"
   ],
   "mixins": [
+    "ExplosionMixin",
+    "LevelMixin",
     "LevelResourceAccessor",
     "LivingEntityMixin",
-    "PlayerListMixin"
+    "MobMixin",
+    "PlayerListMixin",
+    "ServerLevelMixin"
   ],
   "injectors": {
     "defaultRequire": 1
