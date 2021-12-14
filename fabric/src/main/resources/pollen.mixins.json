@@ -16,11 +16,15 @@
     "client.RenderSystemMixin"
   ],
   "mixins": [
+    "ExplosionMixin",
     "LevelChunkMixin",
+    "LevelMixin",
     "LevelResourceAccessor",
     "LivingEntityMixin",
+    "MobMixin",
     "PlayerListMixin",
-    "ServerLevelEntityCallbacksMixin"
+    "ServerLevelEntityCallbacksMixin",
+    "ServerLevelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

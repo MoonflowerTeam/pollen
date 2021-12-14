@@ -1,11 +1,14 @@
 package gg.moonflower.pollen.core.forge;
 
+import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
+import gg.moonflower.pollen.api.event.events.entity.SetTargetEvent;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractEvent;
 import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
 import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvent;
+import gg.moonflower.pollen.api.event.events.world.ExplosionEvents;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -132,5 +135,32 @@ public class PollenCommonForgeEvents {
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.player.PlayerEvent.StopTracking event) {
         ServerPlayerTrackingEvents.STOP_TRACKING_ENTITY.invoker().stopTracking(event.getPlayer(), event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void onEvent(net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent event) {
+        SetTargetEvent.EVENT.invoker().setTarget(event.getEntityLiving(), event.getTarget());
+    }
+
+    @SubscribeEvent
+    public static void onEvent(net.minecraftforge.event.world.ExplosionEvent.Start event) {
+        if (ExplosionEvents.START.invoker().start(event.getWorld(), event.getExplosion()))
+            event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void onEvent(net.minecraftforge.event.world.ExplosionEvent.Detonate event) {
+        ExplosionEvents.DETONATE.invoker().detonate(event.getWorld(), event.getExplosion(), event.getAffectedEntities());
+    }
+
+    @SubscribeEvent
+    public static void onEvent(net.minecraftforge.event.entity.EntityJoinWorldEvent event) {
+        if (EntityEvents.JOIN.invoker().onJoin(event.getEntity(), event.getWorld()))
+            event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void onEvent(net.minecraftforge.event.entity.EntityLeaveWorldEvent event) {
+        EntityEvents.LEAVE.invoker().onLeave(event.getEntity(), event.getWorld());
     }
 }

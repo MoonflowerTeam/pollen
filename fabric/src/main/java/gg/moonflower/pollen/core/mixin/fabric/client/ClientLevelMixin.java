@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.core.mixin.fabric.client;
 
 import gg.moonflower.pollen.api.entity.PollenEntity;
+import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.entity.LevelEntityGetter;
@@ -17,13 +18,13 @@ public abstract class ClientLevelMixin {
     protected abstract LevelEntityGetter<Entity> getEntities();
 
     @Inject(method = "addEntity", at = @At("TAIL"))
-    public void addEntity(int entityId, Entity entityToSpawn, CallbackInfo ci) {
+    public void onAddedToLevel(int entityId, Entity entityToSpawn, CallbackInfo ci) {
         if (entityToSpawn instanceof PollenEntity)
             ((PollenEntity) entityToSpawn).onAddedToLevel();
     }
 
     @Inject(method = "removeEntity", at = @At("TAIL"))
-    public void removeEntity(int entityId, Entity.RemovalReason reason, CallbackInfo ci) {
+    public void onRemovedFromLevel(int entityId, Entity.RemovalReason reason, CallbackInfo ci) {
         Entity entity = this.getEntities().get(entityId);
         if (entity instanceof PollenEntity)
             ((PollenEntity) entity).onRemovedFromLevel();
