@@ -58,12 +58,12 @@ allprojects {
 
     publishing {
         repositories {
-            if (project.hasProperty("jacksonMavenUser") && project.hasProperty("jacksonMavenPass")) {
+            if (project.hasProperty("moonflowerUsername") && project.hasProperty("moonflowerToken")) {
                 maven {
-                    url "https://maven.jaackson.me"
+                    url "https://repo.moonflower.gg/releases"
                     credentials {
-                        username = project.properties.jacksonMavenUser
-                        password = project.properties.jacksonMavenPass
+                        username = project.properties.moonflowerUsername
+                        password = project.properties.moonflowerToken
                     }
                 }
             }
