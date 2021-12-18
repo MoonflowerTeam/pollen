@@ -15,3 +15,6 @@ transitive-accessible method net/minecraft/world/entity/npc/VillagerProfession <
 transitive-accessible method net/minecraft/world/entity/ai/village/poi/PoiType <init> (Ljava/lang/String;Ljava/util/Set;II)V
 transitive-accessible method net/minecraft/world/entity/ai/village/poi/PoiType <init> (Ljava/lang/String;Ljava/util/Set;ILjava/util/function/Predicate;I)V
 transitive-accessible method net/minecraft/world/entity/ai/village/poi/PoiType registerBlockStates (Lnet/minecraft/world/entity/ai/village/poi/PoiType;)Lnet/minecraft/world/entity/ai/village/poi/PoiType;
+
+transitive-accessible method net/minecraft/core/particles/SimpleParticleType <init> (Z)V
+transitive-accessible method net/minecraft/core/particles/ParticleType <init> (ZLnet/minecraft/core/particles/ParticleOptions$Deserializer;)V
