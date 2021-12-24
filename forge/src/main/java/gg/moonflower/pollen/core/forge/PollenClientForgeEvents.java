@@ -1,8 +1,8 @@
 package gg.moonflower.pollen.core.forge;
 
 import gg.moonflower.pollen.api.event.events.client.InputEvents;
-import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
-import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvent;
+import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
+import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvents;
 import gg.moonflower.pollen.api.event.events.registry.client.ParticleFactoryRegistryEvent;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.extensions.MouseHandlerExtension;
@@ -29,27 +29,27 @@ public class PollenClientForgeEvents {
     public static void onEvent(net.minecraftforge.event.TickEvent.ClientTickEvent event) {
         switch (event.phase) {
             case START:
-                TickEvent.CLIENT_PRE.invoker().tick();
+                TickEvents.CLIENT_PRE.invoker().tick();
                 break;
             case END:
-                TickEvent.CLIENT_POST.invoker().tick();
+                TickEvents.CLIENT_POST.invoker().tick();
                 break;
         }
     }
 
     @SubscribeEvent
     public static void onEvent(ClientPlayerNetworkEvent.LoggedInEvent event) {
-        ClientNetworkEvent.LOGIN.invoker().login(event.getMultiPlayerGameMode(), event.getPlayer(), event.getConnection());
+        ClientNetworkEvents.LOGIN.invoker().login(event.getMultiPlayerGameMode(), event.getPlayer(), event.getConnection());
     }
 
     @SubscribeEvent
     public static void onEvent(ClientPlayerNetworkEvent.LoggedOutEvent event) {
-        ClientNetworkEvent.LOGOUT.invoker().logout(event.getMultiPlayerGameMode(), event.getPlayer(), event.getConnection());
+        ClientNetworkEvents.LOGOUT.invoker().logout(event.getMultiPlayerGameMode(), event.getPlayer(), event.getConnection());
     }
 
     @SubscribeEvent
     public static void onEvent(ClientPlayerNetworkEvent.RespawnEvent event) {
-        ClientNetworkEvent.RESPAWN.invoker().respawn(event.getMultiPlayerGameMode(), event.getOldPlayer(), event.getPlayer(), event.getConnection());
+        ClientNetworkEvents.RESPAWN.invoker().respawn(event.getMultiPlayerGameMode(), event.getOldPlayer(), event.getPlayer(), event.getConnection());
     }
 
     @SubscribeEvent

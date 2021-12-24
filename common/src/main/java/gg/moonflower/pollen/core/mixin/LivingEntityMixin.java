@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.core.mixin;
 
 import gg.moonflower.pollen.api.event.events.entity.ModifyGravityEvent;
-import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
+import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,7 +14,7 @@ public class LivingEntityMixin {
 
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {
-        TickEvent.LIVING_POST.invoker().tick((LivingEntity) (Object) this);
+        TickEvents.LIVING_POST.invoker().tick((LivingEntity) (Object) this);
     }
 
     @ModifyVariable(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getFluidState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/material/FluidState;", shift = At.Shift.BEFORE))

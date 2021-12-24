@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public class ServerLevelMixin {
     @Inject(method = "explode", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Explosion;explode()V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
     public void explode(Entity entity, DamageSource damageSource, ExplosionDamageCalculator explosionDamageCalculator, double d, double e, double f, float g, boolean bl, Explosion.BlockInteraction blockInteraction, CallbackInfoReturnable<Explosion> cir, Explosion explosion) {
-        if (ExplosionEvents.START.invoker().start((ServerLevel) (Object) this, explosion))
+        if (!ExplosionEvents.START.invoker().start((ServerLevel) (Object) this, explosion))
             cir.setReturnValue(explosion);
     }
 }
