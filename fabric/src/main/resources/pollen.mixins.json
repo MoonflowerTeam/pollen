@@ -16,6 +16,7 @@
     "client.RenderSystemMixin"
   ],
   "mixins": [
+    "ContainerProviderImplMixin",
     "DedicatedServerMixin",
     "ExplosionMixin",
     "IntegratedServerMixin",
@@ -27,7 +28,8 @@
     "MobMixin",
     "PlayerListMixin",
     "ServerLevelEntityCallbacksMixin",
-    "ServerLevelMixin"
+    "ServerLevelMixin",
+    "ServerPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
