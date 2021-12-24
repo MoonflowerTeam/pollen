@@ -10,6 +10,7 @@ import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
 import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
 import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.common.trades.VillagerTradeManager;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.command.ConfigCommand;
 import gg.moonflower.pollen.core.mixin.fabric.LevelResourceAccessor;
@@ -90,7 +91,10 @@ public class PollenFabric implements ModInitializer {
         ServerEntityEvents.ENTITY_UNLOAD.register(EntityEvents.LEAVE.invoker()::onLeave);
 
         // Pollen Events
-        ServerLifecycleEvent.STARTING.register(server -> ConfigTracker.INSTANCE.loadConfigs(PollinatedConfigType.SERVER, getServerConfigPath(server)));
+        ServerLifecycleEvent.STARTING.register(server -> {
+            ConfigTracker.INSTANCE.loadConfigs(PollinatedConfigType.SERVER, getServerConfigPath(server));
+            VillagerTradeManager.init();
+        });
         ServerLifecycleEvent.STOPPED.register(server -> ConfigTracker.INSTANCE.unloadConfigs(PollinatedConfigType.SERVER, getServerConfigPath(server)));
         CommandRegistryEvent.EVENT.register((dispatcher, selection) -> ConfigCommand.register(dispatcher, selection == Commands.CommandSelection.DEDICATED));
     }
