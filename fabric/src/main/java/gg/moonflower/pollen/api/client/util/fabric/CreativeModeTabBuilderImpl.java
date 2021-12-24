@@ -1,5 +1,6 @@
-package gg.moonflower.pollen.api.registry.forge;
+package gg.moonflower.pollen.api.client.util.fabric;
 
+import net.fabricmc.fabric.impl.item.group.ItemGroupExtensions;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
@@ -14,7 +15,8 @@ import java.util.function.Supplier;
 public class CreativeModeTabBuilderImpl {
 
     public static CreativeModeTab buildImpl(ResourceLocation name, Supplier<ItemStack> icon, BiConsumer<List<ItemStack>, CreativeModeTab> stacksForDisplay) {
-        return new CreativeModeTab(String.format("%s.%s", name.getNamespace(), name.getPath())) {
+        ((ItemGroupExtensions) CreativeModeTab.TAB_BUILDING_BLOCKS).fabric_expandArray();
+        return new CreativeModeTab(CreativeModeTab.TABS.length - 1, String.format("%s.%s", name.getNamespace(), name.getPath())) {
             @Override
             public ItemStack makeIcon() {
                 return icon.get();

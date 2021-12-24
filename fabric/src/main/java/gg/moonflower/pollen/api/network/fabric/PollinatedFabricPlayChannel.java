@@ -30,7 +30,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal

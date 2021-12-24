@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.registry.fabric;
+package gg.moonflower.pollen.api.registry.resource.fabric;
 
 import net.fabricmc.fabric.api.tag.TagRegistry;
 import net.minecraft.resources.ResourceLocation;

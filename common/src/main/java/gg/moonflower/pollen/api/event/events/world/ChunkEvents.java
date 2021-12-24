@@ -9,6 +9,7 @@ public final class ChunkEvents {
 
     public static final PollinatedEvent<Load> LOAD = EventRegistry.createLoop(Load.class);
     public static final PollinatedEvent<Unload> UNLOAD = EventRegistry.createLoop(Unload.class);
+
     private ChunkEvents() {
     }
 

@@ -22,6 +22,7 @@ public final class NbtConstants {
     public static final int INT_ARRAY = 11;
     public static final int LONG_ARRAY = 12;
     public static final int ANY_NUMERIC = 99;
+
     private NbtConstants() {
     }
 }

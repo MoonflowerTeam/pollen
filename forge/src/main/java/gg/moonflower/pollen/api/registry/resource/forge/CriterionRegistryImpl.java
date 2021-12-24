@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.registry.forge;
+package gg.moonflower.pollen.api.registry.resource.forge;
 
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.CriterionTrigger;

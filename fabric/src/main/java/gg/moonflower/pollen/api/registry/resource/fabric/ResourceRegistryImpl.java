@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.registry.fabric;
+package gg.moonflower.pollen.api.registry.resource.fabric;
 
 import gg.moonflower.pollen.api.registry.resource.PollinatedPreparableReloadListener;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;

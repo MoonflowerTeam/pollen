@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.registry.fabric;
+package gg.moonflower.pollen.api.registry.resource.fabric;
 
 import net.fabricmc.fabric.api.object.builder.v1.advancement.CriterionRegistry;
 import net.minecraft.advancements.CriterionTrigger;

@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.api.registry.forge;
 
+import gg.moonflower.pollen.api.registry.ClientRegistries;
 import gg.moonflower.pollen.api.registry.resource.ResourceRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;

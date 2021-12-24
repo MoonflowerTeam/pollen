@@ -9,7 +9,6 @@ import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
 @ApiStatus.Internal

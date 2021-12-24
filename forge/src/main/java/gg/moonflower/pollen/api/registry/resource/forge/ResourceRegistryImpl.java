@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.registry.forge;
+package gg.moonflower.pollen.api.registry.resource.forge;
 
 import com.mojang.datafixers.util.Pair;
 import gg.moonflower.pollen.api.registry.resource.PollinatedPreparableReloadListener;
