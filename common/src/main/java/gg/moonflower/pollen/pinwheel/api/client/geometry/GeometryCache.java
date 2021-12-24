@@ -32,7 +32,7 @@ import java.util.function.Function;
  * @author Ocelot
  * @since 1.0.0
  */
-public class GeometryCache {
+public final class GeometryCache {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new Gson();
@@ -63,6 +63,9 @@ public class GeometryCache {
                 Util.backgroundExecutor().execute(GeometryCache::writeMetadata);
             }
         });
+    }
+
+    private GeometryCache() {
     }
 
     private static synchronized void writeMetadata() {

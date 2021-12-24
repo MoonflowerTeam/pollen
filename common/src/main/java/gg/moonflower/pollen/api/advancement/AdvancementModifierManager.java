@@ -30,10 +30,13 @@ import java.util.stream.Stream;
  * @author Ocelot
  * @since 1.0.0
  */
-public class AdvancementModifierManager {
+public final class AdvancementModifierManager {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Map<ResourceLocation, AdvancementModifier> ADVANCEMENT_MODIFIERS = new HashMap<>();
+
+    private AdvancementModifierManager() {
+    }
 
     @ApiStatus.Internal
     public static void init() {

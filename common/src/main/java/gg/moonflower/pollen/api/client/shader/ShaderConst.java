@@ -13,10 +13,13 @@ import org.lwjgl.opengl.GLCapabilities;
  * @author Ocelot
  * @since 1.0.0
  */
-public class ShaderConst {
+public final class ShaderConst {
 
     private static ShaderMode computeMode;
     private static ShaderMode geometryMode;
+
+    private ShaderConst() {
+    }
 
     @ApiStatus.Internal
     public static void init() {

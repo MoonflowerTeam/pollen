@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.event.events.registry;
+package gg.moonflower.pollen.api.event.events.registry.client;
 
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.api.registry.EventRegistry;
@@ -8,11 +8,11 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 
 /**
- * Registers particles when it is safe to do so.
+ * Registers particle factories when it is safe to do so.
  */
-public interface ParticleRegistryEvent {
+public interface ParticleFactoryRegistryEvent {
 
-    PollinatedEvent<ParticleRegistryEvent> EVENT = EventRegistry.createLoop(ParticleRegistryEvent.class);
+    PollinatedEvent<ParticleFactoryRegistryEvent> EVENT = EventRegistry.createLoop(ParticleFactoryRegistryEvent.class);
 
     /**
      * Registers all particle factories.

@@ -7,7 +7,7 @@ import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTr
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
 import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
-import gg.moonflower.pollen.api.event.events.world.ChunkEvent;
+import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.command.ConfigCommand;
@@ -70,8 +70,8 @@ public class PollenFabric implements ModInitializer {
         ServerLifecycleEvents.SERVER_STOPPING.register(ServerLifecycleEvent.STOPPING.invoker()::stopping);
         ServerLifecycleEvents.SERVER_STOPPED.register(ServerLifecycleEvent.STOPPED.invoker()::stopped);
 
-        ServerChunkEvents.CHUNK_LOAD.register(ChunkEvent.LOAD.invoker()::load);
-        ServerChunkEvents.CHUNK_UNLOAD.register(ChunkEvent.UNLOAD.invoker()::unload);
+        ServerChunkEvents.CHUNK_LOAD.register(ChunkEvents.LOAD.invoker()::load);
+        ServerChunkEvents.CHUNK_UNLOAD.register(ChunkEvents.UNLOAD.invoker()::unload);
 
         UseItemCallback.EVENT.register(PlayerInteractEvent.RIGHT_CLICK_ITEM.invoker()::interaction);
         UseBlockCallback.EVENT.register(PlayerInteractEvent.RIGHT_CLICK_BLOCK.invoker()::interaction);

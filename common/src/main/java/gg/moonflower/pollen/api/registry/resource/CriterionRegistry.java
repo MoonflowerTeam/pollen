@@ -1,8 +1,7 @@
-package gg.moonflower.pollen.api.registry;
+package gg.moonflower.pollen.api.registry.resource;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.platform.Platform;
-import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.CriterionTrigger;
 
 /**
@@ -11,7 +10,10 @@ import net.minecraft.advancements.CriterionTrigger;
  * @author Ocelot
  * @since 1.0.0
  */
-public class CriterionRegistry {
+public final class CriterionRegistry {
+
+    private CriterionRegistry() {
+    }
 
     /**
      * Registers a new criterion for a trigger for advancements.

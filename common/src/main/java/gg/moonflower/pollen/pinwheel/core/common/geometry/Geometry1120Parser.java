@@ -14,7 +14,10 @@ import java.util.Set;
  * @author Ocelot
  */
 @ApiStatus.Internal
-public class Geometry1120Parser {
+public final class Geometry1120Parser {
+
+    private Geometry1120Parser() {
+    }
 
     public static GeometryModelData[] parseModel(JsonElement json) throws JsonParseException {
         JsonArray jsonArray = GsonHelper.getAsJsonArray(json.getAsJsonObject(), "minecraft:geometry");

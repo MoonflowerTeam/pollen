@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.api.registry.fabric;
 
-import gg.moonflower.pollen.api.registry.PollinatedPreparableReloadListener;
+import gg.moonflower.pollen.api.registry.resource.PollinatedPreparableReloadListener;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;

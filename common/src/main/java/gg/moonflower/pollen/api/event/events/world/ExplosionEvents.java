@@ -1,7 +1,6 @@
 package gg.moonflower.pollen.api.event.events.world;
 
 import gg.moonflower.pollen.api.event.PollinatedEvent;
-import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
 import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
@@ -15,7 +14,7 @@ import java.util.List;
  * @author abigailfails
  * @since 1.0.0
  */
-public class ExplosionEvents {
+public final class ExplosionEvents {
 
     public static final PollinatedEvent<Start> START = EventRegistry.create(Start.class, events -> (level, explosion) -> {
         for (Start event : events)
@@ -24,6 +23,9 @@ public class ExplosionEvents {
         return false;
     });
     public static final PollinatedEvent<Detonate> DETONATE = EventRegistry.createLoop(Detonate.class);
+
+    private ExplosionEvents() {
+    }
 
     /**
      * Called when an explosion is about to occur, which is cancelled if the event returns true.

@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.core.event.registry;
 
 import gg.moonflower.pollen.api.event.PollinatedEvent;
-import gg.moonflower.pollen.api.event.events.registry.RegisterAtlasSpriteEvent;
+import gg.moonflower.pollen.api.event.events.registry.client.RegisterAtlasSpriteEvent;
 import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;

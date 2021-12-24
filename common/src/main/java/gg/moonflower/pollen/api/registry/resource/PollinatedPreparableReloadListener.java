@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.registry;
+package gg.moonflower.pollen.api.registry.resource;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;

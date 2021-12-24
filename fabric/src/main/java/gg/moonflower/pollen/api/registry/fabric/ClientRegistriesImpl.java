@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.api.registry.fabric;
 
-import gg.moonflower.pollen.api.registry.ClientRegistries;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;

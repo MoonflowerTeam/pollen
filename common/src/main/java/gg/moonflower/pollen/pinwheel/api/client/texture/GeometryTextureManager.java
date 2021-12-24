@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.pinwheel.api.client.texture;
 
-import gg.moonflower.pollen.api.registry.PollinatedPreparableReloadListener;
-import gg.moonflower.pollen.api.registry.ResourceRegistry;
+import gg.moonflower.pollen.api.registry.resource.PollinatedPreparableReloadListener;
+import gg.moonflower.pollen.api.registry.resource.ResourceRegistry;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelRenderer;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
@@ -31,7 +31,7 @@ import java.util.concurrent.Executor;
  * @author Ocelot
  * @since 1.0.0
  */
-public class GeometryTextureManager {
+public final class GeometryTextureManager {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Reloader RELOADER = new Reloader();
@@ -42,6 +42,9 @@ public class GeometryTextureManager {
 
     static {
         DYNAMIC_RELOADER.addListener(RELOADER);
+    }
+
+    private GeometryTextureManager() {
     }
 
     @ApiStatus.Internal

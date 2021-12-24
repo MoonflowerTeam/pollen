@@ -16,12 +16,15 @@ import java.util.Set;
  * @author Ocelot
  */
 @ApiStatus.Internal
-public class Geometry180Parser {
+public final class Geometry180Parser {
 
     static final Gson GSON = new GsonBuilder().
             registerTypeAdapter(GeometryModelData.Poly.class, new GeometryModelData.Poly.Deserializer()).
             registerTypeAdapter(GeometryModelData.PolyMesh.class, new GeometryModelData.PolyMesh.Deserializer()).
             create();
+
+    private Geometry180Parser() {
+    }
 
     public static GeometryModelData[] parseModel(JsonElement json) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();

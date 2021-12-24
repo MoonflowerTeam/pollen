@@ -16,12 +16,15 @@ import org.jetbrains.annotations.ApiStatus;
  * @author Ocelot
  * @since 1.0.0
  */
-public class PollenSuggestionProviders {
+public final class PollenSuggestionProviders {
 
     /**
      * Command suggestion provider for all loaded mod ids.
      */
     public static final SuggestionProvider<CommandSourceStack> MOD_IDS = SuggestionProviders.register(new ResourceLocation(Pollen.MOD_ID, "mod_ids"), (context, builder) -> SharedSuggestionProvider.suggest(Platform.getMods().map(PollinatedModContainer::getId), builder));
+
+    private PollenSuggestionProviders() {
+    }
 
     @ApiStatus.Internal
     public static void init() {

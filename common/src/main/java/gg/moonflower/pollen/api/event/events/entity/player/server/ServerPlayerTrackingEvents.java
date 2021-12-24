@@ -16,6 +16,9 @@ public final class ServerPlayerTrackingEvents {
     public static final PollinatedEvent<StartTrackingEntity> START_TRACKING_ENTITY = EventRegistry.createLoop(StartTrackingEntity.class);
     public static final PollinatedEvent<StopTrackingEntity> STOP_TRACKING_ENTITY = EventRegistry.createLoop(StopTrackingEntity.class);
 
+    private ServerPlayerTrackingEvents() {
+    }
+
     /**
      * Called each time a player starts tracking a chunk.
      *
@@ -58,8 +61,5 @@ public final class ServerPlayerTrackingEvents {
     @FunctionalInterface
     public interface StopTrackingEntity {
         void stopTracking(Player player, Entity entity);
-    }
-
-    private ServerPlayerTrackingEvents() {
     }
 }

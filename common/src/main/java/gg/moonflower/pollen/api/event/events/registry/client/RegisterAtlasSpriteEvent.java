@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.event.events.registry;
+package gg.moonflower.pollen.api.event.events.registry.client;
 
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.core.event.registry.RegisterAtlasSpriteEventImpl;

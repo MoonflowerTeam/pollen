@@ -10,7 +10,10 @@ import net.minecraft.resources.ResourceLocation;
  * @author Ocelot
  * @since 1.0.0
  */
-public class AdvancementBuilderHelper {
+public final class AdvancementBuilderHelper {
+
+    private AdvancementBuilderHelper() {
+    }
 
     /**
      * Creates a new advancement reward with only a single loot table.

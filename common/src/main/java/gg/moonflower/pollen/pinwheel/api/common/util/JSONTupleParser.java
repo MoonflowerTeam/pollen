@@ -16,7 +16,10 @@ import java.util.function.Supplier;
  * @author Ocelot
  * @since 1.0.0
  */
-public class JSONTupleParser {
+public final class JSONTupleParser {
+
+    private JSONTupleParser() {
+    }
 
     /**
      * Parses an array of floats from the specified JSON.

@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.api.registry.forge;
 
 import com.mojang.datafixers.util.Pair;
-import gg.moonflower.pollen.api.registry.PollinatedPreparableReloadListener;
+import gg.moonflower.pollen.api.registry.resource.PollinatedPreparableReloadListener;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import gg.moonflower.pollen.api.util.forge.ForgeModResourcePack;
 import net.minecraft.resources.ResourceLocation;
