@@ -10,11 +10,13 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.function.Supplier;
+
 @ApiStatus.Internal
 public class BlockEntityRendererRegistryImpl {
-    public static <T extends BlockEntity> void register(BlockEntityType<T> type, BlockEntityRendererRegistry.BlockEntityRendererFactory<T> factory) {
+    public static <T extends BlockEntity> void register(Supplier<BlockEntityType<T>> type, BlockEntityRendererRegistry.BlockEntityRendererFactory<T> factory) {
         Minecraft minecraft = Minecraft.getInstance();
-        net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry.INSTANCE.register(type, renderDispatcher -> factory.create(new BlockEntityRendererRegistry.BlockEntityRendererFactory.Context() {
+        net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry.INSTANCE.register(type.get(), renderDispatcher -> factory.create(new BlockEntityRendererRegistry.BlockEntityRendererFactory.Context() {
             @Override
             public BlockEntityRenderDispatcher getBlockEntityRenderDispatcher() {
                 return renderDispatcher;

@@ -7,18 +7,21 @@ import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 
+import java.util.function.Supplier;
+
 public final class ColorRegistry {
 
     private ColorRegistry() {
     }
 
+    @SafeVarargs
     @ExpectPlatform
-    public static void register(ItemColor itemColor, ItemLike... items) {
+    public static void register(ItemColor itemColor, Supplier<ItemLike>... items) {
         Platform.error();
     }
 
     @ExpectPlatform
-    public static void register(BlockColor blockColor, Block... blocks) {
+    public static void register(BlockColor blockColor, Supplier<Block>... blocks) {
         Platform.error();
     }
 }
