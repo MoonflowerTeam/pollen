@@ -12,12 +12,12 @@ public final class ItemPredicateRegistry {
     }
 
     @ExpectPlatform
-    public static void register(ResourceLocation id, ItemPropertyFunction provider) {
+    public static void register(ResourceLocation id, ItemPropertyFunction function) {
         Platform.error();
     }
 
     @ExpectPlatform
-    public static void register(Item item, ResourceLocation id, ItemPropertyFunction provider) {
+    public static void register(Item item, ResourceLocation id, ItemPropertyFunction function) {
         Platform.error();
     }
 }

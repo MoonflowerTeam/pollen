@@ -18,7 +18,7 @@ public final class ColorRegistry {
     }
 
     @ExpectPlatform
-    public static void register(BlockColor itemColor, Block... blocks) {
+    public static void register(BlockColor blockColor, Block... blocks) {
         Platform.error();
     }
 }
