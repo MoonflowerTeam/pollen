@@ -6,8 +6,7 @@ import net.minecraft.server.MinecraftServer;
 
 public interface ServerLifecycleEvent {
 
-    PollinatedEvent<Starting> STARTING = EventRegistry.create(Starting.class, events -> server -> {
-    });
+    PollinatedEvent<Starting> STARTING = EventRegistry.createLoop(Starting.class);
     PollinatedEvent<Started> STARTED = EventRegistry.createLoop(Started.class);
     PollinatedEvent<Stopping> STOPPING = EventRegistry.createLoop(Stopping.class);
     PollinatedEvent<Stopped> STOPPED = EventRegistry.createLoop(Stopped.class);
