@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.core.forge;
 
 import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
+import gg.moonflower.pollen.api.event.events.entity.ModifyTradesEvents;
 import gg.moonflower.pollen.api.event.events.entity.SetTargetEvent;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractEvent;
 import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
@@ -162,5 +163,15 @@ public class PollenCommonForgeEvents {
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.EntityLeaveWorldEvent event) {
         EntityEvents.LEAVE.invoker().onLeave(event.getEntity(), event.getWorld());
+    }
+
+    @SubscribeEvent
+    public static void onEvent(net.minecraftforge.event.village.VillagerTradesEvent event) {
+        ModifyTradesEvents.VILLAGER.invoker().modifyTrades(event.getTrades(), event.getType());
+    }
+
+    @SubscribeEvent
+    public static void onEvent(net.minecraftforge.event.village.WandererTradesEvent event) {
+        ModifyTradesEvents.WANDERER.invoker().modifyTrades(event.getGenericTrades(), event.getRareTrades());
     }
 }
