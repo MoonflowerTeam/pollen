@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.api.util;
 
-import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
+import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.platform.Platform;
 
 import java.util.Collection;
@@ -26,7 +26,7 @@ public class Scheduler implements ScheduledExecutorService {
             SIDED_SCHEDULERS.values().forEach(Scheduler::shutdownInternal);
             SIDED_SCHEDULERS.clear();
         }));
-        ServerLifecycleEvent.STOPPING.register(server -> {
+        ServerLifecycleEvents.STOPPING.register(server -> {
             if (SIDED_SCHEDULERS.containsKey(false))
                 SIDED_SCHEDULERS.get(false).onServerStopped();
         });

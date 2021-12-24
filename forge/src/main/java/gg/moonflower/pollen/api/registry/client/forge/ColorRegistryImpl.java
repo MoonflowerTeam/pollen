@@ -43,9 +43,9 @@ public class ColorRegistryImpl {
     }
 
     @SafeVarargs
-    public static void register(BlockColor blockColor, Supplier<Block>... blocks) {
+    public static void register(BlockColor blockColor, Supplier<? extends Block>... blocks) {
         BLOCK_COLORS.add(event -> {
-            for (Supplier<Block> block : blocks) {
+            for (Supplier<? extends Block> block : blocks) {
                 event.getBlockColors().register(blockColor, block.get());
             }
         });

@@ -16,11 +16,14 @@
     "client.RenderSystemMixin"
   ],
   "mixins": [
+    "DedicatedServerMixin",
     "ExplosionMixin",
+    "IntegratedServerMixin",
     "LevelChunkMixin",
     "LevelMixin",
     "LevelResourceAccessor",
     "LivingEntityMixin",
+    "MinecraftServerMixin",
     "MobMixin",
     "PlayerListMixin",
     "ServerLevelEntityCallbacksMixin",

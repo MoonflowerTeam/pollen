@@ -22,7 +22,7 @@ public class EntityAttributeRegistryImpl {
         ATTRIBUTE_FACTORIES.forEach(consumer -> consumer.accept(event));
     }
 
-    public static void register(Supplier<EntityType<? extends LivingEntity>> entity, AttributeSupplier.Builder attributeBuilder) {
+    public static <T extends LivingEntity> void register(Supplier<EntityType<T>> entity, AttributeSupplier.Builder attributeBuilder) {
         ATTRIBUTE_FACTORIES.add(event -> event.put(entity.get(), attributeBuilder.build()));
     }
 }

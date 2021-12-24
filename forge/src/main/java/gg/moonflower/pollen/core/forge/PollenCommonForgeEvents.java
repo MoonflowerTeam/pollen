@@ -5,7 +5,7 @@ import gg.moonflower.pollen.api.event.events.entity.ModifyTradesEvents;
 import gg.moonflower.pollen.api.event.events.entity.SetTargetEvent;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractEvent;
 import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
-import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
+import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
 import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
@@ -16,6 +16,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
@@ -54,27 +55,32 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(LivingEvent.LivingUpdateEvent event) {
-        event.setCanceled(!TickEvent.LIVING_PRE.invoker().tick(event.getEntityLiving()));
+        event.setCanceled(TickEvent.LIVING_PRE.invoker().tick(event.getEntityLiving()));
+    }
+
+    @SubscribeEvent
+    public static void onEvent(ServerAboutToStartEvent event) {
+        event.setCanceled(ServerLifecycleEvents.PRE_STARTING.invoker().preStarting(event.getServer()));
     }
 
     @SubscribeEvent
     public static void onEvent(ServerStartingEvent event) {
-        ServerLifecycleEvent.STARTING.invoker().starting(event.getServer());
+        event.setCanceled(ServerLifecycleEvents.STARTING.invoker().starting(event.getServer()));
     }
 
     @SubscribeEvent
     public static void onEvent(ServerStartedEvent event) {
-        ServerLifecycleEvent.STARTED.invoker().started(event.getServer());
+        ServerLifecycleEvents.STARTED.invoker().started(event.getServer());
     }
 
     @SubscribeEvent
     public static void onEvent(ServerStoppingEvent event) {
-        ServerLifecycleEvent.STOPPING.invoker().stopping(event.getServer());
+        ServerLifecycleEvents.STOPPING.invoker().stopping(event.getServer());
     }
 
     @SubscribeEvent
     public static void onEvent(ServerStoppedEvent event) {
-        ServerLifecycleEvent.STOPPED.invoker().stopped(event.getServer());
+        ServerLifecycleEvents.STOPPED.invoker().stopped(event.getServer());
     }
 
     @SubscribeEvent
