@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 public class EntityAttributeRegistry {
 
     @ExpectPlatform
-    public static <T extends LivingEntity> void register(Supplier<EntityType<T>> entity, AttributeSupplier.Builder attributeBuilder) {
+    public static <T extends LivingEntity> void register(Supplier<EntityType<T>> entity, Supplier<AttributeSupplier.Builder> attributeBuilder) {
         Platform.error();
     }
 }

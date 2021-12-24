@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 @ApiStatus.Internal
 public class EntityAttributeRegistryImpl {
 
-    public static <T extends LivingEntity> void register(Supplier<EntityType<T>> entity, AttributeSupplier.Builder attributeBuilder) {
-        FabricDefaultAttributeRegistry.register(entity.get(), attributeBuilder);
+    public static <T extends LivingEntity> void register(Supplier<EntityType<T>> entity, Supplier<AttributeSupplier.Builder> attributeBuilder) {
+        FabricDefaultAttributeRegistry.register(entity.get(), attributeBuilder.get());
     }
 }
