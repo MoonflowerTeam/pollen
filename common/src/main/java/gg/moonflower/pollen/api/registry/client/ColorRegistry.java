@@ -20,6 +20,7 @@ public final class ColorRegistry {
         Platform.error();
     }
 
+    @SafeVarargs
     @ExpectPlatform
     public static void register(BlockColor blockColor, Supplier<Block>... blocks) {
         Platform.error();
