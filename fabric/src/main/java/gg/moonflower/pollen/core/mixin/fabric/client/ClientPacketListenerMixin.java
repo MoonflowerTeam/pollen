@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.core.mixin.fabric.client;
 
-import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvent;
+import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
@@ -23,6 +23,6 @@ public abstract class ClientPacketListenerMixin {
 
     @Inject(method = "handleRespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;setServerBrand(Ljava/lang/String;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
     public void handleRespawn(ClientboundRespawnPacket pkt, CallbackInfo ci, ResourceKey<Level> dimensionKey, DimensionType dimensionType, LocalPlayer oldPlayer, int oldPlayerId, String serverBrand, LocalPlayer newPlayer) {
-        ClientNetworkEvent.RESPAWN.invoker().respawn(this.minecraft.gameMode, oldPlayer, newPlayer, newPlayer.connection.getConnection());
+        ClientNetworkEvents.RESPAWN.invoker().respawn(this.minecraft.gameMode, oldPlayer, newPlayer, newPlayer.connection.getConnection());
     }
 }

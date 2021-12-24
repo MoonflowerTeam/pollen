@@ -2,10 +2,10 @@ package gg.moonflower.pollen.core.fabric;
 
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.config.fabric.ConfigTracker;
-import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractEvent;
+import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractionEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
-import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
+import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
 import gg.moonflower.pollen.api.platform.Platform;
@@ -60,10 +60,10 @@ public class PollenFabric implements ModInitializer {
 
         Pollen.PLATFORM.setup();
 
-        ServerTickEvents.START_SERVER_TICK.register(level -> TickEvent.SERVER_PRE.invoker().tick());
-        ServerTickEvents.END_SERVER_TICK.register(level -> TickEvent.SERVER_POST.invoker().tick());
-        ServerTickEvents.START_WORLD_TICK.register(TickEvent.LEVEL_PRE.invoker()::tick);
-        ServerTickEvents.END_WORLD_TICK.register(TickEvent.LEVEL_POST.invoker()::tick);
+        ServerTickEvents.START_SERVER_TICK.register(level -> TickEvents.SERVER_PRE.invoker().tick());
+        ServerTickEvents.END_SERVER_TICK.register(level -> TickEvents.SERVER_POST.invoker().tick());
+        ServerTickEvents.START_WORLD_TICK.register(TickEvents.LEVEL_PRE.invoker()::tick);
+        ServerTickEvents.END_WORLD_TICK.register(TickEvents.LEVEL_POST.invoker()::tick);
 
 //        ServerLifecycleEvents.SERVER_STARTING.register(ServerLifecycleEvent.STARTING.invoker()::starting);
 //        ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvent.STARTED.invoker()::started);
@@ -73,10 +73,10 @@ public class PollenFabric implements ModInitializer {
         ServerChunkEvents.CHUNK_LOAD.register(ChunkEvents.LOAD.invoker()::load);
         ServerChunkEvents.CHUNK_UNLOAD.register(ChunkEvents.UNLOAD.invoker()::unload);
 
-        UseItemCallback.EVENT.register(PlayerInteractEvent.RIGHT_CLICK_ITEM.invoker()::interaction);
-        UseBlockCallback.EVENT.register(PlayerInteractEvent.RIGHT_CLICK_BLOCK.invoker()::interaction);
-        AttackBlockCallback.EVENT.register(PlayerInteractEvent.LEFT_CLICK_BLOCK.invoker()::interaction);
-        UseEntityCallback.EVENT.register((player, world, hand, entity, entityHitResult) -> PlayerInteractEvent.RIGHT_CLICK_ENTITY.invoker().interaction(player, world, hand, entity));
+        UseItemCallback.EVENT.register(PlayerInteractionEvents.RIGHT_CLICK_ITEM.invoker()::interaction);
+        UseBlockCallback.EVENT.register(PlayerInteractionEvents.RIGHT_CLICK_BLOCK.invoker()::interaction);
+        AttackBlockCallback.EVENT.register(PlayerInteractionEvents.LEFT_CLICK_BLOCK.invoker()::interaction);
+        UseEntityCallback.EVENT.register((player, world, hand, entity, entityHitResult) -> PlayerInteractionEvents.RIGHT_CLICK_ENTITY.invoker().interaction(player, world, hand, entity));
 
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> CommandRegistryEvent.EVENT.invoker().registerCommands(dispatcher, dedicated ? Commands.CommandSelection.DEDICATED : Platform.getRunningServer().isPresent() ? Commands.CommandSelection.INTEGRATED : Commands.CommandSelection.ALL));
 

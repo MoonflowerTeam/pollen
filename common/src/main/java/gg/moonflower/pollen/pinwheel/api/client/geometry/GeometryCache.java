@@ -3,7 +3,7 @@ package gg.moonflower.pollen.pinwheel.api.client.geometry;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
+import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.Util;
@@ -54,7 +54,7 @@ public final class GeometryCache {
                 LOGGER.error("Failed to load cache metadata", e);
             }
         }
-        TickEvent.CLIENT_POST.register(() -> {
+        TickEvents.CLIENT_POST.register(() -> {
             if (nextWriteTime == Long.MAX_VALUE)
                 return;
 

@@ -13,9 +13,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 
-public interface PlayerInteractEvent {
+public final class PlayerInteractionEvents {
 
-    PollinatedEvent<RightClickItem> RIGHT_CLICK_ITEM = EventRegistry.create(RightClickItem.class, events -> (player, level, hand) -> {
+    public static final PollinatedEvent<RightClickItem> RIGHT_CLICK_ITEM = EventRegistry.create(RightClickItem.class, events -> (player, level, hand) -> {
         for (RightClickItem event : events) {
             InteractionResultHolder<ItemStack> result = event.interaction(player, level, hand);
             if (result.getResult() != InteractionResult.PASS)
@@ -24,27 +24,29 @@ public interface PlayerInteractEvent {
         return InteractionResultHolder.pass(ItemStack.EMPTY);
     });
 
-    PollinatedEvent<RightClickEntity> RIGHT_CLICK_ENTITY = EventRegistry.createResult(RightClickEntity.class);
-    PollinatedEvent<RightClickBlock> RIGHT_CLICK_BLOCK = EventRegistry.createResult(RightClickBlock.class);
-    PollinatedEvent<LeftClickBlock> LEFT_CLICK_BLOCK = EventRegistry.createResult(LeftClickBlock.class);
+    public static final PollinatedEvent<RightClickEntity> RIGHT_CLICK_ENTITY = EventRegistry.createResult(RightClickEntity.class);
+    public static final PollinatedEvent<RightClickBlock> RIGHT_CLICK_BLOCK = EventRegistry.createResult(RightClickBlock.class);
+    public static final PollinatedEvent<LeftClickBlock> LEFT_CLICK_BLOCK = EventRegistry.createResult(LeftClickBlock.class);
+
+    private PlayerInteractionEvents() {}
 
     @FunctionalInterface
-    interface RightClickItem {
+    public interface RightClickItem {
         InteractionResultHolder<ItemStack> interaction(Player player, Level level, InteractionHand hand);
     }
 
     @FunctionalInterface
-    interface RightClickEntity {
+    public interface RightClickEntity {
         InteractionResult interaction(Player player, Level level, InteractionHand hand, Entity entity);
     }
 
     @FunctionalInterface
-    interface RightClickBlock {
+    public interface RightClickBlock {
         InteractionResult interaction(Player player, Level level, InteractionHand hand, BlockHitResult hitResult);
     }
 
     @FunctionalInterface
-    interface LeftClickBlock {
+    public interface LeftClickBlock {
         InteractionResult interaction(Player player, Level level, InteractionHand hand, BlockPos pos, Direction direction);
     }
 

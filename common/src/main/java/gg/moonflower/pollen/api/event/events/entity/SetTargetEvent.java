@@ -16,7 +16,10 @@ public interface SetTargetEvent {
     PollinatedEvent<SetTargetEvent> EVENT = EventRegistry.createLoop(SetTargetEvent.class);
 
     /**
-     * Called when an entity targets another entity.
+     * Fired when an entity targets another entity.
+     *
+     * @param attacker The attacking entity
+     * @param target   The target entity
      */
     void setTarget(LivingEntity attacker, LivingEntity target);
 }

@@ -6,24 +6,26 @@ import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.Connection;
 
-public interface ClientNetworkEvent {
+public final class ClientNetworkEvents {
 
-    PollinatedEvent<Login> LOGIN = EventRegistry.createLoop(Login.class);
-    PollinatedEvent<Logout> LOGOUT = EventRegistry.createLoop(Logout.class);
-    PollinatedEvent<Respawn> RESPAWN = EventRegistry.createLoop(Respawn.class);
+    public static final PollinatedEvent<Login> LOGIN = EventRegistry.createLoop(Login.class);
+    public static final PollinatedEvent<Logout> LOGOUT = EventRegistry.createLoop(Logout.class);
+    public static final PollinatedEvent<Respawn> RESPAWN = EventRegistry.createLoop(Respawn.class);
+
+    private ClientNetworkEvents() {}
 
     @FunctionalInterface
-    interface Login {
+    public interface Login {
         void login(MultiPlayerGameMode controller, LocalPlayer player, Connection connection);
     }
 
     @FunctionalInterface
-    interface Logout {
+    public interface Logout {
         void logout(MultiPlayerGameMode controller, LocalPlayer player, Connection connection);
     }
 
     @FunctionalInterface
-    interface Respawn {
+    public interface Respawn {
         void respawn(MultiPlayerGameMode controller, LocalPlayer oldPlayer, LocalPlayer player, Connection connection);
     }
 

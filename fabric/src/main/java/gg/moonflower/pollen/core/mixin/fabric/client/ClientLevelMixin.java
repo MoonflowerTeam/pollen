@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ClientLevelMixin {
     @Inject(method = "addEntity", at = @At("HEAD"), cancellable = true)
     private void addEntity(int entityId, Entity entityToSpawn, CallbackInfo ci) {
-        if (EntityEvents.JOIN.invoker().onJoin(entityToSpawn, (ClientLevel) (Object) this))
+        if (!EntityEvents.JOIN.invoker().onJoin(entityToSpawn, (ClientLevel) (Object) this))
             ci.cancel();
     }
 
