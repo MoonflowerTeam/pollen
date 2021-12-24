@@ -82,8 +82,4 @@ public class Pollen {
     public static MinecraftServer getRunningServer() {
         return server;
     }
-
-
-
-
 }
