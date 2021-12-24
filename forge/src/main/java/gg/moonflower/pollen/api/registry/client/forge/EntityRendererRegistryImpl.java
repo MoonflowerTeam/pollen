@@ -11,11 +11,13 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.function.Supplier;
+
 @ApiStatus.Internal
 public class EntityRendererRegistryImpl {
-    public static <T extends Entity> void register(EntityType<T> type, EntityRendererRegistry.EntityRendererFactory<T> factory) {
+    public static <T extends Entity> void register(Supplier<EntityType<T>> type, EntityRendererRegistry.EntityRendererFactory<T> factory) {
         Minecraft minecraft = Minecraft.getInstance();
-        RenderingRegistry.registerEntityRenderingHandler(type, renderDispatcher -> factory.create(new EntityRendererRegistry.EntityRendererFactory.Context() {
+        RenderingRegistry.registerEntityRenderingHandler(type.get(), renderDispatcher -> factory.create(new EntityRendererRegistry.EntityRendererFactory.Context() {
             @Override
             public EntityRenderDispatcher getEntityRenderDispatcher() {
                 return renderDispatcher;

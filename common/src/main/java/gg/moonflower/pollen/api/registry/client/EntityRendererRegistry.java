@@ -10,13 +10,15 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 
+import java.util.function.Supplier;
+
 public final class EntityRendererRegistry {
 
     private EntityRendererRegistry() {
     }
 
     @ExpectPlatform
-    public static <T extends Entity> void register(EntityType<T> type, EntityRendererFactory<T> factory) {
+    public static <T extends Entity> void register(Supplier<EntityType<T>> type, EntityRendererFactory<T> factory) {
         Platform.error();
     }
 

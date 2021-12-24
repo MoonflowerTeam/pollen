@@ -10,13 +10,15 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
+import java.util.function.Supplier;
+
 public final class BlockEntityRendererRegistry {
 
     private BlockEntityRendererRegistry() {
     }
 
     @ExpectPlatform
-    public static <T extends BlockEntity> void register(BlockEntityType<T> type, BlockEntityRendererFactory<T> factory) {
+    public static <T extends BlockEntity> void register(Supplier<BlockEntityType<T>> type, BlockEntityRendererFactory<T> factory) {
         Platform.error();
     }
 
