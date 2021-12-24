@@ -5,7 +5,7 @@ import gg.moonflower.pollen.api.event.events.entity.ModifyTradesEvents;
 import gg.moonflower.pollen.api.event.events.entity.SetTargetEvent;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractEvent;
 import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
-import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
+import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
 import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
@@ -18,10 +18,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
+import net.minecraftforge.fml.event.server.*;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
@@ -58,23 +55,28 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
+    public static void onEvent(FMLServerAboutToStartEvent event) {
+        ServerLifecycleEvents.PRE_STARTING.invoker().preStarting(event.getServer());
+    }
+
+    @SubscribeEvent
     public static void onEvent(FMLServerStartingEvent event) {
-        ServerLifecycleEvent.STARTING.invoker().starting(event.getServer());
+        ServerLifecycleEvents.STARTING.invoker().starting(event.getServer());
     }
 
     @SubscribeEvent
     public static void onEvent(FMLServerStartedEvent event) {
-        ServerLifecycleEvent.STARTED.invoker().started(event.getServer());
+        ServerLifecycleEvents.STARTED.invoker().started(event.getServer());
     }
 
     @SubscribeEvent
     public static void onEvent(FMLServerStoppingEvent event) {
-        ServerLifecycleEvent.STOPPING.invoker().stopping(event.getServer());
+        ServerLifecycleEvents.STOPPING.invoker().stopping(event.getServer());
     }
 
     @SubscribeEvent
     public static void onEvent(FMLServerStoppedEvent event) {
-        ServerLifecycleEvent.STOPPED.invoker().stopped(event.getServer());
+        ServerLifecycleEvents.STOPPED.invoker().stopped(event.getServer());
     }
 
     @SubscribeEvent

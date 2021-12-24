@@ -6,18 +6,21 @@
   "client": [
     "client.CameraAccessor",
     "client.ClientHandshakePacketListenerImplMixin",
+    "client.ClientLevelMixin",
     "client.ClientPacketListenerMixin",
     "client.GameRendererMixin",
     "client.KeyboardInputMixin",
     "client.MouseHandlerMixin",
-    "client.ParticleEngineMixin",
-    "client.ClientLevelMixin"
+    "client.ParticleEngineMixin"
   ],
   "mixins": [
+    "DedicatedServerMixin",
     "ExplosionMixin",
+    "IntegratedServerMixin",
     "LevelMixin",
     "LevelResourceAccessor",
     "LivingEntityMixin",
+    "MinecraftServerMixin",
     "MobMixin",
     "PlayerListMixin",
     "ServerLevelMixin"

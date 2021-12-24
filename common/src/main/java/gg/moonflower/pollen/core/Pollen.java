@@ -9,7 +9,7 @@ import gg.moonflower.pollen.api.command.argument.EnumArgument;
 import gg.moonflower.pollen.api.command.argument.TimeArgumentType;
 import gg.moonflower.pollen.api.crafting.brewing.PollenBrewingRecipe;
 import gg.moonflower.pollen.api.event.events.client.render.InitRendererEvent;
-import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvent;
+import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
 import gg.moonflower.pollen.api.sync.SyncedDataManager;
@@ -68,8 +68,11 @@ public class Pollen {
         ArgumentTypes.register(MOD_ID + ":color", ColorArgumentType.class, new EmptyArgumentSerializer<>(ColorArgumentType::new));
         ArgumentTypes.register(MOD_ID + ":time", TimeArgumentType.class, new TimeArgumentType.Serializer());
         ArgumentTypes.register(MOD_ID + ":enum", EnumArgument.class, new EnumArgument.Serializer());
-        ServerLifecycleEvent.STARTING.register(server -> Pollen.server = server);
-        ServerLifecycleEvent.STOPPED.register(server -> Pollen.server = null);
+        ServerLifecycleEvents.PRE_STARTING.register(server -> {
+            Pollen.server = server;
+            return true;
+        });
+        ServerLifecycleEvents.STOPPED.register(server -> Pollen.server = null);
         PollenMessages.init();
     }
 
