@@ -16,7 +16,7 @@ public final class EntityRendererRegistry {
     }
 
     @ExpectPlatform
-    public static <T extends Entity> void register(EntityType<T> type, EntityRendererProvider<T> factory) {
+    public static <T extends Entity> void register(Supplier<EntityType<T>> type, EntityRendererProvider<T> factory) {
         Platform.error();
     }
 

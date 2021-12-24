@@ -6,10 +6,12 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.function.Supplier;
+
 @ApiStatus.Internal
 public class EntityAttributeRegistryImpl {
 
-    public static void register(EntityType<? extends LivingEntity> entity, AttributeSupplier.Builder attributeBuilder) {
-        FabricDefaultAttributeRegistry.register(entity, attributeBuilder);
+    public static void register(Supplier<EntityType<? extends LivingEntity>> entity, AttributeSupplier.Builder attributeBuilder) {
+        FabricDefaultAttributeRegistry.register(entity.get(), attributeBuilder);
     }
 }

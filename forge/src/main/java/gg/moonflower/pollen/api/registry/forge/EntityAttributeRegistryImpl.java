@@ -10,6 +10,7 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @ApiStatus.Internal
 public class EntityAttributeRegistryImpl {
@@ -21,7 +22,7 @@ public class EntityAttributeRegistryImpl {
         ATTRIBUTE_FACTORIES.forEach(consumer -> consumer.accept(event));
     }
 
-    public static void register(EntityType<? extends LivingEntity> entity, AttributeSupplier.Builder attributeBuilder) {
-        ATTRIBUTE_FACTORIES.add(event -> event.put(entity, attributeBuilder.build()));
+    public static void register(Supplier<EntityType<? extends LivingEntity>> entity, AttributeSupplier.Builder attributeBuilder) {
+        ATTRIBUTE_FACTORIES.add(event -> event.put(entity.get(), attributeBuilder.build()));
     }
 }

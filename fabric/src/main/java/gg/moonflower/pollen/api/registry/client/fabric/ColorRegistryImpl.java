@@ -7,13 +7,22 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.function.Supplier;
+
 @ApiStatus.Internal
 public class ColorRegistryImpl {
-    public static void register(ItemColor itemColor, ItemLike... items) {
-        ColorProviderRegistry.ITEM.register(itemColor, items);
+
+    @SafeVarargs
+    public static void register(ItemColor itemColor, Supplier<ItemLike>... items) {
+        for (Supplier<ItemLike> item : items) {
+            ColorProviderRegistry.ITEM.register(itemColor, item.get());
+        }
     }
 
-    public static void register(BlockColor blockColor, Block... blocks) {
-        ColorProviderRegistry.BLOCK.register(blockColor, blocks);
+    @SafeVarargs
+    public static void register(BlockColor blockColor, Supplier<Block>... blocks) {
+        for (Supplier<Block> block : blocks) {
+            ColorProviderRegistry.BLOCK.register(blockColor, block.get());
+        }
     }
 }

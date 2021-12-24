@@ -10,9 +10,12 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 
 @ApiStatus.Internal
 public class BlockEntityRendererRegistryImpl {
+
 
     private static final Set<Consumer<EntityRenderersEvent.RegisterRenderers>> BLOCK_ENTITY_FACTORIES = new HashSet<>();
 
@@ -21,7 +24,7 @@ public class BlockEntityRendererRegistryImpl {
         BLOCK_ENTITY_FACTORIES.forEach(consumer -> consumer.accept(event));
     }
 
-    public static <T extends BlockEntity> void register(BlockEntityType<T> type, BlockEntityRendererProvider<T> factory) {
-        BLOCK_ENTITY_FACTORIES.add(event -> event.registerBlockEntityRenderer(type, factory));
+    public static <T extends BlockEntity> void register(Supplier<BlockEntityType<T>> type, BlockEntityRendererProvider<T> factory) {
+        BLOCK_ENTITY_FACTORIES.add(event -> event.registerBlockEntityRenderer(type.get(), factory));
     }
 }

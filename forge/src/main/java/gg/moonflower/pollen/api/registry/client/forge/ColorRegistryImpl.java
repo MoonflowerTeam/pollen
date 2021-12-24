@@ -14,6 +14,7 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @ApiStatus.Internal
 @Mod.EventBusSubscriber(modid = Pollen.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -32,11 +33,21 @@ public class ColorRegistryImpl {
         BLOCK_COLORS.forEach(consumer -> consumer.accept(event));
     }
 
-    public static void register(ItemColor itemColor, ItemLike... items) {
-        ITEM_COLORS.add(event -> event.getItemColors().register(itemColor, items));
+    @SafeVarargs
+    public static void register(ItemColor itemColor, Supplier<ItemLike>... items) {
+        ITEM_COLORS.add(event -> {
+            for (Supplier<ItemLike> item : items) {
+                event.getItemColors().register(itemColor, item.get());
+            }
+        });
     }
 
-    public static void register(BlockColor blockColor, Block... blocks) {
-        BLOCK_COLORS.add(event -> event.getBlockColors().register(blockColor, blocks));
+    @SafeVarargs
+    public static void register(BlockColor blockColor, Supplier<Block>... blocks) {
+        BLOCK_COLORS.add(event -> {
+            for (Supplier<Block> block : blocks) {
+                event.getBlockColors().register(blockColor, block.get());
+            }
+        });
     }
 }
