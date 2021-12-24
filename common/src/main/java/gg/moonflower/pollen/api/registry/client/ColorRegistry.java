@@ -16,7 +16,7 @@ public final class ColorRegistry {
 
     @SafeVarargs
     @ExpectPlatform
-    public static void register(ItemColor itemColor, Supplier<ItemLike>... items) {
+    public static void register(ItemColor itemColor, Supplier<? extends ItemLike>... items) {
         Platform.error();
     }
 

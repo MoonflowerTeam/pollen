@@ -34,9 +34,9 @@ public class ColorRegistryImpl {
     }
 
     @SafeVarargs
-    public static void register(ItemColor itemColor, Supplier<ItemLike>... items) {
+    public static void register(ItemColor itemColor, Supplier<? extends ItemLike>... items) {
         ITEM_COLORS.add(event -> {
-            for (Supplier<ItemLike> item : items) {
+            for (Supplier<? extends ItemLike> item : items) {
                 event.getItemColors().register(itemColor, item.get());
             }
         });
