@@ -1,7 +1,6 @@
 package gg.moonflower.pollen.core.mixin.fabric.client;
 
 import gg.moonflower.pollen.api.entity.PollenEntity;
-import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.entity.LevelEntityGetter;

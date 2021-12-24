@@ -13,7 +13,6 @@ import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.command.ConfigCommand;
 import gg.moonflower.pollen.core.mixin.fabric.LevelResourceAccessor;
-import gg.moonflower.pollen.core.mixin.fabric.ServerLevelEntityCallbacksMixin;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;

@@ -4,7 +4,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Allows Fabric to have similar BlockEntity functionality as Forge.
@@ -30,7 +29,7 @@ public interface PollenBlockEntity {
     /**
      * Called when the initial data from this BlockEntity is received on the client when a chunk is sent.
      *
-     * @param tag   The tag received
+     * @param tag The tag received
      */
     default void handleUpdateTag(CompoundTag tag) {
         ((BlockEntity) this).load(tag);

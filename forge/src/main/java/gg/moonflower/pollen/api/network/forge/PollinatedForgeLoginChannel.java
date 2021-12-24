@@ -7,7 +7,6 @@ import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import gg.moonflower.pollen.api.network.packet.login.PollinatedLoginPacket;
 import gg.moonflower.pollen.api.registry.NetworkRegistry;
 import net.minecraft.network.protocol.Packet;
-
 import net.minecraftforge.network.HandshakeHandler;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.simple.SimpleChannel;
