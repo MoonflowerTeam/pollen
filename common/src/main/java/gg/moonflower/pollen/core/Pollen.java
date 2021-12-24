@@ -35,12 +35,14 @@ public class Pollen {
     public static final RecipeType<PollenBrewingRecipe> BREWING = RecipeType.register(MOD_ID + ":brewing");
     private static final PollinatedRegistry<RecipeSerializer<?>> RECIPE_SERIALIZERS = PollinatedRegistry.create(Registry.RECIPE_SERIALIZER, MOD_ID);
     public static final Supplier<RecipeSerializer<PollenBrewingRecipe>> BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("brewing", PollenBrewingRecipe::createSerializer);
-    private static MinecraftServer server;    public static final Platform PLATFORM = Platform.builder(Pollen.MOD_ID)
+    public static final Platform PLATFORM = Platform.builder(Pollen.MOD_ID)
             .commonInit(Pollen::onCommon)
             .clientInit(Pollen::onClient)
             .commonPostInit(Pollen::onCommonPost)
             .clientPostInit(Pollen::onClientPost)
             .build();
+
+    private static MinecraftServer server;
 
     public static void init() {
         PollenSuggestionProviders.init();
