@@ -18,9 +18,9 @@ public interface TickEvent {
 
     PollinatedEvent<LivingPre> LIVING_PRE = EventRegistry.create(LivingPre.class, events -> entity -> {
         for (LivingPre event : events)
-            if (!event.tick(entity))
-                return false;
-        return true;
+            if (event.tick(entity))
+                return true;
+        return false;
     });
 
     PollinatedEvent<LivingPost> LIVING_POST = EventRegistry.createLoop(LivingPost.class);

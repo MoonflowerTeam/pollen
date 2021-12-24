@@ -51,17 +51,17 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(LivingEvent.LivingUpdateEvent event) {
-        event.setCanceled(!TickEvent.LIVING_PRE.invoker().tick(event.getEntityLiving()));
+        event.setCanceled(TickEvent.LIVING_PRE.invoker().tick(event.getEntityLiving()));
     }
 
     @SubscribeEvent
     public static void onEvent(FMLServerAboutToStartEvent event) {
-        ServerLifecycleEvents.PRE_STARTING.invoker().preStarting(event.getServer());
+        event.setCanceled(ServerLifecycleEvents.PRE_STARTING.invoker().preStarting(event.getServer()));
     }
 
     @SubscribeEvent
     public static void onEvent(FMLServerStartingEvent event) {
-        ServerLifecycleEvents.STARTING.invoker().starting(event.getServer());
+        event.setCanceled(ServerLifecycleEvents.STARTING.invoker().starting(event.getServer()));
     }
 
     @SubscribeEvent
