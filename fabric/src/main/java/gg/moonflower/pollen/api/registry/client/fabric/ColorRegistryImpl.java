@@ -13,8 +13,8 @@ import java.util.function.Supplier;
 public class ColorRegistryImpl {
 
     @SafeVarargs
-    public static void register(ItemColor itemColor, Supplier<ItemLike>... items) {
-        for (Supplier<ItemLike> item : items) {
+    public static void register(ItemColor itemColor, Supplier<? extends ItemLike>... items) {
+        for (Supplier<? extends ItemLike> item : items) {
             ColorProviderRegistry.ITEM.register(itemColor, item.get());
         }
     }
