@@ -21,10 +21,13 @@ import java.util.concurrent.Executor;
  * @see CompletableFuture
  * @since 1.0.0
  */
-public class OnlineRequest {
+public final class OnlineRequest {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11";
+
+    private OnlineRequest() {
+    }
 
     /**
      * <p>Fetches data from the specified url.</p>

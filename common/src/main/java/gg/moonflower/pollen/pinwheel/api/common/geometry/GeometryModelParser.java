@@ -16,9 +16,12 @@ import java.io.Reader;
  * @author Ocelot
  * @since 1.0.0
  */
-public class GeometryModelParser {
+public final class GeometryModelParser {
 
     private static final Gson GSON = new GsonBuilder().registerTypeAdapter(GeometryModelTextureTable.class, new GeometryModelTextureTable.Serializer()).create();
+
+    private GeometryModelParser() {
+    }
 
     /**
      * Creates a new geometry model from the specified reader.

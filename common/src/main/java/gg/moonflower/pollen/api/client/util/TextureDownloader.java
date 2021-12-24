@@ -27,7 +27,10 @@ import static org.lwjgl.stb.STBImageWrite.stbi_write_png;
  * @author Ocelot
  * @since 1.0.0
  */
-public class TextureDownloader {
+public final class TextureDownloader {
+
+    private TextureDownloader() {
+    }
 
     /**
      * Writes the specified texture to file with the specified name. If the texture specifies mipmap levels, then the file name will be <code>name-#.png</code>.

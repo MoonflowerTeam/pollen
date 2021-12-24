@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.core.mixin.forge;
 
-import gg.moonflower.pollen.api.registry.forge.ResourceRegistryImpl;
+import gg.moonflower.pollen.api.registry.resource.forge.ResourceRegistryImpl;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;

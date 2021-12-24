@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.core.mixin.client;
 
-import gg.moonflower.pollen.api.event.events.registry.RegisterAtlasSpriteEvent;
+import gg.moonflower.pollen.api.event.events.registry.client.RegisterAtlasSpriteEvent;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;

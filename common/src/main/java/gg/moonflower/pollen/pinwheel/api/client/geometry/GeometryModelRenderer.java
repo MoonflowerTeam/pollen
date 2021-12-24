@@ -21,11 +21,14 @@ import java.util.Map;
  * @author Ocelot
  * @since 1.0.0
  */
-public class GeometryModelRenderer {
+public final class GeometryModelRenderer {
 
     private static final Map<Model, Map<String, ModelPart>> MODEL_PARTS = new HashMap<>();
     private static final Map<String, String> MAPPED_NAMES = new HashMap<>();
     private static final GeometryModelBufferSource SOURCE = new GeometryModelBufferSource();
+
+    private GeometryModelRenderer() {
+    }
 
     /**
      * Copies angles from the parent model to the geometry model.

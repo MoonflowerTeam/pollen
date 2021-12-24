@@ -16,7 +16,10 @@ import java.util.Set;
  * @author Ocelot
  */
 @ApiStatus.Internal
-public class Geometry110Parser {
+public final class Geometry110Parser {
+
+    private Geometry110Parser() {
+    }
 
     public static GeometryModelData[] parseModel(JsonElement json) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();

@@ -6,7 +6,7 @@ package gg.moonflower.pollen.api.util;
  * @author Ocelot
  * @since 1.0.0
  */
-public class NbtConstants {
+public final class NbtConstants {
 
     public static final int END = 0;
     public static final int BYTE = 1;
@@ -22,4 +22,7 @@ public class NbtConstants {
     public static final int INT_ARRAY = 11;
     public static final int LONG_ARRAY = 12;
     public static final int ANY_NUMERIC = 99;
+
+    private NbtConstants() {
+    }
 }

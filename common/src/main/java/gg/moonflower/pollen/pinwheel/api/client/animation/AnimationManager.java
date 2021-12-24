@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.pinwheel.api.client.animation;
 
-import gg.moonflower.pollen.api.registry.PollinatedPreparableReloadListener;
-import gg.moonflower.pollen.api.registry.ResourceRegistry;
+import gg.moonflower.pollen.api.registry.resource.PollinatedPreparableReloadListener;
+import gg.moonflower.pollen.api.registry.resource.ResourceRegistry;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.pinwheel.api.common.animation.AnimationData;
 import gg.moonflower.pollen.pinwheel.api.common.util.BackgroundLoader;
@@ -40,6 +40,9 @@ public final class AnimationManager {
 
     static {
         DYNAMIC_RELOADER.addListener(RELOADER);
+    }
+
+    private AnimationManager() {
     }
 
     @ApiStatus.Internal

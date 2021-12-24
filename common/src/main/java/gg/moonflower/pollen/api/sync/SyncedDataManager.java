@@ -27,7 +27,7 @@ import java.util.stream.Stream;
  * @author Ocelot
  * @since 1.0.0
  **/
-public class SyncedDataManager {
+public final class SyncedDataManager {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Map<ResourceLocation, SyncedDataKey<?>> REGISTERED_KEYS = new HashMap<>();
@@ -35,6 +35,9 @@ public class SyncedDataManager {
     private static final Map<Integer, SyncedDataKey<?>> CLIENT_KEY_LOOKUP = new Int2ObjectArrayMap<>();
     private static int nextId;
     private static boolean dirty;
+
+    private SyncedDataManager() {
+    }
 
     private static Map<Integer, SyncedDataKey<?>> getKeyLookup() {
         return !CLIENT_KEY_LOOKUP.isEmpty() ? CLIENT_KEY_LOOKUP : KEY_LOOKUP;

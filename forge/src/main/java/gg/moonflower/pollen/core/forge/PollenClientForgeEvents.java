@@ -3,7 +3,7 @@ package gg.moonflower.pollen.core.forge;
 import gg.moonflower.pollen.api.event.events.client.InputEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvent;
 import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvent;
-import gg.moonflower.pollen.api.event.events.registry.ParticleRegistryEvent;
+import gg.moonflower.pollen.api.event.events.registry.client.ParticleFactoryRegistryEvent;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.extensions.MouseHandlerExtension;
 import net.minecraft.client.Minecraft;
@@ -85,14 +85,14 @@ public class PollenClientForgeEvents {
     @SubscribeEvent
     public static void onEvent(ParticleFactoryRegisterEvent event) {
         ParticleEngine particleEngine = Minecraft.getInstance().particleEngine;
-        ParticleRegistryEvent.EVENT.invoker().registerParticles(new ParticleRegistryEvent.Registry() {
+        ParticleFactoryRegistryEvent.EVENT.invoker().registerParticles(new ParticleFactoryRegistryEvent.Registry() {
             @Override
             public <T extends ParticleOptions> void register(ParticleType<T> type, ParticleProvider<T> provider) {
                 particleEngine.register(type, provider);
             }
 
             @Override
-            public <T extends ParticleOptions> void register(ParticleType<T> type, ParticleRegistryEvent.Factory<T> factory) {
+            public <T extends ParticleOptions> void register(ParticleType<T> type, ParticleFactoryRegistryEvent.Factory<T> factory) {
                 particleEngine.register(type, factory::create);
             }
         });

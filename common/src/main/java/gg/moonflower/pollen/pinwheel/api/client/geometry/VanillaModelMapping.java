@@ -17,7 +17,7 @@ import java.util.Map;
  * @author Ocelot
  * @since 1.0.0
  */
-public class VanillaModelMapping {
+public final class VanillaModelMapping {
 
     private static final Map<Class<? extends Model>, Map<String, String>> MAPPING = new HashMap<>();
 
@@ -99,6 +99,9 @@ public class VanillaModelMapping {
         add(WolfModel.class, "head", "realHead", "body", "leg0", "leg1", "leg2", "leg3", "tail", "realTail", "upperBody");
         // No ZombieModel fields
         add(ZombieVillagerModel.class, "hatRim");
+    }
+
+    private VanillaModelMapping() {
     }
 
     private static void add(Class<? extends Model> clazz, String... mapping) {

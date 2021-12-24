@@ -33,11 +33,14 @@ import java.util.function.Consumer;
  * @author Ocelot
  * @since 1.0.0
  */
-public class SkinHelper {
+public final class SkinHelper {
 
     private static final Map<GameProfile, CompletableFuture<GameProfile>> PROFILE_CACHE = new WeakHashMap<>();
     private static MinecraftSessionService sessionService;
     private static GameProfileCache gameProfileCache;
+
+    private SkinHelper() {
+    }
 
     @ApiStatus.Internal
     public static void init() {

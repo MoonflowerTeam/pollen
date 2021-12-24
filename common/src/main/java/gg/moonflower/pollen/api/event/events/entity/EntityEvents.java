@@ -10,8 +10,8 @@ import net.minecraft.world.level.Level;
  *
  * @author abigailfails
  * @since 1.0.0
- * */
-public class EntityEvents {
+ */
+public final class EntityEvents {
 
     public static final PollinatedEvent<Join> JOIN = EventRegistry.create(Join.class, events -> (entity, level) -> {
         for (Join event : events)
