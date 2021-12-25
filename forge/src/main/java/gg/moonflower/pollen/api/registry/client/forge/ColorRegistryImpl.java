@@ -13,6 +13,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -20,8 +21,8 @@ import java.util.function.Supplier;
 @Mod.EventBusSubscriber(modid = Pollen.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ColorRegistryImpl {
 
-    private static final Set<Consumer<ColorHandlerEvent.Item>> ITEM_COLORS = new HashSet<>();
-    private static final Set<Consumer<ColorHandlerEvent.Block>> BLOCK_COLORS = new HashSet<>();
+    private static final Set<Consumer<ColorHandlerEvent.Item>> ITEM_COLORS = ConcurrentHashMap.newKeySet();
+    private static final Set<Consumer<ColorHandlerEvent.Block>> BLOCK_COLORS = ConcurrentHashMap.newKeySet();
 
     @SubscribeEvent
     public static void onEvent(ColorHandlerEvent.Item event) {
