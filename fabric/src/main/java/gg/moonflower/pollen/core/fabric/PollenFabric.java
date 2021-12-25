@@ -65,8 +65,6 @@ public class PollenFabric implements ModInitializer {
         ServerTickEvents.START_WORLD_TICK.register(TickEvents.LEVEL_PRE.invoker()::tick);
         ServerTickEvents.END_WORLD_TICK.register(TickEvents.LEVEL_POST.invoker()::tick);
 
-//        ServerLifecycleEvents.SERVER_STARTING.register(ServerLifecycleEvent.STARTING.invoker()::starting);
-//        ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvent.STARTED.invoker()::started);
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STOPPING.register(ServerLifecycleEvents.STOPPING.invoker()::stopping);
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STOPPED.register(ServerLifecycleEvents.STOPPED.invoker()::stopped);
 
