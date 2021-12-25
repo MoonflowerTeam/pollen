@@ -55,6 +55,7 @@ public class Pollen {
         AnimationManager.init();
         AdvancementModifierManager.init();
         ShaderLoader.init();
+        DebugInputs.init();
         InitRendererEvent.EVENT.register(ShaderConst::init);
     }
 
