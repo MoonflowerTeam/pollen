@@ -12,6 +12,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -19,7 +20,7 @@ import java.util.function.Supplier;
 @Mod.EventBusSubscriber(modid = Pollen.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class BlockEntityRendererRegistryImpl {
 
-    private static final Set<Consumer<EntityRenderersEvent.RegisterRenderers>> BLOCK_ENTITY_FACTORIES = new HashSet<>();
+    private static final Set<Consumer<EntityRenderersEvent.RegisterRenderers>> BLOCK_ENTITY_FACTORIES = ConcurrentHashMap.newKeySet();
 
     @SubscribeEvent
     public static void onEvent(EntityRenderersEvent.RegisterRenderers event) {
