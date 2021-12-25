@@ -29,7 +29,7 @@ public abstract class ServerPlayerMixin extends Player {
         ContainerEvents.OPEN.invoker().open(this, this.containerMenu);
     }
 
-    @Inject(method = "openHorseInventory", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/AbstractContainerMenu;addSlotListener(Lnet/minecraft/world/inventory/ContainerListener;)V", shift = At.Shift.AFTER))
+    @Inject(method = "openHorseInventory", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;initMenu(Lnet/minecraft/world/inventory/AbstractContainerMenu;)V", shift = At.Shift.AFTER))
     public void openHorseInventory(AbstractHorse horse, Container inventory, CallbackInfo ci) {
         ContainerEvents.OPEN.invoker().open(this, this.containerMenu);
     }
