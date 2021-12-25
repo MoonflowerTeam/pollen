@@ -12,19 +12,19 @@ import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
 import gg.moonflower.pollen.api.event.events.world.ExplosionEvents;
 import gg.moonflower.pollen.core.Pollen;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
-import net.minecraftforge.event.server.ServerAboutToStartEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.event.server.ServerStoppedEvent;
-import net.minecraftforge.event.server.ServerStoppingEvent;
+import net.minecraftforge.event.server.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
@@ -178,12 +178,42 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.village.VillagerTradesEvent event) {
-        ModifyTradesEvents.VILLAGER.invoker().modifyTrades(event.getTrades(), event.getType());
+        Int2ObjectMap<ModifyTradesEvents.TradeRegistry> newTrades = new Int2ObjectOpenHashMap<>();
+        ModifyTradesEvents.VILLAGER.invoker().modifyTrades(new ModifyTradesEvents.ModifyVillager.Context() {
+            @Override
+            public VillagerProfession getProfession() {
+                return event.getType();
+            }
+
+            @Override
+            public ModifyTradesEvents.TradeRegistry getTrades(int tier) {
+                Validate.exclusiveBetween(0, 6, tier, "Tier must be between 1 and 5");
+                return newTrades.computeIfAbsent(tier, key -> new ModifyTradesEvents.TradeRegistry());
+            }
+        });
+
+        newTrades.forEach((tier, registry) -> event.getTrades().get(tier).addAll(registry));
     }
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.village.WandererTradesEvent event) {
-        ModifyTradesEvents.WANDERER.invoker().modifyTrades(event.getGenericTrades(), event.getRareTrades());
+        ModifyTradesEvents.TradeRegistry generic = new ModifyTradesEvents.TradeRegistry();
+        ModifyTradesEvents.TradeRegistry rare = new ModifyTradesEvents.TradeRegistry();
+
+        ModifyTradesEvents.WANDERER.invoker().modifyTrades(new ModifyTradesEvents.ModifyWanderer.Context() {
+            @Override
+            public ModifyTradesEvents.TradeRegistry getGeneric() {
+                return generic;
+            }
+
+            @Override
+            public ModifyTradesEvents.TradeRegistry getRare() {
+                return rare;
+            }
+        });
+
+        event.getGenericTrades().addAll(generic);
+        event.getRareTrades().addAll(rare);
     }
 
     @SubscribeEvent

@@ -3,15 +3,14 @@ package gg.moonflower.pollen.common.trades;
 import gg.moonflower.pollen.api.event.events.entity.ModifyTradesEvents;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
+import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @ApiStatus.Internal
@@ -37,12 +36,22 @@ public class VillagerTradeManager {
     // From MinecraftForge to keep platforms consistent
 
     private static void registerWandererTrades() {
-        List<VillagerTrades.ItemListing> generic = NonNullList.create();
-        List<VillagerTrades.ItemListing> rare = NonNullList.create();
+        ModifyTradesEvents.TradeRegistry generic = new ModifyTradesEvents.TradeRegistry();
+        ModifyTradesEvents.TradeRegistry rare = new ModifyTradesEvents.TradeRegistry();
         generic.addAll(Arrays.asList(WANDERER_TRADES.get(1)));
         rare.addAll(Arrays.asList(WANDERER_TRADES.get(2)));
 
-        ModifyTradesEvents.WANDERER.invoker().modifyTrades(generic, rare);
+        ModifyTradesEvents.WANDERER.invoker().modifyTrades(new ModifyTradesEvents.ModifyWanderer.Context() {
+            @Override
+            public ModifyTradesEvents.TradeRegistry getGeneric() {
+                return generic;
+            }
+
+            @Override
+            public ModifyTradesEvents.TradeRegistry getRare() {
+                return rare;
+            }
+        });
 
         VillagerTrades.WANDERING_TRADER_TRADES.put(1, generic.toArray(new VillagerTrades.ItemListing[0]));
         VillagerTrades.WANDERING_TRADER_TRADES.put(2, rare.toArray(new VillagerTrades.ItemListing[0]));
@@ -51,17 +60,27 @@ public class VillagerTradeManager {
     private static void registerVillagerTrades() {
         for (VillagerProfession prof : Registry.VILLAGER_PROFESSION) {
             Int2ObjectMap<VillagerTrades.ItemListing[]> vanillaTrades = VANILLA_TRADES.getOrDefault(prof, new Int2ObjectOpenHashMap<>());
-            Int2ObjectMap<List<VillagerTrades.ItemListing>> newTrades = new Int2ObjectOpenHashMap<>();
+            Int2ObjectMap<ModifyTradesEvents.TradeRegistry> newTrades = new Int2ObjectOpenHashMap<>();
             for (int i = 1; i < 6; i++) {
-                newTrades.put(i, NonNullList.create());
+                newTrades.put(i, new ModifyTradesEvents.TradeRegistry());
             }
 
             vanillaTrades.int2ObjectEntrySet().forEach(e -> Arrays.stream(e.getValue()).forEach(newTrades.get(e.getIntKey())::add));
-            ModifyTradesEvents.VILLAGER.invoker().modifyTrades(newTrades, prof);
+            ModifyTradesEvents.VILLAGER.invoker().modifyTrades(new ModifyTradesEvents.ModifyVillager.Context() {
+                @Override
+                public VillagerProfession getProfession() {
+                    return prof;
+                }
+
+                @Override
+                public ModifyTradesEvents.TradeRegistry getTrades(int tier) {
+                    Validate.exclusiveBetween(0, 6, tier, "Tier must be between 1 and 5");
+                    return newTrades.get(tier);
+                }
+            });
             Int2ObjectMap<VillagerTrades.ItemListing[]> modifiedTrades = new Int2ObjectOpenHashMap<>();
             newTrades.int2ObjectEntrySet().forEach(e -> modifiedTrades.put(e.getIntKey(), e.getValue().toArray(new VillagerTrades.ItemListing[0])));
             VillagerTrades.TRADES.put(prof, modifiedTrades);
         }
     }
-
 }
