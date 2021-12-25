@@ -12,9 +12,9 @@
   ],
   "mixins": [
     "EntityMixin",
-    "HandshakeHandlerMixin",
     "FolderRepositorySourceAccessor",
     "ForgeInternalHandlerMixin",
+    "HandshakeHandlerMixin",
     "PackRepositoryAccessor",
     "PackRepositoryMixin",
     "SimpleReloadableResourceManagerMixin"
