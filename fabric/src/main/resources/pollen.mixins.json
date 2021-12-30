@@ -11,6 +11,7 @@
     "client.GameRendererMixin",
     "client.KeyboardInputMixin",
     "client.LivingEntityRendererMixin",
+    "client.MinecraftMixin",
     "client.MouseHandlerMixin",
     "client.ParticleEngineMixin",
     "client.RenderSystemMixin"

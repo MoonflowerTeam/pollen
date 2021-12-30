@@ -5,10 +5,6 @@
   "minVersion": "0.8",
   "client": [
     "client.AgeableListModelAccessor",
-    "client.LevelRendererMixin",
-    "client.MouseHandlerMixin",
-    "client.TextureAtlasMixin",
-    "client.WolfAccessor",
     "client.ChunkRenderDispatcherRebuildTaskMixin",
     "client.ChunkRenderDispatcherRenderChunkAccessor",
     "client.ClientChunkCacheAccessor",
@@ -16,7 +12,10 @@
     "client.ClientLevelMixin",
     "client.CompiledChunkMixin",
     "client.LevelRendererMixin",
-    "client.LevelRendererRenderChunkInfoAccessor"
+    "client.LevelRendererRenderChunkInfoAccessor",
+    "client.MouseHandlerMixin",
+    "client.TextureAtlasMixin",
+    "client.WolfAccessor"
   ],
   "mixins": [
     "AdvancementBuilderAccessor",
