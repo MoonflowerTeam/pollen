@@ -18,7 +18,7 @@ public class MouseHandlerMixin implements MouseHandlerExtension {
     }
 
     @Override
-    public double getXOffset() {
+    public double pollen_getXOffset() {
         return xOffset;
     }
 }

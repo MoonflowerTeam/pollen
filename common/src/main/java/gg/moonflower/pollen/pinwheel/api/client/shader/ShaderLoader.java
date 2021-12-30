@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.client.shader;
+package gg.moonflower.pollen.pinwheel.api.client.shader;
 
 import com.google.gson.JsonParser;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -42,8 +42,8 @@ import static org.lwjgl.opengl.GL20C.*;
 public final class ShaderLoader {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final List<ShaderPreProcessor> GLOBAL_PRE_PROCESSERS = new ArrayList<>(0);
-    private static final Map<ResourceLocation, List<ShaderPreProcessor>> PRE_PROCESSERS = new HashMap<>(0);
+    private static final List<ShaderPreProcessor> GLOBAL_PRE_PROCESSORS = new ArrayList<>(0);
+    private static final Map<ResourceLocation, List<ShaderPreProcessor>> PRE_PROCESSORS = new HashMap<>(0);
     private static final Map<ShaderProgram.Shader, Map<ResourceLocation, Integer>> SHADERS = new HashMap<>();
     private static final Map<ResourceLocation, ShaderProgram> PROGRAMS = new HashMap<>();
     private static final Map<ShaderInstance, ResourceLocation> INSTANCES = new HashMap<>();
@@ -63,7 +63,7 @@ public final class ShaderLoader {
      * @param processor The processor to add
      */
     public static synchronized void addPreProcessor(ResourceLocation shader, ShaderPreProcessor processor) {
-        PRE_PROCESSERS.computeIfAbsent(shader, key -> new ArrayList<>(1)).add(processor);
+        PRE_PROCESSORS.computeIfAbsent(shader, key -> new ArrayList<>(1)).add(processor);
     }
 
     /**
@@ -72,7 +72,7 @@ public final class ShaderLoader {
      * @param processor The processor to add
      */
     public static synchronized void addGlobalPreProcessor(ShaderPreProcessor processor) {
-        GLOBAL_PRE_PROCESSERS.add(processor);
+        GLOBAL_PRE_PROCESSORS.add(processor);
     }
 
     /**
@@ -104,18 +104,18 @@ public final class ShaderLoader {
     }
 
     private static CharSequence preprocessShader(ResourceLocation id, String data, ShaderProgram.Shader type) {
-        if (PRE_PROCESSERS.containsKey(id)) {
-            for (ShaderPreProcessor processer : PRE_PROCESSERS.get(id)) {
+        if (PRE_PROCESSORS.containsKey(id)) {
+            for (ShaderPreProcessor processor : PRE_PROCESSORS.get(id)) {
                 try {
-                    data = processer.modify(id, data, type);
+                    data = processor.modify(id, data, type);
                 } catch (Throwable t) {
                     LOGGER.error("Shader Pre-Processor threw an exception. Ignoring processing step.", t);
                 }
             }
         }
-        for (ShaderPreProcessor processer : GLOBAL_PRE_PROCESSERS) {
+        for (ShaderPreProcessor processor : GLOBAL_PRE_PROCESSORS) {
             try {
-                data = processer.modify(id, data, type);
+                data = processor.modify(id, data, type);
             } catch (Throwable t) {
                 LOGGER.error("Shader Pre-Processor threw an exception. Ignoring processing step.", t);
             }

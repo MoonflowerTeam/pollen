@@ -2,5 +2,5 @@ package gg.moonflower.pollen.core.extensions;
 
 public interface MouseHandlerExtension {
 
-    double getXOffset();
+    double pollen_getXOffset();
 }

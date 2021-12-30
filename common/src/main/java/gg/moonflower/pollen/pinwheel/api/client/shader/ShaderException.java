@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.client.shader;
+package gg.moonflower.pollen.pinwheel.api.client.shader;
 
 /**
  * Exception thrown when shaders fail to compile.

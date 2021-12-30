@@ -9,7 +9,15 @@
     "client.MinecraftMixin",
     "client.MouseHandlerMixin",
     "client.TextureAtlasMixin",
-    "client.WolfAccessor"
+    "client.WolfAccessor",
+    "client.ChunkRenderDispatcherRebuildTaskMixin",
+    "client.ChunkRenderDispatcherRenderChunkAccessor",
+    "client.ClientChunkCacheAccessor",
+    "client.ClientChunkCacheStorageAccessor",
+    "client.ClientLevelMixin",
+    "client.CompiledChunkMixin",
+    "client.LevelRendererMixin",
+    "client.LevelRendererRenderChunkInfoAccessor"
   ],
   "mixins": [
     "AdvancementBuilderAccessor",

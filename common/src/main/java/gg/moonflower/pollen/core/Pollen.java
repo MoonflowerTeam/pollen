@@ -1,8 +1,8 @@
 package gg.moonflower.pollen.core;
 
 import gg.moonflower.pollen.api.advancement.AdvancementModifierManager;
-import gg.moonflower.pollen.api.client.shader.ShaderConst;
-import gg.moonflower.pollen.api.client.shader.ShaderLoader;
+import gg.moonflower.pollen.pinwheel.api.client.shader.ShaderConst;
+import gg.moonflower.pollen.pinwheel.api.client.shader.ShaderLoader;
 import gg.moonflower.pollen.api.command.PollenSuggestionProviders;
 import gg.moonflower.pollen.api.command.argument.ColorArgumentType;
 import gg.moonflower.pollen.api.command.argument.EnumArgument;
@@ -16,13 +16,16 @@ import gg.moonflower.pollen.api.sync.SyncedDataManager;
 import gg.moonflower.pollen.core.network.PollenMessages;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
+import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
+import gg.moonflower.pollen.pinwheel.core.client.render.ChainedBlockRenderer;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.core.Registry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,6 +68,13 @@ public class Pollen {
     }
 
     private static void onClientPost(Platform.ModSetupContext context) {
+        // Block renderer API example
+        if (!Platform.isProduction()) {
+            ChainedBlockRenderer chainedBlockRenderer = new ChainedBlockRenderer();
+            BlockRendererRegistry.register(Blocks.CHAIN, chainedBlockRenderer);
+            BlockRendererRegistry.register(Blocks.LANTERN, chainedBlockRenderer);
+            BlockRendererRegistry.register(Blocks.SOUL_LANTERN, chainedBlockRenderer);
+        }
     }
 
     private static void onCommonPost(Platform.ModSetupContext context) {

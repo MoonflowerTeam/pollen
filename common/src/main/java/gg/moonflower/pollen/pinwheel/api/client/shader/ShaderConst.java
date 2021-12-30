@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.client.shader;
+package gg.moonflower.pollen.pinwheel.api.client.shader;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import org.jetbrains.annotations.ApiStatus;

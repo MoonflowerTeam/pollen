@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.client.shader;
+package gg.moonflower.pollen.pinwheel.api.client.shader;
 
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;

@@ -54,20 +54,20 @@ public class PollenClientForgeEvents {
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.client.event.GuiScreenEvent.MouseScrollEvent.Pre event) {
         MouseHandler mouseHandler = Minecraft.getInstance().mouseHandler;
-        if (InputEvents.GUI_MOUSE_SCROLL_EVENT_PRE.invoker().mouseScrolled(mouseHandler, ((MouseHandlerExtension) mouseHandler).getXOffset(), event.getScrollDelta()))
+        if (InputEvents.GUI_MOUSE_SCROLL_EVENT_PRE.invoker().mouseScrolled(mouseHandler, ((MouseHandlerExtension) mouseHandler).pollen_getXOffset(), event.getScrollDelta()))
             event.setCanceled(true);
     }
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.client.event.GuiScreenEvent.MouseScrollEvent.Post event) {
         MouseHandler mouseHandler = Minecraft.getInstance().mouseHandler;
-        InputEvents.GUI_MOUSE_SCROLL_EVENT_POST.invoker().mouseScrolled(mouseHandler, ((MouseHandlerExtension) mouseHandler).getXOffset(), event.getScrollDelta());
+        InputEvents.GUI_MOUSE_SCROLL_EVENT_POST.invoker().mouseScrolled(mouseHandler, ((MouseHandlerExtension) mouseHandler).pollen_getXOffset(), event.getScrollDelta());
     }
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.client.event.InputEvent.MouseScrollEvent event) {
         MouseHandler mouseHandler = Minecraft.getInstance().mouseHandler;
-        if (InputEvents.MOUSE_SCROLL_EVENT.invoker().mouseScrolled(mouseHandler, ((MouseHandlerExtension) mouseHandler).getXOffset(), event.getScrollDelta()))
+        if (InputEvents.MOUSE_SCROLL_EVENT.invoker().mouseScrolled(mouseHandler, ((MouseHandlerExtension) mouseHandler).pollen_getXOffset(), event.getScrollDelta()))
             event.setCanceled(true);
     }
 
