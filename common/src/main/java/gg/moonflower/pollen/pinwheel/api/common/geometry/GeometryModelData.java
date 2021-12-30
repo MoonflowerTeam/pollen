@@ -268,7 +268,7 @@ public class GeometryModelData {
         }
 
         /**
-         * @return Whether or not the cube should be mirrored along the un-rotated x-axis
+         * @return Whether the cube should be mirrored along the un-rotated x-axis
          */
         public boolean isMirror() {
             return mirror;
@@ -386,7 +386,7 @@ public class GeometryModelData {
         }
 
         /**
-         * @return Whether or not this inflate value should be used instead of the bone value
+         * @return Whether this inflate value should be used instead of the bone value
          */
         public boolean isOverrideInflate() {
             return overrideInflate;
@@ -400,14 +400,14 @@ public class GeometryModelData {
         }
 
         /**
-         * @return Whether or not this mirror value should be used instead of the bone value
+         * @return Whether this mirror value should be used instead of the bone value
          */
         public boolean isOverrideMirror() {
             return overrideMirror;
         }
 
         /**
-         * @return Whether or not the cube should be mirrored along the un-rotated x-axis
+         * @return Whether the cube should be mirrored along the un-rotated x-axis
          */
         public boolean isMirror() {
             return mirror;
@@ -544,7 +544,7 @@ public class GeometryModelData {
         }
 
         /**
-         * @return Whether or not UVs should be read from <code>0-1</code> or <code>0-textureWidth or textureHeight</code>
+         * @return Whether UVs should be read from <code>0-1</code> or <code>0-textureWidth/textureHeight</code>
          */
         public boolean isNormalizedUvs() {
             return normalizedUvs;

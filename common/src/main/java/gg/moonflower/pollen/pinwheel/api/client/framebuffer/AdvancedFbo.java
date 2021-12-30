@@ -225,7 +225,7 @@ public class AdvancedFbo implements NativeResource {
      *
      * @param target The target framebuffer to copy data into
      */
-    public void resolveToFrambuffer(RenderTarget target) {
+    public void resolveToFramebuffer(RenderTarget target) {
         this.resolveToFbo(target.frameBufferId, target.viewWidth, target.viewHeight, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
     }
 
@@ -236,19 +236,19 @@ public class AdvancedFbo implements NativeResource {
      * @param mask      The buffers to copy into the provided framebuffer
      * @param filtering The filter to use if this framebuffer and the provided framebuffer are different sizes
      */
-    public void resolveToFrambuffer(RenderTarget target, int mask, int filtering) {
+    public void resolveToFramebuffer(RenderTarget target, int mask, int filtering) {
         this.resolveToFbo(target.frameBufferId, target.viewWidth, target.viewHeight, mask, filtering);
     }
 
     /**
-     * Resolves this framebuffer to the the window framebuffer as the target.
+     * Resolves this framebuffer to the window framebuffer as the target.
      */
     public void resolveToScreen() {
         this.resolveToScreen(GL_COLOR_BUFFER_BIT, GL_NEAREST);
     }
 
     /**
-     * Resolves this framebuffer to the the window framebuffer as the target.
+     * Resolves this framebuffer to the window framebuffer as the target.
      *
      * @param mask      The buffers to copy into the provided framebuffer
      * @param filtering The filter to use if this framebuffer and the provided framebuffer are different sizes

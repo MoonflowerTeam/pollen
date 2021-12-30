@@ -31,19 +31,6 @@ public class PollinatedEventImpl<T> extends PollinatedEvent<T> {
         this.invoker = this.factory.apply(this.handlers);
     }
 
-//    @Override
-//    public T invoker() {
-//        if (this.invoker == null) {
-//            this.lock.lock();
-//            try {
-//                this.invoker = this.factory.apply(this.handlers);
-//            } finally {
-//                this.lock.unlock();
-//            }
-//        }
-//        return super.invoker();
-//    }
-
     @Override
     public void register(T listener) {
         Objects.requireNonNull(listener, "Tried to register a null listener");

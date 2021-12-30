@@ -179,7 +179,7 @@ public abstract class DynamicInventory implements Container {
     }
 
     /**
-     * Same as {@link Container#getMaxStackSize()} but used to determine if a stack can be added on a per slot basis.
+     * Same as {@link Container#getMaxStackSize()} but used to determine if a stack can be added on a per-slot basis.
      *
      * @param index The index to get the stack limit for
      * @return The limit for the specified stack

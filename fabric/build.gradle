@@ -41,6 +41,7 @@ repositories {
         name = 'Ladysnake Mods'
         url = 'https://ladysnake.jfrog.io/artifactory/mods'
     }
+    mavenCentral()
 }
 
 dependencies {

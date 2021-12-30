@@ -95,7 +95,7 @@ public final class SkinHelper {
     }
 
     /**
-     * Loads the a texture from the specified player profile.
+     * Loads the texture from the specified player profile.
      *
      * @param input    The profile of the player to load textures for
      * @param type     The type of texture to load

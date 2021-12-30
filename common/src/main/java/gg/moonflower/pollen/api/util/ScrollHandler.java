@@ -150,7 +150,7 @@ public final class ScrollHandler {
     }
 
     /**
-     * Calculates the position of the scroll bar based on where is was last tick and now.
+     * Calculates the position of the scroll bar based on where it was last tick and now.
      *
      * @param partialTicks The percentage from last tick to this tick
      * @return The position of the scroll bar interpolated over the specified value
