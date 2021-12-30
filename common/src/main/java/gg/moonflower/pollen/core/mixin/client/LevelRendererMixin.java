@@ -1,15 +1,29 @@
 package gg.moonflower.pollen.core.mixin.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.mojang.math.Matrix4f;
 import gg.moonflower.pollen.api.client.render.PollenDimensionSpecialEffects;
 import gg.moonflower.pollen.core.client.render.PollenDimensionRenderContextImpl;
+import gg.moonflower.pollen.core.extensions.CompiledChunkExtensions;
+import gg.moonflower.pollen.core.extensions.LevelRendererExtensions;
+import gg.moonflower.pollen.pinwheel.api.client.render.BlockRenderer;
+import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
+import gg.moonflower.pollen.pinwheel.core.client.DataContainerImpl;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.DimensionSpecialEffects;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.BlockDestructionProgress;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -17,13 +31,26 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.SortedSet;
+import java.util.stream.Stream;
+
 @Mixin(LevelRenderer.class)
-public class LevelRendererMixin {
+public class LevelRendererMixin implements LevelRendererExtensions {
 
     @Shadow
     private int ticks;
+
+    @Shadow
+    @Final
+    private ObjectList<LevelRenderer.RenderChunkInfo> renderChunks;
     @Shadow
     private ClientLevel level;
+    @Shadow
+    @Final
+    private RenderBuffers renderBuffers;
+    @Shadow
+    @Final
+    private Long2ObjectMap<SortedSet<BlockDestructionProgress>> destructionProgress;
 
     @Unique
     private PoseStack captureMatrixStack;
@@ -35,6 +62,50 @@ public class LevelRendererMixin {
     private Matrix4f captureProjection;
     @Unique
     private final PollenDimensionSpecialEffects.RenderContext renderContext = new PollenDimensionRenderContextImpl(() -> this.ticks, () -> this.capturePartialTicks, () -> this.captureCamera, () -> this.level, () -> this.captureMatrixStack, () -> this.captureProjection);
+    @Unique
+    private DataContainerImpl dataContainer;
+
+    @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;checkPoseStack(Lcom/mojang/blaze3d/vertex/PoseStack;)V", ordinal = 1, shift = At.Shift.BEFORE))
+    public void renderBlockRenders(PoseStack matrixStack, float partialTicks, long finishTimeNano, boolean drawBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightmap, Matrix4f projection, CallbackInfo ci) {
+        Vec3 vec3 = camera.getPosition();
+        double x = vec3.x();
+        double y = vec3.y();
+        double z = vec3.z();
+
+        this.pollen_getBlockRenderers().forEach(pos -> {
+            BlockState state = this.level.getBlockState(pos);
+            BlockRenderer renderer = BlockRendererRegistry.get(state.getBlock());
+            if (renderer == null)
+                return;
+
+            MultiBufferSource buffer = this.renderBuffers.bufferSource();
+            matrixStack.pushPose();
+            matrixStack.translate((double) pos.getX() - x, (double) pos.getY() - y, (double) pos.getZ() - z);
+            SortedSet<BlockDestructionProgress> sortedSet = this.destructionProgress.get(pos.asLong());
+            if (sortedSet != null && !sortedSet.isEmpty()) {
+                int u = sortedSet.last().getProgress();
+                if (u >= 0) {
+                    PoseStack.Pose pose = matrixStack.last();
+                    VertexConsumer vertexConsumer = new SheetedDecalTextureGenerator(this.renderBuffers.crumblingBufferSource().getBuffer(ModelBakery.DESTROY_TYPES.get(u)), pose.pose(), pose.normal());
+                    buffer = renderType -> {
+                        VertexConsumer vertexConsumer2 = this.renderBuffers.bufferSource().getBuffer(renderType);
+                        return renderType.affectsCrumbling() ? VertexMultiConsumer.create(vertexConsumer, vertexConsumer2) : vertexConsumer2;
+                    };
+                }
+            }
+
+            if (this.dataContainer == null || this.dataContainer.getLevel() != this.level)
+                this.dataContainer = new DataContainerImpl(this.level);
+
+            renderer.render(this.level, pos, this.dataContainer.get(pos), buffer, matrixStack, partialTicks, camera, gameRenderer, lightmap, projection, LevelRenderer.getLightColor(this.level, pos), OverlayTexture.NO_OVERLAY);
+            matrixStack.popPose();
+        });
+    }
+
+    @Override
+    public Stream<BlockPos> pollen_getBlockRenderers() {
+        return this.renderChunks.stream().flatMap(info -> ((CompiledChunkExtensions) ((LevelRendererRenderChunkInfoAccessor) info).getChunk().getCompiledChunk()).pollen_getBlockRenderPositions().stream());
+    }
 
     @Inject(method = "renderLevel", at = @At("HEAD"))
     public void renderLevel(PoseStack matrixStack, float partialTicks, long finishTimeNano, boolean drawBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightmap, Matrix4f projection, CallbackInfo ci) {
