@@ -10,6 +10,7 @@
     "client.ClientPacketListenerMixin",
     "client.GameRendererMixin",
     "client.KeyboardInputMixin",
+    "client.MinecraftMixin",
     "client.MouseHandlerMixin",
     "client.ParticleEngineMixin"
   ],
