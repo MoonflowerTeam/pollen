@@ -13,6 +13,7 @@ import gg.moonflower.pollen.pinwheel.api.client.render.BlockRenderer;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
 import gg.moonflower.pollen.pinwheel.core.client.DataContainerImpl;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -41,9 +42,6 @@ public class LevelRendererMixin implements LevelRendererExtensions {
     private int ticks;
 
     @Shadow
-    @Final
-    private ObjectList<LevelRenderer.RenderChunkInfo> renderChunks;
-    @Shadow
     private ClientLevel level;
     @Shadow
     @Final
@@ -52,6 +50,7 @@ public class LevelRendererMixin implements LevelRendererExtensions {
     @Final
     private Long2ObjectMap<SortedSet<BlockDestructionProgress>> destructionProgress;
 
+    @Shadow @Final private ObjectArrayList<LevelRenderer.RenderChunkInfo> renderChunksInFrustum;
     @Unique
     private PoseStack captureMatrixStack;
     @Unique
@@ -104,7 +103,7 @@ public class LevelRendererMixin implements LevelRendererExtensions {
 
     @Override
     public Stream<BlockPos> pollen_getBlockRenderers() {
-        return this.renderChunks.stream().flatMap(info -> ((CompiledChunkExtensions) ((LevelRendererRenderChunkInfoAccessor) info).getChunk().getCompiledChunk()).pollen_getBlockRenderPositions().stream());
+        return this.renderChunksInFrustum.stream().flatMap(info -> ((CompiledChunkExtensions) ((LevelRendererRenderChunkInfoAccessor) info).getChunk().getCompiledChunk()).pollen_getBlockRenderPositions().stream());
     }
 
     @Inject(method = "renderLevel", at = @At("HEAD"))
