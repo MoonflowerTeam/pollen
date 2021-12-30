@@ -19,3 +19,4 @@ classes/
 .vscode
 .settings
 *.launch
+fabric/src/generated/resources/pollen.accesswidener

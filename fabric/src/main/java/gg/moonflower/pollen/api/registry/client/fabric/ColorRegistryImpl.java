@@ -20,8 +20,8 @@ public class ColorRegistryImpl {
     }
 
     @SafeVarargs
-    public static void register(BlockColor blockColor, Supplier<Block>... blocks) {
-        for (Supplier<Block> block : blocks) {
+    public static void register(BlockColor blockColor, Supplier<? extends Block>... blocks) {
+        for (Supplier<? extends Block> block : blocks) {
             ColorProviderRegistry.BLOCK.register(blockColor, block.get());
         }
     }

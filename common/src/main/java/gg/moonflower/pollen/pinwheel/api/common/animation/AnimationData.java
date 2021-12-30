@@ -240,7 +240,7 @@ public class AnimationData {
         }
 
         /**
-         * @return The time this frame occur at
+         * @return The time this frame occurs at
          */
         public float getTime() {
             return time;

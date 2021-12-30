@@ -192,7 +192,7 @@ public class PollenCommonForgeEvents {
             }
         });
 
-        newTrades.forEach((tier, registry) -> event.getTrades().get(tier).addAll(registry));
+        newTrades.forEach((tier, registry) -> event.getTrades().get(tier.intValue()).addAll(registry));
     }
 
     @SubscribeEvent

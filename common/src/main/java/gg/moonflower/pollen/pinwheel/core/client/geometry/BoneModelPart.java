@@ -170,7 +170,7 @@ public class BoneModelPart extends ModelPart implements AnimatedModelPart {
     /**
      * Resets the transformation of this part.
      *
-     * @param resetChildren Whether or not to reset the transformations of all child parts
+     * @param resetChildren Whether to reset the transformations of all child parts
      */
     public void resetTransform(boolean resetChildren) {
         Vector3f rotation = this.bone.getRotation();

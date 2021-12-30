@@ -112,7 +112,7 @@ public interface PollinatedPlayNetworkChannel {
      *
      * @param clazz        The class of the packet
      * @param deserializer The generator for a new packet
-     * @param direction    The direction the packet should be able to go or null for bi-directional
+     * @param direction    The direction the packet should be able to go or null for bidirectional
      * @param <MSG>        The type of packet to be sent
      * @param <T>          The handler that will process the packet. Should be an interface to avoid loading client classes on server
      */

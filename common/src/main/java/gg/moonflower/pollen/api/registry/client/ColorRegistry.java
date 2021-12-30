@@ -22,7 +22,7 @@ public final class ColorRegistry {
 
     @SafeVarargs
     @ExpectPlatform
-    public static void register(BlockColor blockColor, Supplier<Block>... blocks) {
+    public static void register(BlockColor blockColor, Supplier<? extends Block>... blocks) {
         Platform.error();
     }
 }
