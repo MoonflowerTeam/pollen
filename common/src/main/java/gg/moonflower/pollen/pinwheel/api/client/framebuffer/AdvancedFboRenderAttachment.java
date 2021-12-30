@@ -43,7 +43,7 @@ public class AdvancedFboRenderAttachment implements AdvancedFboAttachment {
     }
 
     private int getId() {
-        RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+        RenderSystem.assertOnRenderThreadOrInit();
         if (this.id == -1) {
             this.id = glGenRenderbuffers();
         }

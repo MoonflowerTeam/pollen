@@ -1,6 +1,8 @@
 package gg.moonflower.pollen.pinwheel.api.client.framebuffer;
 
+import com.mojang.blaze3d.pipeline.MainTarget;
 import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -193,7 +195,7 @@ public class AdvancedFbo implements NativeResource {
     }
 
     private void _resolveToFbo(int id, int width, int height, int mask, int filtering) {
-        RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+        RenderSystem.assertOnRenderThreadOrInit();
         this.bindRead();
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, id);
         glBlitFramebuffer(0, 0, this.width, this.height, 0, 0, width, height, mask, filtering);
@@ -225,7 +227,7 @@ public class AdvancedFbo implements NativeResource {
      *
      * @param target The target framebuffer to copy data into
      */
-    public void resolveToFrambuffer(RenderTarget target) {
+    public void resolveToFramebuffer(RenderTarget target) {
         this.resolveToFbo(target.frameBufferId, target.viewWidth, target.viewHeight, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
     }
 
@@ -236,19 +238,19 @@ public class AdvancedFbo implements NativeResource {
      * @param mask      The buffers to copy into the provided framebuffer
      * @param filtering The filter to use if this framebuffer and the provided framebuffer are different sizes
      */
-    public void resolveToFrambuffer(RenderTarget target, int mask, int filtering) {
+    public void resolveToFramebuffer(RenderTarget target, int mask, int filtering) {
         this.resolveToFbo(target.frameBufferId, target.viewWidth, target.viewHeight, mask, filtering);
     }
 
     /**
-     * Resolves this framebuffer to the the window framebuffer as the target.
+     * Resolves this framebuffer to the window framebuffer as the target.
      */
     public void resolveToScreen() {
         this.resolveToScreen(GL_COLOR_BUFFER_BIT, GL_NEAREST);
     }
 
     /**
-     * Resolves this framebuffer to the the window framebuffer as the target.
+     * Resolves this framebuffer to the window framebuffer as the target.
      *
      * @param mask      The buffers to copy into the provided framebuffer
      * @param filtering The filter to use if this framebuffer and the provided framebuffer are different sizes
@@ -262,7 +264,7 @@ public class AdvancedFbo implements NativeResource {
     }
 
     private void _resolveToScreen(int mask, int filtering) {
-        RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+        RenderSystem.assertOnRenderThreadOrInit();
         Window window = Minecraft.getInstance().getWindow();
         this.bindRead();
         unbindDraw();
@@ -281,7 +283,7 @@ public class AdvancedFbo implements NativeResource {
     }
 
     private void _free() {
-        RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+        RenderSystem.assertOnRenderThreadOrInit();
         if (this.id != -1) {
             glDeleteFramebuffers(this.id);
             this.id = -1;
@@ -400,7 +402,7 @@ public class AdvancedFbo implements NativeResource {
      * @throws IllegalArgumentException If there is no depth attachment in this framebuffer
      */
     public AdvancedFboAttachment getDepthAttachment() {
-        RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+        RenderSystem.assertOnRenderThreadOrInit();
         Validate.isTrue(this.hasDepthAttachment(), "Depth attachment does not exist.");
         return Objects.requireNonNull(this.depthAttachment);
     }
@@ -697,7 +699,7 @@ public class AdvancedFbo implements NativeResource {
      * @see AdvancedFbo
      * @since 3.0.0
      */
-    public static class Wrapper extends RenderTarget {
+    public static class Wrapper extends TextureTarget {
         private final AdvancedFbo fbo;
 
         private Wrapper(AdvancedFbo fbo) {
@@ -735,7 +737,7 @@ public class AdvancedFbo implements NativeResource {
 
         @Override
         public void setFilterMode(int framebufferFilter) {
-            RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+            RenderSystem.assertOnRenderThreadOrInit();
             this.filterMode = framebufferFilter;
             for (int i = 0; i < this.fbo.getColorAttachments(); i++) {
                 this.fbo.getColorAttachment(i).bindAttachment();

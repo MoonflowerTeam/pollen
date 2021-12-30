@@ -83,7 +83,7 @@ public class BlockDataKey<T> {
             this.filter = state ->
             {
                 for (Block block : blocks)
-                    if (state.getBlock().is(block))
+                    if (state.is(block))
                         return true;
                 return false;
             };

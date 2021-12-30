@@ -39,7 +39,7 @@ public class AdvancedFboTextureAttachment extends AbstractTexture implements Adv
     }
 
     private void _create() {
-        RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+        RenderSystem.assertOnRenderThreadOrInit();
         this.bind();
         setBlurMipmap(this, false, this.mipmapLevels > 1);
         GlStateManager._texParameter(3553, 33085, this.mipmapLevels);

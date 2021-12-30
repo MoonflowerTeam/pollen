@@ -43,7 +43,7 @@ public class ChainedBlockRenderer implements TickableBlockRenderer {
         time.set(time.get() + 1);
 
         CHAIN_POS.set(pos).move(Direction.DOWN);
-        if (!level.getBlockState(CHAIN_POS).getBlock().is(Blocks.CHAIN)) {
+        if (!level.getBlockState(CHAIN_POS).is(Blocks.CHAIN)) {
             boolean shouldAttach = level.getBlockState(pos).is(Blocks.CHAIN) && Block.canSupportCenter(level, CHAIN_POS, Direction.UP);
             if (!attached.get().equals(shouldAttach)) {
                 attached.set(shouldAttach);
@@ -53,7 +53,7 @@ public class ChainedBlockRenderer implements TickableBlockRenderer {
         }
 
         CHAIN_POS.set(pos).move(Direction.UP);
-        if (!level.getBlockState(CHAIN_POS).getBlock().is(Blocks.CHAIN) && !Objects.equals(top.get(), pos)) {
+        if (!level.getBlockState(CHAIN_POS).is(Blocks.CHAIN) && !Objects.equals(top.get(), pos)) {
             top.set(pos);
             if (level.getBlockState(CHAIN_POS.set(pos).move(Direction.DOWN)).is(Blocks.CHAIN))
                 container.updateNeighbor(CHAIN_POS);
@@ -66,16 +66,16 @@ public class ChainedBlockRenderer implements TickableBlockRenderer {
         BlockData<Boolean> attached = container.get(ATTACHED);
 
         CHAIN_POS.set(pos).move(Direction.DOWN);
-        if (level.getBlockState(CHAIN_POS).getBlock().is(Blocks.CHAIN) && !attached.get().equals(container.get(ATTACHED, CHAIN_POS).get())) {
+        if (level.getBlockState(CHAIN_POS).is(Blocks.CHAIN) && !attached.get().equals(container.get(ATTACHED, CHAIN_POS).get())) {
             attached.set(container.get(ATTACHED, CHAIN_POS).get());
             container.updateNeighbor(CHAIN_POS.set(pos).move(Direction.UP));
         }
 
         CHAIN_POS.set(pos).move(Direction.UP);
-        if (!level.getBlockState(CHAIN_POS).getBlock().is(Blocks.CHAIN)) {
+        if (!level.getBlockState(CHAIN_POS).is(Blocks.CHAIN)) {
             top.set(pos);
             container.updateNeighbor(CHAIN_POS.set(pos).move(Direction.DOWN));
-        } else if (level.getBlockState(CHAIN_POS).getBlock().is(Blocks.CHAIN)) {
+        } else if (level.getBlockState(CHAIN_POS).is(Blocks.CHAIN)) {
             top.set(container.get(TOP, CHAIN_POS).get());
             container.updateNeighbor(CHAIN_POS.set(pos).move(Direction.DOWN));
         }
@@ -96,9 +96,8 @@ public class ChainedBlockRenderer implements TickableBlockRenderer {
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        Block block = state.getBlock();
-        if (block.is(Blocks.CHAIN) && state.getValue(ChainBlock.AXIS) == Direction.Axis.Y)
+        if (state.is(Blocks.CHAIN) && state.getValue(ChainBlock.AXIS) == Direction.Axis.Y)
             return RenderShape.INVISIBLE;
-        return (block.is(Blocks.LANTERN) || block.is(Blocks.SOUL_LANTERN)) && state.getValue(Lantern.HANGING) ? RenderShape.INVISIBLE : RenderShape.MODEL;
+        return (state.is(Blocks.LANTERN) || state.is(Blocks.SOUL_LANTERN)) && state.getValue(LanternBlock.HANGING) ? RenderShape.INVISIBLE : RenderShape.MODEL;
     }
 }
