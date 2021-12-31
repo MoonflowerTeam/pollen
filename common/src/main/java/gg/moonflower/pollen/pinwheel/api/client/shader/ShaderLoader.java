@@ -3,6 +3,7 @@ package gg.moonflower.pollen.pinwheel.api.client.shader;
 import com.google.gson.JsonParser;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.serialization.JsonOps;
+import gg.moonflower.pollen.api.registry.client.ShaderRegistry;
 import gg.moonflower.pollen.api.registry.resource.PollinatedPreparableReloadListener;
 import gg.moonflower.pollen.api.registry.resource.ResourceRegistry;
 import gg.moonflower.pollen.core.Pollen;
@@ -35,6 +36,7 @@ import static org.lwjgl.opengl.GL20C.*;
 
 /**
  * Loads GLSL shaders designed for rendering instead of Post-Processing.
+ * <b><i>NOTE: THESE ARE NOT VANILLA SHADERS.</i></b> Use {@link ShaderRegistry} to create vanilla Minecraft {@link AdvancedShaderInstance}.
  *
  * @author Ocelot
  * @since 1.0.0
@@ -46,7 +48,7 @@ public final class ShaderLoader {
     private static final Map<ResourceLocation, List<ShaderPreProcessor>> PRE_PROCESSORS = new HashMap<>(0);
     private static final Map<ShaderProgram.Shader, Map<ResourceLocation, Integer>> SHADERS = new HashMap<>();
     private static final Map<ResourceLocation, ShaderProgram> PROGRAMS = new HashMap<>();
-    private static final Map<ShaderInstance, ResourceLocation> INSTANCES = new HashMap<>();
+    private static final Map<AdvancedShaderInstance, ResourceLocation> INSTANCES = new HashMap<>();
 
     private ShaderLoader() {
     }
@@ -76,21 +78,21 @@ public final class ShaderLoader {
     }
 
     /**
-     * Creates a new {@link ShaderInstance} of the specified type.
+     * Creates a new {@link AdvancedShaderInstance} of the specified type.
      *
      * @param program The program to create
      * @return A new shader ready to use
      */
-    public static ShaderInstance create(ResourceLocation program) {
+    public static AdvancedShaderInstance create(ResourceLocation program) {
         RenderSystem.assertOnRenderThreadOrInit();
         try {
             int programId = linkShaders(program, 0);
-            ShaderInstance instance = new ShaderInstance(programId);
+            AdvancedShaderInstance instance = new AdvancedShaderInstance(programId);
             INSTANCES.put(instance, program);
             return instance;
         } catch (Exception e) {
             LOGGER.error("Failed to create new shader instance: " + program, e);
-            ShaderInstance instance = new ShaderInstance(-1);
+            AdvancedShaderInstance instance = new AdvancedShaderInstance(-1);
             INSTANCES.put(instance, program);
             return instance;
         }

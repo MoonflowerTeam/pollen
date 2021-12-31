@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.core;
 
 import gg.moonflower.pollen.api.advancement.AdvancementModifierManager;
+import gg.moonflower.pollen.core.client.render.PollenShaderTypes;
 import gg.moonflower.pollen.pinwheel.api.client.shader.ShaderConst;
 import gg.moonflower.pollen.pinwheel.api.client.shader.ShaderLoader;
 import gg.moonflower.pollen.api.command.PollenSuggestionProviders;
@@ -59,6 +60,7 @@ public class Pollen {
         AnimationManager.init();
         AdvancementModifierManager.init();
         ShaderLoader.init();
+        PollenShaderTypes.init();
         DebugInputs.init();
         InitRendererEvent.EVENT.register(ShaderConst::init);
     }

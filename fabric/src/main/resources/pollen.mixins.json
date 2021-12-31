@@ -14,7 +14,8 @@
     "client.MinecraftMixin",
     "client.MouseHandlerMixin",
     "client.ParticleEngineMixin",
-    "client.RenderSystemMixin"
+    "client.RenderSystemMixin",
+    "client.ShaderInstanceMixin"
   ],
   "mixins": [
     "ContainerProviderImplMixin",

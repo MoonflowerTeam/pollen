@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Matrix4f;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Mth;
 import org.lwjgl.opengl.GL11C;
@@ -107,6 +108,7 @@ public final class ShapeRenderer {
      * Ends the rendering of a chain of quads.
      */
     public static void end() {
+        RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
         Tesselator.getInstance().end();
         zLevel = 0;
         resetColor();

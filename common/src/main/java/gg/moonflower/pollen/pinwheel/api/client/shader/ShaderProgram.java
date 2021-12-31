@@ -2,6 +2,7 @@ package gg.moonflower.pollen.pinwheel.api.client.shader;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import gg.moonflower.pollen.api.registry.client.ShaderRegistry;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +15,8 @@ import static org.lwjgl.opengl.GL32C.GL_GEOMETRY_SHADER;
 import static org.lwjgl.opengl.GL43C.GL_COMPUTE_SHADER;
 
 /**
- * A template for creating a {@link ShaderInstance}.
+ * A template for creating a {@link AdvancedShaderInstance}.
+ * <b><i>NOTE: THESE ARE NOT VANILLA SHADERS.</i></b> Use {@link ShaderRegistry} to create vanilla Minecraft {@link AdvancedShaderInstance}.
  *
  * @author Ocelot
  * @since 1.0.0

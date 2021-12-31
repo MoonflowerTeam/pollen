@@ -3,7 +3,9 @@ package gg.moonflower.pollen.pinwheel.api.client.shader;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
+import gg.moonflower.pollen.api.registry.client.ShaderRegistry;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import net.minecraft.client.renderer.ShaderInstance;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,11 +20,12 @@ import static org.lwjgl.opengl.GL20C.*;
 
 /**
  * A usable instance of a {@link ShaderProgram}.
+ * <b><i>NOTE: THESE ARE NOT VANILLA SHADERS.</i></b> Use {@link ShaderRegistry} to create vanilla Minecraft {@link ShaderInstance}.
  *
  * @author Ocelot
  * @since 1.0.0
  */
-public class ShaderInstance implements NativeResource {
+public class AdvancedShaderInstance implements NativeResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final FloatBuffer MATRIX_4_4 = BufferUtils.createFloatBuffer(4 * 4);
@@ -30,7 +33,7 @@ public class ShaderInstance implements NativeResource {
     private final Map<CharSequence, Integer> uniforms;
     private int program;
 
-    ShaderInstance(int program) {
+    AdvancedShaderInstance(int program) {
         this.program = program;
         this.uniforms = new Object2IntArrayMap<>();
     }
