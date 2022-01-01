@@ -251,7 +251,7 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
                 localAnimationTime = animation.getAnimationLength();
             }
 
-            float blendWeight = animation.getBlendWeight();
+            float blendWeight = animation.getBlendWeight().safeResolve(runtime.create(1.0F));
             for (AnimationData.BoneAnimation boneAnimation : animation.getBoneAnimations()) {
                 if (!this.modelParts.containsKey(boneAnimation.getName()) || animation.getBoneAnimations().length == 0)
                     continue;
