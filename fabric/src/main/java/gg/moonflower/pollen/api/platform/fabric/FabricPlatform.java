@@ -3,6 +3,7 @@ package gg.moonflower.pollen.api.platform.fabric;
 import gg.moonflower.pollen.api.platform.Platform;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.data.DataGenerator;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.CompletableFuture;
@@ -16,13 +17,15 @@ public class FabricPlatform extends Platform {
     private final Runnable clientInit;
     private final Consumer<Platform.ModSetupContext> commonPostInit;
     private final Consumer<Platform.ModSetupContext> clientPostInit;
+    private final Consumer<DataSetupContext> dataInit;
 
-    FabricPlatform(String modId, Runnable commonInit, Runnable clientInit, Consumer<Platform.ModSetupContext> commonPostInit, Consumer<ModSetupContext> clientPostInit) {
+    FabricPlatform(String modId, Runnable commonInit, Runnable clientInit, Consumer<Platform.ModSetupContext> commonPostInit, Consumer<ModSetupContext> clientPostInit, Consumer<DataSetupContext> dataInit) {
         super(modId);
         this.commonInit = commonInit;
         this.clientInit = clientInit;
         this.commonPostInit = commonPostInit;
         this.clientPostInit = clientPostInit;
+        this.dataInit = dataInit;
     }
 
     @Override
@@ -36,6 +39,11 @@ public class FabricPlatform extends Platform {
             this.clientInit.run();
             this.clientPostInit.accept(context);
         }
+    }
+
+    @Override
+    public void dataSetup(DataGenerator dataGenerator) {
+        throw new UnsupportedOperationException("Data Generators are not supported in Fabric 1.16");
     }
 
     private static class SetupContext implements ModSetupContext {

@@ -1,11 +1,13 @@
 package gg.moonflower.pollen.api.platform.forge;
 
 import gg.moonflower.pollen.api.platform.Platform;
+import net.minecraft.data.DataGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -21,20 +23,23 @@ public final class ForgePlatform extends Platform {
     private final Runnable clientInit;
     private final Consumer<Platform.ModSetupContext> commonPostInit;
     private final Consumer<Platform.ModSetupContext> clientPostInit;
+    private final Consumer<Platform.DataSetupContext> dataInit;
 
-    ForgePlatform(String modId, IEventBus eventBus, Runnable commonInit, Runnable clientInit, Consumer<ModSetupContext> commonPostInit, Consumer<Platform.ModSetupContext> clientPostInit) {
+    ForgePlatform(String modId, IEventBus eventBus, Runnable commonInit, Runnable clientInit, Consumer<ModSetupContext> commonPostInit, Consumer<Platform.ModSetupContext> clientPostInit, Consumer<Platform.DataSetupContext> dataInit) {
         super(modId);
         this.eventBus = eventBus;
         this.commonInit = commonInit;
         this.clientInit = clientInit;
         this.commonPostInit = commonPostInit;
         this.clientPostInit = clientPostInit;
+        this.dataInit = dataInit;
     }
 
     @Override
     public void setup() {
-        this.eventBus.<FMLCommonSetupEvent>addListener(e -> this.commonPostInit.accept(new SetupContext(e)));
-        this.eventBus.<FMLClientSetupEvent>addListener(e -> this.clientPostInit.accept(new SetupContext(e)));
+        this.eventBus.<FMLCommonSetupEvent>addListener(e -> this.commonPostInit.accept(new ModSetupContextImpl(e)));
+        this.eventBus.<FMLClientSetupEvent>addListener(e -> this.clientPostInit.accept(new ModSetupContextImpl(e)));
+        this.eventBus.<GatherDataEvent>addListener(e -> this.dataInit.accept(new DataSetupContextImpl(e.getGenerator())));
 
         this.commonInit.run();
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> this.clientInit::run);
@@ -44,11 +49,11 @@ public final class ForgePlatform extends Platform {
         return eventBus;
     }
 
-    private static class SetupContext implements ModSetupContext {
+    private static class ModSetupContextImpl implements ModSetupContext {
 
         private final ParallelDispatchEvent event;
 
-        private SetupContext(ParallelDispatchEvent event) {
+        private ModSetupContextImpl(ParallelDispatchEvent event) {
             this.event = event;
         }
 
@@ -60,6 +65,20 @@ public final class ForgePlatform extends Platform {
         @Override
         public <T> CompletableFuture<T> enqueueWork(Supplier<T> work) {
             return this.event.enqueueWork(work);
+        }
+    }
+
+    private static class DataSetupContextImpl implements DataSetupContext {
+
+        private final DataGenerator dataGenerator;
+
+        private DataSetupContextImpl(DataGenerator dataGenerator) {
+            this.dataGenerator = dataGenerator;
+        }
+
+        @Override
+        public DataGenerator getGenerator() {
+            return dataGenerator;
         }
     }
 }

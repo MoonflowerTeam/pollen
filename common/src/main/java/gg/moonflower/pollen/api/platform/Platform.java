@@ -5,6 +5,8 @@ import dev.architectury.injectables.annotations.PlatformOnly;
 import dev.architectury.injectables.targets.ArchitecturyTarget;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import gg.moonflower.pollen.core.Pollen;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DataProvider;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.thread.BlockableEventLoop;
 import org.jetbrains.annotations.ApiStatus;
@@ -111,6 +113,15 @@ public abstract class Platform {
     public abstract void setup();
 
     /**
+     * Loads the {@link Platform} data generator.
+     *
+     * <p>Fabric users need to run this on the data initializer in order for them to work
+     */
+    @PlatformOnly(PlatformOnly.FABRIC)
+    public void dataSetup(DataGenerator dataGenerator) {
+    }
+
+    /**
      * Used as context for initializing mods during loading lifecycle.
      *
      * @author Ocelot
@@ -137,6 +148,21 @@ public abstract class Platform {
         <T> CompletableFuture<T> enqueueWork(Supplier<T> work);
     }
 
+    /**
+     * Used as context for initializing data generators.
+     *
+     * @author Ocelot
+     * @see DataProvider
+     * @since 1.0.0
+     */
+    public interface DataSetupContext {
+
+        /**
+         * @return The actual data generator to add providers to
+         */
+        DataGenerator getGenerator();
+    }
+
     public static class Builder {
 
         private final String modId;
@@ -149,6 +175,8 @@ public abstract class Platform {
         };
         private Consumer<ModSetupContext> clientPostInit = __ -> {
         };
+        private Consumer<DataSetupContext> dataInit = __ -> {
+        };
 
         private Builder(String modId) {
             this.modId = modId;
@@ -156,7 +184,7 @@ public abstract class Platform {
 
         @ApiStatus.Internal
         @ExpectPlatform
-        public static Platform buildImpl(String modId, Runnable commonInit, Runnable clientInit, Consumer<ModSetupContext> commonPostInit, Consumer<ModSetupContext> clientPostInit) {
+        public static Platform buildImpl(String modId, Runnable commonInit, Runnable clientInit, Consumer<ModSetupContext> commonPostInit, Consumer<ModSetupContext> clientPostInit, Consumer<DataSetupContext> dataInit) {
             return Platform.error();
         }
 
@@ -180,8 +208,13 @@ public abstract class Platform {
             return this;
         }
 
+        public Builder dataInit(Consumer<DataSetupContext> dataInit) {
+            this.dataInit = dataInit;
+            return this;
+        }
+
         public Platform build() {
-            return buildImpl(this.modId, this.commonInit, this.clientInit, this.commonPostInit, this.clientPostInit);
+            return buildImpl(this.modId, this.commonInit, this.clientInit, this.commonPostInit, this.clientPostInit, this.dataInit);
         }
     }
 }
