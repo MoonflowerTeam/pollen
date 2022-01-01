@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -64,18 +65,30 @@ public interface BlockRenderer {
     }
 
     /**
-     * Retrieves data by the data keys.
+     * Modifies the block state used to retrieve a model for rendering.
+     * <p>Can be used to maintain a certain state and add custom rendering in place of a model. One example is animating the end portal frame eyes while retaining the frame.
+     *
+     * @param state The state to get the model for
+     * @return A different state to get a model for
+     */
+    default BlockState getRenderState(BlockState state) {
+        return state;
+    }
+
+    /**
+     * Retrieves data by data keys. Also has the capability to send updates to neighboring renderers.
      *
      * @author Ocelot
+     * @see BlockDataKey
      */
     interface DataContainer {
 
         /**
          * Updates the renderer at the specified position.
          *
-         * @param pos The position to update at
+         * @param direction The direction to update in
          */
-        void updateNeighbor(BlockPos pos);
+        void updateNeighbor(Direction direction);
 
         /**
          * Fetches the block data for the specified key.

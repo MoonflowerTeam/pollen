@@ -6,6 +6,7 @@ import gg.moonflower.pollen.pinwheel.api.client.render.BlockRenderer;
 import gg.moonflower.pollen.core.extensions.ClientLevelExtensions;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -24,8 +25,8 @@ public class DataContainerImpl {
         this.pos = new BlockPos.MutableBlockPos();
         this.container = new BlockRenderer.DataContainer() {
             @Override
-            public void updateNeighbor(BlockPos pos) {
-                DataContainerImpl.this.scheduleTick(pos);
+            public void updateNeighbor(Direction direction) {
+                DataContainerImpl.this.scheduleTick(pos.relative(direction));
             }
 
             @Override
