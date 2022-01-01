@@ -43,7 +43,7 @@ public class FabricPlatform extends Platform {
 
     @Override
     public void dataSetup(DataGenerator dataGenerator) {
-        throw new UnsupportedOperationException("Data Generators are not supported in Fabric 1.16");
+        this.dataInit.accept(new DataSetupContextImpl((FabricDataGenerator) dataGenerator));
     }
 
     private static class SetupContext implements ModSetupContext {
@@ -57,6 +57,25 @@ public class FabricPlatform extends Platform {
         @Override
         public <T> CompletableFuture<T> enqueueWork(Supplier<T> work) {
             return CompletableFuture.completedFuture(work.get());
+        }
+    }
+
+    private static class DataSetupContextImpl implements DataSetupContext {
+
+        private final FabricDataGenerator generator;
+
+        private DataSetupContextImpl(FabricDataGenerator generator) {
+            this.generator = generator;
+        }
+
+        @Override
+        public DataGenerator getGenerator() {
+            return generator;
+        }
+
+        @Override
+        public PollinatedModContainer getMod() {
+            return new PollinatedModContainerImpl(this.generator.getModContainer());
         }
     }
 }
