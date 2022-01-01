@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.core.mixin.fabric;
+package gg.moonflower.pollen.core.mixin.fabric.client;
 
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import net.minecraft.client.server.IntegratedServer;
