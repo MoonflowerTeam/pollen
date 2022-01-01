@@ -1,8 +1,6 @@
 package gg.moonflower.pollen.core;
 
 import gg.moonflower.pollen.api.advancement.AdvancementModifierManager;
-import gg.moonflower.pollen.pinwheel.api.client.shader.ShaderConst;
-import gg.moonflower.pollen.pinwheel.api.client.shader.ShaderLoader;
 import gg.moonflower.pollen.api.command.PollenSuggestionProviders;
 import gg.moonflower.pollen.api.command.argument.ColorArgumentType;
 import gg.moonflower.pollen.api.command.argument.EnumArgument;
@@ -17,8 +15,11 @@ import gg.moonflower.pollen.core.network.PollenMessages;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
+import gg.moonflower.pollen.pinwheel.api.client.shader.ShaderConst;
+import gg.moonflower.pollen.pinwheel.api.client.shader.ShaderLoader;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
 import gg.moonflower.pollen.pinwheel.core.client.render.ChainedBlockRenderer;
+import gg.moonflower.pollen.pinwheel.core.client.render.FlowerPotBlockRenderer;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.core.Registry;
@@ -74,6 +75,7 @@ public class Pollen {
             BlockRendererRegistry.register(Blocks.CHAIN, chainedBlockRenderer);
             BlockRendererRegistry.register(Blocks.LANTERN, chainedBlockRenderer);
             BlockRendererRegistry.register(Blocks.SOUL_LANTERN, chainedBlockRenderer);
+            BlockRendererRegistry.register(Blocks.FLOWER_POT, new FlowerPotBlockRenderer());
         }
     }
 

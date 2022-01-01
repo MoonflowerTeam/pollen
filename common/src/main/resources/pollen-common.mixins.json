@@ -13,6 +13,9 @@
     "client.CompiledChunkMixin",
     "client.LevelRendererMixin",
     "client.LevelRendererRenderChunkInfoAccessor",
+    "client.ModelPartAccessor",
+    "client.ModelPartCubeAccessor",
+    "client.ModelPartPolygonAccessor",
     "client.MouseHandlerMixin",
     "client.TextureAtlasMixin",
     "client.WolfAccessor"

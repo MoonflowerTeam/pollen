@@ -32,6 +32,7 @@ import java.util.Objects;
  * @since 1.0.0
  */
 public class GeometryModelTextureTable {
+
     public static final Codec<GeometryModelTextureTable> CODEC = Codec.unboundedMap(Codec.STRING, GeometryModelTexture.CODEC.listOf().xmap(list -> list.toArray(new GeometryModelTexture[0]), Arrays::asList)).xmap(GeometryModelTextureTable::new, table -> table.textures);
     public static GeometryModelTextureTable EMPTY = new GeometryModelTextureTable(new HashMap<>());
 
@@ -85,6 +86,7 @@ public class GeometryModelTextureTable {
      * @author Ocelot
      */
     public static class Serializer implements JsonSerializer<GeometryModelTextureTable>, JsonDeserializer<GeometryModelTextureTable> {
+
         private static final Logger LOGGER = LogManager.getLogger();
 
         @Override

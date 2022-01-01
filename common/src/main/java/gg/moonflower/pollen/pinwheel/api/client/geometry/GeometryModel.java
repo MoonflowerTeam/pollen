@@ -1,9 +1,7 @@
 package gg.moonflower.pollen.pinwheel.api.client.geometry;
 
-import com.google.common.collect.Iterables;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import gg.moonflower.pollen.core.mixin.client.AgeableListModelAccessor;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryAtlasTexture;
 import gg.moonflower.pollen.pinwheel.api.common.geometry.GeometryModelData;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTexture;
@@ -12,6 +10,7 @@ import gg.moonflower.pollen.pinwheel.core.client.geometry.JavaModelConverter;
 import gg.moonflower.pollen.pinwheel.core.client.geometry.LocalGeometryModelLoader;
 import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.ListModel;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import org.jetbrains.annotations.Nullable;
@@ -106,36 +105,11 @@ public interface GeometryModel {
      *
      * @param textureWidth  The width of the texture in pixels
      * @param textureHeight The height of the texture in pixels
-     * @param bones         The parent bones in a Java model. These are expected to be the individual parts that are rendered
+     * @param model         The model class. All fields will be checked as parents
      * @return A new model from the data
      */
-    static GeometryModel create(int textureWidth, int textureHeight, ModelPart... bones) {
-        return new BedrockGeometryModel(textureWidth, textureHeight, JavaModelConverter.convert(bones));
-    }
-
-    /**
-     * Creates a new {@link GeometryModel} from the specified model data.
-     *
-     * @param textureWidth  The width of the texture in pixels
-     * @param textureHeight The height of the texture in pixels
-     * @param model         The model to get the bones from
-     * @return A new model from the data
-     */
-    static GeometryModel create(int textureWidth, int textureHeight, ListModel<?> model) {
-        return new BedrockGeometryModel(textureWidth, textureHeight, JavaModelConverter.convert(Iterables.toArray(model.parts(), ModelPart.class)));
-    }
-
-    /**
-     * Creates a new {@link GeometryModel} from the specified model data.
-     *
-     * @param textureWidth  The width of the texture in pixels
-     * @param textureHeight The height of the texture in pixels
-     * @param model         The model to get the bones from
-     * @return A new model from the data
-     */
-    static GeometryModel create(int textureWidth, int textureHeight, AgeableListModel<?> model) {
-        AgeableListModelAccessor accessor = (AgeableListModelAccessor) model;
-        return new BedrockGeometryModel(textureWidth, textureHeight, JavaModelConverter.convert(Iterables.toArray(Iterables.concat(accessor.invokeHeadParts(), accessor.invokeBodyParts()), ModelPart.class)));
+    static GeometryModel create(int textureWidth, int textureHeight, Model model) {
+        return new BedrockGeometryModel(textureWidth, textureHeight, JavaModelConverter.convert(model));
     }
 
     /**

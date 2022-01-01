@@ -1,0 +1,7 @@
+{
+  "texture": {
+    "type": "location",
+    "texture": "entity/bee/bee",
+    "layer": "cutout"
+  }
+}

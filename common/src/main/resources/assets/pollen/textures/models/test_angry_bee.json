@@ -1,0 +1,7 @@
+{
+  "texture": {
+    "type": "location",
+    "texture": "entity/bee/bee_angry",
+    "layer": "cutout"
+  }
+}
