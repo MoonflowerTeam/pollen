@@ -30,6 +30,9 @@
     "client": [
       "gg.moonflower.pollen.core.fabric.PollenFabricClient"
     ],
+    "fabric-datagen": [
+      "gg.moonflower.pollen.core.fabric.PollenFabricData"
+    ],
     "cardinal-components-entity": [
       "gg.moonflower.pollen.core.fabric.PollenComponents"
     ],
