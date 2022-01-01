@@ -48,7 +48,7 @@ public class ChainedBlockRenderer implements TickableBlockRenderer {
             if (!attached.get().equals(shouldAttach)) {
                 attached.set(shouldAttach);
                 if (level.getBlockState(CHAIN_POS.set(pos).move(Direction.UP)).is(Blocks.CHAIN))
-                    container.updateNeighbor(CHAIN_POS);
+                    container.updateNeighbor(Direction.UP);
             }
         }
 
@@ -56,7 +56,7 @@ public class ChainedBlockRenderer implements TickableBlockRenderer {
         if (!level.getBlockState(CHAIN_POS).getBlock().is(Blocks.CHAIN) && !Objects.equals(top.get(), pos)) {
             top.set(pos);
             if (level.getBlockState(CHAIN_POS.set(pos).move(Direction.DOWN)).is(Blocks.CHAIN))
-                container.updateNeighbor(CHAIN_POS);
+                container.updateNeighbor(Direction.DOWN);
         }
     }
 
@@ -68,16 +68,16 @@ public class ChainedBlockRenderer implements TickableBlockRenderer {
         CHAIN_POS.set(pos).move(Direction.DOWN);
         if (level.getBlockState(CHAIN_POS).getBlock().is(Blocks.CHAIN) && !attached.get().equals(container.get(ATTACHED, CHAIN_POS).get())) {
             attached.set(container.get(ATTACHED, CHAIN_POS).get());
-            container.updateNeighbor(CHAIN_POS.set(pos).move(Direction.UP));
+            container.updateNeighbor(Direction.UP);
         }
 
         CHAIN_POS.set(pos).move(Direction.UP);
         if (!level.getBlockState(CHAIN_POS).getBlock().is(Blocks.CHAIN)) {
             top.set(pos);
-            container.updateNeighbor(CHAIN_POS.set(pos).move(Direction.DOWN));
+            container.updateNeighbor(Direction.DOWN);
         } else if (level.getBlockState(CHAIN_POS).getBlock().is(Blocks.CHAIN)) {
             top.set(container.get(TOP, CHAIN_POS).get());
-            container.updateNeighbor(CHAIN_POS.set(pos).move(Direction.DOWN));
+            container.updateNeighbor(Direction.DOWN);
         }
     }
 
