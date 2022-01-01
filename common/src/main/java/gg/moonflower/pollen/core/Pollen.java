@@ -73,18 +73,10 @@ public class Pollen {
 
     private static void onCommon() {
         SyncedDataManager.init();
-        StrippingRegistry.register(Blocks.LANTERN, Blocks.SOUL_LANTERN);
         RECIPE_SERIALIZERS.register(PLATFORM);
     }
 
     private static void onClientPost(Platform.ModSetupContext context) {
-        // Block renderer API example
-        if (!Platform.isProduction()) {
-            ChainedBlockRenderer chainedBlockRenderer = new ChainedBlockRenderer();
-            BlockRendererRegistry.register(Blocks.CHAIN, chainedBlockRenderer);
-            BlockRendererRegistry.register(Blocks.LANTERN, chainedBlockRenderer);
-            BlockRendererRegistry.register(Blocks.SOUL_LANTERN, chainedBlockRenderer);
-        }
     }
 
     private static void onCommonPost(Platform.ModSetupContext context) {
@@ -100,12 +92,6 @@ public class Pollen {
     }
 
     private static void onDataInit(Platform.DataSetupContext context) {
-        context.getGenerator().addProvider(new PollinatedSoundProvider(context.getGenerator(), context.getMod()) {
-            @Override
-            protected void registerSounds(Consumer<SoundDefinitionBuilder> registry) {
-                registry.accept(SoundDefinitionBuilder.forSound(() -> SoundEvents.AMBIENT_CAVE));
-            }
-        });
     }
 
     @Nullable
