@@ -24,7 +24,7 @@ public abstract class AnimatedEntityRenderer<T extends PathfinderMob & AnimatedE
 
     @Override
     protected float getBob(T entity, float partialTicks) {
-        return (entity.isNoAnimationPlaying() ? entity.tickCount : entity.getAnimationTick()) + partialTicks;
+        return (entity.isNoAnimationPlaying() ? entity.tickCount+ partialTicks : entity.getRenderAnimationTick(partialTicks));
     }
 
     @Override
@@ -49,7 +49,7 @@ public abstract class AnimatedEntityRenderer<T extends PathfinderMob & AnimatedE
      * @return The animations to play
      */
     public ResourceLocation[] getAnimations(T entity) {
-        return entity.isNoAnimationPlaying() ? new ResourceLocation[0] : entity.getAnimationState().getAnimations();
+        return entity.isNoAnimationPlaying() ? entity.getIdleAnimationState().getAnimations() : entity.getAnimationState().getAnimations();
     }
 
     /**
