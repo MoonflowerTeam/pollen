@@ -12,6 +12,7 @@ import gg.moonflower.pollen.api.event.events.client.render.InitRendererEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
+import gg.moonflower.pollen.api.registry.StrippingRegistry;
 import gg.moonflower.pollen.api.sync.SyncedDataManager;
 import gg.moonflower.pollen.core.client.render.PollenShaderTypes;
 import gg.moonflower.pollen.core.network.PollenMessages;
@@ -72,6 +73,7 @@ public class Pollen {
 
     private static void onCommon() {
         SyncedDataManager.init();
+        StrippingRegistry.register(Blocks.LANTERN, Blocks.SOUL_LANTERN);
         RECIPE_SERIALIZERS.register(PLATFORM);
     }
 

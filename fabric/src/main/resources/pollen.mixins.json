@@ -18,6 +18,7 @@
     "client.ShaderInstanceMixin"
   ],
   "mixins": [
+    "AxeItemMixin",
     "ContainerProviderImplMixin",
     "DedicatedServerMixin",
     "ExplosionMixin",

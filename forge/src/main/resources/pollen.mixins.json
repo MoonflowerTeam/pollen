@@ -11,6 +11,7 @@
     "client.RenderSystemMixin"
   ],
   "mixins": [
+    "AxeItemMixin",
     "EntityMixin",
     "FolderRepositorySourceAccessor",
     "ForgeInternalHandlerMixin",
