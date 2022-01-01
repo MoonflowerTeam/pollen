@@ -132,6 +132,16 @@ public interface AnimatedEntity extends AnimationEffectSource {
     int getAnimationTick();
 
     /**
+     * Calculates the current animation tick time.
+     *
+     * @param partialTicks The percentage from last tick to this tick
+     * @return The interpolated tick
+     */
+    default float getRenderAnimationTick(float partialTicks) {
+        return this.getAnimationTick() + partialTicks;
+    }
+
+    /**
      * Sets the current tick of animation.
      *
      * @param tick The new animation tick
@@ -142,6 +152,13 @@ public interface AnimatedEntity extends AnimationEffectSource {
      * @return The current state of animation
      */
     AnimationState getAnimationState();
+
+    /**
+     * @return The animations to use when no other animations are playing
+     */
+    default AnimationState getIdleAnimationState() {
+        return AnimationState.EMPTY;
+    }
 
     /**
      * Sets the state of animation and resets the animation ticks.
