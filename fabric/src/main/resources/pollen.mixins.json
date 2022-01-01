@@ -15,6 +15,7 @@
     "client.ParticleEngineMixin"
   ],
   "mixins": [
+    "AxeItemMixin",
     "ContainerProviderImplMixin",
     "DedicatedServerMixin",
     "ExplosionMixin",
