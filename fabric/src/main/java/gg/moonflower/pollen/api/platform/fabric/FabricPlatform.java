@@ -1,7 +1,10 @@
 package gg.moonflower.pollen.api.platform.fabric;
 
 import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.api.util.PollinatedModContainer;
+import gg.moonflower.pollen.api.util.fabric.PollinatedModContainerImpl;
 import net.fabricmc.api.EnvType;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.data.DataGenerator;
 import org.jetbrains.annotations.ApiStatus;
@@ -30,7 +33,7 @@ public class FabricPlatform extends Platform {
 
     @Override
     public void setup() {
-        ModSetupContext context = new SetupContext();
+        ModSetupContext context = new ModSetupContextImpl();
 
         this.commonInit.run();
         this.commonPostInit.accept(context);
@@ -46,7 +49,7 @@ public class FabricPlatform extends Platform {
         this.dataInit.accept(new DataSetupContextImpl((FabricDataGenerator) dataGenerator));
     }
 
-    private static class SetupContext implements ModSetupContext {
+    private static class ModSetupContextImpl implements ModSetupContext {
 
         @Override
         public CompletableFuture<Void> enqueueWork(Runnable work) {

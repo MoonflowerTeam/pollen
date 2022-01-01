@@ -1,6 +1,8 @@
 package gg.moonflower.pollen.api.platform.forge;
 
 import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.api.util.PollinatedModContainer;
+import gg.moonflower.pollen.api.util.forge.PollinatedModContainerImpl;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -39,7 +41,7 @@ public final class ForgePlatform extends Platform {
     public void setup() {
         this.eventBus.<FMLCommonSetupEvent>addListener(e -> this.commonPostInit.accept(new ModSetupContextImpl(e)));
         this.eventBus.<FMLClientSetupEvent>addListener(e -> this.clientPostInit.accept(new ModSetupContextImpl(e)));
-        this.eventBus.<GatherDataEvent>addListener(e -> this.dataInit.accept(new DataSetupContextImpl(e.getGenerator())));
+        this.eventBus.<GatherDataEvent>addListener(e -> this.dataInit.accept(new DataSetupContextImpl(e.getGenerator(), new PollinatedModContainerImpl(e.getModContainer()))));
 
         this.commonInit.run();
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> this.clientInit::run);
@@ -71,14 +73,21 @@ public final class ForgePlatform extends Platform {
     private static class DataSetupContextImpl implements DataSetupContext {
 
         private final DataGenerator dataGenerator;
+        private final PollinatedModContainer modContainer;
 
-        private DataSetupContextImpl(DataGenerator dataGenerator) {
+        private DataSetupContextImpl(DataGenerator dataGenerator, PollinatedModContainer modContainer) {
             this.dataGenerator = dataGenerator;
+            this.modContainer = modContainer;
         }
 
         @Override
         public DataGenerator getGenerator() {
             return dataGenerator;
+        }
+
+        @Override
+        public PollinatedModContainer getMod() {
+            return modContainer;
         }
     }
 }

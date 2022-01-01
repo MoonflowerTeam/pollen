@@ -161,6 +161,11 @@ public abstract class Platform {
          * @return The actual data generator to add providers to
          */
         DataGenerator getGenerator();
+
+        /**
+         * @return The mod the generator is running for
+         */
+        PollinatedModContainer getMod();
     }
 
     public static class Builder {
