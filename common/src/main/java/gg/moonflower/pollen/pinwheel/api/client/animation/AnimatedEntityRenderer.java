@@ -24,7 +24,7 @@ public abstract class AnimatedEntityRenderer<T extends PathfinderMob & AnimatedE
 
     @Override
     protected float getBob(T entity, float partialTicks) {
-        return (entity.isNoAnimationPlaying() ? entity.tickCount+ partialTicks : entity.getRenderAnimationTick(partialTicks));
+        return (entity.isNoAnimationPlaying() ? entity.tickCount + partialTicks : entity.getRenderAnimationTick(partialTicks));
     }
 
     @Override

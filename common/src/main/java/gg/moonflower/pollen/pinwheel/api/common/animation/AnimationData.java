@@ -1,24 +1,12 @@
 package gg.moonflower.pollen.pinwheel.api.common.animation;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 import gg.moonflower.pollen.pinwheel.api.common.util.JSONTupleParser;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 import net.minecraft.util.GsonHelper;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -32,11 +20,11 @@ public class AnimationData {
     /**
      * A completely empty animation definition.
      */
-    public static final AnimationData EMPTY = new AnimationData("empty", Loop.NONE, 0.0F, 0.0F, false, new BoneAnimation[0], new SoundEffect[0], new ParticleEffect[0], new TimelineEffect[0]);
+    public static final AnimationData EMPTY = new AnimationData("empty", Loop.NONE, MolangExpression.ZERO, 0.0F, false, new BoneAnimation[0], new SoundEffect[0], new ParticleEffect[0], new TimelineEffect[0]);
 
     private final String name;
     private final Loop loop;
-    private final float blendWeight;
+    private final MolangExpression blendWeight;
     private final float animationLength;
     private final boolean overridePreviousAnimation;
     private final BoneAnimation[] boneAnimations;
@@ -44,7 +32,7 @@ public class AnimationData {
     private final ParticleEffect[] particleEffects;
     private final TimelineEffect[] timelineEffects;
 
-    public AnimationData(String name, Loop loop, float blendWeight, float animationLength, boolean overridePreviousAnimation, BoneAnimation[] boneAnimations, SoundEffect[] soundEffects, ParticleEffect[] particleEffects, TimelineEffect[] timelineEffects) {
+    public AnimationData(String name, Loop loop, MolangExpression blendWeight, float animationLength, boolean overridePreviousAnimation, BoneAnimation[] boneAnimations, SoundEffect[] soundEffects, ParticleEffect[] particleEffects, TimelineEffect[] timelineEffects) {
         this.name = name;
         this.loop = loop;
         this.blendWeight = blendWeight;
@@ -73,7 +61,7 @@ public class AnimationData {
     /**
      * @return How much this animation should be blended with others
      */
-    public float getBlendWeight() {
+    public MolangExpression getBlendWeight() {
         return blendWeight;
     }
 
@@ -556,7 +544,7 @@ public class AnimationData {
                 /* Parse global animation properties */
                 String animationName = animationEntry.getKey();
                 Loop loop = animationObject.has("loop") ? parseLoop(animationObject.get("loop")) : Loop.NONE; // bool
-                float blendWeight = GsonHelper.getAsFloat(animationObject, "blend_weight", 1.0f); // expression TODO Molang
+                MolangExpression blendWeight = JSONTupleParser.getExpression(animationObject, "blend_weight", () -> MolangExpression.of(1.0F)); // expression TODO Molang
                 float animationLength = GsonHelper.getAsFloat(animationObject, "animation_length", -1); // float
                 boolean overridePreviousAnimation = GsonHelper.getAsBoolean(animationObject, "override_previous_animation", false); // bool
                 Set<BoneAnimation> bones = new HashSet<>();
