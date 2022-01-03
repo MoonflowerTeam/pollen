@@ -1,11 +1,11 @@
 package gg.moonflower.pollen.core.mixin.client;
 
+import gg.moonflower.pollen.core.extensions.ClientLevelExtensions;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRenderer;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
 import gg.moonflower.pollen.pinwheel.api.client.render.TickableBlockRenderer;
 import gg.moonflower.pollen.pinwheel.core.client.BlockDataStorage;
 import gg.moonflower.pollen.pinwheel.core.client.DataContainerImpl;
-import gg.moonflower.pollen.core.extensions.ClientLevelExtensions;
 import net.minecraft.client.multiplayer.ClientChunkCache;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -26,10 +26,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -41,7 +38,7 @@ public abstract class ClientLevelMixin extends Level implements ClientLevelExten
     @Final
     private ClientChunkCache chunkSource;
     @Unique
-    private final Map<ChunkPos, Set<BlockPos>> blockRenderers = new HashMap<>();
+    private final Map<ChunkPos, Set<BlockPos>> tickableBlockRenderers = new HashMap<>();
     @Unique
     private final Map<BlockPos, BlockState> pendingUpdates = new HashMap<>();
     @Unique
@@ -54,7 +51,7 @@ public abstract class ClientLevelMixin extends Level implements ClientLevelExten
     }
 
     @Unique
-    private void scheduleTick(BlockPos pos, BlockState state){
+    private void scheduleTick(BlockPos pos, BlockState state) {
         this.pendingUpdates.put(pos.immutable(), state);
     }
 
@@ -68,12 +65,12 @@ public abstract class ClientLevelMixin extends Level implements ClientLevelExten
         boolean flag = super.setBlock(pos, state, flags, recursionLeft);
         BlockDataStorage.get(this).update(state, pos);
 
-        BlockRenderer renderer = BlockRendererRegistry.get(state.getBlock());
         ChunkPos chunkPos = new ChunkPos(pos);
-        if (renderer instanceof TickableBlockRenderer) {
-            this.blockRenderers.computeIfAbsent(chunkPos, __ -> new HashSet<>()).add(pos.immutable());
-        } else if (this.blockRenderers.containsKey(chunkPos)) {
-            this.blockRenderers.get(chunkPos).remove(pos);
+        List<BlockRenderer> renderers = BlockRendererRegistry.get(state.getBlock());
+        if (renderers.stream().anyMatch(renderer -> renderer instanceof TickableBlockRenderer)) {
+            this.tickableBlockRenderers.computeIfAbsent(chunkPos, __ -> new HashSet<>()).add(pos.immutable());
+        } else if (this.tickableBlockRenderers.containsKey(chunkPos)) {
+            this.tickableBlockRenderers.get(chunkPos).remove(pos);
         }
 
         if (flag)
@@ -92,12 +89,12 @@ public abstract class ClientLevelMixin extends Level implements ClientLevelExten
             LevelChunk chunk = chunks.get(i);
             if (chunk == null)
                 continue;
-            this.blockRenderers.computeIfAbsent(chunk.getPos(), chunkPos -> {
+            this.tickableBlockRenderers.computeIfAbsent(chunk.getPos(), chunkPos -> {
                 Set<BlockPos> positions = new HashSet<>();
                 for (BlockPos pos : BlockPos.betweenClosed(chunkPos.getMinBlockX(), 0, chunkPos.getMinBlockZ(), chunkPos.getMaxBlockX(), this.getMaxBuildHeight(), chunkPos.getMaxBlockZ())) {
                     BlockState state = chunk.getBlockState(pos);
-                    BlockRenderer renderer = BlockRendererRegistry.get(state.getBlock());
-                    if (renderer != null && renderer.getRenderShape(state) != RenderShape.MODEL) {
+                    List<BlockRenderer> renderers = BlockRendererRegistry.get(state.getBlock());
+                    if (renderers.stream().anyMatch(renderer -> renderer.getRenderShape(state) != RenderShape.MODEL)) {
                         BlockPos immutablePos = pos.immutable();
                         positions.add(immutablePos);
                         this.pollen_scheduleTick(immutablePos);
@@ -106,8 +103,8 @@ public abstract class ClientLevelMixin extends Level implements ClientLevelExten
                 return positions;
             }).forEach(pos -> {
                 BlockState state = this.getBlockState(pos);
-                BlockRenderer renderer = BlockRendererRegistry.get(state.getBlock());
-                if (renderer != null) {
+                List<BlockRenderer> renderers = BlockRendererRegistry.get(state.getBlock());
+                for (BlockRenderer renderer : renderers) {
                     BlockState oldState = this.updates.remove(pos);
                     if (oldState != null)
                         renderer.receiveUpdate(this, pos, oldState, state, this.dataContainer.get(pos));
@@ -118,15 +115,15 @@ public abstract class ClientLevelMixin extends Level implements ClientLevelExten
         }
 
         this.updates.forEach((pos, state) -> {
-            BlockRenderer renderer = BlockRendererRegistry.get(state.getBlock());
-            if (renderer != null)
+            List<BlockRenderer> renderers = BlockRendererRegistry.get(state.getBlock());
+            for (BlockRenderer renderer : renderers)
                 renderer.receiveUpdate(this, pos, state, this.getBlockState(pos), this.dataContainer.get(pos));
         });
     }
 
     @Inject(method = "unload", at = @At("TAIL"))
     public void onChunkLoaded(LevelChunk chunk, CallbackInfo ci) {
-        this.blockRenderers.remove(chunk.getPos());
+        this.tickableBlockRenderers.remove(chunk.getPos());
         BlockDataStorage.get(this).invalidateChunk(chunk.getPos());
     }
 }

@@ -16,8 +16,10 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Acts as a custom renderer for any block, instead of just tile entities.
+ * <p>{@link RenderExclusively} should be used to define <i>how</i> this renderer should interact with other renderers of the same type
  *
  * @author Ocelot
+ * @see RenderExclusively
  * @since 1.0.0
  */
 public interface BlockRenderer {

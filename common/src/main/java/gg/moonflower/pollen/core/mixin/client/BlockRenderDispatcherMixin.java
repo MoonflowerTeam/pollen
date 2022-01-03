@@ -13,7 +13,7 @@ public class BlockRenderDispatcherMixin {
 
     @ModifyVariable(method = "getBlockModel", at = @At("HEAD"), argsOnly = true)
     public BlockState modifyBlockState(BlockState state) {
-        BlockRenderer renderer = BlockRendererRegistry.get(state.getBlock());
+        BlockRenderer renderer = BlockRendererRegistry.getFirst(state.getBlock());
         return renderer != null ? renderer.getRenderState(state) : state;
     }
 }
