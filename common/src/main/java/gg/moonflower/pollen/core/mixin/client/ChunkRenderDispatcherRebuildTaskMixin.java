@@ -29,14 +29,14 @@ public class ChunkRenderDispatcherRebuildTaskMixin {
 
     @Inject(method = "compile", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;isSolidRender(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
     public void compile(float x, float y, float z, ChunkRenderDispatcher.CompiledChunk chunk, ChunkBufferBuilderPack pack, CallbackInfoReturnable<Set<BlockEntity>> cir, int i, BlockPos start, BlockPos end, VisGraph visGraph, Set<BlockEntity> blockEntities, RenderChunkRegion renderChunkRegion, PoseStack matrixStack, Random random, BlockRenderDispatcher blockRenderDispatcher, Iterator<BlockPos> iterator, BlockPos pos, BlockState state) {
-        BlockRenderer renderer = BlockRendererRegistry.get(state.getBlock());
+        BlockRenderer renderer = BlockRendererRegistry.getFirst(state.getBlock());
         if (renderer != null && renderer.getRenderShape(state) != RenderShape.MODEL)
             ((CompiledChunkExtensions) chunk).pollen_getBlockRenderPositions().add(pos.immutable());
     }
 
     @Redirect(method = "compile", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getRenderShape()Lnet/minecraft/world/level/block/RenderShape;"))
     public RenderShape redirectRenderShape(BlockState state) {
-        BlockRenderer renderer = BlockRendererRegistry.get(state.getBlock());
+        BlockRenderer renderer = BlockRendererRegistry.getFirst(state.getBlock());
         return renderer != null && renderer.getRenderShape(state) == RenderShape.INVISIBLE ? RenderShape.INVISIBLE : state.getRenderShape();
     }
 }

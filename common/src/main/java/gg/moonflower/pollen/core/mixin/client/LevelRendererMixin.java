@@ -31,6 +31,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.List;
 import java.util.SortedSet;
 import java.util.stream.Stream;
 
@@ -73,8 +74,8 @@ public class LevelRendererMixin implements LevelRendererExtensions {
 
         this.pollen_getBlockRenderers().forEach(pos -> {
             BlockState state = this.level.getBlockState(pos);
-            BlockRenderer renderer = BlockRendererRegistry.get(state.getBlock());
-            if (renderer == null)
+            List<BlockRenderer> renderers = BlockRendererRegistry.get(state.getBlock());
+            if (renderers.isEmpty())
                 return;
 
             MultiBufferSource buffer = this.renderBuffers.bufferSource();
@@ -96,7 +97,11 @@ public class LevelRendererMixin implements LevelRendererExtensions {
             if (this.dataContainer == null || this.dataContainer.getLevel() != this.level)
                 this.dataContainer = new DataContainerImpl(this.level);
 
-            renderer.render(this.level, pos, this.dataContainer.get(pos), buffer, matrixStack, partialTicks, camera, gameRenderer, lightmap, projection, LevelRenderer.getLightColor(this.level, pos), OverlayTexture.NO_OVERLAY);
+            for (BlockRenderer renderer : renderers) {
+                matrixStack.pushPose();
+                renderer.render(this.level, pos, this.dataContainer.get(pos), buffer, matrixStack, partialTicks, camera, gameRenderer, lightmap, projection, LevelRenderer.getLightColor(this.level, pos), OverlayTexture.NO_OVERLAY);
+                matrixStack.popPose();
+            }
             matrixStack.popPose();
         });
     }
