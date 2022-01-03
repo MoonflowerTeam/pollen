@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(AxeItem.class)
 public class AxeItemMixin {
 
-    @Inject(method = "getAxeStrippingState", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getAxeStrippingState", at = @At("HEAD"), cancellable = true, remap = false)
     private static void getAxeStrippingState(BlockState state, CallbackInfoReturnable<BlockState> cir) {
         BlockState strippedState = StrippingRegistry.getStrippedState(state);
         if (strippedState != null)
