@@ -14,7 +14,7 @@ jobs:
         java: [
             17    # Minimum supported by Minecraft 1.18
         ]
-        os: [ubuntu-20.04, windows-latest]  # and run on both Linux and Windows
+        os: [ubuntu-20.04]  # and run on Linux
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -37,7 +37,7 @@ jobs:
 
       - name: Make gradle wrapper executable
         if: ${{ runner.os != 'Windows' }}
-        run: chmod +x ./gradlew
+        run: chmod +x gradlew
 
       - name: Build
         run: ./gradlew :fabric:build -x runDatagen :forge:build
