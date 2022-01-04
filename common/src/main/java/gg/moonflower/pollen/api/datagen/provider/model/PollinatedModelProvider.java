@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  * @see PollinatedItemModelGenerator
  * @since 1.0.0
  */
-public abstract class PollinatedModelProvider implements DataProvider {
+public class PollinatedModelProvider implements DataProvider {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
@@ -80,10 +80,6 @@ public abstract class PollinatedModelProvider implements DataProvider {
         Consumer<Item> skippedAutoModelsOutput = skippedAutoModels::add;
 
         this.factories.stream().map(factory -> factory.create(blockStateOutput, modelOutput, skippedAutoModelsOutput)).forEach(PollinatedModelGenerator::run);
-
-        List<Block> blocks = Registry.BLOCK.stream().filter(block -> this.domain.equals(Registry.BLOCK.getKey(block).getNamespace()) && !blockStates.containsKey(block)).collect(Collectors.toList());
-        if (!blocks.isEmpty())
-            throw new IllegalStateException("Missing blockstate definitions for: " + blocks);
 
         Registry.BLOCK.forEach(block -> {
             if (!this.domain.equals(Registry.BLOCK.getKey(block).getNamespace()))
