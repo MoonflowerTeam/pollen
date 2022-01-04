@@ -189,7 +189,7 @@ public abstract class PollinatedBlockModelGenerator implements PollinatedModelGe
     }
 
     protected ResourceLocation createSuffixedVariant(Block block, String suffix, ModelTemplate modelTemplate, Function<ResourceLocation, TextureMapping> textureMappingGetter) {
-        return modelTemplate.createWithSuffix(block, suffix, (TextureMapping) textureMappingGetter.apply(TextureMapping.getBlockTexture(block, suffix)), this.modelOutput);
+        return modelTemplate.createWithSuffix(block, suffix, textureMappingGetter.apply(TextureMapping.getBlockTexture(block, suffix)), this.modelOutput);
     }
 
     protected static BlockStateGenerator createPressurePlate(Block pressurePlateBlock, ResourceLocation unpoweredModelLocation, ResourceLocation poweredModelLocation) {

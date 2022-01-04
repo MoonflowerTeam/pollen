@@ -81,10 +81,6 @@ public abstract class PollinatedModelProvider implements DataProvider {
 
         this.factories.stream().map(factory -> factory.create(blockStateOutput, modelOutput, skippedAutoModelsOutput)).forEach(PollinatedModelGenerator::run);
 
-        List<Block> blocks = Registry.BLOCK.stream().filter(block -> this.domain.equals(Registry.BLOCK.getKey(block).getNamespace()) && !blockStates.containsKey(block)).collect(Collectors.toList());
-        if (!blocks.isEmpty())
-            throw new IllegalStateException("Missing blockstate definitions for: " + blocks);
-
         Registry.BLOCK.forEach(block -> {
             if (!this.domain.equals(Registry.BLOCK.getKey(block).getNamespace()))
                 return;
