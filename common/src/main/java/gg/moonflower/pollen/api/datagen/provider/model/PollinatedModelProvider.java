@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  * @see PollinatedItemModelGenerator
  * @since 1.0.0
  */
-public abstract class PollinatedModelProvider implements DataProvider {
+public class PollinatedModelProvider implements DataProvider {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
