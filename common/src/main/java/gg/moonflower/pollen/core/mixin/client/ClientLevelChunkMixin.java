@@ -6,16 +6,23 @@ import gg.moonflower.pollen.pinwheel.api.client.render.BlockRenderer;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
 import gg.moonflower.pollen.pinwheel.api.client.render.TickableBlockRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.game.ClientboundLevelChunkPacketData;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelHeightAccessor;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkBiomeContainer;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.world.level.chunk.UpgradeData;
+import net.minecraft.world.level.levelgen.blending.BlendingData;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,21 +33,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 @Mixin(LevelChunk.class)
-public class ClientLevelChunkMixin implements ClientLevelChunkExtension {
+public abstract class ClientLevelChunkMixin extends ChunkAccess implements ClientLevelChunkExtension {
 
     @Shadow
     @Final
     private Level level;
-    @Shadow
-    @Final
-    private LevelChunkSection[] sections;
-    @Shadow
-    @Final
-    private ChunkPos chunkPos;
     @Unique
     private final Map<BlockPos, Set<TickableBlockRenderer>> tickableBlockRenderers = new HashMap<>();
+
+    private ClientLevelChunkMixin(ChunkPos chunkPos, UpgradeData upgradeData, LevelHeightAccessor levelHeightAccessor, Registry<Biome> registry, long l, @Nullable LevelChunkSection[] levelChunkSections, @Nullable BlendingData blendingData) {
+        super(chunkPos, upgradeData, levelHeightAccessor, registry, l, levelChunkSections, blendingData);
+    }
 
     @Unique
     private void addRenderers(BlockPos pos, BlockState state) {
@@ -66,12 +72,12 @@ public class ClientLevelChunkMixin implements ClientLevelChunkExtension {
     }
 
     @Inject(method = "replaceWithPacketData", at = @At("TAIL"))
-    public void updateBlockRenderers(ChunkBiomeContainer chunkBiomeContainer, FriendlyByteBuf friendlyByteBuf, CompoundTag compoundTag, int i, CallbackInfo ci) {
+    public void updateBlockRenderers(FriendlyByteBuf friendlyByteBuf, CompoundTag compoundTag, Consumer<ClientboundLevelChunkPacketData.BlockEntityTagOutput> consumer, CallbackInfo ci) {
         if (!this.level.isClientSide()) // Renderers are client only
             return;
 
         for (LevelChunkSection section : this.sections) {
-            if (section == LevelChunk.EMPTY_SECTION || section.isEmpty())
+            if (section.hasOnlyAir())
                 continue;
 
             for (BlockPos pos : BlockPos.betweenClosed(0, 0, 0, 15, 15, 15)) {
