@@ -1,6 +1,9 @@
 package gg.moonflower.pollen.pinwheel.api.client.render;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import net.minecraft.core.Registry;
 import net.minecraft.world.level.block.Block;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -16,6 +19,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class BlockRendererRegistry {
 
+    private static final RenderSet EMPTY = new RenderSet();
     private static final Map<Block, RenderSet> RENDERERS = new HashMap<>();
     private static final Lock LOCK = new ReentrantLock();
 
@@ -45,9 +49,7 @@ public class BlockRendererRegistry {
      * @return The renderers for that block
      */
     public static List<BlockRenderer> get(Block block) {
-        if (!RENDERERS.containsKey(block))
-            return Collections.emptyList();
-        return RENDERERS.get(block).values();
+        return RENDERERS.getOrDefault(block, EMPTY).values();
     }
 
     /**

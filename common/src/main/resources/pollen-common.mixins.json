@@ -10,6 +10,7 @@
     "client.ChunkRenderDispatcherRenderChunkAccessor",
     "client.ClientChunkCacheAccessor",
     "client.ClientChunkCacheStorageAccessor",
+    "client.ClientLevelChunkMixin",
     "client.ClientLevelMixin",
     "client.CompiledChunkMixin",
     "client.LevelRendererMixin",

@@ -3,7 +3,7 @@ package gg.moonflower.pollen.pinwheel.core.client;
 import gg.moonflower.pollen.pinwheel.api.client.blockdata.BlockData;
 import gg.moonflower.pollen.pinwheel.api.client.blockdata.BlockDataKey;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRenderer;
-import gg.moonflower.pollen.core.extensions.ClientLevelExtensions;
+import gg.moonflower.pollen.core.extensions.ClientLevelExtension;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -43,7 +43,7 @@ public class DataContainerImpl {
 
     private void scheduleTick(BlockPos pos) {
         if (!this.pos.equals(pos))
-            ((ClientLevelExtensions) this.level).pollen_scheduleTick(pos);
+            ((ClientLevelExtension) this.level).pollen_scheduleTick(pos);
     }
 
     private <T> BlockData<T> get(BlockDataKey<T> key, BlockPos pos) {
