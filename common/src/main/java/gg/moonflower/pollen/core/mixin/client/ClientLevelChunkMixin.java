@@ -40,7 +40,7 @@ public abstract class ClientLevelChunkMixin extends ChunkAccess implements Clien
 
     @Shadow
     @Final
-    private Level level;
+    Level level;
     @Unique
     private final Map<BlockPos, Set<TickableBlockRenderer>> tickableBlockRenderers = new HashMap<>();
 
