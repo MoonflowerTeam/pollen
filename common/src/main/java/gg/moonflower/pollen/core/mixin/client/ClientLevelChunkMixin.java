@@ -8,6 +8,7 @@ import gg.moonflower.pollen.pinwheel.api.client.render.TickableBlockRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -35,6 +36,9 @@ public class ClientLevelChunkMixin implements ClientLevelChunkExtension {
     @Shadow
     @Final
     private LevelChunkSection[] sections;
+    @Shadow
+    @Final
+    private ChunkPos chunkPos;
     @Unique
     private final Map<BlockPos, Set<TickableBlockRenderer>> tickableBlockRenderers = new HashMap<>();
 
@@ -71,7 +75,7 @@ public class ClientLevelChunkMixin implements ClientLevelChunkExtension {
                 continue;
 
             for (BlockPos pos : BlockPos.betweenClosed(0, 0, 0, 15, 15, 15)) {
-                this.addRenderers(pos, section.getBlockState(pos.getX(), pos.getY(), pos.getZ()));
+                this.addRenderers(pos.offset(this.chunkPos.getMinBlockX(), section.bottomBlockY(), this.chunkPos.getMinBlockZ()), section.getBlockState(pos.getX(), pos.getY(), pos.getZ()));
             }
         }
     }
