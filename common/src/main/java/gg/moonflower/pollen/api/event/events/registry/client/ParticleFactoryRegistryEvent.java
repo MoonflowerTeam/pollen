@@ -6,6 +6,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Registers particle factories when it is safe to do so.
@@ -65,6 +66,7 @@ public interface ParticleFactoryRegistryEvent {
          * @param sprites The sprites loaded from <code>domain:particles/particle_name.json</code>.
          * @return A new particle provider
          */
+        @NotNull
         ParticleProvider<T> create(SpriteSet sprites);
     }
 }
