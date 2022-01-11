@@ -80,20 +80,4 @@ public class PollenClientForgeEvents {
     public static void onEvent(InputEvent.KeyInputEvent event) {
         InputEvents.KEY_INPUT_EVENT.invoker().keyInput(event.getKey(), event.getScanCode(), event.getAction(), event.getModifiers());
     }
-
-    @SubscribeEvent
-    public static void onEvent(ParticleFactoryRegisterEvent event) {
-        ParticleEngine particleEngine = Minecraft.getInstance().particleEngine;
-        ParticleFactoryRegistryEvent.EVENT.invoker().registerParticles(new ParticleFactoryRegistryEvent.Registry() {
-            @Override
-            public <T extends ParticleOptions> void register(ParticleType<T> type, ParticleProvider<T> provider) {
-                particleEngine.register(type, provider);
-            }
-
-            @Override
-            public <T extends ParticleOptions> void register(ParticleType<T> type, ParticleFactoryRegistryEvent.Factory<T> factory) {
-                particleEngine.register(type, factory::create);
-            }
-        });
-    }
 }
