@@ -2,6 +2,7 @@ package gg.moonflower.pollen.api.crafting.condition;
 
 import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Supplies JSON objects for accessing conditions for use in data generators.
@@ -9,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
  * @author Ocelot
  * @since 1.0.0
  */
+@ApiStatus.Experimental // TODO test after recipe providers are added
 public interface PollinatedRecipeConditionProvider {
 
     /**
