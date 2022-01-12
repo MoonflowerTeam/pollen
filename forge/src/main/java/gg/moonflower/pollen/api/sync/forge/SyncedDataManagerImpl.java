@@ -11,6 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -37,8 +38,8 @@ public class SyncedDataManagerImpl {
     public static final Capability<ForgeDataComponent> CAPABILITY = null;
 
     @SuppressWarnings("ConstantConditions")
-    private static ForgeDataComponent getDataComponent(Player player) {
-        return player.getCapability(CAPABILITY).orElseThrow(() -> new IllegalStateException("Failed to get capability"));
+    private static ForgeDataComponent getDataComponent(Entity entity) {
+        return entity.getCapability(CAPABILITY).orElseThrow(() -> new IllegalStateException("Failed to get capability"));
     }
 
     public static void init() {
@@ -59,16 +60,14 @@ public class SyncedDataManagerImpl {
 
     @SubscribeEvent
     public static void onEvent(AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof Player) {
-            event.addCapability(new ResourceLocation(Pollen.MOD_ID, "synced_data"), new Provider());
-        }
+        event.addCapability(new ResourceLocation(Pollen.MOD_ID, "synced_data"), new Provider());
     }
 
     @SubscribeEvent
     public static void onStartTracking(PlayerEvent.StartTracking event) {
-        if (event.getPlayer() instanceof ServerPlayer && event.getTarget() instanceof ServerPlayer) {
+        if (event.getPlayer() instanceof ServerPlayer) {
             ServerPlayer player = (ServerPlayer) event.getPlayer();
-            ServerPlayer target = (ServerPlayer) event.getTarget();
+            Entity target = event.getTarget();
             ForgeDataComponent component = getDataComponent(player);
             if (component.shouldSyncWith(target, player))
                 PollenMessages.PLAY.sendTo(player, new ClientboundUpdateSyncedDataPacket(target, player, true));
@@ -101,36 +100,36 @@ public class SyncedDataManagerImpl {
         }
     }
 
-    public static void sync(ServerPlayer player) {
-        ForgeDataComponent component = getDataComponent(player);
+    public static void sync(Entity entity) {
+        ForgeDataComponent component = getDataComponent(entity);
         if (component.isDirty()) {
-            for (ServerPlayer other : player.getLevel().getServer().getPlayerList().getPlayers()) {
-                if (component.shouldSyncWith(player, other))
-                    PollenMessages.PLAY.sendTo(other, new ClientboundUpdateSyncedDataPacket(player, other, false));
+            for (ServerPlayer other : ((ServerLevel) entity.level).getServer().getPlayerList().getPlayers()) {
+                if (component.shouldSyncWith(entity, other))
+                    PollenMessages.PLAY.sendTo(other, new ClientboundUpdateSyncedDataPacket(entity, other, false));
             }
             component.clean();
         }
     }
 
-    public static <T> void set(Player player, SyncedDataKey<T> key, T value) {
-        getDataComponent(player).setValue(key, value);
+    public static <T> void set(Entity entity, SyncedDataKey<T> key, T value) {
+        getDataComponent(entity).setValue(key, value);
         SyncedDataManager.markDirty();
     }
 
-    public static <T> T get(Player player, SyncedDataKey<T> key) {
-        return getDataComponent(player).getValue(key);
+    public static <T> T get(Entity entity, SyncedDataKey<T> key) {
+        return getDataComponent(entity).getValue(key);
     }
 
-    public static void writePacketData(FriendlyByteBuf buf, ServerPlayer provider, ServerPlayer player, boolean sync) {
+    public static void writePacketData(FriendlyByteBuf buf, Entity provider, Entity entity, boolean sync) {
         if (sync) {
-            getDataComponent(player).writeSyncPacket(buf, provider, player);
+            getDataComponent(entity).writeSyncPacket(buf, provider, entity);
         } else {
-            getDataComponent(player).writeUpdatePacket(buf, provider, player);
+            getDataComponent(entity).writeUpdatePacket(buf, provider, entity);
         }
     }
 
-    public static void readPacketData(FriendlyByteBuf buf, Player player) {
-        getDataComponent(player).applySyncPacket(buf);
+    public static void readPacketData(FriendlyByteBuf buf, Entity entity) {
+        getDataComponent(entity).applySyncPacket(buf);
     }
 
     public static class Provider implements ICapabilitySerializable<CompoundTag> {
