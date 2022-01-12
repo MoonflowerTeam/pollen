@@ -4,7 +4,7 @@ import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
 import gg.moonflower.pollen.api.sync.forge.SyncedDataManagerImpl;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.ApiStatus;
@@ -15,23 +15,23 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Internal
 public class ClientboundUpdateSyncedDataPacket implements PollinatedPacket<ForgeClientPlayPacketHandler> {
 
-    private ServerPlayer provider;
-    private ServerPlayer player;
+    private Entity provider;
+    private Entity player;
     private boolean sync;
 
     @OnlyIn(Dist.CLIENT)
-    private int playerId;
+    private int entityId;
     @OnlyIn(Dist.CLIENT)
     private FriendlyByteBuf payload;
 
-    public ClientboundUpdateSyncedDataPacket(ServerPlayer provider, ServerPlayer player, boolean sync) {
+    public ClientboundUpdateSyncedDataPacket(Entity provider, Entity player, boolean sync) {
         this.provider = provider;
         this.player = player;
         this.sync = sync;
     }
 
     public ClientboundUpdateSyncedDataPacket(FriendlyByteBuf buf) {
-        this.playerId = buf.readVarInt();
+        this.entityId = buf.readVarInt();
         this.payload = buf;
     }
 
@@ -47,8 +47,8 @@ public class ClientboundUpdateSyncedDataPacket implements PollinatedPacket<Forge
     }
 
     @OnlyIn(Dist.CLIENT)
-    public int getPlayerId() {
-        return playerId;
+    public int getEntityId() {
+        return entityId;
     }
 
     @OnlyIn(Dist.CLIENT)

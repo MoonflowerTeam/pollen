@@ -7,14 +7,14 @@ import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
 import gg.moonflower.pollen.api.sync.fabric.FabricDataComponent;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 
-@SuppressWarnings("UnstableApiUsage")
 public class PollenComponents implements EntityComponentInitializer {
 
     public static final ComponentKey<FabricDataComponent> SYNCED_DATA = ComponentRegistry.getOrCreate(new ResourceLocation(Pollen.MOD_ID, "synced_data"), FabricDataComponent.class);
 
     @Override
     public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
-        registry.registerForPlayers(SYNCED_DATA, FabricDataComponent::new);
+        registry.registerFor(Entity.class, SYNCED_DATA, FabricDataComponent::new);
     }
 }
