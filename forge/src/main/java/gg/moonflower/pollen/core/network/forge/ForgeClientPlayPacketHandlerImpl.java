@@ -24,14 +24,13 @@ public class ForgeClientPlayPacketHandlerImpl extends PollenClientPlayPacketHand
             return;
 
         ctx.enqueueWork(() -> {
-            Entity entity = level.getEntity(msg.getPlayerId());
-            if (!(entity instanceof Player)) {
-                LOGGER.warn("Server sent synced data for unexpected entity: " + msg.getPlayerId());
+            Entity entity = level.getEntity(msg.getEntityId());
+            if (entity == null) {
+                LOGGER.warn("Server sent synced data for unexpected entity: " + msg.getEntityId());
                 return;
             }
 
-            Player player = (Player) entity;
-            SyncedDataManagerImpl.readPacketData(msg.getPayload(), player);
+            SyncedDataManagerImpl.readPacketData(msg.getPayload(), entity);
         });
     }
 }

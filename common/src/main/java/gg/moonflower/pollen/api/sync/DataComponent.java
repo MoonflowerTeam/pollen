@@ -6,7 +6,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.Entity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -43,8 +43,8 @@ public abstract class DataComponent {
             this.dirtyValues.add(SyncedDataManager.getId(key));
     }
 
-    public boolean shouldSyncWith(Player provider, Player player) {
-        return this.values.keySet().stream().map(key -> (provider == player && key.getSyncStrategy().isSyncEntity()) || key.getSyncStrategy().isSyncTracking()).reduce(false, (a, b) -> a || b);
+    public boolean shouldSyncWith(Entity provider, Entity entity) {
+        return this.values.keySet().stream().map(key -> (provider == entity && key.getSyncStrategy().isSyncEntity()) || key.getSyncStrategy().isSyncTracking()).reduce(false, (a, b) -> a || b);
     }
 
     public boolean shouldCopyForRespawn(boolean lossless, boolean keepInventory) {

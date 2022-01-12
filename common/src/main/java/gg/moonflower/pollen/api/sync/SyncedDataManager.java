@@ -8,8 +8,7 @@ import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.core.network.login.ClientboundSyncPlayerDataKeysPacket;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.Entity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -47,9 +46,8 @@ public final class SyncedDataManager {
     public static void init() {
         TickEvents.SERVER_POST.register(() -> SyncedDataManager.dirty = false);
         TickEvents.LIVING_POST.register(entity -> {
-            if (!(entity instanceof ServerPlayer) || !dirty)
-                return;
-            sync((ServerPlayer) entity);
+            if (dirty)
+                sync(entity);
         });
     }
 
@@ -60,7 +58,7 @@ public final class SyncedDataManager {
 
     @ApiStatus.Internal
     @ExpectPlatform
-    public static void sync(ServerPlayer player) {
+    public static void sync(Entity entity) {
         Platform.error();
     }
 
@@ -96,25 +94,25 @@ public final class SyncedDataManager {
     /**
      * Sets the value of the specified data key for the specified player.
      *
-     * @param player The player to set the key for
+     * @param entity The entity to set the key for
      * @param key    The key to set
      * @param value  The new value
      * @param <T>    The type of data to set
      */
     @ExpectPlatform
-    public static <T> void set(Player player, SyncedDataKey<T> key, T value) {
+    public static <T> void set(Entity entity, SyncedDataKey<T> key, T value) {
         Platform.error();
     }
 
     /**
      * Retrieves the value of the specified data key from the specified player.
      *
-     * @param player The player to get the data from
+     * @param player The entity to get the data from
      * @param key    The key to get
      * @param <T>    The type of data to get
      */
     @ExpectPlatform
-    public static <T> T get(Player player, SyncedDataKey<T> key) {
+    public static <T> T get(Entity player, SyncedDataKey<T> key) {
         return Platform.error();
     }
 
