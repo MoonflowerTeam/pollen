@@ -13,22 +13,29 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Internal
 public class PollinatedRecipeConditionWrapper implements ICondition {
 
-    private final ResourceLocation id;
+    private final ResourceLocation name;
+    private final String stringName;
     private final boolean result;
 
-    public PollinatedRecipeConditionWrapper(ResourceLocation id, boolean result) {
-        this.id = id;
+    public PollinatedRecipeConditionWrapper(ResourceLocation name, String stringName, boolean result) {
+        this.name = name;
+        this.stringName = stringName;
         this.result = result;
     }
 
     @Override
     public ResourceLocation getID() {
-        return id;
+        return name;
     }
 
     @Override
     public boolean test() {
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return stringName;
     }
 
     public static class Serializer implements IConditionSerializer<PollinatedRecipeConditionWrapper> {
@@ -47,7 +54,7 @@ public class PollinatedRecipeConditionWrapper implements ICondition {
 
         @Override
         public PollinatedRecipeConditionWrapper read(JsonObject json) {
-            return new PollinatedRecipeConditionWrapper(this.name, this.condition.test(json));
+            return new PollinatedRecipeConditionWrapper(this.name, this.condition.toString(), this.condition.test(json));
         }
 
         @Override

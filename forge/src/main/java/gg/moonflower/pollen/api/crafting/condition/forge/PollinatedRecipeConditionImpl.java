@@ -2,6 +2,10 @@ package gg.moonflower.pollen.api.crafting.condition.forge;
 
 import gg.moonflower.pollen.api.crafting.condition.PollinatedRecipeConditionProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.crafting.conditions.*;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -34,11 +38,35 @@ public class PollinatedRecipeConditionImpl {
     }
 
     public static PollinatedRecipeConditionProvider itemExists(ResourceLocation name) {
-        return wrap(new ItemExistsCondition(name.getNamespace(), name.getPath()));
+        return wrap(new ItemExistsCondition(name));
     }
 
-    public static PollinatedRecipeConditionProvider modLoaded(String modId) {
-        return wrap(new ModLoadedCondition(modId));
+    public static PollinatedRecipeConditionProvider blockExists(ResourceLocation name) {
+        return wrap(new BlockExistsCondition(name));
+    }
+
+    public static PollinatedRecipeConditionProvider fluidExists(ResourceLocation name) {
+        return wrap(new FluidExistsCondition(name));
+    }
+
+    public static PollinatedRecipeConditionProvider itemTagPopulated(Tag.Named<Item> tag) {
+        return wrap(new ItemTagPopulatedCondition(tag.getName()));
+    }
+
+    public static PollinatedRecipeConditionProvider blockTagPopulated(Tag.Named<Block> tag) {
+        return wrap(new BlockTagPopulatedCondition(tag.getName()));
+    }
+
+    public static PollinatedRecipeConditionProvider fluidTagPopulated(Tag.Named<Fluid> tag) {
+        return wrap(new FluidTagPopulatedCondition(tag.getName()));
+    }
+
+    public static PollinatedRecipeConditionProvider allModsLoaded(String... modIds) {
+        return modIds.length == 1 ? wrap(new ModLoadedCondition(modIds[0])) : wrap(new AndCondition(Arrays.stream(modIds).map(ModLoadedCondition::new).toArray(ICondition[]::new)));
+    }
+
+    public static PollinatedRecipeConditionProvider anyModsLoaded(String... modIds) {
+        return modIds.length == 1 ? wrap(new ModLoadedCondition(modIds[0])) : wrap(new OrCondition(Arrays.stream(modIds).map(ModLoadedCondition::new).toArray(ICondition[]::new)));
     }
 
     private static PollinatedRecipeConditionProvider wrap(ICondition condition) {

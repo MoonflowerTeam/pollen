@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.api.registry.forge;
 
 import gg.moonflower.pollen.api.crafting.condition.PollinatedRecipeCondition;
-import gg.moonflower.pollen.api.crafting.condition.forge.PollinatedRecipeConditionWrapper;
+import gg.moonflower.pollen.api.crafting.condition.forge.*;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -32,6 +32,11 @@ public class RecipeConditionRegistryImpl {
     @SubscribeEvent
     public static void registerRecipeConditions(RegistryEvent.Register<RecipeSerializer<?>> event) {
         CONDITIONS.forEach(CraftingHelper::register);
+        CraftingHelper.register(BlockExistsCondition.Serializer.INSTANCE);
+        CraftingHelper.register(FluidExistsCondition.Serializer.INSTANCE);
+        CraftingHelper.register(ItemTagPopulatedCondition.Serializer.INSTANCE);
+        CraftingHelper.register(BlockTagPopulatedCondition.Serializer.INSTANCE);
+        CraftingHelper.register(FluidTagPopulatedCondition.Serializer.INSTANCE);
     }
 
     public static IConditionSerializer<?> get(PollinatedRecipeCondition condition) {
