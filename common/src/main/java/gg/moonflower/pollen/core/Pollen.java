@@ -11,6 +11,7 @@ import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
 import gg.moonflower.pollen.api.sync.SyncedDataManager;
+import gg.moonflower.pollen.core.datagen.PollenLanguageProvider;
 import gg.moonflower.pollen.core.network.PollenMessages;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
@@ -81,6 +82,7 @@ public class Pollen {
     }
 
     private static void onDataInit(Platform.DataSetupContext context) {
+        context.getGenerator().addProvider(new PollenLanguageProvider(context.getGenerator(), context.getMod()));
     }
 
     @Nullable
