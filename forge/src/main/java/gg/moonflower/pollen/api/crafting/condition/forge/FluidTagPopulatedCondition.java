@@ -2,6 +2,7 @@ package gg.moonflower.pollen.api.crafting.condition.forge;
 
 import com.google.gson.JsonObject;
 import gg.moonflower.pollen.core.Pollen;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.SerializationTags;
 import net.minecraft.util.GsonHelper;
@@ -29,7 +30,7 @@ public class FluidTagPopulatedCondition implements ICondition {
 
     @Override
     public boolean test() {
-        return SerializationTags.getInstance().getFluids().getAvailableTags().contains(this.tag);
+        return SerializationTags.getInstance().getOrEmpty(Registry.FLUID_REGISTRY).getAvailableTags().contains(this.tag);
     }
 
     @Override
