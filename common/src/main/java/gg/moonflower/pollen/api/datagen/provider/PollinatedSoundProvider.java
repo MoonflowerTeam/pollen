@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -53,7 +54,7 @@ public abstract class PollinatedSoundProvider implements DataProvider {
         this.registerSounds(registry);
 
         JsonObject json = new JsonObject();
-        sounds.forEach(definition -> json.add(definition.getSoundId(), definition.toJson()));
+        sounds.stream().sorted(Comparator.comparing(SoundDefinitionBuilder::getSoundId)).forEachOrdered(definition -> json.add(definition.getSoundId(), definition.toJson()));
 
         try {
             DataProvider.save(GSON, cache, json, path);
