@@ -7,14 +7,13 @@ import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.mojang.math.Matrix4f;
 import gg.moonflower.pollen.api.client.render.PollenDimensionSpecialEffects;
 import gg.moonflower.pollen.core.client.render.PollenDimensionRenderContextImpl;
-import gg.moonflower.pollen.core.extensions.CompiledChunkExtensions;
-import gg.moonflower.pollen.core.extensions.LevelRendererExtensions;
+import gg.moonflower.pollen.core.extensions.CompiledChunkExtension;
+import gg.moonflower.pollen.core.extensions.LevelRendererExtension;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRenderer;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
 import gg.moonflower.pollen.pinwheel.core.client.DataContainerImpl;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.*;
@@ -37,7 +36,7 @@ import java.util.SortedSet;
 import java.util.stream.Stream;
 
 @Mixin(LevelRenderer.class)
-public class LevelRendererMixin implements LevelRendererExtensions {
+public class LevelRendererMixin implements LevelRendererExtension {
 
     @Shadow
     private int ticks;
@@ -51,7 +50,9 @@ public class LevelRendererMixin implements LevelRendererExtensions {
     @Final
     private Long2ObjectMap<SortedSet<BlockDestructionProgress>> destructionProgress;
 
-    @Shadow @Final private ObjectArrayList<LevelRenderer.RenderChunkInfo> renderChunksInFrustum;
+    @Shadow
+    @Final
+    private ObjectArrayList<LevelRenderer.RenderChunkInfo> renderChunksInFrustum;
     @Unique
     private PoseStack captureMatrixStack;
     @Unique
@@ -108,7 +109,7 @@ public class LevelRendererMixin implements LevelRendererExtensions {
 
     @Override
     public Stream<BlockPos> pollen_getBlockRenderers() {
-        return this.renderChunksInFrustum.stream().flatMap(info -> ((CompiledChunkExtensions) ((LevelRendererRenderChunkInfoAccessor) info).getChunk().getCompiledChunk()).pollen_getBlockRenderPositions().stream());
+        return this.renderChunksInFrustum.stream().flatMap(info -> ((CompiledChunkExtension) ((LevelRendererRenderChunkInfoAccessor) info).getChunk().getCompiledChunk()).pollen_getBlockRenderPositions().stream());
     }
 
     @Inject(method = "renderLevel", at = @At("HEAD"))
