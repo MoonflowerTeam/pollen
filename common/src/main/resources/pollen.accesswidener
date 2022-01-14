@@ -7,6 +7,7 @@ accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/St
 accessible class net/minecraft/client/renderer/LevelRenderer$RenderChunkInfo
 accessible class net/minecraft/client/multiplayer/ClientChunkCache$Storage
 
+accessible method net/minecraft/data/tags/TagsProvider$TagAppender <init> (Lnet/minecraft/tags/Tag$Builder;Lnet/minecraft/core/Registry;Ljava/lang/String;)V
 transitive-accessible class net/minecraft/data/models/BlockModelGenerators$TintState
 
 transitive-accessible class net/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier

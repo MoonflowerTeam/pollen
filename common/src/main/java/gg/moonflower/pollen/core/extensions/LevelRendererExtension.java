@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 
 import java.util.stream.Stream;
 
-public interface LevelRendererExtensions {
+public interface LevelRendererExtension {
 
     Stream<BlockPos> pollen_getBlockRenderers();
 }
