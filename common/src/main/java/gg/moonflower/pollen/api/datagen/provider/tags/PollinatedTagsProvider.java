@@ -83,14 +83,14 @@ public abstract class PollinatedTagsProvider<T> extends TagsProvider<T> {
             return this;
         }
 
+        @Override
         public PollinatedTagAppender<T> addOptional(ResourceLocation resourceLocation) {
-            this.builder.add(new Tag.OptionalElementEntry(resourceLocation), this.source);
-            return this;
+            return (PollinatedTagAppender<T>) super.addOptional(resourceLocation);
         }
 
+        @Override
         public PollinatedTagAppender<T> addOptionalTag(ResourceLocation resourceLocation) {
-            this.builder.add(new Tag.OptionalTagEntry(resourceLocation), this.source);
-            return this;
+            return (PollinatedTagAppender<T>) super.addOptionalTag(resourceLocation);
         }
 
         public PollinatedTagAppender<T> replace() {
