@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 
 import java.util.Set;
 
-public interface CompiledChunkExtensions {
+public interface CompiledChunkExtension {
 
     Set<BlockPos> pollen_getBlockRenderPositions();
 }

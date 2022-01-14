@@ -29,7 +29,10 @@
     "ServerAdvancementManagerMixin",
     "ServerPlayerMixin",
     "ServerResourcesMixin",
-    "SimpleReloadableResourceManagerMixin"
+    "SimpleReloadableResourceManagerMixin",
+    "TagBuilderMixin",
+    "TagsProviderAccessor",
+    "TagsProviderMixin"
   ],
   "injectors": {
     "defaultRequire": 1

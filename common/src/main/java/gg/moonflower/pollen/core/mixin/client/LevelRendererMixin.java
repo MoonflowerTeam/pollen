@@ -7,8 +7,8 @@ import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.mojang.math.Matrix4f;
 import gg.moonflower.pollen.api.client.render.PollenDimensionSpecialEffects;
 import gg.moonflower.pollen.core.client.render.PollenDimensionRenderContextImpl;
-import gg.moonflower.pollen.core.extensions.CompiledChunkExtensions;
-import gg.moonflower.pollen.core.extensions.LevelRendererExtensions;
+import gg.moonflower.pollen.core.extensions.CompiledChunkExtension;
+import gg.moonflower.pollen.core.extensions.LevelRendererExtension;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRenderer;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
 import gg.moonflower.pollen.pinwheel.core.client.DataContainerImpl;
@@ -36,7 +36,7 @@ import java.util.SortedSet;
 import java.util.stream.Stream;
 
 @Mixin(LevelRenderer.class)
-public class LevelRendererMixin implements LevelRendererExtensions {
+public class LevelRendererMixin implements LevelRendererExtension {
 
     @Shadow
     private int ticks;
@@ -108,7 +108,7 @@ public class LevelRendererMixin implements LevelRendererExtensions {
 
     @Override
     public Stream<BlockPos> pollen_getBlockRenderers() {
-        return this.renderChunks.stream().flatMap(info -> ((CompiledChunkExtensions) ((LevelRendererRenderChunkInfoAccessor) info).getChunk().getCompiledChunk()).pollen_getBlockRenderPositions().stream());
+        return this.renderChunks.stream().flatMap(info -> ((CompiledChunkExtension) ((LevelRendererRenderChunkInfoAccessor) info).getChunk().getCompiledChunk()).pollen_getBlockRenderPositions().stream());
     }
 
     @Inject(method = "renderLevel", at = @At("HEAD"))
