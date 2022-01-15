@@ -1,7 +1,7 @@
-package gg.moonflower.pollen.core.mixin.client;
+package gg.moonflower.pollen.core.mixin.fabric.sodium;
 
-import gg.moonflower.pollen.core.extensions.CompiledChunkExtension;
-import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher;
+import gg.moonflower.pollen.core.extensions.fabric.sodium.ChunkRenderDataExtension;
+import me.jellysquid.mods.sodium.client.render.chunk.data.ChunkRenderData;
 import net.minecraft.core.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.Unique;
 import java.util.HashSet;
 import java.util.Set;
 
-@Mixin(ChunkRenderDispatcher.CompiledChunk.class)
-public class CompiledChunkMixin implements CompiledChunkExtension {
+@Mixin(ChunkRenderData.class)
+public class ChunkRenderDataMixin implements ChunkRenderDataExtension {
 
     @Unique
     private final Set<BlockPos> renderableBlocks = new HashSet<>();
