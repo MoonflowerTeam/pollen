@@ -24,14 +24,14 @@ public abstract class GrindstoneMenuResultSlotMixin extends Slot {
         super(container, i, j, k);
     }
 
-    @Inject(method = "onTake", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Container;setItem(ILnet/minecraft/world/item/ItemStack;)V", shift = At.Shift.BEFORE, ordinal = 0), cancellable = true)
+    @Inject(method = "onTake(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/item/ItemStack;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Container;setItem(ILnet/minecraft/world/item/ItemStack;)V", shift = At.Shift.BEFORE, ordinal = 0), cancellable = true)
     public void onTake(Player player, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
         this.checkTakeAchievements(stack);
         ((GrindstoneMenuExtension) this.this$0).pollen_craft(player);
         cir.setReturnValue(stack);
     }
 
-    @Inject(method = "getExperienceFromItem", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getExperienceFromItem(Lnet/minecraft/world/item/ItemStack;)I", at = @At("HEAD"), cancellable = true)
     public void getExperienceFromItem(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
         GrindstoneMenuExtension extension = (GrindstoneMenuExtension) this.this$0;
         if (extension.pollen_hasRecipeExperience())
