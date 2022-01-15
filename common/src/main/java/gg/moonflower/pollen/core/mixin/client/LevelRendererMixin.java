@@ -7,19 +7,16 @@ import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.mojang.math.Matrix4f;
 import gg.moonflower.pollen.api.client.render.PollenDimensionSpecialEffects;
 import gg.moonflower.pollen.core.client.render.PollenDimensionRenderContextImpl;
-import gg.moonflower.pollen.core.extensions.CompiledChunkExtension;
 import gg.moonflower.pollen.core.extensions.LevelRendererExtension;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRenderer;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
 import gg.moonflower.pollen.pinwheel.core.client.DataContainerImpl;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.BlockDestructionProgress;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -33,10 +30,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 import java.util.SortedSet;
-import java.util.stream.Stream;
 
 @Mixin(LevelRenderer.class)
-public class LevelRendererMixin implements LevelRendererExtension {
+public abstract class LevelRendererMixin implements LevelRendererExtension {
 
     @Shadow
     private int ticks;
@@ -50,9 +46,6 @@ public class LevelRendererMixin implements LevelRendererExtension {
     @Final
     private Long2ObjectMap<SortedSet<BlockDestructionProgress>> destructionProgress;
 
-    @Shadow
-    @Final
-    private ObjectArrayList<LevelRenderer.RenderChunkInfo> renderChunksInFrustum;
     @Unique
     private PoseStack captureMatrixStack;
     @Unique
@@ -66,7 +59,7 @@ public class LevelRendererMixin implements LevelRendererExtension {
     @Unique
     private DataContainerImpl dataContainer;
 
-    @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;checkPoseStack(Lcom/mojang/blaze3d/vertex/PoseStack;)V", ordinal = 1, shift = At.Shift.BEFORE))
+    @Inject(method = "renderLevel", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/LevelRenderer;globalBlockEntities:Ljava/util/Set;", shift = At.Shift.BEFORE, ordinal = 0))
     public void renderBlockRenders(PoseStack matrixStack, float partialTicks, long finishTimeNano, boolean drawBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightmap, Matrix4f projection, CallbackInfo ci) {
         Vec3 vec3 = camera.getPosition();
         double x = vec3.x();
@@ -105,11 +98,6 @@ public class LevelRendererMixin implements LevelRendererExtension {
             }
             matrixStack.popPose();
         });
-    }
-
-    @Override
-    public Stream<BlockPos> pollen_getBlockRenderers() {
-        return this.renderChunksInFrustum.stream().flatMap(info -> ((CompiledChunkExtension) ((LevelRendererRenderChunkInfoAccessor) info).getChunk().getCompiledChunk()).pollen_getBlockRenderPositions().stream());
     }
 
     @Inject(method = "renderLevel", at = @At("HEAD"))

@@ -5,7 +5,7 @@
   "minVersion": "0.8",
   "client": [
     "client.AgeableListModelAccessor",
-    "client.BlockRenderDispatcherMixin",
+    "client.BlockModelShaperMixin",
     "client.ChunkRenderDispatcherRebuildTaskMixin",
     "client.ChunkRenderDispatcherRenderChunkAccessor",
     "client.ClientChunkCacheAccessor",

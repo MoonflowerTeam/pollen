@@ -2,6 +2,7 @@
   "required": true,
   "package": "gg.moonflower.pollen.core.mixin.fabric",
   "compatibilityLevel": "JAVA_17",
+  "plugin": "gg.moonflower.pollen.core.mixin.fabric.PollenFabricMixinPlugin",
   "minVersion": "0.8",
   "client": [
     "client.CameraAccessor",
@@ -11,12 +12,19 @@
     "client.GameRendererMixin",
     "client.IntegratedServerMixin",
     "client.KeyboardInputMixin",
+    "client.LevelRendererVanillaMixin",
     "client.LivingEntityRendererMixin",
     "client.MinecraftMixin",
     "client.MouseHandlerMixin",
     "client.ParticleEngineMixin",
     "client.RenderSystemMixin",
-    "client.ShaderInstanceMixin"
+    "client.ShaderInstanceMixin",
+    "sodium.BlockRendererMixin",
+    "sodium.ChunkRenderDataMixin",
+    "sodium.ChunkRenderManagerMixin",
+    "sodium.ChunkRenderRebuildTaskMixin",
+    "sodium.LevelRendererSodiumMixin",
+    "sodium.SodiumWorldRendererAccessor"
   ],
   "mixins": [
     "AxeItemMixin",
