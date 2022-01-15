@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import java.util.stream.Stream;
 
 @Mixin(LevelRenderer.class)
-public class LevelRendererSodiumMixin implements LevelRendererExtension {
+public abstract class LevelRendererSodiumMixin implements LevelRendererExtension {
 
     @Override
     public Stream<BlockPos> pollen_getBlockRenderers() {
