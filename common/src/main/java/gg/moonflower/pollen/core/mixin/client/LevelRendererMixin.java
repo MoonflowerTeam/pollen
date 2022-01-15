@@ -17,7 +17,10 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.BlockDestructionProgress;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
@@ -29,7 +32,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
+import java.util.WeakHashMap;
 
 @Mixin(LevelRenderer.class)
 public abstract class LevelRendererMixin implements LevelRendererExtension {
@@ -57,7 +62,7 @@ public abstract class LevelRendererMixin implements LevelRendererExtension {
     @Unique
     private final PollenDimensionSpecialEffects.RenderContext renderContext = new PollenDimensionRenderContextImpl(() -> this.ticks, () -> this.capturePartialTicks, () -> this.captureCamera, () -> this.level, () -> this.captureMatrixStack, () -> this.captureProjection);
     @Unique
-    private DataContainerImpl dataContainer;
+    private final Map<ResourceKey<Level>, DataContainerImpl> dataContainer = new WeakHashMap<>(3);
 
     @Inject(method = "renderLevel", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/LevelRenderer;globalBlockEntities:Ljava/util/Set;", shift = At.Shift.BEFORE, ordinal = 0))
     public void renderBlockRenders(PoseStack matrixStack, float partialTicks, long finishTimeNano, boolean drawBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightmap, Matrix4f projection, CallbackInfo ci) {
@@ -88,16 +93,23 @@ public abstract class LevelRendererMixin implements LevelRendererExtension {
                 }
             }
 
-            if (this.dataContainer == null || this.dataContainer.getLevel() != this.level)
-                this.dataContainer = new DataContainerImpl(this.level);
-
             for (BlockRenderer renderer : renderers) {
                 matrixStack.pushPose();
-                renderer.render(this.level, pos, this.dataContainer.get(pos), buffer, matrixStack, partialTicks, camera, gameRenderer, lightmap, projection, LevelRenderer.getLightColor(this.level, pos), OverlayTexture.NO_OVERLAY);
+                renderer.render(this.level, pos, this.pollen_getDataContainer(this.level, pos), buffer, matrixStack, partialTicks, camera, gameRenderer, lightmap, projection, LevelRenderer.getLightColor(this.level, pos), OverlayTexture.NO_OVERLAY);
                 matrixStack.popPose();
             }
             matrixStack.popPose();
         });
+    }
+
+    @Inject(method = "setLevel", at = @At("HEAD"))
+    public void setLevel(ClientLevel levelClient, CallbackInfo ci) {
+        this.dataContainer.remove(this.level.dimension());
+    }
+
+    @Override
+    public BlockRenderer.DataContainer pollen_getDataContainer(ClientLevel level, BlockPos pos) {
+        return this.dataContainer.computeIfAbsent(level.dimension(), __ -> new DataContainerImpl(level)).get(pos);
     }
 
     @Inject(method = "renderLevel", at = @At("HEAD"))

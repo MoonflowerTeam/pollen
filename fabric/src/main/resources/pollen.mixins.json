@@ -19,6 +19,7 @@
     "client.ParticleEngineMixin",
     "client.RenderSystemMixin",
     "client.ShaderInstanceMixin",
+    "iris.ShadowRendererMixin",
     "sodium.BlockRendererMixin",
     "sodium.ChunkRenderDataMixin",
     "sodium.ChunkRenderManagerMixin",

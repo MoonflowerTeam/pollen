@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.util.stream.Stream;
 
 @Mixin(LevelRenderer.class)
-public class LevelRendererVanillaMixin implements LevelRendererExtension {
+public abstract class LevelRendererVanillaMixin implements LevelRendererExtension {
 
     @Shadow
     @Final

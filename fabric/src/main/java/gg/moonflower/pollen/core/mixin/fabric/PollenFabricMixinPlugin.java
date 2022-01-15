@@ -11,10 +11,13 @@ import java.util.Set;
 public class PollenFabricMixinPlugin implements IMixinConfigPlugin {
 
     private boolean sodiumLoaded;
+    private boolean irisLoaded;
 
     @Override
     public void onLoad(String mixinPackage) {
-        this.sodiumLoaded = FabricLoader.getInstance().isModLoaded("sodium");
+        FabricLoader loader = FabricLoader.getInstance();
+        this.sodiumLoaded = loader.isModLoaded("sodium");
+        this.irisLoaded = loader.isModLoaded("iris");
     }
 
     @Override
@@ -24,7 +27,11 @@ public class PollenFabricMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        return this.sodiumLoaded ? !"gg.moonflower.pollen.core.mixin.fabric.client.LevelRendererVanillaMixin".equals(mixinClassName) : !mixinClassName.startsWith("gg.moonflower.pollen.core.mixin.sodium");
+        if (!this.sodiumLoaded && mixinClassName.startsWith("gg.moonflower.pollen.core.mixin.fabric.sodium"))
+            return false;
+        if (!this.irisLoaded && mixinClassName.startsWith("gg.moonflower.pollen.core.mixin.fabric.iris"))
+            return false;
+        return !this.sodiumLoaded || !"gg.moonflower.pollen.core.mixin.fabric.client.LevelRendererVanillaMixin".equals(mixinClassName);
     }
 
     @Override
