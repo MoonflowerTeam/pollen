@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.core.mixin.fabric.iris;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 import gg.moonflower.pollen.core.extensions.LevelRendererExtension;
@@ -21,14 +22,12 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
 @Mixin(ShadowRenderer.class)
 public abstract class ShadowRendererMixin {
-
-    @Shadow
-    public static Matrix4f ORTHO;
 
     @Shadow
     private static ClientLevel getLevel() {
@@ -44,7 +43,7 @@ public abstract class ShadowRendererMixin {
     }
 
     @Inject(method = "renderBlockEntities", at = @At("TAIL"), remap = false)
-    public void renderBlockRenderers(MultiBufferSource.BufferSource buffer, PoseStack matrixStack, double cameraX, double cameraY, double cameraZ, float partialTicks, CallbackInfo ci) {
+    public void renderBlockRenderers(PoseStack matrixStack, float partialTicks, double cameraX, double cameraY, double cameraZ, MultiBufferSource.BufferSource buffer, CallbackInfoReturnable<Integer> ci) {
         Minecraft minecraft = Minecraft.getInstance();
         LevelRendererExtension extension = (LevelRendererExtension) minecraft.levelRenderer;
         GameRenderer gameRenderer = minecraft.gameRenderer;
@@ -61,7 +60,7 @@ public abstract class ShadowRendererMixin {
 
             for (BlockRenderer renderer : renderers) {
                 matrixStack.pushPose();
-                renderer.render(level, pos, extension.pollen_getDataContainer(level, pos), buffer, matrixStack, partialTicks, this.captureCamera, gameRenderer, gameRenderer.lightTexture(), ORTHO, LevelRenderer.getLightColor(level, pos), OverlayTexture.NO_OVERLAY);
+                renderer.render(level, pos, extension.pollen_getDataContainer(level, pos), buffer, matrixStack, partialTicks, this.captureCamera, gameRenderer, gameRenderer.lightTexture(), RenderSystem.getProjectionMatrix(), LevelRenderer.getLightColor(level, pos), OverlayTexture.NO_OVERLAY);
                 matrixStack.popPose();
             }
             matrixStack.popPose();
