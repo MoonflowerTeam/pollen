@@ -103,7 +103,8 @@ public abstract class LevelRendererMixin implements LevelRendererExtension {
 
     @Inject(method = "setLevel", at = @At("HEAD"))
     public void setLevel(ClientLevel levelClient, CallbackInfo ci) {
-        this.dataContainer.remove(this.level.dimension());
+        if (this.level != null)
+            this.dataContainer.remove(this.level.dimension());
     }
 
     @Override

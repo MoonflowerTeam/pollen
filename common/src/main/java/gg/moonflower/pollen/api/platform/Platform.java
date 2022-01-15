@@ -5,10 +5,13 @@ import dev.architectury.injectables.annotations.PlatformOnly;
 import dev.architectury.injectables.targets.ArchitecturyTarget;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import gg.moonflower.pollen.core.Pollen;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.thread.BlockableEventLoop;
+import net.minecraft.world.item.crafting.RecipeManager;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Optional;
@@ -26,6 +29,10 @@ import java.util.stream.Stream;
 public abstract class Platform {
 
     private static final boolean FORGE = ArchitecturyTarget.getCurrentTarget().equals(PlatformOnly.FORGE);
+    private static final Supplier<RecipeManager> CLIENT_RECIPE_MANAGER = () -> {
+        ClientPacketListener listener = Minecraft.getInstance().getConnection();
+        return listener != null ? listener.getRecipeManager() : null;
+    };
 
     private final String modId;
 
@@ -89,6 +96,13 @@ public abstract class Platform {
      */
     public static Optional<MinecraftServer> getRunningServer() {
         return Optional.ofNullable(Pollen.getRunningServer());
+    }
+
+    public static Optional<RecipeManager> getRecipeManager() {
+        MinecraftServer server = Pollen.getRunningServer();
+        if (server != null)
+            return Optional.of(server.getRecipeManager());
+        return isClient() ? Optional.ofNullable(CLIENT_RECIPE_MANAGER.get()) : Optional.empty();
     }
 
     /**
