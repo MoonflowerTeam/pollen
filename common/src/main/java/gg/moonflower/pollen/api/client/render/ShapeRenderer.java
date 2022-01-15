@@ -1,17 +1,15 @@
 package gg.moonflower.pollen.api.client.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Mth;
 import org.lwjgl.opengl.GL11C;
+
+import java.util.function.Supplier;
 
 /**
  * Renders {@link GL11C#GL_QUADS} to the screen using enhanced precision and {@link BufferBuilder}.
@@ -27,6 +25,7 @@ public final class ShapeRenderer {
     private static float green = 1.0F;
     private static float blue = 1.0F;
     private static float alpha = 1.0F;
+    private static Supplier<ShaderInstance> shader;
 
     private ShapeRenderer() {
     }
@@ -108,10 +107,11 @@ public final class ShapeRenderer {
      * Ends the rendering of a chain of quads.
      */
     public static void end() {
-        RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+        RenderSystem.setShader(shader);
         Tesselator.getInstance().end();
         zLevel = 0;
         resetColor();
+        shader = GameRenderer::getPositionColorTexShader;
     }
 
     /**
@@ -259,5 +259,14 @@ public final class ShapeRenderer {
         ShapeRenderer.green = ((color >> 8) & 0xff) / 255f;
         ShapeRenderer.blue = (color & 0xff) / 255f;
         ShapeRenderer.alpha = ((color >> 24) & 0xff) / 255f;
+    }
+
+    /**
+     * Sets the shader to use when drawing.
+     *
+     * @param shader The new shader
+     */
+    public static void setShader(Supplier<ShaderInstance> shader) {
+        ShapeRenderer.shader = shader;
     }
 }
