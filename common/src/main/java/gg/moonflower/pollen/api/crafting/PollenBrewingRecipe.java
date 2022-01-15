@@ -1,9 +1,7 @@
-package gg.moonflower.pollen.api.crafting.brewing;
+package gg.moonflower.pollen.api.crafting;
 
 import com.google.gson.JsonObject;
-import dev.architectury.injectables.annotations.ExpectPlatform;
-import gg.moonflower.pollen.api.platform.Platform;
-import gg.moonflower.pollen.core.Pollen;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -16,10 +14,12 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
  * @author Ocelot
+ * @since 1.0.0
  */
 public class PollenBrewingRecipe implements Recipe<Container> {
 
@@ -35,12 +35,6 @@ public class PollenBrewingRecipe implements Recipe<Container> {
         this.from = from;
         this.ingredient = ingredient;
         this.result = result;
-    }
-
-    @ApiStatus.Internal
-    @ExpectPlatform
-    public static RecipeSerializer<PollenBrewingRecipe> createSerializer() {
-        return Platform.error();
     }
 
     @ApiStatus.Internal
@@ -113,11 +107,21 @@ public class PollenBrewingRecipe implements Recipe<Container> {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return Pollen.BREWING_SERIALIZER.get();
+        return PollenRecipeTypes.BREWING.get();
     }
 
     @Override
     public RecipeType<?> getType() {
-        return Pollen.BREWING;
+        return PollenRecipeTypes.BREWING_TYPE.get();
+    }
+
+    @Override
+    public NonNullList<Ingredient> getIngredients() {
+        return NonNullList.of(Ingredient.EMPTY, this.ingredient);
+    }
+
+    @Override
+    public ItemStack getToastSymbol() {
+        return new ItemStack(Blocks.BREWING_STAND);
     }
 }
