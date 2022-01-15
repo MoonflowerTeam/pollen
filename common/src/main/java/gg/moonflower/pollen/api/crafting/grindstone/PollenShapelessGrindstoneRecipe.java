@@ -58,7 +58,7 @@ public class PollenShapelessGrindstoneRecipe implements PollenGrindstoneRecipe {
         if (ingredients.size() > 2)
             throw new JsonParseException("Too many ingredients for grindstone recipe");
 
-        ItemStack result = ShapedRecipe.itemFromJson(GsonHelper.getAsJsonObject(json, "result"));
+        ItemStack result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "result"));
         int experience = GsonHelper.getAsInt(json, "experience", 0);
         return new PollenShapelessGrindstoneRecipe(recipeId, group, result, ingredients, experience);
     }

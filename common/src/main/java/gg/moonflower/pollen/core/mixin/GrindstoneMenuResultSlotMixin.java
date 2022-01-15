@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(targets = "net.minecraft.world.inventory.GrindstoneMenu$4")
@@ -25,10 +26,10 @@ public abstract class GrindstoneMenuResultSlotMixin extends Slot {
     }
 
     @Inject(method = "onTake", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Container;setItem(ILnet/minecraft/world/item/ItemStack;)V", shift = At.Shift.BEFORE, ordinal = 0), cancellable = true)
-    public void onTake(Player player, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
+    public void onTake(Player player, ItemStack stack, CallbackInfo ci) {
         this.checkTakeAchievements(stack);
         ((GrindstoneMenuExtension) this.this$0).pollen_craft(player);
-        cir.setReturnValue(stack);
+        ci.cancel();
     }
 
     @Inject(method = "getExperienceFromItem", at = @At("HEAD"), cancellable = true)

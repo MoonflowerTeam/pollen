@@ -28,7 +28,7 @@ public abstract class GrindstoneMenuMixin extends AbstractContainerMenu implemen
 
     @Shadow
     @Final
-    private Container repairSlots;
+    Container repairSlots;
 
     @Shadow
     @Final
@@ -75,7 +75,7 @@ public abstract class GrindstoneMenuMixin extends AbstractContainerMenu implemen
                 } else if (ItemStack.isSame(itemStack, itemStack2) && ItemStack.tagMatches(itemStack, itemStack2)) {
                     itemStack2.grow(itemStack.getCount());
                     this.repairSlots.setItem(i, itemStack2);
-                } else if (!player.inventory.add(itemStack2)) {
+                } else if (!player.getInventory().add(itemStack2)) {
                     player.drop(itemStack2, false);
                 }
             }
