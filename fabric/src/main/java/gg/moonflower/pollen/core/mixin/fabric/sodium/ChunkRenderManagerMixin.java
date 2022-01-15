@@ -4,9 +4,8 @@ import gg.moonflower.pollen.core.extensions.fabric.sodium.ChunkRenderDataExtensi
 import gg.moonflower.pollen.core.extensions.fabric.sodium.ChunkRenderManagerExtension;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
-import me.jellysquid.mods.sodium.client.render.chunk.ChunkGraphicsState;
-import me.jellysquid.mods.sodium.client.render.chunk.ChunkRenderContainer;
-import me.jellysquid.mods.sodium.client.render.chunk.ChunkRenderManager;
+import me.jellysquid.mods.sodium.client.render.chunk.RenderSection;
+import me.jellysquid.mods.sodium.client.render.chunk.RenderSectionManager;
 import net.minecraft.core.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -16,19 +15,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.stream.Stream;
 
-@Mixin(ChunkRenderManager.class)
-public class ChunkRenderManagerMixin<T extends ChunkGraphicsState> implements ChunkRenderManagerExtension {
+@Mixin(RenderSectionManager.class)
+public class ChunkRenderManagerMixin implements ChunkRenderManagerExtension {
 
     @Unique
-    private final ObjectList<ChunkRenderContainer<T>> renderChunks = new ObjectArrayList<>();
+    private final ObjectList<RenderSection> renderChunks = new ObjectArrayList<>();
 
-    @Inject(method = "addChunkToRenderLists", at = @At(value = "INVOKE", target = "Lme/jellysquid/mods/sodium/client/render/chunk/ChunkRenderContainer;isTickable()Z", shift = At.Shift.BEFORE), remap = false)
-    public void addChunkToRenderLists(ChunkRenderContainer<T> state, CallbackInfo ci) {
-        this.renderChunks.add(state);
+    @Inject(method = "addChunkToVisible", at = @At("HEAD"), remap = false)
+    public void addChunkToVisible(RenderSection render, CallbackInfo ci) {
+        this.renderChunks.add(render);
     }
 
-    @Inject(method = "reset", at = @At("TAIL"), remap = false)
-    public void reset(CallbackInfo ci) {
+    @Inject(method = "resetLists", at = @At("TAIL"), remap = false)
+    public void resetLists(CallbackInfo ci) {
         this.renderChunks.clear();
     }
 

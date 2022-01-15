@@ -2,7 +2,7 @@ package gg.moonflower.pollen.core.mixin.fabric.sodium;
 
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRenderer;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
-import me.jellysquid.mods.sodium.client.render.chunk.compile.buffers.ChunkModelBuffers;
+import me.jellysquid.mods.sodium.client.render.chunk.compile.buffers.ChunkModelBuilder;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -24,7 +24,7 @@ public class BlockRendererMixin {
     }
 
     @Inject(method = "renderModel", at = @At("HEAD"), remap = false, cancellable = true)
-    public void renderModel(BlockAndTintGetter world, BlockState state, BlockPos pos, BakedModel model, ChunkModelBuffers buffers, boolean cull, long seed, CallbackInfoReturnable<Boolean> cir) {
+    public void renderModel(BlockAndTintGetter world, BlockState state, BlockPos pos, BlockPos origin, BakedModel model, ChunkModelBuilder buffers, boolean cull, long seed, CallbackInfoReturnable<Boolean> cir) {
         BlockRenderer renderer = BlockRendererRegistry.getFirst(state.getBlock());
         if (renderer != null && renderer.getRenderShape(state) == RenderShape.INVISIBLE)
             cir.setReturnValue(false);
