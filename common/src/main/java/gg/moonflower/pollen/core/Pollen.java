@@ -11,10 +11,12 @@ import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
 import gg.moonflower.pollen.api.sync.SyncedDataManager;
+import gg.moonflower.pollen.core.client.render.DebugPollenFlowerPotRenderer;
 import gg.moonflower.pollen.core.datagen.PollenLanguageProvider;
 import gg.moonflower.pollen.core.network.PollenMessages;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
+import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
 import gg.moonflower.pollen.pinwheel.api.client.shader.ShaderConst;
 import gg.moonflower.pollen.pinwheel.api.client.shader.ShaderLoader;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
@@ -24,6 +26,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,6 +62,8 @@ public class Pollen {
         ShaderLoader.init();
         DebugInputs.init();
         InitRendererEvent.EVENT.register(ShaderConst::init);
+        if (!Platform.isProduction())
+            BlockRendererRegistry.register(Blocks.FLOWER_POT, new DebugPollenFlowerPotRenderer());
     }
 
     private static void onCommon() {

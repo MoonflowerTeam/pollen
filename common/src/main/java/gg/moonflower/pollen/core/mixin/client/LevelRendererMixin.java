@@ -7,19 +7,16 @@ import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.mojang.math.Matrix4f;
 import gg.moonflower.pollen.api.client.render.PollenDimensionSpecialEffects;
 import gg.moonflower.pollen.core.client.render.PollenDimensionRenderContextImpl;
-import gg.moonflower.pollen.core.extensions.CompiledChunkExtension;
 import gg.moonflower.pollen.core.extensions.LevelRendererExtension;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRenderer;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
 import gg.moonflower.pollen.pinwheel.core.client.DataContainerImpl;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.BlockDestructionProgress;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -33,16 +30,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 import java.util.SortedSet;
-import java.util.stream.Stream;
 
 @Mixin(LevelRenderer.class)
-public class LevelRendererMixin implements LevelRendererExtension {
+public abstract class LevelRendererMixin implements LevelRendererExtension {
 
     @Shadow
     private int ticks;
-    @Shadow
-    @Final
-    private ObjectList<LevelRenderer.RenderChunkInfo> renderChunks;
     @Shadow
     private ClientLevel level;
     @Shadow
@@ -65,7 +58,7 @@ public class LevelRendererMixin implements LevelRendererExtension {
     @Unique
     private DataContainerImpl dataContainer;
 
-    @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;checkPoseStack(Lcom/mojang/blaze3d/vertex/PoseStack;)V", ordinal = 1, shift = At.Shift.BEFORE))
+    @Inject(method = "renderLevel", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/LevelRenderer;globalBlockEntities:Ljava/util/Set;", shift = At.Shift.BEFORE, ordinal = 0))
     public void renderBlockRenders(PoseStack matrixStack, float partialTicks, long finishTimeNano, boolean drawBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightmap, Matrix4f projection, CallbackInfo ci) {
         Vec3 vec3 = camera.getPosition();
         double x = vec3.x();
@@ -106,11 +99,6 @@ public class LevelRendererMixin implements LevelRendererExtension {
         });
     }
 
-    @Override
-    public Stream<BlockPos> pollen_getBlockRenderers() {
-        return this.renderChunks.stream().flatMap(info -> ((CompiledChunkExtension) ((LevelRendererRenderChunkInfoAccessor) info).getChunk().getCompiledChunk()).pollen_getBlockRenderPositions().stream());
-    }
-
     @Inject(method = "renderLevel", at = @At("HEAD"))
     public void renderLevel(PoseStack matrixStack, float partialTicks, long finishTimeNano, boolean drawBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightmap, Matrix4f projection, CallbackInfo ci) {
         this.captureMatrixStack = matrixStack;
@@ -120,7 +108,7 @@ public class LevelRendererMixin implements LevelRendererExtension {
     }
 
     @Inject(method = "renderClouds", at = @At("HEAD"), cancellable = true)
-    public void renderClouds(PoseStack poseStack, float partialTicks, double x, double y, double z, CallbackInfo ci) {
+    public void renderClouds(PoseStack poseStack, float f, double d, double e, double g, CallbackInfo ci) {
         DimensionSpecialEffects specialEffects = this.level.effects();
         if (specialEffects instanceof PollenDimensionSpecialEffects) {
             PollenDimensionSpecialEffects.Renderer renderer = ((PollenDimensionSpecialEffects) specialEffects).getCloudRenderer();
@@ -156,7 +144,7 @@ public class LevelRendererMixin implements LevelRendererExtension {
     }
 
     @Inject(method = "renderSky", at = @At("HEAD"), cancellable = true)
-    public void renderSky(PoseStack poseStack, float partialTicks, CallbackInfo ci) {
+    public void renderSky(PoseStack poseStack, float f, CallbackInfo ci) {
         DimensionSpecialEffects specialEffects = this.level.effects();
         if (specialEffects instanceof PollenDimensionSpecialEffects) {
             PollenDimensionSpecialEffects.Renderer renderer = ((PollenDimensionSpecialEffects) specialEffects).getSkyRenderer();
