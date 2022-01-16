@@ -33,8 +33,7 @@
     "ServerResourcesMixin",
     "SimpleReloadableResourceManagerMixin",
     "TagBuilderMixin",
-    "TagsProviderAccessor",
-    "TagsProviderMixin"
+    "TagsProviderAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

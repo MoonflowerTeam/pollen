@@ -41,7 +41,8 @@
     "PlayerListMixin",
     "ServerLevelEntityCallbacksMixin",
     "ServerLevelMixin",
-    "ServerPlayerMixin"
+    "ServerPlayerMixin",
+    "TagsProviderMixin"
   ],
   "injectors": {
     "defaultRequire": 1
