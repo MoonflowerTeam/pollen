@@ -11,7 +11,7 @@ import java.util.List;
 @Mixin(TagsProvider.class)
 public class TagsProviderMixin<T> {
 
-    @ModifyVariable(method = "lambda$run$2", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", shift = At.Shift.BEFORE), ordinal = 0)
+    @ModifyVariable(method = "method_27046", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", shift = At.Shift.BEFORE), ordinal = 0)
     public List<Tag.BuilderEntry> modifyList(List<Tag.BuilderEntry> list) {
         list.clear();
         return list;
