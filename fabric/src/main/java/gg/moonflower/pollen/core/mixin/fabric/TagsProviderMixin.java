@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.core.mixin;
+package gg.moonflower.pollen.core.mixin.fabric;
 
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.Tag;
