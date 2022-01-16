@@ -25,7 +25,7 @@ public final class ShapeRenderer {
     private static float green = 1.0F;
     private static float blue = 1.0F;
     private static float alpha = 1.0F;
-    private static Supplier<ShaderInstance> shader;
+    private static Supplier<ShaderInstance> shader = GameRenderer::getPositionColorTexShader;
 
     private ShapeRenderer() {
     }
