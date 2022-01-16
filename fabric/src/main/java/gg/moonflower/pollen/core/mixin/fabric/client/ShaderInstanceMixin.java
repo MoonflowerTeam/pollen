@@ -1,21 +1,26 @@
 package gg.moonflower.pollen.core.mixin.fabric.client;
 
 import com.mojang.blaze3d.shaders.Program;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ShaderInstance.class)
 public class ShaderInstanceMixin {
 
+    @Mutable
     @Shadow
     @Final
     private String name;
@@ -25,14 +30,15 @@ public class ShaderInstanceMixin {
     @Unique
     private static Program.Type captureType;
 
-    @ModifyVariable(method = "<init>", at = @At(value = "NEW", target = "net/minecraft/resources/ResourceLocation", ordinal = 0, shift = At.Shift.BEFORE), index = 2, argsOnly = true)
-    public String modifyLocationString(String value) {
+    @ModifyVariable(print = true, method = "<init>", index = 2, at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/ShaderInstance;vertexFormat:Lcom/mojang/blaze3d/vertex/VertexFormat;"), argsOnly = true)
+    public String clearLocationString(String value) {
         return "";
     }
 
     @ModifyVariable(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/resources/ResourceProvider;getResource(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/server/packs/resources/Resource;", shift = At.Shift.BEFORE), index = 4)
     public ResourceLocation modifyLocation(ResourceLocation location) {
         ResourceLocation id = new ResourceLocation(this.name);
+        this.name = id.getNamespace().equals("minecraft") ? id.getPath() : id.toString();
         return new ResourceLocation(id.getNamespace(), "shaders/core/" + id.getPath() + ".json");
     }
 
