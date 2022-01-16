@@ -30,7 +30,7 @@ public class ShaderInstanceMixin {
     @Unique
     private static Program.Type captureType;
 
-    @ModifyVariable(print = true, method = "<init>", index = 2, at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/ShaderInstance;vertexFormat:Lcom/mojang/blaze3d/vertex/VertexFormat;"), argsOnly = true)
+    @ModifyVariable(method = "<init>", index = 2, at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/ShaderInstance;vertexFormat:Lcom/mojang/blaze3d/vertex/VertexFormat;"), argsOnly = true)
     public String clearLocationString(String value) {
         return "";
     }
