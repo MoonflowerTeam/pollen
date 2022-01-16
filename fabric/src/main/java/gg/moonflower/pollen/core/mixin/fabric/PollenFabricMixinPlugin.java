@@ -12,12 +12,14 @@ public class PollenFabricMixinPlugin implements IMixinConfigPlugin {
 
     private boolean sodiumLoaded;
     private boolean irisLoaded;
+    private boolean optifineLoaded;
 
     @Override
     public void onLoad(String mixinPackage) {
         FabricLoader loader = FabricLoader.getInstance();
         this.sodiumLoaded = loader.isModLoaded("sodium");
         this.irisLoaded = loader.isModLoaded("iris");
+        this.optifineLoaded = loader.isModLoaded("optifabric");
     }
 
     @Override
@@ -27,6 +29,8 @@ public class PollenFabricMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        if (this.optifineLoaded && mixinClassName.equals("gg.moonflower.pollen.core.mixin.fabric.client.ShaderInstanceMixin"))
+            return false;
         if (!this.sodiumLoaded && mixinClassName.startsWith("gg.moonflower.pollen.core.mixin.fabric.sodium"))
             return false;
         if (!this.irisLoaded && mixinClassName.startsWith("gg.moonflower.pollen.core.mixin.fabric.iris"))
