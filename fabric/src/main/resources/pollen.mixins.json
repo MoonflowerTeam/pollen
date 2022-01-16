@@ -36,7 +36,8 @@
     "MobMixin",
     "PlayerListMixin",
     "ServerLevelMixin",
-    "ServerPlayerMixin"
+    "ServerPlayerMixin",
+    "TagsProviderMixin"
   ],
   "injectors": {
     "defaultRequire": 1
