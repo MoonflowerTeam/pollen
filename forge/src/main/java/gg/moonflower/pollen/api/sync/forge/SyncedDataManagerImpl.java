@@ -71,7 +71,6 @@ public class SyncedDataManagerImpl {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
         if (event.getOriginal() instanceof ServerPlayer && event.getPlayer() instanceof ServerPlayer) {
