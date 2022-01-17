@@ -8,7 +8,8 @@
     "client.CreateWorldScreenMixin",
     "client.LevelRendererMixin",
     "client.LevelRendererVanillaMixin",
-    "client.OptionsMixin"
+    "client.OptionsMixin",
+    "client.RecipeManagerAccessor"
   ],
   "mixins": [
     "AxeItemMixin",
