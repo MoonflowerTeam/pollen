@@ -32,7 +32,7 @@ public class ChunkRenderDispatcherRebuildTaskMixin {
     public void compile(float x, float y, float z, ChunkRenderDispatcher.CompiledChunk chunk, ChunkBufferBuilderPack pack, CallbackInfoReturnable<Set<BlockEntity>> cir, int i, BlockPos start, BlockPos end, VisGraph visGraph, Set<BlockEntity> blockEntities, RenderChunkRegion renderChunkRegion, PoseStack matrixStack, Random random, BlockRenderDispatcher blockRenderDispatcher, Iterator<BlockPos> iterator, BlockPos pos, BlockState state) {
         BlockRenderer renderer = BlockRendererRegistry.getFirst(state.getBlock());
         if (renderer != null && renderer.getRenderShape(state) != RenderShape.MODEL)
-            ((CompiledChunkExtension) chunk).pollen_getBlockRenderers().add(pos.immutable());
+            ((CompiledChunkExtension) chunk).pollen_getBlockRenderPositions().add(pos.immutable());
         if (BlockRendererRegistry.get(state.getBlock()).stream().anyMatch(r -> r instanceof TickableBlockRenderer))
             ((CompiledChunkExtension) chunk).pollen_getTickingBlockRenderers().add(pos.immutable());
     }

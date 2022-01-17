@@ -15,13 +15,11 @@ public abstract class LevelRendererSodiumMixin implements LevelRendererExtension
 
     @Override
     public Stream<BlockPos> pollen_getBlockRenderers() {
-        if (!(this instanceof WorldRendererExtended))
-            return Stream.empty();
         return ((ChunkRenderManagerExtension) ((SodiumWorldRendererAccessor) ((WorldRendererExtended)this).getSodiumWorldRenderer()).getRenderSectionManager()).pollen_getBlockRenderPositions();
     }
 
     @Override
     public Stream<BlockPos> pollen_getTickingBlockRenderers() {
-        return ((ChunkRenderManagerExtension) ((SodiumWorldRendererAccessor) SodiumWorldRenderer.getInstance()).getChunkRenderManager()).pollen_getTickingBlockRenderPositions();
+        return ((ChunkRenderManagerExtension) ((SodiumWorldRendererAccessor) ((WorldRendererExtended)this).getSodiumWorldRenderer()).getRenderSectionManager()).pollen_getTickingBlockRenderPositions();
     }
 }
