@@ -129,7 +129,7 @@ public class PollenGrindstoneCategory implements IRecipeCategory<PollenGrindston
                 return;
 
             experience = displayData.lastExperience;
-            if (displayData.lastTopStack == null || !ItemStack.matches(newBottomStack, displayData.lastBottomStack) || !ItemStack.matches(displayData.lastTopStack, newTopStack)) {
+            if (displayData.lastTopStack == null || displayData.lastBottomStack == null || !ItemStack.matches(displayData.lastBottomStack, newBottomStack) || !ItemStack.matches(displayData.lastTopStack, newTopStack)) {
                 experience = getExperienceFromItem(newTopStack) + getExperienceFromItem(newBottomStack);
                 displayData.setLast(newTopStack, newBottomStack, experience);
             }
