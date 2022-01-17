@@ -62,6 +62,11 @@ dependencies {
     modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cardinal_components_version}"
     include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cardinal_components_version}"
     include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cardinal_components_version}"
+
+    include "com.github.LlamaLad7:MixinExtras:${project.mixin_extras_version}"
+    implementation "com.github.LlamaLad7:MixinExtras:${project.mixin_extras_version}"
+    annotationProcessor "com.github.LlamaLad7:MixinExtras:${project.mixin_extras_version}"
+
     // Needed for making sure render changes apply
     modCompileOnly "curse.maven:sodium-394468:3488820"
     modCompileOnly "curse.maven:irisshaders-455508:3596178"
