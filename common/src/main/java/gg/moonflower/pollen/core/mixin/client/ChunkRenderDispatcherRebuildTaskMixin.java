@@ -12,13 +12,13 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.Set;
 
@@ -26,18 +26,13 @@ import java.util.Set;
 public class ChunkRenderDispatcherRebuildTaskMixin {
 
     @Shadow
-    @Final
-    ChunkRenderDispatcher.RenderChunk this$1;
-
-    @Shadow
     @Nullable
     protected RenderChunkRegion region;
 
-    @Inject(method = "compile", at = @At("HEAD"))
-    public void compile(float x, float y, float z, ChunkRenderDispatcher.CompiledChunk chunk, ChunkBufferBuilderPack pack, CallbackInfoReturnable<Set<BlockEntity>> cir) {
-        BlockPos blockpos = ((ChunkRenderDispatcherRenderChunkAccessor) this.this$1).getOrigin().immutable();
+    @Inject(method = "compile", at = @At(value = "INVOKE_ASSIGN", target = "Lcom/google/common/collect/Sets;newHashSet()Ljava/util/HashSet;", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
+    public void compile(float x, float y, float z, ChunkRenderDispatcher.CompiledChunk chunk, ChunkBufferBuilderPack pack, CallbackInfoReturnable<Set<BlockEntity>> cir, int i, BlockPos originPos, BlockPos offset) {
         if (this.region != null) {
-            for (BlockPos pos : BlockPos.betweenClosed(blockpos, blockpos.offset(15, 15, 15))) {
+            for (BlockPos pos : BlockPos.betweenClosed(originPos, offset)) {
                 BlockState state = this.region.getBlockState(pos);
                 if (state.isAir())
                     continue;
