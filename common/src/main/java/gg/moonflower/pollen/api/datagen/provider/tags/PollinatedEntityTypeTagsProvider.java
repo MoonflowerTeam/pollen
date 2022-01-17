@@ -7,7 +7,6 @@ import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Item;
 
 /**
  * Wraps {@link TagsProvider} to enable optional tags while still extending {@link EntityTypeTagsProvider}.

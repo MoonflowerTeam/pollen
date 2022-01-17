@@ -3,7 +3,6 @@ package gg.moonflower.pollen.api.sync.forge;
 import gg.moonflower.pollen.api.sync.DataComponent;
 import gg.moonflower.pollen.api.sync.SyncedDataManager;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.ApiStatus;
 
