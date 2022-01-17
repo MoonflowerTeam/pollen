@@ -22,5 +22,6 @@ public class PollenLanguageProvider extends PollinatedLanguageProvider {
         this.add("argument." + this.domain + ".time.big", "Time must not be more than %s); found %s");
         this.add("commands." + this.domain + ".config.success", "Config for %s of type %s found at %s");
         this.add("commands." + this.domain + ".config.fail", "Config for %s of type %s not found");
+        this.add("gui.jei.category." + this.domain + ".grindstone.experience", "XP: %s - %s");
     }
 }

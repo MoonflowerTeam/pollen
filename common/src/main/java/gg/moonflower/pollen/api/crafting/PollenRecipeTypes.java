@@ -2,7 +2,6 @@ package gg.moonflower.pollen.api.crafting;
 
 import com.google.gson.JsonObject;
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import gg.moonflower.pollen.api.crafting.grindstone.PollenDisenchantRecipe;
 import gg.moonflower.pollen.api.crafting.grindstone.PollenGrindstoneRecipe;
 import gg.moonflower.pollen.api.crafting.grindstone.PollenShapelessGrindstoneRecipe;
 import gg.moonflower.pollen.api.platform.Platform;
@@ -38,7 +37,6 @@ public class PollenRecipeTypes {
 
     public static final Supplier<RecipeType<PollenGrindstoneRecipe>> GRINDSTONE_TYPE = register("grindstone");
     public static final Supplier<RecipeSerializer<PollenShapelessGrindstoneRecipe>> GRINDSTONE = RECIPE_SERIALIZERS.register("grindstone", () -> createSerializer(PollenShapelessGrindstoneRecipe::fromJson, PollenShapelessGrindstoneRecipe::fromNetwork, PollenShapelessGrindstoneRecipe::toNetwork));
-    public static final Supplier<RecipeSerializer<PollenDisenchantRecipe>> DISENCHANT = RECIPE_SERIALIZERS.register("disenchant", () -> createSerializer(PollenDisenchantRecipe::fromJson, PollenDisenchantRecipe::fromNetwork, PollenDisenchantRecipe::toNetwork));
 
     /**
      * Creates a multiplatform recipe serializer.

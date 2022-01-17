@@ -6,5 +6,6 @@
   "argument.pollen.time.unknown_unit": "Invalid Time Unit",
   "commands.pollen.config.fail": "Config for %s of type %s not found",
   "commands.pollen.config.success": "Config for %s of type %s found at %s",
+  "gui.jei.category.pollen.grindstone.experience": "XP: %s - %s",
   "pack.source.forgemod": "Forge Mod"
 }
