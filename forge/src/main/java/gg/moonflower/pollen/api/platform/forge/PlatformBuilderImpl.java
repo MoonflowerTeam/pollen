@@ -1,7 +1,6 @@
 package gg.moonflower.pollen.api.platform.forge;
 
 import gg.moonflower.pollen.api.platform.Platform;
-import net.minecraft.data.DataGenerator;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 

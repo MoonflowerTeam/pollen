@@ -7,16 +7,13 @@
     "client.AgeableListModelAccessor",
     "client.BlockModelShaperMixin",
     "client.ChunkRenderDispatcherRebuildTaskMixin",
-    "client.ChunkRenderDispatcherRenderChunkAccessor",
-    "client.ClientChunkCacheAccessor",
-    "client.ClientChunkCacheStorageAccessor",
-    "client.ClientLevelChunkMixin",
     "client.ClientLevelMixin",
     "client.CompiledChunkMixin",
     "client.LevelRendererMixin",
     "client.LevelRendererRenderChunkInfoAccessor",
+    "client.ModelBakeryMixin",
+    "client.ModelManagerMixin",
     "client.MouseHandlerMixin",
-    "client.TextureAtlasMixin",
     "client.WolfAccessor"
   ],
   "mixins": [

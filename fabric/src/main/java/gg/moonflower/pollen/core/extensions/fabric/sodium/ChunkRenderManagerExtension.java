@@ -7,4 +7,6 @@ import java.util.stream.Stream;
 public interface ChunkRenderManagerExtension {
 
     Stream<BlockPos> pollen_getBlockRenderPositions();
+
+    Stream<BlockPos> pollen_getTickingBlockRenderPositions();
 }

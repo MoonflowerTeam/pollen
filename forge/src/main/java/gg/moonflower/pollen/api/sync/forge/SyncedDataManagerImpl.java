@@ -13,13 +13,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -78,13 +73,14 @@ public class SyncedDataManagerImpl {
             ServerPlayer original = (ServerPlayer) event.getOriginal();
             ServerPlayer player = (ServerPlayer) event.getPlayer();
 
-            ForgeDataComponent oldHolder = getDataComponent(original);
-            ForgeDataComponent newHolder = getDataComponent(player);
-            if (oldHolder.shouldCopyForRespawn(!event.isWasDeath(), player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)))
-                newHolder.copyForRespawn(oldHolder, !event.isWasDeath());
+            original.getCapability(CAPABILITY).ifPresent(oldHolder -> {
+                ForgeDataComponent newHolder = getDataComponent(player);
+                if (oldHolder.shouldCopyForRespawn(!event.isWasDeath(), player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)))
+                    newHolder.copyForRespawn(oldHolder, !event.isWasDeath());
 
-            if (newHolder.shouldSyncWith(player, player))
-                PollenMessages.PLAY.sendTo(player, new ClientboundUpdateSyncedDataPacket(player, player, true));
+                if (newHolder.shouldSyncWith(player, player))
+                    PollenMessages.PLAY.sendTo(player, new ClientboundUpdateSyncedDataPacket(player, player, true));
+            });
         }
     }
 

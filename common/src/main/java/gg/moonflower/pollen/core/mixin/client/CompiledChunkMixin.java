@@ -14,9 +14,16 @@ public class CompiledChunkMixin implements CompiledChunkExtension {
 
     @Unique
     private final Set<BlockPos> renderableBlocks = new HashSet<>();
+    @Unique
+    private final Set<BlockPos> tickingBlocks = new HashSet<>();
 
     @Override
     public Set<BlockPos> pollen_getBlockRenderPositions() {
         return this.renderableBlocks;
+    }
+
+    @Override
+    public Set<BlockPos> pollen_getTickingBlockRenderers() {
+        return this.tickingBlocks;
     }
 }

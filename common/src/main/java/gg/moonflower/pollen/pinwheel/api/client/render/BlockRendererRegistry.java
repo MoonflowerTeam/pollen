@@ -1,9 +1,6 @@
 package gg.moonflower.pollen.pinwheel.api.client.render;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-import net.minecraft.core.Registry;
 import net.minecraft.world.level.block.Block;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;

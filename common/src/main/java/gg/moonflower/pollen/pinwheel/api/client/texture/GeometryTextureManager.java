@@ -21,11 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -137,11 +133,11 @@ public final class GeometryTextureManager {
                         PROVIDERS.forEach(provider -> provider.addHashTables(hashTables::add));
                         return Pair.of(textures, hashTables.toArray(new String[0]));
                     }, backgroundExecutor)
-                    .thenCompose(pair -> {
+                    .thenComposeAsync(pair -> {
                         if (spriteUploader == null)
                             spriteUploader = new GeometryTextureSpriteUploader(Minecraft.getInstance().getTextureManager());
                         return spriteUploader.setTextures(pair.getLeft(), pair.getRight()).reload(stage, resourceManager, preparationsProfiler, reloadProfiler, backgroundExecutor, gameExecutor);
-                    })
+                    }, gameExecutor)
                     .thenCompose(stage::wait).thenAcceptAsync(textures ->
                     {
                         TEXTURES.clear();

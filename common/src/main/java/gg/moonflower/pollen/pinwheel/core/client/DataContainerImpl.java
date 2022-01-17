@@ -1,9 +1,9 @@
 package gg.moonflower.pollen.pinwheel.core.client;
 
+import gg.moonflower.pollen.core.extensions.ClientLevelExtension;
 import gg.moonflower.pollen.pinwheel.api.client.blockdata.BlockData;
 import gg.moonflower.pollen.pinwheel.api.client.blockdata.BlockDataKey;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRenderer;
-import gg.moonflower.pollen.core.extensions.ClientLevelExtension;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

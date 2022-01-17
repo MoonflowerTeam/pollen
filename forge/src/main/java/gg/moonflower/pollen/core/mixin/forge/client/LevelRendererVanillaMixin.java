@@ -4,7 +4,6 @@ import gg.moonflower.pollen.core.extensions.CompiledChunkExtension;
 import gg.moonflower.pollen.core.extensions.LevelRendererExtension;
 import gg.moonflower.pollen.core.mixin.client.LevelRendererRenderChunkInfoAccessor;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
 import org.spongepowered.asm.mixin.Final;
@@ -23,5 +22,10 @@ public abstract class LevelRendererVanillaMixin implements LevelRendererExtensio
     @Override
     public Stream<BlockPos> pollen_getBlockRenderers() {
         return this.renderChunksInFrustum.stream().flatMap(info -> ((CompiledChunkExtension) ((LevelRendererRenderChunkInfoAccessor) info).getChunk().getCompiledChunk()).pollen_getBlockRenderPositions().stream());
+    }
+
+    @Override
+    public Stream<BlockPos> pollen_getTickingBlockRenderers() {
+        return this.renderChunksInFrustum.stream().flatMap(info -> ((CompiledChunkExtension) ((LevelRendererRenderChunkInfoAccessor) info).getChunk().getCompiledChunk()).pollen_getTickingBlockRenderers().stream());
     }
 }
