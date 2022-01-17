@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.core;
 
 import gg.moonflower.pollen.api.advancement.AdvancementModifierManager;
+import gg.moonflower.pollen.api.client.model.ItemOverrideModifierManager;
 import gg.moonflower.pollen.api.command.PollenSuggestionProviders;
 import gg.moonflower.pollen.api.command.argument.ColorArgumentType;
 import gg.moonflower.pollen.api.command.argument.EnumArgument;
@@ -49,7 +50,7 @@ public class Pollen {
         GeometryModelManager.init();
         GeometryTextureManager.init();
         AnimationManager.init();
-        AdvancementModifierManager.init();
+        ItemOverrideModifierManager.init();
         ShaderLoader.init();
         DebugInputs.init();
         InitRendererEvent.EVENT.register(ShaderConst::init);
@@ -59,6 +60,7 @@ public class Pollen {
 
     private static void onCommon() {
         SyncedDataManager.init();
+        AdvancementModifierManager.init();
         PollenRecipeTypes.RECIPE_SERIALIZERS.register(PLATFORM);
         PollenRecipeTypes.RECIPES.register(PLATFORM);
     }

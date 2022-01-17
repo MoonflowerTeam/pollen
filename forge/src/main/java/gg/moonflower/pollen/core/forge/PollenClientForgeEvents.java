@@ -1,21 +1,17 @@
 package gg.moonflower.pollen.core.forge;
 
 import gg.moonflower.pollen.api.event.events.client.InputEvents;
+import gg.moonflower.pollen.api.event.events.client.resource.ModelEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvents;
-import gg.moonflower.pollen.api.event.events.registry.client.ParticleFactoryRegistryEvent;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.extensions.MouseHandlerExtension;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
-import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.client.particle.ParticleProvider;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.ApiStatus;

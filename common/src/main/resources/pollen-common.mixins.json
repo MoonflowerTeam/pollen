@@ -9,8 +9,11 @@
     "client.ChunkRenderDispatcherRebuildTaskMixin",
     "client.ClientLevelMixin",
     "client.CompiledChunkMixin",
+    "client.ItemOverrideDeserializerAccessor",
     "client.LevelRendererMixin",
     "client.LevelRendererRenderChunkInfoAccessor",
+    "client.ModelBakeryMixin",
+    "client.ModelManagerMixin",
     "client.MouseHandlerMixin",
     "client.WolfAccessor"
   ],
