@@ -9,6 +9,7 @@
     "client.LevelRendererMixin",
     "client.LevelRendererVanillaMixin",
     "client.OptionsMixin",
+    "client.RecipeManagerAccessor",
     "client.RenderSystemMixin"
   ],
   "mixins": [
