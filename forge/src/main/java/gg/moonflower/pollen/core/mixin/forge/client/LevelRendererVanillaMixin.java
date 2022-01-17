@@ -4,7 +4,6 @@ import gg.moonflower.pollen.core.extensions.CompiledChunkExtension;
 import gg.moonflower.pollen.core.extensions.LevelRendererExtension;
 import gg.moonflower.pollen.core.mixin.client.LevelRendererRenderChunkInfoAccessor;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
 import org.spongepowered.asm.mixin.Final;

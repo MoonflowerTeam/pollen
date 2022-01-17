@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.pinwheel.api.client.framebuffer;
 
-import com.mojang.blaze3d.pipeline.MainTarget;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.platform.GlStateManager;

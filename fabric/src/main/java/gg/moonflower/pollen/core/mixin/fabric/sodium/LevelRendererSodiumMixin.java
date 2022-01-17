@@ -2,7 +2,6 @@ package gg.moonflower.pollen.core.mixin.fabric.sodium;
 
 import gg.moonflower.pollen.core.extensions.LevelRendererExtension;
 import gg.moonflower.pollen.core.extensions.fabric.sodium.ChunkRenderManagerExtension;
-import me.jellysquid.mods.sodium.client.render.SodiumWorldRenderer;
 import me.jellysquid.mods.sodium.client.world.WorldRendererExtended;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
