@@ -19,4 +19,9 @@ public abstract class LevelRendererSodiumMixin implements LevelRendererExtension
             return Stream.empty();
         return ((ChunkRenderManagerExtension) ((SodiumWorldRendererAccessor) ((WorldRendererExtended)this).getSodiumWorldRenderer()).getRenderSectionManager()).pollen_getBlockRenderPositions();
     }
+
+    @Override
+    public Stream<BlockPos> pollen_getTickingBlockRenderers() {
+        return ((ChunkRenderManagerExtension) ((SodiumWorldRendererAccessor) SodiumWorldRenderer.getInstance()).getChunkRenderManager()).pollen_getTickingBlockRenderPositions();
+    }
 }

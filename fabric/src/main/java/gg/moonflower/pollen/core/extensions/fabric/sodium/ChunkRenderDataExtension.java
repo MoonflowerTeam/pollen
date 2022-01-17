@@ -7,4 +7,6 @@ import java.util.Set;
 public interface ChunkRenderDataExtension {
 
     Set<BlockPos> pollen_getBlockRenderPositions();
+
+    Set<BlockPos> pollen_getTickingBlockRenderPositions();
 }
