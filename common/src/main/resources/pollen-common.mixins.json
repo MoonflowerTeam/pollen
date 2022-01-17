@@ -12,7 +12,6 @@
     "client.LevelRendererMixin",
     "client.LevelRendererRenderChunkInfoAccessor",
     "client.MouseHandlerMixin",
-    "client.TextureAtlasMixin",
     "client.WolfAccessor"
   ],
   "mixins": [

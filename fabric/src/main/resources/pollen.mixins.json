@@ -16,6 +16,7 @@
     "client.MinecraftMixin",
     "client.MouseHandlerMixin",
     "client.ParticleEngineMixin",
+    "client.TextureAtlasMixin",
     "iris.ShadowRendererMixin",
     "sodium.BlockRendererMixin",
     "sodium.ChunkRenderDataMixin",

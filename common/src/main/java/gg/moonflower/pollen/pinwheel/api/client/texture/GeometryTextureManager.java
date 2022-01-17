@@ -137,11 +137,11 @@ public final class GeometryTextureManager {
                         PROVIDERS.forEach(provider -> provider.addHashTables(hashTables::add));
                         return Pair.of(textures, hashTables.toArray(new String[0]));
                     }, backgroundExecutor)
-                    .thenCompose(pair -> {
+                    .thenComposeAsync(pair -> {
                         if (spriteUploader == null)
                             spriteUploader = new GeometryTextureSpriteUploader(Minecraft.getInstance().getTextureManager());
                         return spriteUploader.setTextures(pair.getLeft(), pair.getRight()).reload(stage, resourceManager, preparationsProfiler, reloadProfiler, backgroundExecutor, gameExecutor);
-                    })
+                    }, gameExecutor)
                     .thenCompose(stage::wait).thenAcceptAsync(textures ->
                     {
                         TEXTURES.clear();
