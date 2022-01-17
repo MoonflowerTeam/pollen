@@ -1,8 +1,8 @@
 {
   "required": true,
   "package": "gg.moonflower.pollen.core.mixin.fabric",
-  "compatibilityLevel": "JAVA_17",
   "plugin": "gg.moonflower.pollen.core.mixin.fabric.PollenFabricMixinPlugin",
+  "compatibilityLevel": "JAVA_17",
   "minVersion": "0.8",
   "client": [
     "client.CameraAccessor",
@@ -19,6 +19,7 @@
     "client.ParticleEngineMixin",
     "client.RenderSystemMixin",
     "client.ShaderInstanceMixin",
+    "client.TextureAtlasMixin",
     "iris.ShadowRendererMixin",
     "sodium.BlockRendererMixin",
     "sodium.ChunkRenderDataMixin",

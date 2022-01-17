@@ -24,6 +24,9 @@
   ],
   "accessWidener": "${id}.accesswidener",
   "entrypoints": {
+    "preLaunch": [
+      "gg.moonflower.pollen.core.fabric.PollenFabricPreLaunch"
+    ],
     "main": [
       "gg.moonflower.pollen.core.fabric.PollenFabric"
     ],
