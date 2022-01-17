@@ -1,7 +1,6 @@
 package gg.moonflower.pollen.core.forge;
 
 import gg.moonflower.pollen.api.event.events.client.InputEvents;
-import gg.moonflower.pollen.api.event.events.client.resource.ModelEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvents;
 import gg.moonflower.pollen.core.Pollen;
@@ -11,7 +10,6 @@ import net.minecraft.client.MouseHandler;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.ApiStatus;
