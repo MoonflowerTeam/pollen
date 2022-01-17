@@ -6,8 +6,6 @@ dependencies {
     implementation "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
     implementation "com.electronwill.night-config:core:${project.night_config_version}"
     implementation "com.electronwill.night-config:toml:${project.night_config_version}"
-    implementation "com.github.LlamaLad7:MixinExtras:${project.mixin_extras_version}"
-    annotationProcessor "com.github.LlamaLad7:MixinExtras:${project.mixin_extras_version}"
 }
 
 architectury {
