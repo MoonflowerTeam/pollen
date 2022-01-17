@@ -26,26 +26,10 @@ public class ItemOverrideModifier {
         this.overrides = overrides;
     }
 
-    private static <T> T[] insert(T[] a, T[] b) {
-        T[] expanded = Arrays.copyOf(a, a.length + b.length);
-        System.arraycopy(b, 0, expanded, a.length, b.length);
-        return expanded;
-    }
-
-    private static <T> T[] remove(T[] array, T remove) {
-        for (int i = 0; i < array.length; i++) {
-            if (remove.equals(array[i])) {
-                System.arraycopy(array, i + 1, array, i, array.length - i - 1); // Copy the rest of the array down
-                array = Arrays.copyOf(array, array.length - 1); // Shrink array by 1
-            }
-        }
-        return array;
-    }
-
     /**
-     * @return A new advancement modifier builder
+     * @return A new item override modifier builder
      */
-    public static Builder itemOverrideModifier() {
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -57,10 +41,10 @@ public class ItemOverrideModifier {
     }
 
     /**
-     * Modifies the specified advancement with this modifier's modifications.
+     * Modifies the specified model with this modifier's modifications.
      *
      * @param model The model to modify
-     * @throws JsonParseException If this modifier is not valid for the specified advancement
+     * @throws JsonParseException If this modifier is not valid for the specified model
      */
     public void modify(BlockModel model) throws JsonParseException {
         model.getOverrides().addAll(this.overrides);
@@ -162,9 +146,9 @@ public class ItemOverrideModifier {
         }
 
         /**
-         * Adds an advancement to inject into.
+         * Adds a model to inject into.
          *
-         * @param id The id of the advancement
+         * @param id The id of the model
          */
         public Builder injectInto(ResourceLocation id) {
             this.inject.add(id);
