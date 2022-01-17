@@ -39,7 +39,7 @@ public class PollenGrindstoneCategory implements IRecipeCategory<PollenGrindston
 
     public PollenGrindstoneCategory(IGuiHelper guiHelper) {
         this.background = guiHelper.drawableBuilder(new ResourceLocation("textures/gui/container/grindstone.png"), 30, 15, 116, 56).build();
-        this.icon = guiHelper.createDrawableIngredient(new ItemStack(Blocks.GRINDSTONE));
+        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(Blocks.GRINDSTONE));
         this.cachedDisplayData = CacheBuilder.newBuilder().maximumSize(25).build(new CacheLoader<PollenGrindstoneRecipe, DisplayData>() {
             @Override
             public DisplayData load(PollenGrindstoneRecipe key) {
@@ -59,13 +59,7 @@ public class PollenGrindstoneCategory implements IRecipeCategory<PollenGrindston
     }
 
     @Override
-    @Deprecated
-    public String getTitle() {
-        return this.getTitleAsTextComponent().getString();
-    }
-
-    @Override
-    public Component getTitleAsTextComponent() {
+    public Component getTitle() {
         return Blocks.GRINDSTONE.getName();
     }
 
