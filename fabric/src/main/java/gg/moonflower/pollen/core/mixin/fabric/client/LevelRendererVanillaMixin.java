@@ -21,6 +21,11 @@ public abstract class LevelRendererVanillaMixin implements LevelRendererExtensio
 
     @Override
     public Stream<BlockPos> pollen_getBlockRenderers() {
-        return this.renderChunks.stream().flatMap(info -> ((CompiledChunkExtension) ((LevelRendererRenderChunkInfoAccessor) info).getChunk().getCompiledChunk()).pollen_getBlockRenderPositions().stream());
+        return this.renderChunks.stream().flatMap(info -> ((CompiledChunkExtension) ((LevelRendererRenderChunkInfoAccessor) info).getChunk().getCompiledChunk()).pollen_getBlockRenderers().stream());
+    }
+
+    @Override
+    public Stream<BlockPos> pollen_getTickingBlockRenderers() {
+        return this.renderChunks.stream().flatMap(info -> ((CompiledChunkExtension) ((LevelRendererRenderChunkInfoAccessor) info).getChunk().getCompiledChunk()).pollen_getTickingBlockRenderers().stream());
     }
 }

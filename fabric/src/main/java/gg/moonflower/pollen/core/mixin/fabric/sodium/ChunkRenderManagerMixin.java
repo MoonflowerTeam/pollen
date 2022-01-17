@@ -36,4 +36,9 @@ public class ChunkRenderManagerMixin<T extends ChunkGraphicsState> implements Ch
     public Stream<BlockPos> pollen_getBlockRenderPositions() {
         return this.renderChunks.stream().flatMap(container -> ((ChunkRenderDataExtension) container.getData()).pollen_getBlockRenderPositions().stream());
     }
+
+    @Override
+    public Stream<BlockPos> pollen_getTickingBlockRenderPositions() {
+        return this.renderChunks.stream().flatMap(container -> ((ChunkRenderDataExtension) container.getData()).pollen_getTickingBlockRenderPositions().stream());
+    }
 }

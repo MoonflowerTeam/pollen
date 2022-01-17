@@ -11,4 +11,6 @@ public interface LevelRendererExtension {
     BlockRenderer.DataContainer pollen_getDataContainer(ClientLevel level, BlockPos pos);
 
     Stream<BlockPos> pollen_getBlockRenderers();
+
+    Stream<BlockPos> pollen_getTickingBlockRenderers();
 }
