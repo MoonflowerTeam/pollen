@@ -248,7 +248,7 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
 
         @Override
         public boolean containsKey(ResourceLocation name) {
-            return this.registry.get(name) != null;
+            return this.registry.containsKey(name);
         }
 
         @Override
