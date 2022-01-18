@@ -3,7 +3,7 @@ package gg.moonflower.pollen.api.registry;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
-import gg.moonflower.pollen.api.registry.PollinatedRegistry;
+import gg.moonflower.pollen.api.platform.Platform;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -91,5 +91,10 @@ public class WrapperPollinatedRegistry<T> extends PollinatedRegistry<T> {
     @Override
     public Iterator<T> iterator() {
         return this.parent.iterator();
+    }
+
+    @Override
+    protected void onRegister(Platform mod) {
+        this.parent.onRegister(mod);
     }
 }
