@@ -9,10 +9,17 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.platform.Platform;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * An abstracted registry for wrapping platform-specific registries.
@@ -21,7 +28,7 @@ import java.util.stream.Stream;
  * @author Jackson
  * @since 1.0.0
  */
-public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable {
+public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterable<T> {
 
     protected final String modId;
     private boolean registered;
@@ -45,7 +52,7 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable {
     }
 
     /**
-     * Creates an {@link PollinatedRegistry} backed by a platform-specific registry. This should only be used to register to another mod's registry.
+     * Creates a {@link PollinatedRegistry} backed by a platform-specific registry. This should only be used to register to another mod's registry.
      *
      * @param registry The registry to register objects to.
      * @param modId    The mod id to register to.
@@ -58,7 +65,17 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable {
     }
 
     /**
-     * Creates an {@link PollinatedRegistry} backed by a {@link Registry}.
+     * Creates a {@link PollinatedRegistry} for registering blocks and item blocks. The mod id from the item registry is used as the id for the block registry.
+     *
+     * @param itemRegistry The registry to add items to
+     * @return A specialized block registry that can register items
+     */
+    public static PollinatedBlockRegistry createBlock(PollinatedRegistry<Item> itemRegistry) {
+        return new PollinatedBlockRegistry(create(Registry.BLOCK, itemRegistry.getModId()), itemRegistry);
+    }
+
+    /**
+     * Creates a {@link PollinatedRegistry} backed by a {@link Registry}.
      * <p>Users should always use {@link PollinatedRegistry#create(Registry, String)}.
      * <p>This is for very specific cases where vanilla registries must strictly be used and {@link PollinatedRegistry#create(Registry, String)} can't do what you need.
      *
@@ -95,6 +112,13 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable {
     }
 
     /**
+     * @return The id of the mod this registry is for
+     */
+    public String getModId() {
+        return modId;
+    }
+
+    /**
      * Registers an object.
      *
      * @param id     The id of the object.
@@ -117,6 +141,54 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable {
     public <R extends T> Supplier<R> registerConditional(String id, Supplier<R> dummy, Supplier<R> object, boolean register) {
         return this.register(id, register ? object : dummy);
     }
+
+    /**
+     * Retrieves the key for the specified value.
+     *
+     * @param value The value to get the key for
+     * @return A key for that value or <code>null</code> if this registry doesn't contain that value
+     */
+    @Nullable
+    public abstract ResourceLocation getKey(T value);
+
+    /**
+     * Retrieves the value for the specified key.
+     *
+     * @param name The key to get the value for
+     * @return A value for that key or <code>null</code> if this registry doesn't contain a value with that name
+     */
+    @Nullable
+    public abstract T get(@Nullable ResourceLocation name);
+
+    /**
+     * Retrieves the value for the specified key.
+     *
+     * @param name The key to get the value for
+     * @return A value for that key
+     */
+    public Optional<T> getOptional(@Nullable ResourceLocation name) {
+        return Optional.ofNullable(this.get(name));
+    }
+
+    /**
+     * @return A set of all registered keys in the registry
+     */
+    public abstract Set<ResourceLocation> keySet();
+
+    /**
+     * @return A stream of all values in the registry
+     */
+    public Stream<T> stream() {
+        return StreamSupport.stream(this.spliterator(), false);
+    }
+
+    /**
+     * Checks to see if a value with the specified name exists.
+     *
+     * @param name The name of the key to get
+     * @return Whether that value exists
+     */
+    public abstract boolean containsKey(ResourceLocation name);
 
     /**
      * Initializes the registry for a {@link Platform}.
@@ -147,10 +219,36 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable {
             this.codec = this.registry.byNameCodec();
         }
 
+        public Registry<T> getRegistry() {
+            return registry;
+        }
+
         @Override
         public <R extends T> Supplier<R> register(String id, Supplier<R> object) {
             R registered = Registry.register(this.registry, new ResourceLocation(this.modId, id), object.get());
             return () -> registered;
+        }
+
+        @Nullable
+        @Override
+        public ResourceLocation getKey(T value) {
+            return this.registry.getKey(value);
+        }
+
+        @Nullable
+        @Override
+        public T get(@Nullable ResourceLocation name) {
+            return this.registry.get(name);
+        }
+
+        @Override
+        public Set<ResourceLocation> keySet() {
+            return this.registry.keySet();
+        }
+
+        @Override
+        public boolean containsKey(ResourceLocation name) {
+            return this.registry.get(name) != null;
         }
 
         @Override
@@ -168,8 +266,10 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable {
             return this.registry.keys(ops);
         }
 
-        public Registry<T> getRegistry() {
-            return registry;
+        @NotNull
+        @Override
+        public Iterator<T> iterator() {
+            return this.registry.iterator();
         }
     }
 }
