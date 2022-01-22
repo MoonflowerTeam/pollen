@@ -50,8 +50,9 @@ public abstract class EntityRenderDispatcherMixin {
             }
 
             @SuppressWarnings("unchecked")
+            @Nullable
             @Override
-            public <T extends LivingEntity, R extends LivingEntityRenderer<T, ? extends EntityModel<T>>> @Nullable R getRenderer(EntityType<? extends T> entityType) {
+            public <T extends LivingEntity, R extends LivingEntityRenderer<T, ? extends EntityModel<T>>> R getRenderer(EntityType<? extends T> entityType) {
                 return (R) renderers.get(entityType);
             }
         });
