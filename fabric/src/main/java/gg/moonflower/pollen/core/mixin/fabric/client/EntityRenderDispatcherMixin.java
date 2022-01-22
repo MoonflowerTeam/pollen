@@ -7,6 +7,7 @@ import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -40,8 +41,8 @@ public abstract class EntityRenderDispatcherMixin {
 
             @Nullable
             @Override
-            public EntityRenderer<? extends Player> getSkin(String skinName) {
-                return playerRenderers.get(skinName);
+            public PlayerRenderer getSkin(String skinName) {
+                return (PlayerRenderer) playerRenderers.get(skinName);
             }
 
             @SuppressWarnings("unchecked")
