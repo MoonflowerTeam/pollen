@@ -7,11 +7,15 @@ import gg.moonflower.pollen.api.command.argument.ColorArgumentType;
 import gg.moonflower.pollen.api.command.argument.EnumArgument;
 import gg.moonflower.pollen.api.command.argument.TimeArgumentType;
 import gg.moonflower.pollen.api.crafting.PollenRecipeTypes;
+import gg.moonflower.pollen.api.event.events.client.render.AddRenderLayersEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.sync.SyncedDataManager;
+import gg.moonflower.pollen.core.client.loader.CosmeticModelLoader;
+import gg.moonflower.pollen.core.client.loader.CosmeticTextureLoader;
 import gg.moonflower.pollen.core.client.render.DebugPollenFlowerPotRenderer;
 import gg.moonflower.pollen.core.client.render.PollenShaderTypes;
+import gg.moonflower.pollen.core.client.render.layer.PollenCosmeticLayer;
 import gg.moonflower.pollen.core.datagen.PollenLanguageProvider;
 import gg.moonflower.pollen.core.network.PollenMessages;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
@@ -24,6 +28,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 @ApiStatus.Internal
 public class Pollen {
@@ -50,8 +56,14 @@ public class Pollen {
         GeometryTextureManager.init();
         AnimationManager.init();
         PollenShaderTypes.init();
+        GeometryModelManager.addLoader(new CosmeticModelLoader());
+        GeometryTextureManager.addProvider(new CosmeticTextureLoader());
         ItemOverrideModifierManager.init();
         DebugInputs.init();
+        AddRenderLayersEvent.EVENT.register(context -> {
+            for (String skin : context.getSkins())
+                Objects.requireNonNull(context.getSkin(skin)).addLayer(new PollenCosmeticLayer<>(context.getSkin(skin)));
+        });
         if (!Platform.isProduction())
             BlockRendererRegistry.register(Blocks.FLOWER_POT, new DebugPollenFlowerPotRenderer());
     }

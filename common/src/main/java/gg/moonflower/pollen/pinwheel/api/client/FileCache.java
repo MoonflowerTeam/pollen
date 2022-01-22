@@ -1,7 +1,11 @@
 package gg.moonflower.pollen.pinwheel.api.client;
 
+import com.google.common.util.concurrent.MoreExecutors;
 import gg.moonflower.pollen.pinwheel.core.client.util.HashedTextureCache;
 import gg.moonflower.pollen.pinwheel.core.client.util.TimedTextureCache;
+import net.minecraft.ReportedException;
+import net.minecraft.server.Bootstrap;
+import net.minecraft.util.Mth;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -9,19 +13,25 @@ import org.apache.http.conn.EofSensorInputStream;
 import org.apache.http.conn.EofSensorWatcher;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Ocelot
  */
 public interface FileCache {
+
     String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11";
+    @ApiStatus.Internal
+    AtomicInteger ID_GENERATOR = new AtomicInteger();
 
     /**
      * Opens a GET stream to the specified URL.
@@ -58,6 +68,49 @@ public interface FileCache {
                 return true;
             }
         });
+    }
+
+    /**
+     * @return A new executor intended to be used for downloading a lot of small files
+     */
+    static ExecutorService createOnlineWorker() {
+        Logger logger = LogManager.getLogger();
+        int i = Mth.clamp(Runtime.getRuntime().availableProcessors() - 1, 1, 7);
+        ExecutorService executorservice;
+        if (i <= 0) {
+            executorservice = MoreExecutors.newDirectExecutorService();
+        } else {
+            executorservice = new ForkJoinPool(i, pool ->
+            {
+                ForkJoinWorkerThread forkjoinworkerthread = new ForkJoinWorkerThread(pool) {
+                    @Override
+                    protected void onTermination(@Nullable Throwable t) {
+                        if (t != null) {
+                            logger.warn("{} died", this.getName(), t);
+                        } else {
+                            logger.debug("{} shutdown", this.getName());
+                        }
+
+                        super.onTermination(t);
+                    }
+                };
+                forkjoinworkerthread.setName("Worker-Pollen Online Fetcher-" + ID_GENERATOR.getAndIncrement());
+                return forkjoinworkerthread;
+            }, (thread, throwable) ->
+            {
+                if (throwable instanceof CompletionException)
+                    throwable = throwable.getCause();
+
+                if (throwable instanceof ReportedException) {
+                    Bootstrap.realStdoutPrintln(((ReportedException) throwable).getReport().getFriendlyReport());
+                    System.exit(-1);
+                }
+
+                logger.error("Caught exception in thread " + thread, throwable);
+            }, true);
+        }
+
+        return executorservice;
     }
 
     /**
