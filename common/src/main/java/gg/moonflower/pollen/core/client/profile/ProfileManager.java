@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 
 /**
  * @author Ocelot
@@ -26,7 +25,8 @@ public final class ProfileManager {
             try {
                 return CONNECTION.getProfileData(id);
             } catch (IOException e) {
-                throw new CompletionException("Failed to retrieve profile data", e);
+                e.printStackTrace();
+                return new ProfileData(id, 0, 0);
             }
         }, HttpUtil.DOWNLOAD_EXECUTOR));
     }

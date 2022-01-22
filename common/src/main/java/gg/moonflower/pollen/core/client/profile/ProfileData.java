@@ -3,6 +3,8 @@ package gg.moonflower.pollen.core.client.profile;
 import java.util.UUID;
 
 /**
+ * Information on a single profile.
+ *
  * @author Ocelot
  */
 public class ProfileData {
@@ -17,14 +19,23 @@ public class ProfileData {
         this.tier = tier;
     }
 
+    /**
+     * @return The id of the profile
+     */
     public UUID getUuid() {
         return uuid;
     }
 
+    /**
+     * @return The Patreon level of the profile
+     */
     public int getPatreon() {
         return patreon;
     }
 
+    /**
+     * @return The Patreon tier of the profile
+     */
     public int getTier() {
         return tier;
     }

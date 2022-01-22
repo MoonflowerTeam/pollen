@@ -13,6 +13,7 @@ import net.minecraft.util.HttpUtil;
 import net.minecraft.world.entity.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.io.IOException;
 import java.util.*;
@@ -23,8 +24,11 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
+ * Retrieves and caches entitlements for all players.
+ *
  * @author Ocelot
  */
+@ApiStatus.Internal
 public final class EntitlementManager {
 
     private static final Map<UUID, EntitlementData> ENTITLEMENTS = new HashMap<>();
@@ -45,15 +49,32 @@ public final class EntitlementManager {
         return ENTITLEMENTS.computeIfAbsent(id, EntitlementData::new);
     }
 
+    /**
+     * @return All entitlements for all players
+     */
     public static Stream<Entitlement> getAllEntitlements() {
         return ENTITLEMENTS.keySet().stream().flatMap(EntitlementManager::getEntitlements);
     }
 
+    /**
+     * Retrieves all entitlements for the player with the specified id.
+     *
+     * @param id The id of the player to retrieve entitlements from
+     * @return All entitlements for that player or an empty stream if they have not yet loaded
+     */
     public static Stream<Entitlement> getEntitlements(UUID id) {
         Map<String, Entitlement> entitlementMap = getData(id).getFuture().getNow(Collections.emptyMap());
         return entitlementMap.isEmpty() ? Stream.empty() : entitlementMap.values().stream();
     }
 
+    /**
+     * Updates settings for the specified entitlement.
+     *
+     * @param id            The id of the player to change data for
+     * @param entitlementId The id of the entitlement to fetch
+     * @param action        The action to take on the entitlement to update settings
+     * @param <T>           The type of entitlement to update
+     */
     @SuppressWarnings("unchecked")
     public static <T extends Entitlement> void updateEntitlementSettings(UUID id, String entitlementId, Consumer<T> action) {
         getData(id).getFuture().thenApplyAsync(map -> {
@@ -116,8 +137,10 @@ public final class EntitlementManager {
             }, HttpUtil.DOWNLOAD_EXECUTOR)).toArray(CompletableFuture[]::new)).thenApply(__ -> map)).thenApplyAsync(map -> {
                 this.expireTime = System.currentTimeMillis() + CACHE_TIME;
                 Minecraft.getInstance().execute(() -> {
-                    GeometryModelManager.reload(false);
-                    GeometryTextureManager.reload(false);
+                    if (map.values().stream().anyMatch(entitlement -> entitlement instanceof ModelEntitlement))
+                        GeometryModelManager.reload(false);
+                    if (map.values().stream().anyMatch(entitlement -> entitlement instanceof TexturedEntitlement))
+                        GeometryTextureManager.reload(false);
                 });
                 return map;
             }, Minecraft.getInstance()).exceptionally(e -> {

@@ -36,6 +36,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 /**
+ * Maintains the internal connection to the Moonflower server.
+ *
  * @author Ocelot
  */
 public class ProfileConnection {
@@ -135,10 +137,24 @@ public class ProfileConnection {
         return result.get();
     }
 
+    /**
+     * Retrieves the data for a profile.
+     *
+     * @param profileId The id of the profile to retrieve
+     * @return The profile for that player
+     * @throws IOException If any error occurs when loading data
+     */
     public ProfileData getProfileData(UUID profileId) throws IOException {
         return GSON.fromJson(getJson(this.url + "/profiles/" + profileId).getAsJsonObject(), ProfileData.class);
     }
 
+    /**
+     * Retrieves all entitlements for a profile.
+     *
+     * @param profileId The id of the profile to retrieve from
+     * @return The map of keys to entitlements
+     * @throws IOException If any error occurs when loading data
+     */
     public Map<String, Entitlement> getEntitlements(UUID profileId) throws IOException {
         try {
             JsonArray array = getJson(this.url + "/profiles/" + profileId + "/entitlements").getAsJsonArray();
@@ -157,6 +173,14 @@ public class ProfileConnection {
         }
     }
 
+    /**
+     * Retrieves a single entitlement for a profile.
+     *
+     * @param profileId     The id of the profile to retrieve from
+     * @param entitlementId The id of the entitlement to retrieve
+     * @return The single entitlement
+     * @throws IOException If any error occurs when loading data
+     */
     public Entitlement getEntitlement(UUID profileId, String entitlementId) throws IOException {
         try {
             return parseEntitlement(getJson(this.url + "/profiles/" + profileId + "/entitlement/" + entitlementId).getAsJsonObject());
@@ -165,10 +189,27 @@ public class ProfileConnection {
         }
     }
 
+    /**
+     * Retrieves settings for a single entitlement for a profile.
+     *
+     * @param profileId     The id of the profile to retrieve from
+     * @param entitlementId The id of the entitlement to get settings for
+     * @return The settings for that entitlement
+     * @throws IOException If any error occurs when loading data
+     */
     public JsonObject getSettings(UUID profileId, String entitlementId) throws IOException {
         return getJson(this.url + "/profiles/" + profileId + "/entitlements/" + entitlementId + "/settings").getAsJsonObject();
     }
 
+    /**
+     * Updates settings for a single entitlement for a profile.
+     *
+     * @param profileId     The id of the profile to set for
+     * @param entitlementId The id of the entitlement to set settings for
+     * @param newSettings   The updated settings for the entitlement. This should only contain changes
+     * @return The entire settings for that entitlement as it now is server-side
+     * @throws IOException If any error occurs when loading data
+     */
     public JsonObject updateSettings(UUID profileId, String entitlementId, JsonObject newSettings) throws IOException {
         return this.runAuthenticated(context -> {
             String url = this.url + "/profiles/" + profileId + "/entitlement/" + entitlementId + "/settings";

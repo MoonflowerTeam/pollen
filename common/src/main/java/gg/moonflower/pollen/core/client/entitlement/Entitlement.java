@@ -10,6 +10,7 @@ import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
@@ -17,19 +18,33 @@ import java.util.Locale;
 /**
  * @author Ocelot
  */
+@ApiStatus.Internal
 public abstract class Entitlement {
 
     private ResourceLocation registryName;
     private Component displayName;
 
+    /**
+     * Updates internal settings for the entitlement.
+     * @param settings The new settings JSON
+     */
     public abstract void updateSettings(JsonObject settings);
 
+    /**
+     * @return A JSON with all settings for this entitlement saved
+     */
     public abstract JsonObject saveSettings();
 
+    /**
+     * @return The id of this entitlement, prefixed by <code>pollen</code>
+     */
     public ResourceLocation getRegistryName() {
         return registryName;
     }
 
+    /**
+     * @return The chat-visible name of the entitlement
+     */
     public Component getDisplayName() {
         return displayName;
     }
@@ -44,6 +59,9 @@ public abstract class Entitlement {
         this.displayName = displayName;
     }
 
+    /**
+     * @return The type of entitlement this is
+     */
     public abstract Type getType();
 
     public enum Type {

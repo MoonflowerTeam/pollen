@@ -7,9 +7,11 @@ import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Objects;
 
+@ApiStatus.Internal
 public class Cosmetic extends Entitlement implements TexturedEntitlement, ModelEntitlement {
 
     public static final Codec<Cosmetic> CODEC = RecordCodecBuilder.create(instance -> instance.group(
