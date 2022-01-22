@@ -55,7 +55,6 @@ public class Pollen {
         ShaderLoader.init();
         DebugInputs.init();
         InitRendererEvent.EVENT.register(ShaderConst::init);
-        AddRenderLayersEvent.EVENT.register(context -> System.out.println(context.getSkins()));
         if (!Platform.isProduction())
             BlockRendererRegistry.register(Blocks.FLOWER_POT, new DebugPollenFlowerPotRenderer());
     }
