@@ -3,6 +3,7 @@ package gg.moonflower.pollen.api.event.events.client.render;
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.world.entity.EntityType;
@@ -58,5 +59,10 @@ public interface AddRenderLayersEvent {
          * @return The renderer for the specified entity type
          */
         @Nullable <T extends LivingEntity, R extends LivingEntityRenderer<T, ? extends EntityModel<T>>> R getRenderer(EntityType<? extends T> entityType);
+
+        /**
+         * @return The entity model set instance
+         */
+        EntityModelSet getEntityModels();
     }
 }
