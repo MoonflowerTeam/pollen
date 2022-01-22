@@ -6,6 +6,7 @@
   "client": [
     "client.ClientPackSourceMixin",
     "client.CreateWorldScreenMixin",
+    "client.EntityRenderDispatcherAccessor",
     "client.LevelRendererMixin",
     "client.LevelRendererVanillaMixin",
     "client.OptionsMixin",
