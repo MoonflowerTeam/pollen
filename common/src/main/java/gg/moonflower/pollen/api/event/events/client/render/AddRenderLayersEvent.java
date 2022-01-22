@@ -5,6 +5,7 @@ import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -47,7 +48,7 @@ public interface AddRenderLayersEvent {
          * @return The skin renderer, or <code>null</code> if not found
          */
         @Nullable
-        EntityRenderer<? extends Player> getSkin(String skinName);
+        PlayerRenderer getSkin(String skinName);
 
         /**
          * Retrieves an entity renderer for an entity type.
