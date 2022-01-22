@@ -41,6 +41,11 @@ public class PollinatedModContainerImpl implements PollinatedModContainer {
         return this.parent.getMetadata().getName();
     }
 
+    @Override
+    public String getVersion() {
+        return this.parent.getMetadata().getVersion().getFriendlyString();
+    }
+
     public ModContainer getFabricContainer() {
         return parent;
     }

@@ -42,6 +42,11 @@ public class PollinatedModContainerImpl implements PollinatedModContainer {
         return this.parent.getModInfo().getDisplayName();
     }
 
+    @Override
+    public String getVersion() {
+        return this.parent.getModInfo().getVersion().getQualifier();
+    }
+
     public ModContainer getForgeContainer() {
         return parent;
     }

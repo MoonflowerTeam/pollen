@@ -45,10 +45,14 @@ public interface PollinatedModContainer {
     String getId();
 
     /**
-     * @return The name of the mod. This can be null and should be
+     * @return The name of the mod
      */
-    @Nullable
     String getName();
+
+    /**
+     * @return The readable version of the mod
+     */
+    String getVersion();
 
     /**
      * @return The visible display name of the mod
