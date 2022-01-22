@@ -9,6 +9,7 @@
     "client.ClientHandshakePacketListenerImplMixin",
     "client.ClientLevelMixin",
     "client.ClientPacketListenerMixin",
+    "client.EntityRenderDispatcherMixin",
     "client.GameRendererMixin",
     "client.IntegratedServerMixin",
     "client.KeyboardInputMixin",
