@@ -12,7 +12,10 @@ import gg.moonflower.pollen.api.event.events.client.render.InitRendererEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.sync.SyncedDataManager;
+import gg.moonflower.pollen.core.client.loader.CosmeticModelLoader;
+import gg.moonflower.pollen.core.client.loader.CosmeticTextureLoader;
 import gg.moonflower.pollen.core.client.render.DebugPollenFlowerPotRenderer;
+import gg.moonflower.pollen.core.client.render.layer.PollenCosmeticLayer;
 import gg.moonflower.pollen.core.datagen.PollenLanguageProvider;
 import gg.moonflower.pollen.core.network.PollenMessages;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
@@ -51,10 +54,16 @@ public class Pollen {
         GeometryModelManager.init();
         GeometryTextureManager.init();
         AnimationManager.init();
+        GeometryModelManager.addLoader(new CosmeticModelLoader());
+        GeometryTextureManager.addProvider(new CosmeticTextureLoader());
         ItemOverrideModifierManager.init();
         ShaderLoader.init();
         DebugInputs.init();
         InitRendererEvent.EVENT.register(ShaderConst::init);
+        AddRenderLayersEvent.EVENT.register(context -> {
+            for (String skin : context.getSkins())
+                context.getSkin(skin).addLayer(new PollenCosmeticLayer<>(context.getSkin(skin)));
+        });
         if (!Platform.isProduction())
             BlockRendererRegistry.register(Blocks.FLOWER_POT, new DebugPollenFlowerPotRenderer());
     }

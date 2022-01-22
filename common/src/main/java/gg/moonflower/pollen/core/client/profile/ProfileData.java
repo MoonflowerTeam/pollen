@@ -2,6 +2,9 @@ package gg.moonflower.pollen.core.client.profile;
 
 import java.util.UUID;
 
+/**
+ * @author Ocelot
+ */
 public class ProfileData {
 
     private final UUID uuid;

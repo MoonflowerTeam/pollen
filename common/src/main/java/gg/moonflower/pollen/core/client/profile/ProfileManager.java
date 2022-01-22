@@ -9,6 +9,9 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
+/**
+ * @author Ocelot
+ */
 public final class ProfileManager {
 
     public static final ProfileConnection CONNECTION = new ProfileConnection("http://localhost:8080/v1");

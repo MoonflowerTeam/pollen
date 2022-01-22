@@ -6,39 +6,37 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
+import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
+/**
+ * @author Ocelot
+ */
 public abstract class Entitlement {
 
-    public static final Codec<Entitlement> CODEC = new Codec<Type>() {
-        @Override
-        public <U> DataResult<Pair<Type, U>> decode(DynamicOps<U> ops, U input) {
-            return ops.compressMaps() ? ops.getNumberValue(input).flatMap(number -> {
-                int ordinal = number.intValue();
-                Type type = ordinal < 0 || ordinal >= Type.values().length ? null : Type.values()[ordinal];
-                return type == null ? DataResult.error("Unknown entitlement type: " + number) : DataResult.success(type, Lifecycle.stable());
-            }).map(type -> Pair.of(type, ops.empty())) : Codec.STRING.decode(ops, input).flatMap(pair -> {
-                Type object = Type.byName(pair.getFirst());
-                return object == null ? DataResult.error("Unknown entitlement type: " + pair.getFirst()) : DataResult.success(Pair.of(object, pair.getSecond()), Lifecycle.stable());
-            });
-        }
-
-        @Override
-        public <U> DataResult<U> encode(Type type, DynamicOps<U> ops, U prefix) {
-            return ops.compressMaps() ? ops.mergeToPrimitive(prefix, ops.createInt(type.ordinal())).setLifecycle(Lifecycle.stable()) : ops.mergeToPrimitive(prefix, ops.createString(type.name().toLowerCase(Locale.ROOT))).setLifecycle(Lifecycle.stable());
-        }
-    }.dispatch(Entitlement::getType, Type::codec);
-
+    private ResourceLocation registryName;
     private Component displayName;
 
     public abstract void updateSettings(JsonObject settings);
 
+    public abstract JsonObject saveSettings();
+
+    public ResourceLocation getRegistryName() {
+        return registryName;
+    }
+
     public Component getDisplayName() {
         return displayName;
+    }
+
+    public final void setRegistryName(String registryName) {
+        Validate.isTrue(this.registryName == null);
+        this.registryName = new ResourceLocation(Pollen.MOD_ID, registryName);
     }
 
     public final void setDisplayName(Component displayName) {

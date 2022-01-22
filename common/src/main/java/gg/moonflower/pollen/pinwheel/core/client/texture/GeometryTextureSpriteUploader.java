@@ -1,7 +1,6 @@
 package gg.moonflower.pollen.pinwheel.core.client.texture;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.util.concurrent.MoreExecutors;
 import com.google.gson.JsonObject;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.pinwheel.api.client.FileCache;
@@ -10,21 +9,18 @@ import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTexture;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
 import gg.moonflower.pollen.pinwheel.core.client.util.HashedTextureCache;
 import gg.moonflower.pollen.pinwheel.core.client.util.TimedTextureCache;
-import net.minecraft.ReportedException;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.Bootstrap;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.util.Mth;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.io.FilenameUtils;
@@ -41,7 +37,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -283,50 +278,10 @@ public class GeometryTextureSpriteUploader extends SimplePreparableReloadListene
         private final Map<String, CompletableFuture<Path>> resources;
 
         private OnlineRepository(String[] hashTableUrls) {
-            AtomicInteger idGenerator = new AtomicInteger();
-            this.executor = createOnlineWorker(idGenerator::getAndIncrement);
+            this.executor = FileCache.createOnlineWorker();
             this.hashedCache = new HashedTextureCache(this.executor, hashTableUrls);
             this.cache = new TimedTextureCache(this.executor, 1, TimeUnit.DAYS);
             this.resources = new HashMap<>();
-        }
-
-        private static ExecutorService createOnlineWorker(Supplier<Integer> idGenerator) {
-            int i = Mth.clamp(Runtime.getRuntime().availableProcessors() - 1, 1, 7);
-            ExecutorService executorservice;
-            if (i <= 0) {
-                executorservice = MoreExecutors.newDirectExecutorService();
-            } else {
-                executorservice = new ForkJoinPool(i, pool ->
-                {
-                    ForkJoinWorkerThread forkjoinworkerthread = new ForkJoinWorkerThread(pool) {
-                        @Override
-                        protected void onTermination(@Nullable Throwable t) {
-                            if (t != null) {
-                                LOGGER.warn("{} died", this.getName(), t);
-                            } else {
-                                LOGGER.debug("{} shutdown", this.getName());
-                            }
-
-                            super.onTermination(t);
-                        }
-                    };
-                    forkjoinworkerthread.setName("Worker-Geometry Online Fetcher-" + idGenerator.get());
-                    return forkjoinworkerthread;
-                }, (thread, throwable) ->
-                {
-                    if (throwable instanceof CompletionException)
-                        throwable = throwable.getCause();
-
-                    if (throwable instanceof ReportedException) {
-                        Bootstrap.realStdoutPrintln(((ReportedException) throwable).getReport().getFriendlyReport());
-                        System.exit(-1);
-                    }
-
-                    LOGGER.error("Caught exception in thread " + thread, throwable);
-                }, true);
-            }
-
-            return executorservice;
         }
 
         public CompletableFuture<Path> requestResource(String url, boolean cache, boolean ignoreMissing) {

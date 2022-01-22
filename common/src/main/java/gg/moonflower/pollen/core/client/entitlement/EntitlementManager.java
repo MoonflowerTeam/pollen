@@ -1,25 +1,42 @@
 package gg.moonflower.pollen.core.client.entitlement;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ibm.icu.impl.Pair;
+import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
+import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvents;
 import gg.moonflower.pollen.core.client.profile.ProfileManager;
+import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
+import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.HttpUtil;
+import net.minecraft.world.entity.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
+/**
+ * @author Ocelot
+ */
 public final class EntitlementManager {
 
     private static final Map<UUID, EntitlementData> ENTITLEMENTS = new HashMap<>();
     private static final Logger LOGGER = LogManager.getLogger();
+
+    static {
+        ServerPlayerTrackingEvents.STOP_TRACKING_ENTITY.register((player, entity) -> {
+            if (entity instanceof Player)
+                ENTITLEMENTS.remove(entity.getUUID());
+        });
+        ClientNetworkEvents.LOGOUT.register((controller, player, connection) -> ENTITLEMENTS.clear());
+    }
 
     private EntitlementManager() {
     }
@@ -28,34 +45,42 @@ public final class EntitlementManager {
         return ENTITLEMENTS.computeIfAbsent(id, EntitlementData::new);
     }
 
-    public static CompletableFuture<Map<String, Entitlement>> getEntitlements(UUID id) {
-        return getData(id).getFuture();
+    public static Stream<Entitlement> getAllEntitlements() {
+        return ENTITLEMENTS.keySet().stream().flatMap(EntitlementManager::getEntitlements);
     }
 
-    public static void setCosmeticSettings(UUID id, String entitlement, boolean enabled) {
-        getEntitlements(id).thenApplyAsync(map -> {
-            if (!map.containsKey(entitlement) || !(map.get(entitlement) instanceof Cosmetic))
+    public static Stream<Entitlement> getEntitlements(UUID id) {
+        Map<String, Entitlement> entitlementMap = getData(id).getFuture().getNow(Collections.emptyMap());
+        return entitlementMap.isEmpty() ? Stream.empty() : entitlementMap.values().stream();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Entitlement> void updateEntitlementSettings(UUID id, String entitlementId, Consumer<T> action) {
+        getData(id).getFuture().thenApplyAsync(map -> {
+            if (!map.containsKey(entitlementId))
                 return null;
 
-            Cosmetic cosmetic = (Cosmetic) map.get(entitlement);
-            boolean oldEnabled = cosmetic.isEnabled();
-            cosmetic.setEnabled(enabled);
+            T entitlement = (T) map.get(entitlementId);
+            JsonObject oldSettings = entitlement.saveSettings();
+            action.accept(entitlement);
 
-            JsonObject json = new JsonObject();
-            if (oldEnabled != cosmetic.isEnabled())
-                json.addProperty("enabled", cosmetic.isEnabled());
+            JsonObject json = entitlement.saveSettings();
+            Set<String> unchangedElements = new HashSet<>(json.size() / 2); // By default, more than half of the elements have probably not changed
+            for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
+                if (oldSettings.has(entry.getKey()) && entry.getValue().equals(oldSettings.get(entry.getKey()))) {
+                    unchangedElements.add(entry.getKey());
+                }
+            }
+            unchangedElements.forEach(json::remove);
 
-            return Pair.of(cosmetic, json);
+            return Pair.of(entitlement, json);
         }, Minecraft.getInstance()).thenAcceptAsync(pair -> {
-            if (pair == null)
+            if (pair == null || pair.second.entrySet().isEmpty()) // If nothing has changed don't send a request
                 return;
-            Cosmetic cosmetic = pair.first;
-            JsonObject json = pair.second;
-
             try {
-                cosmetic.updateSettings(ProfileManager.CONNECTION.updateSettings(id, entitlement, json));
+                pair.first.updateSettings(ProfileManager.CONNECTION.updateSettings(id, entitlementId, pair.second));
             } catch (IOException e) {
-                throw new CompletionException("Failed to update entitlement settings for " + entitlement, e);
+                throw new CompletionException("Failed to update entitlement settings for " + entitlementId, e);
             }
         }, HttpUtil.DOWNLOAD_EXECUTOR);
     }
@@ -73,8 +98,8 @@ public final class EntitlementManager {
             this.expireTime = 0;
         }
 
-        public CompletableFuture<Map<String, Entitlement>> getFuture() {
-            if (this.future != null && System.currentTimeMillis() < this.expireTime)
+        public synchronized CompletableFuture<Map<String, Entitlement>> getFuture() {
+            if (this.future != null && (!this.future.isDone() || System.currentTimeMillis() < this.expireTime))
                 return this.future;
             return this.future = CompletableFuture.supplyAsync(() -> {
                 try {
@@ -90,9 +115,14 @@ public final class EntitlementManager {
                 }
             }, HttpUtil.DOWNLOAD_EXECUTOR)).toArray(CompletableFuture[]::new)).thenApply(__ -> map)).thenApplyAsync(map -> {
                 this.expireTime = System.currentTimeMillis() + CACHE_TIME;
+                Minecraft.getInstance().execute(() -> {
+                    GeometryModelManager.reload(false);
+                    GeometryTextureManager.reload(false);
+                });
                 return map;
             }, Minecraft.getInstance()).exceptionally(e -> {
                 LOGGER.error("Failed to retrieve entitlements for " + this.id, e);
+                this.expireTime = System.currentTimeMillis() + CACHE_TIME;
                 return new HashMap<>();
             });
         }

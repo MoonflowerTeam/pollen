@@ -9,6 +9,7 @@
     "client.ChunkRenderDispatcherRebuildTaskMixin",
     "client.ClientLevelMixin",
     "client.CompiledChunkMixin",
+    "client.EntityRenderDispatcherAccessor",
     "client.ItemOverrideDeserializerAccessor",
     "client.LevelRendererMixin",
     "client.LevelRendererRenderChunkInfoAccessor",

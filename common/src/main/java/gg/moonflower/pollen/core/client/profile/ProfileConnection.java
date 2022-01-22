@@ -35,9 +35,13 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+/**
+ * @author Ocelot
+ */
 public class ProfileConnection {
 
     private static final String USER_AGENT = "Pollen/" + PollinatedModContainer.get(Pollen.MOD_ID).orElseThrow(() -> new IllegalStateException("No Pollen? wtf")).getVersion() + "/" + SharedConstants.getCurrentVersion().getName();
+    private static final int MAX_AUTH_ATTEMPTS = 2;
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new Gson();
 
@@ -50,7 +54,7 @@ public class ProfileConnection {
 
     @Nullable
     private static JsonElement getJsonResponse(HttpEntity entity) {
-        if (ContentType.APPLICATION_JSON.equals(ContentType.parse(entity.getContentType().getValue()))) {
+        if (ContentType.APPLICATION_JSON.toString().equals(entity.getContentType().getValue())) {
             try (InputStreamReader reader = new InputStreamReader(entity.getContent())) {
                 return new JsonParser().parse(reader);
             } catch (Throwable t) {
@@ -58,6 +62,23 @@ public class ProfileConnection {
             }
         }
         return null;
+    }
+
+    private static Entitlement parseEntitlement(JsonObject json) throws JsonSyntaxException {
+        String id = GsonHelper.getAsString(json, "id");
+        String displayName = GsonHelper.getAsString(json, "displayName");
+        Entitlement.Type type = Entitlement.Type.byName(GsonHelper.getAsString(json, "type"));
+        if (type == null)
+            throw new JsonSyntaxException("Unknown entitlement type: " + GsonHelper.getAsString(json, "type"));
+
+        DataResult<? extends Entitlement> result = type.codec().parse(JsonOps.INSTANCE, GsonHelper.getAsJsonObject(json, "data"));
+        if (result.error().isPresent())
+            throw new JsonSyntaxException("Failed to parse '" + id + "'. " + result.error().get().message());
+
+        Entitlement entitlement = result.result().orElseThrow(() -> new IllegalStateException("Failed to retrieve entitlement result"));
+        entitlement.setRegistryName(id);
+        entitlement.setDisplayName(new TextComponent(displayName));
+        return entitlement;
     }
 
     private static JsonElement checkError(String url, HttpResponse response) throws IOException {
@@ -108,7 +129,7 @@ public class ProfileConnection {
     private <T> T runAuthenticated(AuthRequest<T> request) throws IOException {
         AtomicReference<T> result = new AtomicReference<>();
         AuthRequestContext<T> context = new AuthRequestContext<T>(result::set);
-        while (result.get() == null && context.attempt < 1) {
+        while (result.get() == null && context.attempt < MAX_AUTH_ATTEMPTS) {
             request.run(context);
         }
         return result.get();
@@ -123,18 +144,12 @@ public class ProfileConnection {
             JsonArray array = getJson(this.url + "/profiles/" + profileId + "/entitlements").getAsJsonArray();
             Map<String, Entitlement> entitlementMap = new HashMap<>();
             for (JsonElement element : array) {
-                JsonObject entitlementJson = element.getAsJsonObject();
-                String id = GsonHelper.getAsString(entitlementJson, "id");
-                String displayName = GsonHelper.getAsString(entitlementJson, "displayName");
-                DataResult<Entitlement> result = Entitlement.CODEC.parse(JsonOps.INSTANCE, entitlementJson);
-                if (result.error().isPresent()) {
-                    LOGGER.error("Failed to parse '" + id + "'" + result.error().get().message() + " " + entitlementJson);
-                    continue;
+                try {
+                    Entitlement entitlement = parseEntitlement(element.getAsJsonObject());
+                    entitlementMap.put(entitlement.getRegistryName().getPath(), entitlement);
+                } catch (JsonParseException e) {
+                    LOGGER.error("Failed to parse entitlement: " + element, e);
                 }
-
-                Entitlement entitlement = result.result().orElseThrow(() -> new IllegalStateException("Failed to retrieve entitlement result"));
-                entitlement.setDisplayName(new TextComponent(displayName));
-                entitlementMap.put(id, entitlement);
             }
             return entitlementMap;
         } catch (JsonParseException e) {
@@ -144,23 +159,14 @@ public class ProfileConnection {
 
     public Entitlement getEntitlement(UUID profileId, String entitlementId) throws IOException {
         try {
-            JsonObject entitlementJson = getJson(this.url + "/profiles/" + profileId + "/entitlement/" + entitlementId).getAsJsonObject();
-            String id = GsonHelper.getAsString(entitlementJson, "id");
-            String displayName = GsonHelper.getAsString(entitlementJson, "displayName");
-            DataResult<Entitlement> result = Entitlement.CODEC.parse(JsonOps.INSTANCE, entitlementJson);
-            if (result.error().isPresent())
-                throw new IOException("Failed to parse '" + id + "'" + result.error().get().message() + " " + entitlementJson);
-
-            Entitlement entitlement = result.result().orElseThrow(() -> new IllegalStateException("Failed to retrieve entitlement result"));
-            entitlement.setDisplayName(new TextComponent(displayName));
-            return entitlement;
+            return parseEntitlement(getJson(this.url + "/profiles/" + profileId + "/entitlement/" + entitlementId).getAsJsonObject());
         } catch (JsonParseException e) {
             throw new IOException("Failed to parse entitlement", e);
         }
     }
 
     public JsonObject getSettings(UUID profileId, String entitlementId) throws IOException {
-        return getJson(this.url + "/profiles/" + profileId + "/entitlement/" + entitlementId + "/settings").getAsJsonObject();
+        return getJson(this.url + "/profiles/" + profileId + "/entitlements/" + entitlementId + "/settings").getAsJsonObject();
     }
 
     public JsonObject updateSettings(UUID profileId, String entitlementId, JsonObject newSettings) throws IOException {
