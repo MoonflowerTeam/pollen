@@ -24,79 +24,79 @@ public final class VanillaModelMapping {
     static {
         add(DragonHeadModel.class, "head", "jaw");
         add(ArmorStandModel.class, "bodyStick1", "bodyStick2", "shoulderStick", "basePlate");
-        add(BatModel.class, "head", "body", "rightWing", "leftWing", "rightWingTip", "leftWingTip");
+        add(BatModel.class, "root", "head", "body", "rightWing", "leftWing", "rightWingTip", "leftWingTip");
         add(BeeModel.class, "bone", "body", "rightWing", "leftWing", "frontLeg", "midLeg", "backLeg", "stinger", "leftAntenna", "rightAntenna");
-        add(BlazeModel.class, "head");
-        add(BoatModel.class, "waterPatch");
-        add(BookModel.class, "leftLid", "rightLid", "leftPages", "rightPages", "flipPage1", "flipPage2", "seam");
+        add(BlazeModel.class, "root", "head");
+        add(BoatModel.class, "leftPaddle", "rightPaddle", "waterPatch");
+        add(BookModel.class, "root", "leftLid", "rightLid", "leftPages", "rightPages", "flipPage1", "flipPage2", "seam");
         // No CatModel fields
-        add(ChestedHorseModel.class, "boxL", "boxR");
-        add(ChickenModel.class, "head", "body", "leg0", "leg1", "wing0", "wing1", "beak", "redThing");
-        add(CodModel.class, "body", "topFin", "head", "nose", "sideFin0", "sideFin1", "tailFin");
+        add(ChestedHorseModel.class, "leftChest", "rightChest");
+        add(ChickenModel.class, "head", "body", "rightLeg", "leftLeg", "rightWing", "leftWing", "beak", "redThing");
+        add(CodModel.class, "root", "tailFin");
         // No ColorableAgeableListModel fields
         // No ColorableListModel fields
         // No CowModel fields
-        add(CreeperModel.class, "head", "hair", "body", "leg0", "leg1", "leg2", "leg3");
-        add(DolphinModel.class, "body", "tail", "tailFin");
+        add(CreeperModel.class, "root", "head", "rightHindLeg", "leftHindLeg", "rightFrontLeg", "leftFrontLeg");
+        add(DolphinModel.class, "root", "body", "tail", "tailFin");
         // No DrownedModel fields
         add(ElytraModel.class, "rightWing", "leftWing");
         // No EndermanModel fields
-        // No EndermiteModel fields
+        add(EndermiteModel.class, "root");
         // No EntityModel fields
-        add(EvokerFangsModel.class, "base", "upperJaw", "lowerJaw");
-        add(FoxModel.class, "head", "earL", "earR", "nose", "body", "leg0", "leg1", "leg2", "leg3", "tail");
-        // No GhastModel fields
+        add(EvokerFangsModel.class, "root", "base", "upperJaw", "lowerJaw");
+        add(FoxModel.class, "head", "body", "rightHindLeg", "leftHindLeg", "rightFrontLeg", "leftFrontLeg", "tail");
+        add(GhastModel.class, "root");
         // No GiantZombieModel fields
-        add(GuardianModel.class, "head", "eye");
-        add(HoglinModel.class, "head", "rightEar", "leftEar", "body", "frontRightLeg", "frontLeftLeg", "backRightLeg", "backLeftLeg", "mane");
-        add(HorseModel.class, "body", "headParts", "leg1", "leg2", "leg3", "leg4", "babyLeg1", "babyLeg2", "babyLeg3", "babyLeg4", "tail");
+        add(GuardianModel.class, "root", "head", "eye");
+        add(HoglinModel.class, "head", "rightEar", "leftEar", "body", "rightFrontLeg", "leftFrontLeg", "rightHindLeg", "leftHindLeg", "mane");
+        add(HorseModel.class, "body", "headParts", "rightHindLeg", "leftHindLeg", "rightFrontLeg", "leftFrontLeg", "rightHindBabyLeg", "leftHindBabyLeg", "rightFrontBabyLeg", "leftFrontBabyLeg", "tail");
         add(HumanoidModel.class, "head", "hat", "body", "rightArm", "leftArm", "rightLeg", "leftLeg");
-        add(IllagerModel.class, "head", "hat", "body", "arms", "leftLeg", "rightLeg", "rightArm", "leftArm");
-        add(IronGolemModel.class, "head", "body", "arm0", "arm1", "leg0", "leg1");
-        add(LavaSlimeModel.class, "insideCube");
-        add(LeashKnotModel.class, "knot");
+        add(IllagerModel.class, "root", "head", "hat", "body", "arms", "leftLeg", "rightLeg", "rightArm", "leftArm");
+        add(IronGolemModel.class, "root", "head", "rightArm", "leftArm", "rightLeg", "leftLeg");
+        add(LavaSlimeModel.class, "root");
+        add(LeashKnotModel.class, "root", "knot");
         // No ListModel fields
-        add(LlamaModel.class, "head", "body", "leg0", "leg1", "leg2", "leg3", "chest1", "chest2");
-        add(LlamaSpitModel.class, "main");
-        // No MinecartModel fields
+        add(LlamaModel.class, "head", "body", "rightHindLeg", "leftHindLeg", "rightFrontLeg", "leftFrontLeg", "rightChest", "leftChest");
+        add(LlamaSpitModel.class, "root");
+        add(MinecartModel.class, "root");
         // No Model fields
-        add(OcelotModel.class, "backLegL", "backLegR", "frontLegL", "frontLegR", "tail1", "tail2", "head", "body");
+        add(OcelotModel.class, "leftHindLeg", "rightHindLeg", "leftFrontLeg", "rightFrontLeg", "tail1", "tail2", "head", "body");
         // No PandaModel fields
-        add(ParrotModel.class, "body", "tail", "wingLeft", "wingRight", "head", "head2", "beak1", "beak2", "feather", "legLeft", "legRight");
-        add(PhantomModel.class, "body", "leftWingBase", "leftWingTip", "rightWingBase", "rightWingTip", "tailBase", "tailTip");
-        add(PiglinModel.class, "earRight", "earLeft", "bodyDefault", "headDefault", "leftArmDefault", "rightArmDefault");
+        add(ParrotModel.class, "root","body", "tail", "leftWing", "rightWing", "head", "feather", "legLeft", "legRight");
+        add(PhantomModel.class, "root","leftWingBase", "leftWingTip", "rightWingBase", "rightWingTip", "tailBase", "tailTip");
+        add(PiglinModel.class, "rightEar", "leftEar");
         // No PigModel fields
         add(PlayerModel.class, "leftSleeve", "rightSleeve", "leftPants", "rightPants", "jacket", "cloak", "ear");
         // No PolarBearModel fields
-        add(PufferfishBigModel.class, "cube", "blueFin0", "blueFin1", "topFrontFin", "topMidFin", "topBackFin", "sideFrontFin0", "sideFrontFin1", "bottomFrontFin", "bottomBackFin", "bottomMidFin", "sideBackFin0", "sideBackFin1");
-        add(PufferfishMidModel.class, "cube", "finBlue0", "finBlue1", "finTop0", "finTop1", "finSide0", "finSide1", "finSide2", "finSide3", "finBottom0", "finBottom1");
-        add(PufferfishSmallModel.class, "cube", "eye0", "eye1", "fin0", "fin1", "finBack");
-        add(QuadrupedModel.class, "head", "body", "leg0", "leg1", "leg2", "leg3");
-        add(RabbitModel.class, "rearFootLeft", "rearFootRight", "haunchLeft", "haunchRight", "body", "frontLegLeft", "frontLegRight", "head", "earRight", "earLeft", "tail", "nose");
-        add(RavagerModel.class, "head", "mouth", "body", "leg0", "leg1", "leg2", "leg3", "neck");
-        add(SalmonModel.class, "bodyFront", "bodyBack", "head", "sideFin0", "sideFin1");
+        add(PufferfishBigModel.class, "root", "leftBlueFin", "rightBlueFin");
+        add(PufferfishMidModel.class, "root", "leftBlueFin", "rightBlueFin");
+        add(PufferfishSmallModel.class, "root", "leftFin", "rightFin");
+        add(QuadrupedModel.class, "head", "body", "rightHindLeg", "leftHindLeg", "rightFrontLeg", "leftFrontLeg");
+        add(RabbitModel.class, "leftRearFoot", "rightRearFoot", "leftHaunch", "rightHaunch", "body", "leftFrontLeg", "rightFrontLeg", "head", "rightEar", "leftEar", "tail", "nose");
+        add(RavagerModel.class, "root","head", "mouth", "rightHindLeg", "leftHindLeg", "rightFrontLeg", "leftFrontLeg", "neck");
+        add(SalmonModel.class, "root", "bodyBack");
         // No SheepFurModel fields
         // No SheepModel fields
-        add(ShieldModel.class, "plate", "handle");
-        add(ShulkerBulletModel.class, "main");
+        add(ShieldModel.class, "root","plate", "handle");
+        add(ShulkerBulletModel.class, "root","main");
         add(ShulkerModel.class, "base", "lid", "head");
-        // No SilverfishModel fields
+        add(SilverfishModel.class, "root");
         // No SkeletonModel fields
-        add(SkullModel.class, "head");
-        add(SlimeModel.class, "cube", "eye0", "eye1", "mouth");
-        add(SnowGolemModel.class, "piece1", "piece2", "head", "arm1", "arm2");
-        add(SpiderModel.class, "head", "body0", "body1", "leg0", "leg1", "leg2", "leg3", "leg4", "leg5", "leg6", "leg7");
-        add(SquidModel.class, "body");
-        add(StriderModel.class, "rightLeg", "leftLeg", "body", "bristle0", "bristle1", "bristle2", "bristle3", "bristle4", "bristle5");
-        add(TridentModel.class, "pole");
-        add(TropicalFishModelA.class, "body", "tail", "leftFin", "rightFin", "topFin");
-        add(TropicalFishModelB.class, "body", "tail", "leftFin", "rightFin", "topFin", "bottomFin");
+        add(SkullModel.class, "root","head");
+        add(SlimeModel.class, "root");
+        add(SnowGolemModel.class, "root", "upperBody", "head", "leftArm", "rightArm");
+        add(SpiderModel.class, "root","head", "rightHindLeg", "leftHindLeg", "rightMiddleHindLeg", "leftMiddleHindLeg", "rightMiddleFrontLeg", "leftMiddleFrontLeg", "rightFrontLeg", "leftFrontLeg");
+        add(SquidModel.class, "root");
+        add(StriderModel.class, "root","rightLeg", "leftLeg", "body", "rightBottomBristle", "rightMiddleBristle", "rightTopBristle", "leftTopBristle", "leftMiddleBristle", "leftBottomBristle");
+        add(TridentModel.class, "root");
+        add(TropicalFishModelA.class, "root", "tail");
+        add(TropicalFishModelB.class, "root", "tail");
         add(TurtleModel.class, "eggBelly");
         add(VexModel.class, "leftWing", "rightWing");
-        add(VillagerModel.class, "head", "hat", "hatRim", "body", "jacket", "arms", "leg0", "leg1", "nose");
-        add(WitchModel.class, "mole");
-        // No WitherBossModel fields
-        add(WolfModel.class, "head", "realHead", "body", "leg0", "leg1", "leg2", "leg3", "tail", "realTail", "upperBody");
+        add(VillagerModel.class, "root","head", "hat", "hatRim", "rightLeg", "leftLeg", "nose");
+        // No WitchModel fields
+        add(WitherBossModel.class, "root", "centerHead", "rightHead", "leftHead", "ribcage", "tail");
+        add(WolfModel.class, "head", "realHead", "body", "rightHindLeg", "leftHindLeg", "rightFrontLeg", "leftFrontLeg", "tail", "realTail", "upperBody");
         // No ZombieModel fields
         add(ZombieVillagerModel.class, "hatRim");
     }
