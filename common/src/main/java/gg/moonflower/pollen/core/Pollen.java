@@ -7,6 +7,7 @@ import gg.moonflower.pollen.api.command.argument.ColorArgumentType;
 import gg.moonflower.pollen.api.command.argument.EnumArgument;
 import gg.moonflower.pollen.api.command.argument.TimeArgumentType;
 import gg.moonflower.pollen.api.crafting.PollenRecipeTypes;
+import gg.moonflower.pollen.api.event.events.client.render.AddRenderLayersEvent;
 import gg.moonflower.pollen.api.event.events.client.render.InitRendererEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.platform.Platform;
@@ -54,6 +55,7 @@ public class Pollen {
         ShaderLoader.init();
         DebugInputs.init();
         InitRendererEvent.EVENT.register(ShaderConst::init);
+        AddRenderLayersEvent.EVENT.register(context -> System.out.println(context.getSkins()));
         if (!Platform.isProduction())
             BlockRendererRegistry.register(Blocks.FLOWER_POT, new DebugPollenFlowerPotRenderer());
     }
