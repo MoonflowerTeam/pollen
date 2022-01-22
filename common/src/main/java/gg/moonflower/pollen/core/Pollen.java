@@ -20,6 +20,7 @@ import gg.moonflower.pollen.core.datagen.PollenLanguageProvider;
 import gg.moonflower.pollen.core.network.PollenMessages;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
+import gg.moonflower.pollen.pinwheel.api.client.geometry.VanillaModelMapping;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
 import net.minecraft.commands.synchronization.ArgumentTypes;
@@ -51,6 +52,7 @@ public class Pollen {
     }
 
     private static void onClient() {
+        VanillaModelMapping.load(); // Loads the class to prevent lag spikes in-game
         SyncedDataManager.initClient();
         GeometryModelManager.init();
         GeometryTextureManager.init();
