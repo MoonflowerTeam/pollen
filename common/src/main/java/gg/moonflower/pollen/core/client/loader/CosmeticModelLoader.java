@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.*;
 
@@ -56,7 +57,7 @@ public class CosmeticModelLoader implements BackgroundLoader<Map<ResourceLocatio
         FileCache cache = FileCache.timed(executor, 1, TimeUnit.DAYS);
         Map<ResourceLocation, GeometryModel> models = new ConcurrentHashMap<>();
 
-        return CompletableFuture.allOf(EntitlementManager.getAllEntitlements().filter(entitlement -> entitlement instanceof ModelEntitlement && ((ModelEntitlement) entitlement).getModelUrl() != null).map(entitlement -> ((ModelEntitlement)entitlement).getModelUrl()).distinct().map(url -> loadModel(cache, url).thenAcceptAsync(json ->
+        return CompletableFuture.allOf(EntitlementManager.getAllEntitlements().filter(entitlement -> entitlement instanceof ModelEntitlement).flatMap(entitlement -> Arrays.stream(((ModelEntitlement) entitlement).getModelUrls())).distinct().map(url -> loadModel(cache, url).thenAcceptAsync(json ->
         {
             if (json == null)
                 return;

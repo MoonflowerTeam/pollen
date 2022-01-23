@@ -1,12 +1,11 @@
 package gg.moonflower.pollen.core.client.entitlement;
 
 import com.google.gson.JsonObject;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.DynamicOps;
-import com.mojang.serialization.Lifecycle;
 import gg.moonflower.pollen.core.Pollen;
+import gg.moonflower.pollen.core.client.entitlement.type.DeveloperHalo;
+import gg.moonflower.pollen.core.client.entitlement.type.Halo;
+import gg.moonflower.pollen.core.client.entitlement.type.ModelCosmetic;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.Validate;
@@ -26,6 +25,7 @@ public abstract class Entitlement {
 
     /**
      * Updates internal settings for the entitlement.
+     *
      * @param settings The new settings JSON
      */
     public abstract void updateSettings(JsonObject settings);
@@ -65,7 +65,9 @@ public abstract class Entitlement {
     public abstract Type getType();
 
     public enum Type {
-        COSMETIC(Cosmetic.CODEC);
+        COSMETIC(ModelCosmetic.CODEC),
+        HALO(Halo.CODEC),
+        DEVELOPER_HALO(DeveloperHalo.CODEC);
 
         private final Codec<? extends Entitlement> codec;
 
