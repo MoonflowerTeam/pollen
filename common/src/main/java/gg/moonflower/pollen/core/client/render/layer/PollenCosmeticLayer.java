@@ -2,7 +2,9 @@ package gg.moonflower.pollen.core.client.render.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import gg.moonflower.pollen.core.client.entitlement.EntitlementManager;
-import gg.moonflower.pollen.core.client.entitlement.type.ModelCosmetic;
+import gg.moonflower.pollen.core.client.entitlement.ModelEntitlement;
+import gg.moonflower.pollen.core.client.entitlement.TexturedEntitlement;
+import gg.moonflower.pollen.core.client.entitlement.type.Cosmetic;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModel;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelRenderer;
@@ -30,17 +32,17 @@ public class PollenCosmeticLayer<T extends LivingEntity> extends RenderLayer<T, 
             return;
 
         EntitlementManager.getEntitlements(entity.getUUID()).forEach(entitlement -> {
-            if (entitlement instanceof ModelCosmetic) {
-                ModelCosmetic cosmetic = (ModelCosmetic) entitlement;
+            if (entitlement instanceof Cosmetic && entitlement instanceof ModelEntitlement && entitlement instanceof TexturedEntitlement) {
+                Cosmetic cosmetic = (Cosmetic) entitlement;
                 if (!cosmetic.isEnabled())
                     return;
 
-                ResourceLocation modelName = cosmetic.getModelKey();
+                ResourceLocation modelName = ((ModelEntitlement) cosmetic).getModelKey();
                 if (modelName == null)
                     return;
 
                 GeometryModel model = GeometryModelManager.getModel(modelName);
-                ResourceLocation textureKey = cosmetic.getTextureKey();
+                ResourceLocation textureKey = ((TexturedEntitlement) cosmetic).getTextureKey();
                 if (model == GeometryModel.EMPTY || textureKey == null)
                     return;
 

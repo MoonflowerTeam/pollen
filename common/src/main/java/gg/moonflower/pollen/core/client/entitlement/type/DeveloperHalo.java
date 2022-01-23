@@ -28,8 +28,10 @@ public class DeveloperHalo extends AbstractHalo {
     @Override
     public void updateSettings(JsonObject settings) {
         super.updateSettings(settings);
-        if (settings.has("type"))
+        if (settings.has("type")) {
             this.type = GsonHelper.getAsString(settings, "type");
+            this.textureKey = new ResourceLocation(Pollen.MOD_ID, type);
+        }
     }
 
     @Override
