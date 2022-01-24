@@ -30,9 +30,9 @@ public class ConfigureEntitlementScreen extends Screen {
     protected void init() {
         this.list = new EntitlementsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
         this.list.addEntries(this.entries.toArray(new EntitlementEntry[0]));
-        this.children.add(this.list);
+        this.addWidget(this.list);
 
-        this.addButton(new Button(this.width / 2 - 100, this.height - 27, 200, 20, CommonComponents.GUI_DONE, button -> this.minecraft.setScreen(this.lastScreen)));
+        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 27, 200, 20, CommonComponents.GUI_DONE, button -> this.minecraft.setScreen(this.lastScreen)));
     }
 
     @Override

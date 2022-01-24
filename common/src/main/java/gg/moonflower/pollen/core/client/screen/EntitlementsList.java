@@ -9,6 +9,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,6 +89,11 @@ public class EntitlementsList extends ContainerObjectSelectionList<EntitlementsL
 
         @Override
         public List<? extends GuiEventListener> children() {
+            return this.children;
+        }
+
+        @Override
+        public List<? extends NarratableEntry> narratables() {
             return this.children;
         }
     }

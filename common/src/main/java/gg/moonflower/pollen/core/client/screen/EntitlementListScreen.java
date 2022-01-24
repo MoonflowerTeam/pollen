@@ -38,9 +38,9 @@ public class EntitlementListScreen extends Screen {
     protected void init() {
         this.list = new EntitlementsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
         this.entitlementsFuture.thenAcceptAsync(map -> this.list.add(this, map.values().stream().filter(Entitlement::hasSettings).toArray(Entitlement[]::new)), this.minecraft);
-        this.children.add(this.list);
+        this.addWidget(this.list);
 
-        this.addButton(new Button(this.width / 2 - 100, this.height - 27, 200, 20, CommonComponents.GUI_DONE, button -> this.minecraft.setScreen(this.lastScreen)));
+        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 27, 200, 20, CommonComponents.GUI_DONE, button -> this.minecraft.setScreen(this.lastScreen)));
     }
 
     @Override
@@ -62,7 +62,7 @@ public class EntitlementListScreen extends Screen {
     public static List<FormattedCharSequence> tooltipAt(EntitlementsList arg, int x, int y) {
         Optional<AbstractWidget> optional = arg.getMouseOver(x, y);
         if (optional.isPresent() && optional.get() instanceof TooltipAccessor)
-            return ((TooltipAccessor) optional.get()).getTooltip().orElse(null);
+            return ((TooltipAccessor) optional.get()).getTooltip();
         return null;
     }
 }

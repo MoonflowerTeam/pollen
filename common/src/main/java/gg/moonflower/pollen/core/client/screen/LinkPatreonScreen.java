@@ -46,7 +46,7 @@ public class LinkPatreonScreen extends Screen {
         super.init();
         this.message = MultiLineLabel.create(this.font, CONTENT, this.width - 50);
         int i = (this.message.getLineCount() + 1) * 9 * 2;
-        this.addButton(this.proceedButton = new Button(this.width / 2 - 155, 100 + i, 150, 20, CommonComponents.GUI_PROCEED, arg -> {
+        this.addRenderableWidget(this.proceedButton = new Button(this.width / 2 - 155, 100 + i, 150, 20, CommonComponents.GUI_PROCEED, arg -> {
             if (this.future != null && !this.future.isDone())
                 return;
             this.proceedButton.active = false;
@@ -74,12 +74,12 @@ public class LinkPatreonScreen extends Screen {
                 }
             }, HttpUtil.DOWNLOAD_EXECUTOR);
         }));
-        this.addButton(this.backButton = new Button(this.width / 2 - 155 + 160, 100 + i, 150, 20, CommonComponents.GUI_BACK, arg -> this.minecraft.setScreen(this.previous)));
+        this.addRenderableWidget(this.backButton = new Button(this.width / 2 - 155 + 160, 100 + i, 150, 20, CommonComponents.GUI_BACK, arg -> this.minecraft.setScreen(this.previous)));
     }
 
     @Override
-    public String getNarrationMessage() {
-        return NARRATION.getString();
+    public Component getNarrationMessage() {
+        return NARRATION;
     }
 
     @Override
