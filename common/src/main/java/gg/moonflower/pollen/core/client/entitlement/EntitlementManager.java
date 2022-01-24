@@ -5,11 +5,19 @@ import com.google.gson.JsonObject;
 import com.ibm.icu.impl.Pair;
 import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
 import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvents;
+import gg.moonflower.pollen.api.registry.resource.PollinatedPreparableReloadListener;
+import gg.moonflower.pollen.api.registry.resource.ResourceRegistry;
+import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.client.profile.ProfileManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.HttpUtil;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,8 +27,10 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -31,29 +41,73 @@ import java.util.stream.Stream;
 @ApiStatus.Internal
 public final class EntitlementManager {
 
-    private static final Map<UUID, EntitlementData> ENTITLEMENTS = new HashMap<>();
+    private static final Map<String, Entitlement> ENTITLEMENTS = new HashMap<>();
+    private static final Map<UUID, EntitlementData> PLAYER_ENTITLEMENTS = new HashMap<>();
     private static final Logger LOGGER = LogManager.getLogger();
+    private static boolean loaded;
 
     static {
         ServerPlayerTrackingEvents.STOP_TRACKING_ENTITY.register((player, entity) -> {
             if (entity instanceof Player)
-                ENTITLEMENTS.remove(entity.getUUID());
+                PLAYER_ENTITLEMENTS.remove(entity.getUUID());
         });
-        ClientNetworkEvents.LOGOUT.register((controller, player, connection) -> ENTITLEMENTS.clear());
+        ClientNetworkEvents.LOGOUT.register((controller, player, connection) -> clearCache());
     }
 
     private EntitlementManager() {
     }
 
     private static EntitlementData getData(UUID id) {
-        return ENTITLEMENTS.computeIfAbsent(id, EntitlementData::new);
+        return PLAYER_ENTITLEMENTS.computeIfAbsent(id, EntitlementData::new);
+    }
+
+    public static void init() {
+        ResourceRegistry.registerReloadListener(PackType.CLIENT_RESOURCES, new PollinatedPreparableReloadListener() {
+            @Override
+            public ResourceLocation getPollenId() {
+                return new ResourceLocation(Pollen.MOD_ID, "entitlements");
+            }
+
+            @Override
+            public CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager, ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor, Executor gameExecutor) {
+                return EntitlementManager.reload(false, stage, gameExecutor);
+            }
+        });
+    }
+
+    public static CompletableFuture<Void> reload(boolean force, PreparableReloadListener.PreparationBarrier stage, Executor gameExecutor) {
+        return (loaded && !force) ? stage.wait(null) : CompletableFuture.supplyAsync(() -> {
+            try {
+                return ProfileManager.CONNECTION.getEntitlements();
+            } catch (IOException e) {
+                LOGGER.error("Failed to load entitlements", e);
+                return Collections.<String, Entitlement>emptyMap();
+            }
+        }, HttpUtil.DOWNLOAD_EXECUTOR).thenCompose(stage::wait).thenAcceptAsync(data -> {
+            ENTITLEMENTS.clear();
+            ENTITLEMENTS.putAll(data);
+            loaded = true;
+            gameExecutor.execute(() -> {
+                if (ENTITLEMENTS.values().stream().anyMatch(entitlement -> entitlement instanceof ModelEntitlement))
+                    GeometryModelManager.reload(false);
+                if (ENTITLEMENTS.values().stream().anyMatch(entitlement -> entitlement instanceof TexturedEntitlement))
+                    GeometryTextureManager.reload(false);
+            });
+        }, gameExecutor).thenCompose(__ -> CompletableFuture.allOf(ProfileManager.getProfile(Minecraft.getInstance().getUser().getGameProfile().getId()), getEntitlementsFuture(Minecraft.getInstance().getUser().getGameProfile().getId()))); // Preload player cosmetics
+    }
+
+    /**
+     * Clears the cache of player entitlements.
+     */
+    public static void clearCache() {
+        PLAYER_ENTITLEMENTS.clear();
     }
 
     /**
      * @return All entitlements for all players
      */
     public static Stream<Entitlement> getAllEntitlements() {
-        return ENTITLEMENTS.keySet().stream().flatMap(EntitlementManager::getEntitlements);
+        return ENTITLEMENTS.values().stream();
     }
 
     /**
@@ -134,28 +188,41 @@ public final class EntitlementManager {
                 return this.future;
             return this.future = CompletableFuture.supplyAsync(() -> {
                 try {
-                    return ProfileManager.CONNECTION.getEntitlements(this.id);
+                    return ProfileManager.CONNECTION.getEntitlementSettings(this.id);
                 } catch (IOException e) {
                     throw new CompletionException(e);
                 }
-            }, HttpUtil.DOWNLOAD_EXECUTOR).thenCompose(map -> CompletableFuture.allOf(map.entrySet().stream().map(entry -> CompletableFuture.runAsync(() -> {
+            }, HttpUtil.DOWNLOAD_EXECUTOR).thenCompose(map -> CompletableFuture.allOf(map.keySet().stream().filter(jsonObject -> !ENTITLEMENTS.containsKey(jsonObject)).map(entitlementId -> CompletableFuture.supplyAsync(() -> {
                 try {
-                    entry.getValue().updateSettings(ProfileManager.CONNECTION.getSettings(this.id, entry.getKey()));
+                    return ProfileManager.CONNECTION.getEntitlement(entitlementId);
                 } catch (IOException e) {
-                    LOGGER.warn("Failed to retrieve entitlement settings for " + entry.getKey(), e);
+                    LOGGER.warn("Failed to retrieve entitlement: " + entitlementId, e);
+                    return null;
                 }
-            }, HttpUtil.DOWNLOAD_EXECUTOR)).toArray(CompletableFuture[]::new)).thenApply(__ -> map)).thenApplyAsync(map -> {
+            }, HttpUtil.DOWNLOAD_EXECUTOR).thenAcceptAsync(entitlement -> {
+                if (entitlement != null) {
+                    ENTITLEMENTS.put(entitlementId, entitlement);
+                } else {
+                    map.remove(entitlementId);
+                }
+            }, Minecraft.getInstance())).toArray(CompletableFuture[]::new)).thenApply(__ -> map)).thenApplyAsync(map -> {
+                Map<String, Entitlement> entitlementMap = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+                    Entitlement entitlement = ENTITLEMENTS.get(entry.getKey()).copy();
+                    entitlement.updateSettings(entry.getValue());
+                    return entitlement;
+                }));
+
                 this.expireTime = System.currentTimeMillis() + CACHE_TIME;
                 Minecraft.getInstance().execute(() -> {
-                    if (map.values().stream().anyMatch(entitlement -> entitlement instanceof ModelEntitlement))
+                    if (entitlementMap.values().stream().anyMatch(entitlement -> entitlement instanceof ModelEntitlement))
                         GeometryModelManager.reload(false);
-                    if (map.values().stream().anyMatch(entitlement -> entitlement instanceof TexturedEntitlement))
+                    if (entitlementMap.values().stream().anyMatch(entitlement -> entitlement instanceof TexturedEntitlement))
                         GeometryTextureManager.reload(false);
                 });
-                return map;
+                return entitlementMap;
             }, Minecraft.getInstance()).exceptionally(e -> {
                 LOGGER.error("Failed to retrieve entitlements for " + this.id, e);
-                this.expireTime = System.currentTimeMillis() + CACHE_TIME;
+                this.expireTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10);
                 return new HashMap<>();
             });
         }

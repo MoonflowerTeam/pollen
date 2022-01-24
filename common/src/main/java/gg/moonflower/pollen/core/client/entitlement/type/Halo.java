@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.core.client.entitlement.type;
 
 import com.mojang.serialization.Codec;
+import gg.moonflower.pollen.core.client.entitlement.Entitlement;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
@@ -19,6 +20,11 @@ public class Halo extends AbstractHalo {
     public Halo(HaloData data) {
         this.data = data;
         this.modelUrl = new String[]{data.getModelUrl()};
+    }
+
+    @Override
+    protected Entitlement copyData() {
+        return new Halo(this.data);
     }
 
     @Override

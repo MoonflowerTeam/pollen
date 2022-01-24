@@ -3,19 +3,19 @@ package gg.moonflower.pollen.core.client.entitlement.type;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import gg.moonflower.pollen.core.Pollen;
+import gg.moonflower.pollen.core.client.entitlement.Entitlement;
 import gg.moonflower.pollen.core.client.entitlement.ModelEntitlement;
+import gg.moonflower.pollen.core.client.entitlement.RenderableCosmetic;
 import gg.moonflower.pollen.core.client.entitlement.TexturedEntitlement;
-import gg.moonflower.pollen.core.client.screen.button.EntitlementEntry;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Objects;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 @ApiStatus.Internal
-public class ModelCosmetic extends Cosmetic implements TexturedEntitlement, ModelEntitlement {
+public class ModelCosmetic extends SimpleCosmetic implements RenderableCosmetic {
 
     public static final Codec<ModelCosmetic> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("modelUrl").forGetter(cosmetic -> cosmetic.getModelUrls()[0]),
@@ -31,6 +31,11 @@ public class ModelCosmetic extends Cosmetic implements TexturedEntitlement, Mode
         this.modelUrl = new String[]{modelUrl};
         this.modelKey = new ResourceLocation(Pollen.MOD_ID, modelKey);
         this.textureTable = textureTable;
+    }
+
+    @Override
+    protected Entitlement copyData() {
+        return new ModelCosmetic(this.modelUrl[0], this.modelKey.getPath(), this.textureTable);
     }
 
     @Override

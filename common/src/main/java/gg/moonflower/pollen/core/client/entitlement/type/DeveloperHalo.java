@@ -3,6 +3,7 @@ package gg.moonflower.pollen.core.client.entitlement.type;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import gg.moonflower.pollen.core.Pollen;
+import gg.moonflower.pollen.core.client.entitlement.Entitlement;
 import gg.moonflower.pollen.core.client.screen.button.ArrayEntry;
 import gg.moonflower.pollen.core.client.screen.button.EntitlementEntry;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
@@ -28,6 +29,11 @@ public class DeveloperHalo extends AbstractHalo {
 
     public DeveloperHalo(Map<String, HaloData> halos) {
         this.halos = halos;
+    }
+
+    @Override
+    protected Entitlement copyData() {
+        return new DeveloperHalo(this.halos);
     }
 
     @Override

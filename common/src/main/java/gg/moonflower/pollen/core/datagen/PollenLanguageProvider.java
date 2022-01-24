@@ -17,6 +17,7 @@ public class PollenLanguageProvider extends PollinatedLanguageProvider {
         this.add("pack.source.forgemod", "Forge Mod");
         this.add("options." + this.domain + ".entitlementList", "Moonflower Cosmetics...");
         this.add("options." + this.domain + ".entitlementList.title", "Moonflower Cosmetic Settings");
+        this.add("options." + this.domain + ".entitlementList.none", "You have no cosmetics");
         this.add("argument." + this.domain + ".enum.invalid", "Invalid Enum Value");
         this.add("argument." + this.domain + ".color.invalid", "Invalid Color String");
         this.add("argument." + this.domain + ".time.unknown_unit", "Invalid Time Unit");
@@ -24,6 +25,9 @@ public class PollenLanguageProvider extends PollinatedLanguageProvider {
         this.add("argument." + this.domain + ".time.big", "Time must not be more than %s); found %s");
         this.add("commands." + this.domain + ".config.success", "Config for %s of type %s found at %s");
         this.add("commands." + this.domain + ".config.fail", "Config for %s of type %s not found");
+        this.add("screen." + this.domain + ".linkPatreon.header", "Link Patreon");
+        this.add("screen." + this.domain + ".linkPatreon.message", "You must link your Minecraft account to your Patreon account before you can access your Moonflower cosmetics. This will continue in an external browser, do you wish to proceed?");
+        this.add("screen." + this.domain + ".linkPatreon.error", "Failed to link Patreon");
         this.add("gui.jei.category." + this.domain + ".grindstone.experience", "XP: %s - %s");
     }
 }

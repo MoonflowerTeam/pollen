@@ -25,6 +25,15 @@ public abstract class Entitlement {
     private ResourceLocation registryName;
     private Component displayName;
 
+    protected abstract Entitlement copyData();
+
+    public final Entitlement copy() {
+        Entitlement entitlement = this.copyData();
+        entitlement.setRegistryName(this.getRegistryName().getPath());
+        entitlement.setDisplayName(this.getDisplayName());
+        return entitlement;
+    }
+
     /**
      * Updates internal settings for the entitlement.
      *
@@ -36,7 +45,7 @@ public abstract class Entitlement {
     }
 
     public boolean hasSettings() {
-        return false;
+        return !this.saveSettings().entrySet().isEmpty();
     }
 
     /**

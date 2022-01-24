@@ -1,21 +1,23 @@
 package gg.moonflower.pollen.core.client.entitlement.type;
 
 import com.google.gson.JsonObject;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.client.entitlement.Entitlement;
-import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
-import net.minecraft.resources.ResourceLocation;
+import gg.moonflower.pollen.core.client.screen.button.EntitlementEntry;
+import gg.moonflower.pollen.core.client.screen.button.ToggleEntry;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.Objects;
+import java.util.function.Consumer;
 
 @ApiStatus.Internal
-public abstract class Cosmetic extends Entitlement {
+public abstract class SimpleCosmetic extends Entitlement {
 
     private boolean enabled;
+
+    public SimpleCosmetic() {
+        this.enabled = true;
+    }
 
     @Override
     public void updateSettings(JsonObject settings) {
@@ -28,6 +30,11 @@ public abstract class Cosmetic extends Entitlement {
         JsonObject settings = new JsonObject();
         settings.addProperty("enabled", this.enabled);
         return settings;
+    }
+
+    @Override
+    public void addEntries(Consumer<EntitlementEntry> entryConsumer) {
+        entryConsumer.accept(new ToggleEntry(new TextComponent("Enabled"), this, v -> this.enabled = v, this.enabled));
     }
 
     public boolean isEnabled() {

@@ -4,7 +4,9 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import gg.moonflower.pollen.core.Pollen;
+import gg.moonflower.pollen.core.client.entitlement.Entitlement;
 import gg.moonflower.pollen.core.client.entitlement.ModelEntitlement;
+import gg.moonflower.pollen.core.client.entitlement.RenderableCosmetic;
 import gg.moonflower.pollen.core.client.entitlement.TexturedEntitlement;
 import gg.moonflower.pollen.core.client.screen.button.ArrayEntry;
 import gg.moonflower.pollen.core.client.screen.button.EntitlementEntry;
@@ -21,7 +23,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @ApiStatus.Internal
-public abstract class AbstractHalo extends Cosmetic implements ModelEntitlement, TexturedEntitlement {
+public abstract class AbstractHalo extends Entitlement implements RenderableCosmetic {
 
     private boolean emissive;
     private Visibility visibility;
@@ -29,7 +31,6 @@ public abstract class AbstractHalo extends Cosmetic implements ModelEntitlement,
 
     @Override
     public void updateSettings(JsonObject settings) {
-        super.updateSettings(settings);
         if (settings.has("emissive"))
             this.emissive = GsonHelper.getAsBoolean(settings, "emissive");
         if (settings.has("visibility"))
@@ -40,7 +41,7 @@ public abstract class AbstractHalo extends Cosmetic implements ModelEntitlement,
 
     @Override
     public JsonObject saveSettings() {
-        JsonObject settings = super.saveSettings();
+        JsonObject settings = new JsonObject();
         settings.addProperty("emissive", this.emissive);
         settings.addProperty("visibility", this.visibility.name().toLowerCase(Locale.ROOT));
         settings.addProperty("display", this.display.name().toLowerCase(Locale.ROOT));
@@ -52,11 +53,6 @@ public abstract class AbstractHalo extends Cosmetic implements ModelEntitlement,
         entryConsumer.accept(new ToggleEntry(new TextComponent("Emissive"), this, v -> this.emissive = v, this.emissive));
         entryConsumer.accept(new ArrayEntry<>(new TextComponent("Visibility"), this, v -> this.visibility = v, this.visibility, Visibility.values()));
         entryConsumer.accept(new ArrayEntry<>(new TextComponent("Display"), this, v -> this.display = v, this.display, Display.values()));
-    }
-
-    @Override
-    public boolean hasSettings() {
-        return true;
     }
 
     @Nullable

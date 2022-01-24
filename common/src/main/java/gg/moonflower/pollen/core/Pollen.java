@@ -12,6 +12,7 @@ import gg.moonflower.pollen.api.event.events.client.render.InitRendererEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.sync.SyncedDataManager;
+import gg.moonflower.pollen.core.client.entitlement.EntitlementManager;
 import gg.moonflower.pollen.core.client.loader.CosmeticModelLoader;
 import gg.moonflower.pollen.core.client.loader.CosmeticTextureLoader;
 import gg.moonflower.pollen.core.client.render.DebugPollenFlowerPotRenderer;
@@ -59,6 +60,7 @@ public class Pollen {
         ItemOverrideModifierManager.init();
         ShaderLoader.init();
         DebugInputs.init();
+        EntitlementManager.init();
         InitRendererEvent.EVENT.register(ShaderConst::init);
         AddRenderLayersEvent.EVENT.register(context -> {
             for (String skin : context.getSkins())

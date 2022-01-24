@@ -8,6 +8,10 @@
   "commands.pollen.config.success": "Config for %s of type %s found at %s",
   "gui.jei.category.pollen.grindstone.experience": "XP: %s - %s",
   "options.pollen.entitlementList": "Moonflower Cosmetics...",
+  "options.pollen.entitlementList.none": "You have no cosmetics",
+  "options.pollen.entitlementList.error": "Failed to link Patreon",
   "options.pollen.entitlementList.title": "Moonflower Cosmetic Settings",
-  "pack.source.forgemod": "Forge Mod"
+  "pack.source.forgemod": "Forge Mod",
+  "screen.pollen.linkPatreon.header": "Link Patreon",
+  "screen.pollen.linkPatreon.message": "You must link your Minecraft account to your Patreon account before you can access your Moonflower cosmetics. This will continue in an external browser, do you wish to proceed?"
 }
