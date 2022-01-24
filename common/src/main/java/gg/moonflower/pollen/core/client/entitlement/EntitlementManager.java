@@ -63,8 +63,18 @@ public final class EntitlementManager {
      * @return All entitlements for that player or an empty stream if they have not yet loaded
      */
     public static Stream<Entitlement> getEntitlements(UUID id) {
-        Map<String, Entitlement> entitlementMap = getData(id).getFuture().getNow(Collections.emptyMap());
+        Map<String, Entitlement> entitlementMap = getEntitlementsFuture(id).getNow(Collections.emptyMap());
         return entitlementMap.isEmpty() ? Stream.empty() : entitlementMap.values().stream();
+    }
+
+    /**
+     * Retrieves all entitlements for the player with the specified id.
+     *
+     * @param id The id of the player to retrieve entitlements from
+     * @return All entitlements for that player
+     */
+    public static CompletableFuture<Map<String, Entitlement>> getEntitlementsFuture(UUID id) {
+        return getData(id).getFuture();
     }
 
     /**

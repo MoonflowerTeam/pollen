@@ -6,13 +6,18 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.client.entitlement.ModelEntitlement;
 import gg.moonflower.pollen.core.client.entitlement.TexturedEntitlement;
+import gg.moonflower.pollen.core.client.screen.button.ArrayEntry;
+import gg.moonflower.pollen.core.client.screen.button.EntitlementEntry;
+import gg.moonflower.pollen.core.client.screen.button.ToggleEntry;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 @ApiStatus.Internal
@@ -40,6 +45,18 @@ public abstract class AbstractHalo extends Cosmetic implements ModelEntitlement,
         settings.addProperty("visibility", this.visibility.name().toLowerCase(Locale.ROOT));
         settings.addProperty("display", this.display.name().toLowerCase(Locale.ROOT));
         return settings;
+    }
+
+    @Override
+    public void addEntries(Consumer<EntitlementEntry> entryConsumer) {
+        entryConsumer.accept(new ToggleEntry(new TextComponent("Emissive"), this, v -> this.emissive = v, this.emissive));
+        entryConsumer.accept(new ArrayEntry<>(new TextComponent("Visibility"), this, v -> this.visibility = v, this.visibility, Visibility.values()));
+        entryConsumer.accept(new ArrayEntry<>(new TextComponent("Display"), this, v -> this.display = v, this.display, Display.values()));
+    }
+
+    @Override
+    public boolean hasSettings() {
+        return true;
     }
 
     @Nullable

@@ -6,6 +6,7 @@ import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.client.entitlement.type.DeveloperHalo;
 import gg.moonflower.pollen.core.client.entitlement.type.Halo;
 import gg.moonflower.pollen.core.client.entitlement.type.ModelCosmetic;
+import gg.moonflower.pollen.core.client.screen.button.EntitlementEntry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.Validate;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
+import java.util.function.Consumer;
 
 /**
  * @author Ocelot
@@ -29,6 +31,13 @@ public abstract class Entitlement {
      * @param settings The new settings JSON
      */
     public abstract void updateSettings(JsonObject settings);
+
+    public void addEntries(Consumer<EntitlementEntry> entryConsumer) {
+    }
+
+    public boolean hasSettings() {
+        return false;
+    }
 
     /**
      * @return A JSON with all settings for this entitlement saved

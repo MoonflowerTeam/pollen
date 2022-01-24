@@ -26,7 +26,7 @@ public final class ProfileManager {
                 return CONNECTION.getProfileData(id);
             } catch (IOException e) {
                 e.printStackTrace();
-                return new ProfileData(id, 0, 0);
+                return new ProfileData(id, 0);
             }
         }, HttpUtil.DOWNLOAD_EXECUTOR));
     }

@@ -7,5 +7,7 @@
   "commands.pollen.config.fail": "Config for %s of type %s not found",
   "commands.pollen.config.success": "Config for %s of type %s found at %s",
   "gui.jei.category.pollen.grindstone.experience": "XP: %s - %s",
+  "options.pollen.entitlementList": "Moonflower Cosmetics...",
+  "options.pollen.entitlementList.title": "Moonflower Cosmetic Settings",
   "pack.source.forgemod": "Forge Mod"
 }
