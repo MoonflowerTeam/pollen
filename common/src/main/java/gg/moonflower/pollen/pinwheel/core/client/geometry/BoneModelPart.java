@@ -240,6 +240,8 @@ public class BoneModelPart extends ModelPart implements AnimatedModelPart {
 
     @Override
     public void translateAndRotate(PoseStack matrixStack) {
+        matrixStack.last().pose().multiply(this.copyPosition);
+        matrixStack.last().normal().mul(this.copyNormal);
         matrixStack.translate((this.animationPose.getPosition().x() + this.x) / 16.0F, (-this.animationPose.getPosition().y() + this.y) / 16.0F, (this.animationPose.getPosition().z() + this.z) / 16.0F);
         if (this.animationPose.getScale().hashCode() != 1333788672) // 1333788672 is the hash code of a 1, 1, 1 vector;
             matrixStack.scale(this.animationPose.getScale().x(), this.animationPose.getScale().y(), this.animationPose.getScale().z());
@@ -250,8 +252,6 @@ public class BoneModelPart extends ModelPart implements AnimatedModelPart {
         if (this.xRot + this.animationPose.getRotation().x() != 0)
             matrixStack.mulPose(Vector3f.XP.rotation(this.xRot + (float) (this.animationPose.getRotation().x() / 180.0F * Math.PI)));
         matrixStack.translate(-this.x / 16.0F, -this.y / 16.0F, -this.z / 16.0F);
-        matrixStack.last().pose().multiply(this.copyPosition);
-        matrixStack.last().normal().mul(this.copyNormal);
     }
 
     /**

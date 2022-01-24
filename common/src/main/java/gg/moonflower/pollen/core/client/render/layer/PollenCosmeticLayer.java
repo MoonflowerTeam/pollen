@@ -1,9 +1,11 @@
 package gg.moonflower.pollen.core.client.render.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import gg.moonflower.pollen.core.client.entitlement.Cosmetic;
 import gg.moonflower.pollen.core.client.entitlement.EntitlementManager;
 import gg.moonflower.pollen.core.client.entitlement.ModelEntitlement;
+import gg.moonflower.pollen.core.client.entitlement.RenderableCosmetic;
+import gg.moonflower.pollen.core.client.entitlement.TexturedEntitlement;
+import gg.moonflower.pollen.core.client.entitlement.type.SimpleCosmetic;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModel;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelRenderer;
@@ -30,17 +32,24 @@ public class PollenCosmeticLayer<T extends LivingEntity> extends RenderLayer<T, 
         if (GeometryTextureManager.isReloading() || GeometryModelManager.isReloading())
             return;
 
-        EntitlementManager.getEntitlements(entity.getUUID()).filter(entitlement -> entitlement instanceof Cosmetic && ((Cosmetic) entitlement).isEnabled()).forEach(entitlement -> {
-            ResourceLocation modelName = ((ModelEntitlement) entitlement).getModelKey();
-            if (modelName == null)
-                return;
+        EntitlementManager.getEntitlements(entity.getUUID()).forEach(entitlement -> {
+            if (entitlement instanceof RenderableCosmetic) {
+                RenderableCosmetic cosmetic = (RenderableCosmetic) entitlement;
+                if (!cosmetic.isEnabled())
+                    return;
 
-            GeometryModel model = GeometryModelManager.getModel(modelName);
-            if (model == GeometryModel.EMPTY)
-                return;
+                ResourceLocation modelName = cosmetic.getModelKey();
+                if (modelName == null)
+                    return;
 
-            GeometryModelRenderer.copyModelAngles(this.getParentModel(), model);
-            GeometryModelRenderer.render(model, entitlement.getRegistryName(), matrixStack, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+                GeometryModel model = GeometryModelManager.getModel(modelName);
+                ResourceLocation textureKey = cosmetic.getTextureKey();
+                if (model == GeometryModel.EMPTY || textureKey == null)
+                    return;
+
+                GeometryModelRenderer.copyModelAngles(this.getParentModel(), model);
+                GeometryModelRenderer.render(model, textureKey, matrixStack, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            }
         });
     }
 }

@@ -20,7 +20,7 @@ public class CosmeticTextureLoader implements TextureTableLoader {
 
     @Override
     public void addTextures(BiConsumer<ResourceLocation, GeometryModelTextureTable> textureConsumer) {
-        EntitlementManager.getAllEntitlements().filter(entitlement -> entitlement instanceof TexturedEntitlement && ((TexturedEntitlement) entitlement).getTexture() != null).forEach(entitlement -> textureConsumer.accept(entitlement.getRegistryName(), ((TexturedEntitlement) entitlement).getTexture()));
+        EntitlementManager.getAllEntitlements().filter(entitlement -> entitlement instanceof TexturedEntitlement).forEach(entitlement -> ((TexturedEntitlement) entitlement).registerTextures(textureConsumer));
     }
 
     @Override

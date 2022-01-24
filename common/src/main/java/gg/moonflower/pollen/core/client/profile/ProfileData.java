@@ -1,5 +1,7 @@
 package gg.moonflower.pollen.core.client.profile;
 
+import net.minecraft.Util;
+
 import java.util.UUID;
 
 /**
@@ -9,14 +11,14 @@ import java.util.UUID;
  */
 public class ProfileData {
 
+    public static final ProfileData EMPTY = new ProfileData(Util.NIL_UUID, 0);
+
     private final UUID uuid;
     private final int patreon;
-    private final int tier;
 
-    public ProfileData(UUID uuid, int patreon, int tier) {
+    public ProfileData(UUID uuid, int patreon) {
         this.uuid = uuid;
         this.patreon = patreon;
-        this.tier = tier;
     }
 
     /**
@@ -27,17 +29,10 @@ public class ProfileData {
     }
 
     /**
-     * @return The Patreon level of the profile
+     * @return The Patreon account id
      */
     public int getPatreon() {
         return patreon;
-    }
-
-    /**
-     * @return The Patreon tier of the profile
-     */
-    public int getTier() {
-        return tier;
     }
 
     @Override
@@ -58,7 +53,6 @@ public class ProfileData {
         return "ProfileData{" +
                 "uuid=" + uuid +
                 ", patreon=" + patreon +
-                ", tier=" + tier +
                 '}';
     }
 }

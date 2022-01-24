@@ -19,8 +19,7 @@ public interface ModelEntitlement {
     ResourceLocation getModelKey();
 
     /**
-     * @return The URL to the model file
+     * @return The URLs to the model files
      */
-    @Nullable
-    String getModelUrl();
+    String[] getModelUrls();
 }

@@ -13,20 +13,24 @@ import java.util.concurrent.CompletableFuture;
  */
 public final class ProfileManager {
 
-    public static final ProfileConnection CONNECTION = new ProfileConnection("http://localhost:8080/v1");
+    public static final ProfileConnection CONNECTION = new ProfileConnection("http://localhost:8080/api/v1", "http://localhost:8080/link");
 
     private static final Map<UUID, CompletableFuture<ProfileData>> PROFILES = new HashMap<>();
 
     private ProfileManager() {
     }
 
-    public static CompletableFuture<ProfileData> getProfile(UUID id) {
+    public static synchronized void clearCache(UUID id) {
+        PROFILES.remove(id);
+    }
+
+    public static synchronized CompletableFuture<ProfileData> getProfile(UUID id) {
         return PROFILES.computeIfAbsent(id, __ -> CompletableFuture.supplyAsync(() -> {
             try {
                 return CONNECTION.getProfileData(id);
             } catch (IOException e) {
                 e.printStackTrace();
-                return new ProfileData(id, 0, 0);
+                return ProfileData.EMPTY;
             }
         }, HttpUtil.DOWNLOAD_EXECUTOR));
     }

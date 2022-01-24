@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.util.HttpUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -32,6 +33,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -47,11 +49,13 @@ public class ProfileConnection {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new Gson();
 
-    private final String url;
+    private final String apiUrl;
+    private final String linkUrl;
     private String token;
 
-    public ProfileConnection(String url) {
-        this.url = url;
+    public ProfileConnection(String apiUrl, String linkUrl) {
+        this.apiUrl = apiUrl;
+        this.linkUrl = linkUrl;
     }
 
     @Nullable
@@ -67,13 +71,14 @@ public class ProfileConnection {
     }
 
     private static Entitlement parseEntitlement(JsonObject json) throws JsonSyntaxException {
-        String id = GsonHelper.getAsString(json, "id");
-        String displayName = GsonHelper.getAsString(json, "displayName");
-        Entitlement.Type type = Entitlement.Type.byName(GsonHelper.getAsString(json, "type"));
+        String id = GsonHelper.getAsString(json, "_id");
+        JsonObject entitlementJson = GsonHelper.getAsJsonObject(json, "entitlement");
+        String displayName = GsonHelper.getAsString(entitlementJson, "displayName");
+        Entitlement.Type type = Entitlement.Type.byName(GsonHelper.getAsString(entitlementJson, "type"));
         if (type == null)
-            throw new JsonSyntaxException("Unknown entitlement type: " + GsonHelper.getAsString(json, "type"));
+            throw new JsonSyntaxException("Unknown entitlement type: " + GsonHelper.getAsString(entitlementJson, "type"));
 
-        DataResult<? extends Entitlement> result = type.codec().parse(JsonOps.INSTANCE, GsonHelper.getAsJsonObject(json, "data"));
+        DataResult<? extends Entitlement> result = type.codec().parse(JsonOps.INSTANCE, entitlementJson);
         if (result.error().isPresent())
             throw new JsonSyntaxException("Failed to parse '" + id + "'. " + result.error().get().message());
 
@@ -105,7 +110,7 @@ public class ProfileConnection {
 
     private String getBearerToken() throws IOException {
         if (this.token == null) {
-            String url = this.url + "/minecraft";
+            String url = this.apiUrl + "/auth";
             String secret = DigestUtils.sha1Hex(url);
             User user = Minecraft.getInstance().getUser();
 
@@ -114,6 +119,7 @@ public class ProfileConnection {
 
                 HttpPost post = new HttpPost(url);
                 post.setEntity(new StringEntity("{\"uuid\":\"" + user.getGameProfile().getId() + "\",\"username\":\"" + user.getGameProfile().getName() + "\",\"secret\":\"" + secret + "\"}"));
+                post.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
 
                 try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build()) {
                     try (CloseableHttpResponse response = client.execute(post)) {
@@ -145,19 +151,18 @@ public class ProfileConnection {
      * @throws IOException If any error occurs when loading data
      */
     public ProfileData getProfileData(UUID profileId) throws IOException {
-        return GSON.fromJson(getJson(this.url + "/profiles/" + profileId).getAsJsonObject(), ProfileData.class);
+        return GSON.fromJson(getJson(this.apiUrl + "/profiles/" + profileId).getAsJsonObject(), ProfileData.class);
     }
 
     /**
-     * Retrieves all entitlements for a profile.
+     * Retrieves all registered entitlements.
      *
-     * @param profileId The id of the profile to retrieve from
      * @return The map of keys to entitlements
      * @throws IOException If any error occurs when loading data
      */
-    public Map<String, Entitlement> getEntitlements(UUID profileId) throws IOException {
+    public Map<String, Entitlement> getEntitlements() throws IOException {
         try {
-            JsonArray array = getJson(this.url + "/profiles/" + profileId + "/entitlements").getAsJsonArray();
+            JsonArray array = getJson(this.apiUrl + "/entitlements").getAsJsonArray();
             Map<String, Entitlement> entitlementMap = new HashMap<>();
             for (JsonElement element : array) {
                 try {
@@ -174,18 +179,45 @@ public class ProfileConnection {
     }
 
     /**
-     * Retrieves a single entitlement for a profile.
+     * Retrieves a single registered entitlement.
      *
-     * @param profileId     The id of the profile to retrieve from
      * @param entitlementId The id of the entitlement to retrieve
      * @return The single entitlement
      * @throws IOException If any error occurs when loading data
      */
-    public Entitlement getEntitlement(UUID profileId, String entitlementId) throws IOException {
+    public Entitlement getEntitlement(String entitlementId) throws IOException {
         try {
-            return parseEntitlement(getJson(this.url + "/profiles/" + profileId + "/entitlement/" + entitlementId).getAsJsonObject());
+            return parseEntitlement(getJson(this.apiUrl + "/entitlements/" + entitlementId).getAsJsonObject());
         } catch (JsonParseException e) {
             throw new IOException("Failed to parse entitlement", e);
+        }
+    }
+
+    /**
+     * Retrieves all entitlements for a profile.
+     *
+     * @param profileId The id of the profile to retrieve from
+     * @return The map of keys to entitlements
+     * @throws IOException If any error occurs when loading data
+     */
+    public Map<String, JsonObject> getEntitlementSettings(UUID profileId) throws IOException {
+        try {
+            JsonArray array = getJson(this.apiUrl + "/profiles/" + profileId + "/entitlements").getAsJsonArray();
+            Map<String, JsonObject> entitlementMap = new HashMap<>();
+            for (JsonElement element : array) {
+                try {
+                    JsonObject settingsJson = element.getAsJsonObject();
+                    String id = GsonHelper.getAsString(settingsJson, "id");
+                    settingsJson.remove("type");
+                    settingsJson.remove("id");
+                    entitlementMap.put(id, settingsJson);
+                } catch (JsonParseException e) {
+                    LOGGER.error("Failed to parse entitlement: " + element, e);
+                }
+            }
+            return entitlementMap;
+        } catch (JsonParseException e) {
+            throw new IOException("Failed to parse entitlements", e);
         }
     }
 
@@ -198,7 +230,7 @@ public class ProfileConnection {
      * @throws IOException If any error occurs when loading data
      */
     public JsonObject getSettings(UUID profileId, String entitlementId) throws IOException {
-        return getJson(this.url + "/profiles/" + profileId + "/entitlements/" + entitlementId + "/settings").getAsJsonObject();
+        return getJson(this.apiUrl + "/profiles/" + profileId + "/entitlements/" + entitlementId).getAsJsonObject();
     }
 
     /**
@@ -212,9 +244,9 @@ public class ProfileConnection {
      */
     public JsonObject updateSettings(UUID profileId, String entitlementId, JsonObject newSettings) throws IOException {
         return this.runAuthenticated(context -> {
-            String url = this.url + "/profiles/" + profileId + "/entitlement/" + entitlementId + "/settings";
+            String url = this.apiUrl + "/profiles/" + profileId + "/entitlements/" + entitlementId;
             HttpPatch patch = new HttpPatch(url);
-            patch.setHeader("Authorization", "Bearer: " + this.getBearerToken());
+            patch.setHeader("Authorization", "Bearer " + this.getBearerToken());
             patch.setEntity(new StringEntity(GSON.toJson(newSettings)));
 
             try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build()) {
@@ -229,6 +261,37 @@ public class ProfileConnection {
                 }
             }
         });
+    }
+
+    public LinkStatus linkPatreon() throws IOException {
+        return this.runAuthenticated(context -> {
+            String url = this.linkUrl + "/minecraft?token=" + this.getBearerToken();
+            CompletableFuture<?> completeFuture = new CompletableFuture<>();
+            CompletableFuture.runAsync(() -> {
+                // TODO open http server to allow server response
+                completeFuture.complete(null);
+            }, HttpUtil.DOWNLOAD_EXECUTOR);
+            context.complete(new LinkStatus(url, completeFuture));
+        });
+    }
+
+    public static class LinkStatus {
+
+        private final String url;
+        private final CompletableFuture<?> successFuture;
+
+        public LinkStatus(String url, CompletableFuture<?> successFuture) {
+            this.url = url;
+            this.successFuture = successFuture;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public CompletableFuture<?> getSuccessFuture() {
+            return successFuture;
+        }
     }
 
     private class AuthRequestContext<T> {

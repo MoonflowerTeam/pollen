@@ -11,6 +11,7 @@ import gg.moonflower.pollen.api.event.events.client.render.AddRenderLayersEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.sync.SyncedDataManager;
+import gg.moonflower.pollen.core.client.entitlement.EntitlementManager;
 import gg.moonflower.pollen.core.client.loader.CosmeticModelLoader;
 import gg.moonflower.pollen.core.client.loader.CosmeticTextureLoader;
 import gg.moonflower.pollen.core.client.render.DebugPollenFlowerPotRenderer;
@@ -62,6 +63,7 @@ public class Pollen {
         GeometryTextureManager.addProvider(new CosmeticTextureLoader());
         ItemOverrideModifierManager.init();
         DebugInputs.init();
+        EntitlementManager.init();
         AddRenderLayersEvent.EVENT.register(context -> {
             for (String skin : context.getSkins())
                 Objects.requireNonNull(context.getSkin(skin)).addLayer(new PollenCosmeticLayer<>(context.getSkin(skin)));

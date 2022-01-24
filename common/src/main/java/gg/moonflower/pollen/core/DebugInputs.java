@@ -4,6 +4,8 @@ import com.google.common.base.Stopwatch;
 import gg.moonflower.pollen.api.client.util.TextureDownloader;
 import gg.moonflower.pollen.api.event.events.client.InputEvents;
 import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.core.client.entitlement.EntitlementManager;
+import gg.moonflower.pollen.core.client.profile.ProfileManager;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
@@ -22,6 +24,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static org.lwjgl.opengl.GL11C.glIsTexture;
@@ -46,9 +49,12 @@ public class DebugInputs {
                     return true;
 
                 final Stopwatch timer = Stopwatch.createStarted();
-                CompletableFuture.allOf(GeometryModelManager.reload(false), GeometryTextureManager.reload(false), AnimationManager.reload(false)).handle((u, t) -> {
+                UUID id = Minecraft.getInstance().getUser().getGameProfile().getId();
+                ProfileManager.clearCache(id);
+                EntitlementManager.clearCache();
+                CompletableFuture.allOf(GeometryModelManager.reload(false), GeometryTextureManager.reload(false), AnimationManager.reload(false), ProfileManager.getProfile(id), EntitlementManager.reload(true, CompletableFuture::completedFuture, Minecraft.getInstance()).thenCompose(__ -> EntitlementManager.getEntitlementsFuture(id))).handle((u, t) -> {
                     timer.stop();
-                    Minecraft.getInstance().gui.getChat().addMessage(new TextComponent("").append(new TranslatableComponent("debug.prefix").withStyle(ChatFormatting.YELLOW, ChatFormatting.BOLD)).append(" Took " + timer + " to reload geometry models, textures, and animations"));
+                    Minecraft.getInstance().gui.getChat().addMessage(new TextComponent("").append(new TranslatableComponent("debug.prefix").withStyle(ChatFormatting.YELLOW, ChatFormatting.BOLD)).append(" Took " + timer + " to reload entitlements"));
                     return u;
                 });
 
