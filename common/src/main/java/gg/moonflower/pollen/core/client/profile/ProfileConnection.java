@@ -28,8 +28,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -46,6 +50,7 @@ public class ProfileConnection {
 
     private static final String USER_AGENT = "Pollen/" + PollinatedModContainer.get(Pollen.MOD_ID).orElseThrow(() -> new IllegalStateException("No Pollen? wtf")).getVersion() + "/" + SharedConstants.getCurrentVersion().getName();
     private static final int MAX_AUTH_ATTEMPTS = 2;
+    private static final int MAX_AUTH_DELAY = 60_000; // 60 seconds to successfully authenticate
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new Gson();
 
@@ -263,34 +268,62 @@ public class ProfileConnection {
         });
     }
 
+    /**
+     * Links the local minecraft account to a Patreon account in a browser.
+     *
+     * @return The status of the link
+     * @throws IOException If any errors occurs when retrieving the URL
+     */
     public LinkStatus linkPatreon() throws IOException {
         return this.runAuthenticated(context -> {
-            String url = this.linkUrl + "/minecraft?token=" + this.getBearerToken();
-            CompletableFuture<?> completeFuture = new CompletableFuture<>();
+            String url = this.linkUrl + "/minecraft?token=" + this.getBearerToken() + "&ref=minecraft";
+            CompletableFuture<?> connectFuture = new CompletableFuture<>();
+            CompletableFuture<?> responseFuture = new CompletableFuture<>();
             CompletableFuture.runAsync(() -> {
-                // TODO open http server to allow server response
-                completeFuture.complete(null);
+                try (ServerSocket serverSocket = new ServerSocket(8001, 1)) {
+                    serverSocket.setSoTimeout(MAX_AUTH_DELAY);
+                    connectFuture.complete(null);
+                    try (Socket clientSocket = serverSocket.accept(); PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true); BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+                        if (in.readLine().startsWith("POST"))
+                            responseFuture.complete(null);
+                        out.println(responseFuture.isDone() ? "HTTP/1.1 200 OK" : "HTTP/1.1 400 Bad Request");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    if (!connectFuture.isDone())
+                        connectFuture.completeExceptionally(e);
+                    responseFuture.completeExceptionally(e);
+                }
+
+                if (!responseFuture.isDone())
+                    responseFuture.completeExceptionally(new IOException("Unknown Cause"));
             }, HttpUtil.DOWNLOAD_EXECUTOR);
-            context.complete(new LinkStatus(url, completeFuture));
+            context.complete(new LinkStatus(url, connectFuture, responseFuture));
         });
     }
 
     public static class LinkStatus {
 
         private final String url;
-        private final CompletableFuture<?> successFuture;
+        private final CompletableFuture<?> connectFuture;
+        private final CompletableFuture<?> responseFuture;
 
-        public LinkStatus(String url, CompletableFuture<?> successFuture) {
+        public LinkStatus(String url, CompletableFuture<?> connectFuture, CompletableFuture<?> responseFuture) {
             this.url = url;
-            this.successFuture = successFuture;
+            this.connectFuture = connectFuture;
+            this.responseFuture = responseFuture;
         }
 
         public String getUrl() {
             return url;
         }
 
-        public CompletableFuture<?> getSuccessFuture() {
-            return successFuture;
+        public CompletableFuture<?> getConnectFuture() {
+            return connectFuture;
+        }
+
+        public CompletableFuture<?> getResponseFuture() {
+            return responseFuture;
         }
     }
 
