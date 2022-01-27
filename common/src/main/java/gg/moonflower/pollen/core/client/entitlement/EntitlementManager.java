@@ -3,6 +3,7 @@ package gg.moonflower.pollen.core.client.entitlement;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ibm.icu.impl.Pair;
+import com.mojang.authlib.yggdrasil.ProfileNotFoundException;
 import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
 import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvents;
 import gg.moonflower.pollen.api.registry.resource.PollinatedPreparableReloadListener;
@@ -221,7 +222,8 @@ public final class EntitlementManager {
                 });
                 return entitlementMap;
             }, Minecraft.getInstance()).exceptionally(e -> {
-                LOGGER.error("Failed to retrieve entitlements for " + this.id, e);
+                if (!(e instanceof ProfileNotFoundException || (e instanceof CompletionException && e.getCause() instanceof ProfileNotFoundException)))
+                    LOGGER.error("Failed to retrieve entitlements for " + this.id, e);
                 this.expireTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10);
                 return new HashMap<>();
             });

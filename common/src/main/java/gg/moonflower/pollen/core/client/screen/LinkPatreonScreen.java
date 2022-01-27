@@ -2,6 +2,7 @@ package gg.moonflower.pollen.core.client.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import gg.moonflower.pollen.core.Pollen;
+import gg.moonflower.pollen.core.client.profile.ProfileConnection;
 import gg.moonflower.pollen.core.client.profile.ProfileData;
 import gg.moonflower.pollen.core.client.profile.ProfileManager;
 import net.minecraft.ChatFormatting;
@@ -26,14 +27,18 @@ public class LinkPatreonScreen extends Screen {
     private final Screen previous;
     private static final Component TITLE = new TranslatableComponent("screen." + Pollen.MOD_ID + ".linkPatreon.header").withStyle(ChatFormatting.BOLD);
     private static final Component CONTENT = new TranslatableComponent("screen." + Pollen.MOD_ID + ".linkPatreon.message");
+    private static final Component WAITING_CONTENT = new TranslatableComponent("screen." + Pollen.MOD_ID + ".linkPatreon.waiting");
     private static final Component PATREON_FAIL = new TranslatableComponent("screen." + Pollen.MOD_ID + ".linkPatreon.fail");
     private static final Component NARRATION = TITLE.copy().append("\n").append(CONTENT);
     private MultiLineLabel message = MultiLineLabel.EMPTY;
 
+    private Button cancelButton;
     private Button proceedButton;
     private Button backButton;
 
-    private CompletableFuture<?> future;
+    private boolean cancelled;
+    private CompletableFuture<ProfileConnection.LinkStatus> requestFuture;
+    private CompletableFuture<?> completeFuture;
 
     public LinkPatreonScreen(Screen screen) {
         super(NarratorChatListener.NO_TITLE);
@@ -43,21 +48,32 @@ public class LinkPatreonScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        this.message = MultiLineLabel.create(this.font, CONTENT, this.width - 50);
+        this.message = MultiLineLabel.create(this.font, this.completeFuture != null && !this.completeFuture.isDone() ? WAITING_CONTENT : CONTENT, this.width - 50);
         int i = (this.message.getLineCount() + 1) * 9 * 2;
+        this.addButton(this.cancelButton = new Button(this.width / 2 - 100, 100 + i, 200, 20, CommonComponents.GUI_CANCEL, arg -> {
+            if (this.requestFuture == null)
+                return;
+            this.requestFuture.thenAcceptAsync(ProfileConnection.LinkStatus::cancel, this.minecraft);
+            this.cancelButton.active = false;
+            this.cancelled = true;
+        }));
+
         this.addButton(this.proceedButton = new Button(this.width / 2 - 155, 100 + i, 150, 20, CommonComponents.GUI_PROCEED, arg -> {
-            if (this.future != null && !this.future.isDone())
+            if (this.completeFuture != null && !this.completeFuture.isDone())
                 return;
             UUID id = this.minecraft.getUser().getGameProfile().getId();
-            this.proceedButton.active = false;
-            this.backButton.active = false;
-            this.future = CompletableFuture.supplyAsync(() -> {
+            this.cancelButton.visible = true;
+            this.proceedButton.visible = false;
+            this.backButton.visible = false;
+            this.message = MultiLineLabel.create(this.font, WAITING_CONTENT, this.width - 50);
+            this.requestFuture = CompletableFuture.supplyAsync(() -> {
                 try {
                     return ProfileManager.CONNECTION.linkPatreon();
                 } catch (Exception e) {
                     throw new CompletionException(e);
                 }
-            }, HttpUtil.DOWNLOAD_EXECUTOR).thenCompose(status -> status.getConnectFuture().thenRunAsync(() -> Util.getPlatform().openUri(status.getUrl()), this.minecraft).thenCompose(__ -> status.getResponseFuture().thenRunAsync(() -> {
+            }, HttpUtil.DOWNLOAD_EXECUTOR);
+            this.completeFuture = this.requestFuture.thenCompose(status -> status.getConnectFuture().thenRunAsync(() -> Util.getPlatform().openUri(status.getUrl()), this.minecraft).thenCompose(__ -> status.getResponseFuture().thenRunAsync(() -> {
                 ProfileManager.clearCache(id);
                 ProfileManager.getProfile(id).thenAcceptAsync(profile -> {
                     if (profile == ProfileData.EMPTY)
@@ -65,16 +81,31 @@ public class LinkPatreonScreen extends Screen {
                     this.minecraft.setScreen(new EntitlementListScreen(this.previous));
                 }, this.minecraft);
             }, this.minecraft))).exceptionally(e -> {
-                e.printStackTrace();
+                if (!this.cancelled)
+                    e.printStackTrace();
                 this.minecraft.execute(() -> {
+                    if (this.cancelled) {
+                        this.minecraft.setScreen(this.previous);
+                        return;
+                    }
+
                     this.minecraft.getToasts().addToast(SystemToast.multiline(this.minecraft, SystemToast.SystemToastIds.WORLD_BACKUP, PATREON_FAIL, new TextComponent(e.getLocalizedMessage())));
-                    this.proceedButton.active = true;
-                    this.backButton.active = true;
+                    this.cancelButton.visible = false;
+                    this.cancelButton.active = true;
+                    this.proceedButton.visible = true;
+                    this.backButton.visible = true;
+                    this.cancelled = false;
+                    this.message = MultiLineLabel.create(this.font, CONTENT, this.width - 50);
                 });
                 return null;
             });
         }));
         this.addButton(this.backButton = new Button(this.width / 2 - 155 + 160, 100 + i, 150, 20, CommonComponents.GUI_BACK, arg -> this.minecraft.setScreen(this.previous)));
+
+        this.cancelButton.visible = this.completeFuture != null && !this.completeFuture.isDone();
+        this.cancelButton.active = !this.cancelled;
+        this.proceedButton.visible = !this.cancelButton.visible;
+        this.backButton.visible = !this.cancelButton.visible;
     }
 
     @Override
@@ -92,6 +123,6 @@ public class LinkPatreonScreen extends Screen {
 
     @Override
     public boolean shouldCloseOnEsc() {
-        return (this.future == null || this.future.isDone()) && super.shouldCloseOnEsc();
+        return (this.completeFuture == null || this.completeFuture.isDone()) && super.shouldCloseOnEsc();
     }
 }
