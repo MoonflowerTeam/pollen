@@ -13,5 +13,6 @@
   "options.pollen.entitlementList.title": "Moonflower Cosmetic Settings",
   "pack.source.forgemod": "Forge Mod",
   "screen.pollen.linkPatreon.header": "Link Patreon",
-  "screen.pollen.linkPatreon.message": "You must link your Minecraft account to your Patreon account before you can access your Moonflower cosmetics. This will continue in an external browser, do you wish to proceed?"
+  "screen.pollen.linkPatreon.message": "You must link your Minecraft account to your Patreon account before you can access your Moonflower cosmetics. This will continue in an external browser, do you wish to proceed?",
+  "screen.pollen.linkPatreon.waiting": "Waiting for response from server..."
 }

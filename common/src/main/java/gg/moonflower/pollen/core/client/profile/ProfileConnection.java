@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.core.client.profile;
 
 import com.google.gson.*;
+import com.mojang.authlib.yggdrasil.ProfileNotFoundException;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
@@ -16,20 +17,24 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
+import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -99,6 +104,17 @@ public class ProfileConnection {
         return json;
     }
 
+    private static JsonElement getProfileJson(String url) throws IOException, ProfileNotFoundException {
+        HttpGet get = new HttpGet(url);
+        try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build()) {
+            try (CloseableHttpResponse response = client.execute(get)) {
+                if (response.getStatusLine().getStatusCode() == 404)
+                    throw new ProfileNotFoundException();
+                return checkError(url, response);
+            }
+        }
+    }
+
     private static JsonElement getJson(String url) throws IOException {
         HttpGet get = new HttpGet(url);
         try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build()) {
@@ -118,14 +134,15 @@ public class ProfileConnection {
                 Minecraft.getInstance().getMinecraftSessionService().joinServer(user.getGameProfile(), user.getAccessToken(), secret);
 
                 HttpPost post = new HttpPost(url);
-                post.setEntity(new StringEntity("{\"uuid\":\"" + user.getGameProfile().getId() + "\",\"username\":\"" + user.getGameProfile().getName() + "\",\"secret\":\"" + secret + "\"}"));
-                post.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
-
+                post.setEntity(EntityBuilder.create().setText("{\"uuid\":\"" + user.getGameProfile().getId() + "\",\"username\":\"" + user.getGameProfile().getName() + "\",\"secret\":\"" + secret + "\"}").setContentType(ContentType.APPLICATION_JSON).build());
                 try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build()) {
                     try (CloseableHttpResponse response = client.execute(post)) {
                         return this.token = GsonHelper.getAsString(checkError(url, response).getAsJsonObject(), "token");
                     }
                 }
+            } catch (IOException e) {
+                this.token = null;
+                throw e;
             } catch (Exception e) {
                 this.token = null;
                 throw new IOException(e);
@@ -136,7 +153,7 @@ public class ProfileConnection {
 
     private <T> T runAuthenticated(AuthRequest<T> request) throws IOException {
         AtomicReference<T> result = new AtomicReference<>();
-        AuthRequestContext<T> context = new AuthRequestContext<T>(result::set);
+        AuthRequestContext<T> context = new AuthRequestContext<>(result::set);
         while (result.get() == null && context.attempt < MAX_AUTH_ATTEMPTS) {
             request.run(context);
         }
@@ -150,8 +167,8 @@ public class ProfileConnection {
      * @return The profile for that player
      * @throws IOException If any error occurs when loading data
      */
-    public ProfileData getProfileData(UUID profileId) throws IOException {
-        return GSON.fromJson(getJson(this.apiUrl + "/profiles/" + profileId).getAsJsonObject(), ProfileData.class);
+    public ProfileData getProfileData(UUID profileId) throws IOException, ProfileNotFoundException {
+        return GSON.fromJson(getProfileJson(this.apiUrl + "/profiles/" + profileId).getAsJsonObject(), ProfileData.class);
     }
 
     /**
@@ -160,9 +177,9 @@ public class ProfileConnection {
      * @return The map of keys to entitlements
      * @throws IOException If any error occurs when loading data
      */
-    public Map<String, Entitlement> getEntitlements() throws IOException {
+    public Map<String, Entitlement> getEntitlements() throws IOException, ProfileNotFoundException {
         try {
-            JsonArray array = getJson(this.apiUrl + "/entitlements").getAsJsonArray();
+            JsonArray array = getProfileJson(this.apiUrl + "/entitlements").getAsJsonArray();
             Map<String, Entitlement> entitlementMap = new HashMap<>();
             for (JsonElement element : array) {
                 try {
@@ -200,9 +217,9 @@ public class ProfileConnection {
      * @return The map of keys to entitlements
      * @throws IOException If any error occurs when loading data
      */
-    public Map<String, JsonObject> getEntitlementSettings(UUID profileId) throws IOException {
+    public Map<String, JsonObject> getEntitlementSettings(UUID profileId) throws IOException, ProfileNotFoundException {
         try {
-            JsonArray array = getJson(this.apiUrl + "/profiles/" + profileId + "/entitlements").getAsJsonArray();
+            JsonArray array = getProfileJson(this.apiUrl + "/profiles/" + profileId + "/entitlements").getAsJsonArray();
             Map<String, JsonObject> entitlementMap = new HashMap<>();
             for (JsonElement element : array) {
                 try {
@@ -229,8 +246,8 @@ public class ProfileConnection {
      * @return The settings for that entitlement
      * @throws IOException If any error occurs when loading data
      */
-    public JsonObject getSettings(UUID profileId, String entitlementId) throws IOException {
-        return getJson(this.apiUrl + "/profiles/" + profileId + "/entitlements/" + entitlementId).getAsJsonObject();
+    public JsonObject getSettings(UUID profileId, String entitlementId) throws IOException, ProfileNotFoundException {
+        return getProfileJson(this.apiUrl + "/profiles/" + profileId + "/entitlements/" + entitlementId).getAsJsonObject();
     }
 
     /**
@@ -242,16 +259,18 @@ public class ProfileConnection {
      * @return The entire settings for that entitlement as it now is server-side
      * @throws IOException If any error occurs when loading data
      */
-    public JsonObject updateSettings(UUID profileId, String entitlementId, JsonObject newSettings) throws IOException {
+    public JsonObject updateSettings(UUID profileId, String entitlementId, JsonObject newSettings) throws IOException, ProfileNotFoundException {
         return this.runAuthenticated(context -> {
             String url = this.apiUrl + "/profiles/" + profileId + "/entitlements/" + entitlementId;
             HttpPatch patch = new HttpPatch(url);
             patch.setHeader("Authorization", "Bearer " + this.getBearerToken());
-            patch.setEntity(new StringEntity(GSON.toJson(newSettings)));
+            patch.setEntity(EntityBuilder.create().setText(GSON.toJson(newSettings)).setContentType(ContentType.APPLICATION_JSON).build());
 
             try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build()) {
                 try (CloseableHttpResponse response = client.execute(patch)) {
                     StatusLine statusLine = response.getStatusLine();
+                    if (statusLine.getStatusCode() == 404)
+                        throw new ProfileNotFoundException();
                     if (statusLine.getStatusCode() == 401) {
                         context.retry();
                         return;
@@ -263,34 +282,79 @@ public class ProfileConnection {
         });
     }
 
+    /**
+     * Links the local minecraft account to a Patreon account in a browser.
+     *
+     * @return The status of the link
+     * @throws IOException If any errors occurs when retrieving the URL
+     */
     public LinkStatus linkPatreon() throws IOException {
         return this.runAuthenticated(context -> {
-            String url = this.linkUrl + "/minecraft?token=" + this.getBearerToken();
-            CompletableFuture<?> completeFuture = new CompletableFuture<>();
+            String url = this.linkUrl + "/minecraft?token=" + this.getBearerToken() + "&ref=minecraft";
+            CompletableFuture<?> connectFuture = new CompletableFuture<>();
+            CompletableFuture<?> responseFuture = new CompletableFuture<>();
+            AtomicReference<ServerSocket> server = new AtomicReference<>();
             CompletableFuture.runAsync(() -> {
-                // TODO open http server to allow server response
-                completeFuture.complete(null);
+                try (ServerSocket serverSocket = new ServerSocket(8001, 1)) {
+                    server.set(serverSocket);
+                    connectFuture.complete(null);
+                    try (Socket clientSocket = serverSocket.accept(); PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true); BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+                        if (in.readLine().startsWith("POST"))
+                            responseFuture.complete(null);
+                        out.println(responseFuture.isDone() ? "HTTP/1.1 200 OK" : "HTTP/1.1 400 Bad Request");
+                    }
+                } catch (Exception e) {
+                    if (!connectFuture.isDone())
+                        connectFuture.completeExceptionally(e);
+                    responseFuture.completeExceptionally(e);
+                } finally {
+                    server.set(null);
+                }
+
+                if (!responseFuture.isDone())
+                    responseFuture.completeExceptionally(new IOException("Unknown Cause"));
             }, HttpUtil.DOWNLOAD_EXECUTOR);
-            context.complete(new LinkStatus(url, completeFuture));
+            context.complete(new LinkStatus(url, connectFuture, responseFuture, server));
         });
     }
 
     public static class LinkStatus {
 
         private final String url;
-        private final CompletableFuture<?> successFuture;
+        private final CompletableFuture<?> connectFuture;
+        private final CompletableFuture<?> responseFuture;
+        private final AtomicReference<ServerSocket> server;
 
-        public LinkStatus(String url, CompletableFuture<?> successFuture) {
+        public LinkStatus(String url, CompletableFuture<?> connectFuture, CompletableFuture<?> responseFuture, AtomicReference<ServerSocket> server) {
             this.url = url;
-            this.successFuture = successFuture;
+            this.connectFuture = connectFuture;
+            this.responseFuture = responseFuture;
+            this.server = server;
+        }
+
+        public synchronized void cancel() {
+            ServerSocket serverSocket = this.server.get();
+            if (serverSocket == null)
+                return;
+
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+                LOGGER.error("Failed to cancel Patreon link", e);
+                this.responseFuture.completeExceptionally(e);
+            }
         }
 
         public String getUrl() {
             return url;
         }
 
-        public CompletableFuture<?> getSuccessFuture() {
-            return successFuture;
+        public CompletableFuture<?> getConnectFuture() {
+            return connectFuture;
+        }
+
+        public CompletableFuture<?> getResponseFuture() {
+            return responseFuture;
         }
     }
 
@@ -304,7 +368,7 @@ public class ProfileConnection {
             this.attempt = 0;
         }
 
-        public void retry() throws IOException {
+        public void retry() {
             ProfileConnection.this.token = null;
             this.attempt++;
         }

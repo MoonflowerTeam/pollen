@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.core.client.profile;
 
+import com.mojang.authlib.yggdrasil.ProfileNotFoundException;
 import net.minecraft.util.HttpUtil;
 
 import java.io.IOException;
@@ -28,10 +29,11 @@ public final class ProfileManager {
         return PROFILES.computeIfAbsent(id, __ -> CompletableFuture.supplyAsync(() -> {
             try {
                 return CONNECTION.getProfileData(id);
+            } catch (ProfileNotFoundException ignored) {
             } catch (IOException e) {
                 e.printStackTrace();
-                return ProfileData.EMPTY;
             }
+            return ProfileData.EMPTY;
         }, HttpUtil.DOWNLOAD_EXECUTOR));
     }
 }
