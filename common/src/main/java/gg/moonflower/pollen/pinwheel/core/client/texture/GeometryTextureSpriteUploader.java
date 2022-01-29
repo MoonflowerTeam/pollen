@@ -284,8 +284,8 @@ public class GeometryTextureSpriteUploader extends SimplePreparableReloadListene
 
         private OnlineRepository(String[] hashTableUrls) {
             this.executor = FileCache.createOnlineWorker();
-            this.hashedCache = new HashedTextureCache(this.executor, hashTableUrls);
-            this.cache = new TimedTextureCache(this.executor, 1, TimeUnit.DAYS);
+            this.hashedCache = FileCache.hashed(this.executor, hashTableUrls);
+            this.cache = FileCache.timed(this.executor, 1, TimeUnit.DAYS);
             this.resources = new HashMap<>();
         }
 
