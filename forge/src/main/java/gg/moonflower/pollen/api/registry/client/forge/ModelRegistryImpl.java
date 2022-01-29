@@ -4,7 +4,7 @@ import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.ApiStatus;
@@ -20,7 +20,7 @@ public class ModelRegistryImpl {
 
     @SubscribeEvent
     public static void onEvent(ModelRegistryEvent event) {
-        SPECIAL_MODELS.forEach(ModelLoader::addSpecialModel);
+        SPECIAL_MODELS.forEach(ForgeModelBakery::addSpecialModel);
     }
 
     public static void registerSpecial(ResourceLocation location) {
