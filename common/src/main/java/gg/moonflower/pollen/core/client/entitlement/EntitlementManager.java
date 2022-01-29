@@ -77,24 +77,7 @@ public final class EntitlementManager {
     }
 
     public static CompletableFuture<Void> reload(boolean force, PreparableReloadListener.PreparationBarrier stage, Executor gameExecutor) {
-        return (loaded && !force) ? stage.wait(null) : CompletableFuture.supplyAsync(() -> {
-            try {
-                return ProfileManager.CONNECTION.getEntitlements();
-            } catch (IOException e) {
-                LOGGER.error("Failed to load entitlements", e);
-                return Collections.<String, Entitlement>emptyMap();
-            }
-        }, HttpUtil.DOWNLOAD_EXECUTOR).thenCompose(stage::wait).thenAcceptAsync(data -> {
-            ENTITLEMENTS.clear();
-            ENTITLEMENTS.putAll(data);
-            loaded = true;
-            gameExecutor.execute(() -> {
-                if (ENTITLEMENTS.values().stream().anyMatch(entitlement -> entitlement instanceof ModelEntitlement))
-                    GeometryModelManager.reload(false);
-                if (ENTITLEMENTS.values().stream().anyMatch(entitlement -> entitlement instanceof TexturedEntitlement))
-                    GeometryTextureManager.reload(false);
-            });
-        }, gameExecutor).thenCompose(__ -> CompletableFuture.allOf(ProfileManager.getProfile(Minecraft.getInstance().getUser().getGameProfile().getId()), getEntitlementsFuture(Minecraft.getInstance().getUser().getGameProfile().getId()))); // Preload player cosmetics
+        return (loaded && !force) ? stage.wait(null) : CompletableFuture.allOf(ProfileManager.getProfile(Minecraft.getInstance().getUser().getGameProfile().getId()), getEntitlementsFuture(Minecraft.getInstance().getUser().getGameProfile().getId())).thenCompose(stage::wait).thenRunAsync(() -> loaded = true, gameExecutor); // Preload player cosmetics
     }
 
     /**
@@ -176,8 +159,8 @@ public final class EntitlementManager {
         private static final long CACHE_TIME = TimeUnit.HOURS.toMillis(1);
 
         private final UUID id;
-        private CompletableFuture<Map<String, Entitlement>> future;
-        private long expireTime;
+        private volatile CompletableFuture<Map<String, Entitlement>> future;
+        private volatile long expireTime;
 
         private EntitlementData(UUID id) {
             this.id = id;
@@ -193,7 +176,7 @@ public final class EntitlementManager {
                 } catch (IOException e) {
                     throw new CompletionException(e);
                 }
-            }, HttpUtil.DOWNLOAD_EXECUTOR).thenCompose(map -> CompletableFuture.allOf(map.keySet().stream().filter(jsonObject -> !ENTITLEMENTS.containsKey(jsonObject)).map(entitlementId -> CompletableFuture.supplyAsync(() -> {
+            }, HttpUtil.DOWNLOAD_EXECUTOR).thenCompose(map -> CompletableFuture.allOf(map.keySet().stream().filter(entitlementId -> !ENTITLEMENTS.containsKey(entitlementId)).map(entitlementId -> CompletableFuture.supplyAsync(() -> {
                 try {
                     return ProfileManager.CONNECTION.getEntitlement(entitlementId);
                 } catch (IOException e) {
