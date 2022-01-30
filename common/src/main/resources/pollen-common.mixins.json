@@ -8,6 +8,7 @@
     "client.BlockModelShaperMixin",
     "client.ChunkRenderDispatcherRebuildTaskMixin",
     "client.ClientLevelMixin",
+    "client.ClientPacketListenerMixin",
     "client.CompiledChunkMixin",
     "client.LevelRendererMixin",
     "client.LevelRendererRenderChunkInfoAccessor",
