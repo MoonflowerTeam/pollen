@@ -3,6 +3,7 @@ package gg.moonflower.pollen.pinwheel.api.client.render;
 import gg.moonflower.pollen.api.event.events.client.resource.ClientTagUpdateEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagCollection;
@@ -85,7 +86,7 @@ public class BlockRendererRegistry {
             }
         }
 
-        TagCollection<Block> tags = connection.getTags().getBlocks();
+        TagCollection<Block> tags = connection.getTags().getOrEmpty(Registry.BLOCK_REGISTRY);
         if (RENDERERS_CACHE.containsKey(block))
             return RENDERERS_CACHE.get(block).values();
 
