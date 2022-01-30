@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ItemRenderer.class)
 public class ItemRendererMixin {
@@ -28,35 +29,39 @@ public class ItemRendererMixin {
     @Shadow
     @Final
     private ItemModelShaper itemModelShaper;
-    @Unique
-    private Item captureItem;
-    @Unique
-    private ItemTransforms.TransformType captureTransform;
 
-    @Inject(method = "getModel", at = @At("HEAD"))
-    public void captureItem(ItemStack stack, Level level, LivingEntity livingEntity, int i, CallbackInfoReturnable<BakedModel> cir) {
-        this.captureItem = stack.getItem();
+    @Unique
+    private Item capturedItem;
+
+    @Unique
+    private Item capturedHandItem;
+
+    @Unique
+    private boolean useSprite;
+
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;", ordinal = 0, shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
+    public void capture(ItemStack itemStack, ItemTransforms.TransformType transformType, boolean bl, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j, BakedModel bakedModel, CallbackInfo ci, boolean itemForm) {
+        this.capturedItem = itemStack.getItem();
+        this.useSprite = itemForm;
     }
 
-    @Inject(method = "render", at = @At("HEAD"))
-    public void captureTransform(ItemStack stack, ItemTransforms.TransformType transform, boolean leftHand, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, BakedModel model, CallbackInfo ci) {
-        this.captureItem = stack.getItem();
-        this.captureTransform = transform;
+    @ModifyVariable(method = "render", index = 8, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;", ordinal = 0, shift = At.Shift.BEFORE), argsOnly = true)
+    public BakedModel render(BakedModel original) {
+        if (this.useSprite && ItemRendererRegistry.getHandModel(this.capturedItem) != null)
+            return this.itemModelShaper.getItemModel(this.capturedItem);
+        return original;
     }
 
-    @ModifyVariable(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/model/BakedModel;getTransforms()Lnet/minecraft/client/renderer/block/model/ItemTransforms;", shift = At.Shift.BEFORE), index = 8, argsOnly = true)
-    public BakedModel modifyModel(BakedModel value) {
-        ModelResourceLocation modelLocation = ItemRendererRegistry.getModel(this.captureItem, this.captureTransform);
+    @Inject(method = "getModel", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILSOFT)
+    public void capture(ItemStack itemStack, Level level, LivingEntity livingEntity, CallbackInfoReturnable<BakedModel> cir) {
+        this.capturedHandItem = itemStack.getItem();
+    }
+
+    @ModifyVariable(method = "getModel", index = 4, at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/renderer/ItemModelShaper;getItemModel(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/client/resources/model/BakedModel;", shift = At.Shift.AFTER))
+    public BakedModel getModel(BakedModel original) {
+        ModelResourceLocation modelLocation = ItemRendererRegistry.getHandModel(this.capturedHandItem);
         if (modelLocation != null)
             return this.itemModelShaper.getModelManager().getModel(modelLocation);
-        return value;
-    }
-
-    @ModifyVariable(method = "getModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemModelShaper;getItemModel(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/client/resources/model/BakedModel;"), index = 5)
-    public BakedModel modifyGuiModel(BakedModel value) {
-        ModelResourceLocation modelLocation = ItemRendererRegistry.getModel(this.captureItem, ItemTransforms.TransformType.GUI);
-        if (modelLocation != null)
-            return this.itemModelShaper.getModelManager().getModel(modelLocation);
-        return value;
+        return original;
     }
 }
