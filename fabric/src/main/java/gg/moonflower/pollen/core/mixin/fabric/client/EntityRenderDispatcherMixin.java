@@ -37,6 +37,9 @@ public abstract class EntityRenderDispatcherMixin {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     public void init(TextureManager textureManager, ItemRenderer itemRenderer, ReloadableResourceManager reloadableResourceManager, Font font, Options options, CallbackInfo ci) {
+        Map<String, PlayerRenderer> playerRenderers = this.playerRenderers;
+        Map<EntityType<?>, EntityRenderer<?>> renderers = this.renderers;
+
         AddRenderLayersEvent.EVENT.invoker().addLayers(new AddRenderLayersEvent.Context() {
             @Override
             public Set<String> getSkins() {
