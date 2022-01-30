@@ -10,6 +10,7 @@
     "client.ClientLevelMixin",
     "client.ClientPacketListenerMixin",
     "client.CompiledChunkMixin",
+    "client.ItemRendererMixin",
     "client.LevelRendererMixin",
     "client.LevelRendererRenderChunkInfoAccessor",
     "client.ModelBakeryMixin",
