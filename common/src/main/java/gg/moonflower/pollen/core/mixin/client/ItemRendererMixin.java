@@ -44,7 +44,7 @@ public class ItemRendererMixin {
         this.captureTransform = transform;
     }
 
-    @ModifyVariable(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/model/BakedModel;getTransforms()Lnet/minecraft/client/renderer/block/model/ItemTransforms;", shift = At.Shift.BEFORE), index = 8, argsOnly = true)
+    @ModifyVariable(method = "render", index = 8, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;", ordinal = 0, shift = At.Shift.BEFORE), argsOnly = true)
     public BakedModel modifyModel(BakedModel value) {
         ModelResourceLocation modelLocation = ItemRendererRegistry.getModel(this.captureItem, this.captureTransform);
         if (modelLocation != null)
@@ -52,7 +52,7 @@ public class ItemRendererMixin {
         return value;
     }
 
-    @ModifyVariable(method = "getModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemModelShaper;getItemModel(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/client/resources/model/BakedModel;"), index = 4)
+    @ModifyVariable(method = "getModel", index = 4, at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/renderer/ItemModelShaper;getItemModel(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/client/resources/model/BakedModel;", shift = At.Shift.AFTER))
     public BakedModel modifyGuiModel(BakedModel value) {
         ModelResourceLocation modelLocation = ItemRendererRegistry.getModel(this.captureItem, ItemTransforms.TransformType.GUI);
         if (modelLocation != null)

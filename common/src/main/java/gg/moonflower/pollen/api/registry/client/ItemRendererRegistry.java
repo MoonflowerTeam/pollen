@@ -44,6 +44,16 @@ public final class ItemRendererRegistry {
     }
 
     /**
+     * Registers the standard definition of a "hand" model. Includes all except gui, ground, and fixed. The model must be registered separately.
+     *
+     * @param item      The item to register a model for
+     * @param modelName The hand model
+     */
+    public static void registerHandModel(ItemLike item, ModelResourceLocation modelName) {
+        registerPerspectiveModel(item, modelName, ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND, ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, ItemTransforms.TransformType.HEAD);
+    }
+
+    /**
      * Registers a model for each perspective of an item. The model must be registered separately.
      *
      * @param item       The item to register a model for
