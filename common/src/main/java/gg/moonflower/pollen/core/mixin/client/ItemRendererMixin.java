@@ -28,33 +28,38 @@ public class ItemRendererMixin {
     @Shadow
     @Final
     private ItemModelShaper itemModelShaper;
+
     @Unique
-    private Item captureItem;
+    private Item capturedItem;
+
     @Unique
-    private ItemTransforms.TransformType captureTransform;
+    private Item capturedHandItem;
+
+    @Unique
+    private ItemTransforms.TransformType capturedTransform;
 
     @Inject(method = "getModel", at = @At("HEAD"))
     public void captureItem(ItemStack stack, Level level, LivingEntity livingEntity, CallbackInfoReturnable<BakedModel> cir) {
-        this.captureItem = stack.getItem();
+        this.capturedHandItem = stack.getItem();
     }
 
     @Inject(method = "render", at = @At("HEAD"))
     public void captureTransform(ItemStack stack, ItemTransforms.TransformType transform, boolean leftHand, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, BakedModel model, CallbackInfo ci) {
-        this.captureItem = stack.getItem();
-        this.captureTransform = transform;
+        this.capturedItem = stack.getItem();
+        this.capturedTransform = transform;
     }
 
     @ModifyVariable(method = "render", index = 8, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;", ordinal = 0, shift = At.Shift.BEFORE), argsOnly = true)
     public BakedModel modifyModel(BakedModel value) {
-        ModelResourceLocation modelLocation = ItemRendererRegistry.getModel(this.captureItem, this.captureTransform);
+        ModelResourceLocation modelLocation = ItemRendererRegistry.getModel(this.capturedItem, this.capturedTransform);
         if (modelLocation != null)
             return this.itemModelShaper.getModelManager().getModel(modelLocation);
         return value;
     }
 
     @ModifyVariable(method = "getModel", index = 4, at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/renderer/ItemModelShaper;getItemModel(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/client/resources/model/BakedModel;", shift = At.Shift.AFTER))
-    public BakedModel modifyGuiModel(BakedModel value) {
-        ModelResourceLocation modelLocation = ItemRendererRegistry.getModel(this.captureItem, ItemTransforms.TransformType.GUI);
+    public BakedModel modifyHandModel(BakedModel value) {
+        ModelResourceLocation modelLocation = ItemRendererRegistry.getModel(this.capturedHandItem, ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND);
         if (modelLocation != null)
             return this.itemModelShaper.getModelManager().getModel(modelLocation);
         return value;
