@@ -53,11 +53,11 @@ public class ItemRendererMixin {
     }
 
     @Inject(method = "getModel", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILSOFT)
-    public void capture(ItemStack itemStack, Level level, LivingEntity livingEntity, CallbackInfoReturnable<BakedModel> cir) {
+    public void capture(ItemStack itemStack, Level level, LivingEntity livingEntity, int i, CallbackInfoReturnable<BakedModel> cir) {
         this.capturedHandItem = itemStack.getItem();
     }
 
-    @ModifyVariable(method = "getModel", index = 4, at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/renderer/ItemModelShaper;getItemModel(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/client/resources/model/BakedModel;", shift = At.Shift.AFTER))
+    @ModifyVariable(method = "getModel", index = 5, at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/renderer/ItemModelShaper;getItemModel(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/client/resources/model/BakedModel;", shift = At.Shift.AFTER))
     public BakedModel getModel(BakedModel original) {
         ModelResourceLocation modelLocation = ItemRendererRegistry.getHandModel(this.capturedHandItem);
         if (modelLocation != null)
