@@ -34,7 +34,7 @@ public class ItemRendererMixin {
     private ItemTransforms.TransformType captureTransform;
 
     @Inject(method = "getModel", at = @At("HEAD"))
-    public void captureItem(ItemStack stack, Level level, LivingEntity livingEntity, CallbackInfoReturnable<BakedModel> cir) {
+    public void captureItem(ItemStack stack, Level level, LivingEntity livingEntity, int i, CallbackInfoReturnable<BakedModel> cir) {
         this.captureItem = stack.getItem();
     }
 
@@ -52,7 +52,7 @@ public class ItemRendererMixin {
         return value;
     }
 
-    @ModifyVariable(method = "getModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemModelShaper;getItemModel(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/client/resources/model/BakedModel;"), index = 4)
+    @ModifyVariable(method = "getModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemModelShaper;getItemModel(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/client/resources/model/BakedModel;"), index = 5)
     public BakedModel modifyGuiModel(BakedModel value) {
         ModelResourceLocation modelLocation = ItemRendererRegistry.getModel(this.captureItem, ItemTransforms.TransformType.GUI);
         if (modelLocation != null)
