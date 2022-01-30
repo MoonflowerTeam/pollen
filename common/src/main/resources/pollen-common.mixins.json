@@ -12,6 +12,7 @@
     "client.CompiledChunkMixin",
     "client.EntityRenderDispatcherAccessor",
     "client.ItemOverrideDeserializerAccessor",
+    "client.ItemRendererMixin",
     "client.LevelRendererMixin",
     "client.LevelRendererRenderChunkInfoAccessor",
     "client.ModelBakeryMixin",
