@@ -36,18 +36,14 @@ public class ItemRendererMixin {
     @Unique
     private Item capturedHandItem;
 
-    @Unique
-    private boolean useSprite;
-
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;", ordinal = 0, shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
-    public void capture(ItemStack itemStack, ItemTransforms.TransformType transformType, boolean bl, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j, BakedModel bakedModel, CallbackInfo ci, boolean itemForm) {
+    @Inject(method = "render", at = @At("HEAD"))
+    public void capture(ItemStack itemStack, ItemTransforms.TransformType transformType, boolean bl, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j, BakedModel bakedModel, CallbackInfo ci) {
         this.capturedItem = itemStack.getItem();
-        this.useSprite = itemForm;
     }
 
-    @ModifyVariable(method = "render", index = 8, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;", ordinal = 0, shift = At.Shift.BEFORE), argsOnly = true)
+    @ModifyVariable(method = "render", index = 8, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z", ordinal = 0, shift = At.Shift.BEFORE), argsOnly = true)
     public BakedModel render(BakedModel original) {
-        if (this.useSprite && ItemRendererRegistry.getHandModel(this.capturedItem) != null)
+        if (ItemRendererRegistry.getHandModel(this.capturedItem) != null)
             return this.itemModelShaper.getItemModel(this.capturedItem);
         return original;
     }
