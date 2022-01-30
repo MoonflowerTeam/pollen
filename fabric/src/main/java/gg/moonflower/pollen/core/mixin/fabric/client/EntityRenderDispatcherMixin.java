@@ -33,6 +33,9 @@ public abstract class EntityRenderDispatcherMixin {
 
     @Inject(method = "onResourceManagerReload", at = @At("TAIL"))
     public void onResourceManagerReload(ResourceManager resourceManager, CallbackInfo ci) {
+        Map<String, EntityRenderer<? extends Player>> playerRenderers = this.playerRenderers;
+        Map<EntityType<?>, EntityRenderer<?>> renderers = this.renderers;
+
         AddRenderLayersEvent.EVENT.invoker().addLayers(new AddRenderLayersEvent.Context() {
             @Override
             public Set<String> getSkins() {
