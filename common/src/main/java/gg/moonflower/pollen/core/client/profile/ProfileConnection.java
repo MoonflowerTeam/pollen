@@ -219,7 +219,7 @@ public class ProfileConnection {
      */
     public Map<String, JsonObject> getEntitlementSettings(UUID profileId) throws IOException, ProfileNotFoundException {
         try {
-            JsonArray array = getProfileJson(this.apiUrl + "/profiles/" + profileId + "/entitlement").getAsJsonArray();
+            JsonArray array = getProfileJson(this.apiUrl + "/user/" + profileId + "/entitlements").getAsJsonArray();
             Map<String, JsonObject> entitlementMap = new HashMap<>();
             for (JsonElement element : array) {
                 try {
@@ -247,7 +247,7 @@ public class ProfileConnection {
      * @throws IOException If any error occurs when loading data
      */
     public JsonObject getSettings(UUID profileId, String entitlementId) throws IOException, ProfileNotFoundException {
-        return getProfileJson(this.apiUrl + "/profiles/" + profileId + "/entitlement/" + entitlementId).getAsJsonObject();
+        return getProfileJson(this.apiUrl + "/user/" + profileId + "/entitlements/" + entitlementId).getAsJsonObject();
     }
 
     /**
@@ -261,7 +261,7 @@ public class ProfileConnection {
      */
     public JsonObject updateSettings(UUID profileId, String entitlementId, JsonObject newSettings) throws IOException, ProfileNotFoundException {
         return this.runAuthenticated(context -> {
-            String url = this.apiUrl + "/profiles/" + profileId + "/entitlement/" + entitlementId;
+            String url = this.apiUrl + "/user/" + profileId + "/entitlements/" + entitlementId;
             HttpPatch patch = new HttpPatch(url);
             patch.setHeader("Authorization", "Bearer " + this.getBearerToken());
             patch.setEntity(EntityBuilder.create().setText(GSON.toJson(newSettings)).setContentType(ContentType.APPLICATION_JSON).build());
