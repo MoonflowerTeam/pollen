@@ -29,7 +29,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -112,6 +111,10 @@ public class ProfileConnection {
                     throw new ProfileNotFoundException();
                 return checkError(url, response);
             }
+        } catch (IOException | ProfileNotFoundException e) {
+            throw e;
+        } catch (Throwable t) {
+            throw new IOException(t);
         }
     }
 

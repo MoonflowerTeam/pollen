@@ -201,7 +201,7 @@ public class BoneModelPart extends ModelPart implements AnimatedModelPart {
                 matrixStack.translate(-this.x / 16.0F, -this.y / 16.0F, -this.z / 16.0F);
 
             Matrix4f matrix4f = matrixStack.last().pose();
-            Matrix3f matrix3f = matrixStack.last().normal().copy();
+            Matrix3f matrix3f = matrixStack.last().normal();
             Collection<Quad> quads = this.quads.get(this.parent.getActiveMaterial());
             if (quads != null) {
                 for (Quad quad : quads) {
