@@ -12,4 +12,32 @@ public interface RenderableCosmetic extends ModelEntitlement, TexturedEntitlemen
      * @return Whether to display this cosmetic
      */
     boolean isEnabled();
+
+    /**
+     * @return The red factor to use when rendering
+     */
+    default float getRed() {
+        return 1.0F;
+    }
+
+    /**
+     * @return The green factor to use when rendering
+     */
+    default float getGreen() {
+        return 1.0F;
+    }
+
+    /**
+     * @return The bluue factor to use when rendering
+     */
+    default float getBlue() {
+        return 1.0F;
+    }
+
+    /**
+     * @return The alpha factor to use when rendering
+     */
+    default float getAlpha() {
+        return 1.0F;
+    }
 }

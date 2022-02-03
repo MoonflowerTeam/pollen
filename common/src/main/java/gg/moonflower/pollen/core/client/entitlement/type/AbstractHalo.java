@@ -12,6 +12,8 @@ import gg.moonflower.pollen.core.client.screen.button.ArrayEntry;
 import gg.moonflower.pollen.core.client.screen.button.EntitlementEntry;
 import gg.moonflower.pollen.core.client.screen.button.ToggleEntry;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -68,6 +70,15 @@ public abstract class AbstractHalo extends Entitlement implements RenderableCosm
     @Override
     public boolean isEnabled() {
         return this.visibility != Visibility.OFF;
+    }
+
+    @Override
+    public float getAlpha() {
+        ClientLevel level = Minecraft.getInstance().level;
+        if(level == null || this.getVisibility() != Visibility.MOONLIGHT)
+            return 1.0F;
+        float brightness = level.getStarBrightness(Minecraft.getInstance().getFrameTime()) / 0.5F;
+        return brightness * brightness;
     }
 
     public boolean isEmissive() {
