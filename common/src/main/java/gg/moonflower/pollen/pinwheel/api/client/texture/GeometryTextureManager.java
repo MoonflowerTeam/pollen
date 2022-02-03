@@ -125,11 +125,17 @@ public final class GeometryTextureManager {
                     {
                         Map<ResourceLocation, GeometryModelTextureTable> textures = new HashMap<>();
                         Set<String> hashTables = new HashSet<>();
-                        PROVIDERS.forEach(provider -> provider.addTextures((location, texture) ->
-                        {
-                            if (textures.put(location, texture) != null)
-                                LOGGER.warn("Texture at location '" + location + "' already exists and is being overridden.");
-                        }));
+                        PROVIDERS.forEach(provider -> {
+                            try {
+                                provider.addTextures((location, texture) ->
+                                {
+                                    if (textures.put(location, texture) != null)
+                                        LOGGER.warn("Texture at location '" + location + "' already exists and is being overridden.");
+                                });
+                            } catch (Exception e) {
+                                LOGGER.error("Provider " + provider + " failed to gather textures", e);
+                            }
+                        });
                         PROVIDERS.forEach(provider -> provider.addHashTables(hashTables::add));
                         return Pair.of(textures, hashTables.toArray(new String[0]));
                     }, backgroundExecutor)

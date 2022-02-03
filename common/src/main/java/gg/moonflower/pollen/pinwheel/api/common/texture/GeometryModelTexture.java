@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -63,6 +64,14 @@ public class GeometryModelTexture {
      */
     public static Builder texture() {
         return new Builder();
+    }
+
+    /**
+     * @param texture The texture to start with
+     * @return A new builder for constructing a texture
+     */
+    public static Builder texture(GeometryModelTexture texture) {
+        return new Builder(texture);
     }
 
     /**
@@ -215,9 +224,9 @@ public class GeometryModelTexture {
         TRANSLUCENT(() -> GeometryRenderTypes::getGeometryTranslucent),
         TRANSLUCENT_CULL(() -> GeometryRenderTypes::getGeometryTranslucentCull);
 
-        private final Supplier<Function<ResourceLocation, RenderType>> renderTypeGetter;
+        private final Supplier<BiFunction<GeometryModelTexture, ResourceLocation, RenderType>> renderTypeGetter;
 
-        TextureLayer(Supplier<Function<ResourceLocation, RenderType>> renderTypeGetter) {
+        TextureLayer(Supplier<BiFunction<GeometryModelTexture, ResourceLocation, RenderType>> renderTypeGetter) {
             this.renderTypeGetter = renderTypeGetter;
         }
 
@@ -237,11 +246,12 @@ public class GeometryModelTexture {
         /**
          * Fetches the render type for the specified location.
          *
+         * @param texture       The texture to get a texture for
          * @param atlasLocation The location of the texture atlas to use
          * @return The render type for this layer
          */
-        public RenderType getRenderType(ResourceLocation atlasLocation) {
-            return this.renderTypeGetter.get().apply(atlasLocation);
+        public RenderType getRenderType(GeometryModelTexture texture, ResourceLocation atlasLocation) {
+            return this.renderTypeGetter.get().apply(texture, atlasLocation);
         }
     }
 
@@ -267,6 +277,15 @@ public class GeometryModelTexture {
             this.cache = false;
             this.color = -1;
             this.glowing = false;
+        }
+
+        private Builder(GeometryModelTexture texture) {
+            this.type = texture.getType();
+            this.layer = texture.getLayer();
+            this.data = texture.getData();
+            this.cache = texture.canCache();
+            this.color = texture.getColor();
+            this.glowing = texture.isGlowing();
         }
 
         /**

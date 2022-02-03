@@ -78,7 +78,7 @@ public class ProfileConnection {
     private static Entitlement parseEntitlement(JsonObject json) throws JsonSyntaxException {
         String id = GsonHelper.getAsString(json, "_id");
         JsonObject entitlementJson = GsonHelper.getAsJsonObject(json, "entitlement");
-        String displayName = GsonHelper.getAsString(entitlementJson, "displayName");
+        String displayName = GsonHelper.getAsString(entitlementJson, "displayName", id);
         Entitlement.Type type = Entitlement.Type.byName(GsonHelper.getAsString(entitlementJson, "type"));
         if (type == null)
             throw new JsonSyntaxException("Unknown entitlement type: " + GsonHelper.getAsString(entitlementJson, "type"));
@@ -126,7 +126,7 @@ public class ProfileConnection {
 
     private String getBearerToken() throws IOException {
         if (this.token == null) {
-            String url = this.apiUrl + "/auth";
+            String url = this.apiUrl + "/auth/minecraft";
             String secret = DigestUtils.sha1Hex(url);
             User user = Minecraft.getInstance().getUser();
 
@@ -168,7 +168,7 @@ public class ProfileConnection {
      * @throws IOException If any error occurs when loading data
      */
     public ProfileData getProfileData(UUID profileId) throws IOException, ProfileNotFoundException {
-        return GSON.fromJson(getProfileJson(this.apiUrl + "/profiles/" + profileId).getAsJsonObject(), ProfileData.class);
+        return GSON.fromJson(getProfileJson(this.apiUrl + "/user/" + profileId).getAsJsonObject(), ProfileData.class);
     }
 
     /**
@@ -179,7 +179,7 @@ public class ProfileConnection {
      */
     public Map<String, Entitlement> getEntitlements() throws IOException, ProfileNotFoundException {
         try {
-            JsonArray array = getProfileJson(this.apiUrl + "/entitlements").getAsJsonArray();
+            JsonArray array = getProfileJson(this.apiUrl + "/entitlement").getAsJsonArray();
             Map<String, Entitlement> entitlementMap = new HashMap<>();
             for (JsonElement element : array) {
                 try {
@@ -204,7 +204,7 @@ public class ProfileConnection {
      */
     public Entitlement getEntitlement(String entitlementId) throws IOException {
         try {
-            return parseEntitlement(getJson(this.apiUrl + "/entitlements/" + entitlementId).getAsJsonObject());
+            return parseEntitlement(getJson(this.apiUrl + "/entitlement/" + entitlementId).getAsJsonObject());
         } catch (JsonParseException e) {
             throw new IOException("Failed to parse entitlement", e);
         }
@@ -219,7 +219,7 @@ public class ProfileConnection {
      */
     public Map<String, JsonObject> getEntitlementSettings(UUID profileId) throws IOException, ProfileNotFoundException {
         try {
-            JsonArray array = getProfileJson(this.apiUrl + "/profiles/" + profileId + "/entitlements").getAsJsonArray();
+            JsonArray array = getProfileJson(this.apiUrl + "/user/" + profileId + "/entitlements").getAsJsonArray();
             Map<String, JsonObject> entitlementMap = new HashMap<>();
             for (JsonElement element : array) {
                 try {
@@ -247,7 +247,7 @@ public class ProfileConnection {
      * @throws IOException If any error occurs when loading data
      */
     public JsonObject getSettings(UUID profileId, String entitlementId) throws IOException, ProfileNotFoundException {
-        return getProfileJson(this.apiUrl + "/profiles/" + profileId + "/entitlements/" + entitlementId).getAsJsonObject();
+        return getProfileJson(this.apiUrl + "/user/" + profileId + "/entitlements/" + entitlementId).getAsJsonObject();
     }
 
     /**
@@ -261,7 +261,7 @@ public class ProfileConnection {
      */
     public JsonObject updateSettings(UUID profileId, String entitlementId, JsonObject newSettings) throws IOException, ProfileNotFoundException {
         return this.runAuthenticated(context -> {
-            String url = this.apiUrl + "/profiles/" + profileId + "/entitlements/" + entitlementId;
+            String url = this.apiUrl + "/user/" + profileId + "/entitlements/" + entitlementId;
             HttpPatch patch = new HttpPatch(url);
             patch.setHeader("Authorization", "Bearer " + this.getBearerToken());
             patch.setEntity(EntityBuilder.create().setText(GSON.toJson(newSettings)).setContentType(ContentType.APPLICATION_JSON).build());
@@ -289,19 +289,19 @@ public class ProfileConnection {
      * @throws IOException If any errors occurs when retrieving the URL
      */
     public LinkStatus linkPatreon() throws IOException {
+        this.token = null;
         return this.runAuthenticated(context -> {
             String url = this.linkUrl + "/minecraft?token=" + this.getBearerToken() + "&ref=minecraft";
             CompletableFuture<?> connectFuture = new CompletableFuture<>();
             CompletableFuture<?> responseFuture = new CompletableFuture<>();
             AtomicReference<ServerSocket> server = new AtomicReference<>();
             CompletableFuture.runAsync(() -> {
-                try (ServerSocket serverSocket = new ServerSocket(8001, 1)) {
+                try (ServerSocket serverSocket = new ServerSocket(8001)) {
                     server.set(serverSocket);
                     connectFuture.complete(null);
-                    try (Socket clientSocket = serverSocket.accept(); PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true); BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
-                        if (in.readLine().startsWith("POST"))
-                            responseFuture.complete(null);
-                        out.println(responseFuture.isDone() ? "HTTP/1.1 200 OK" : "HTTP/1.1 400 Bad Request");
+                    try (Socket clientSocket = serverSocket.accept(); PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
+                        out.println("HTTP/1.1 200 OK");
+                        responseFuture.complete(null);
                     }
                 } catch (Exception e) {
                     if (!connectFuture.isDone())

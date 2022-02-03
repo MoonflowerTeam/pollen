@@ -2,6 +2,7 @@ package gg.moonflower.pollen.core.client.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import gg.moonflower.pollen.core.Pollen;
+import gg.moonflower.pollen.core.client.entitlement.EntitlementManager;
 import gg.moonflower.pollen.core.client.profile.ProfileConnection;
 import gg.moonflower.pollen.core.client.profile.ProfileData;
 import gg.moonflower.pollen.core.client.profile.ProfileManager;
@@ -75,6 +76,7 @@ public class LinkPatreonScreen extends Screen {
             }, HttpUtil.DOWNLOAD_EXECUTOR);
             this.completeFuture = this.requestFuture.thenCompose(status -> status.getConnectFuture().thenRunAsync(() -> Util.getPlatform().openUri(status.getUrl()), this.minecraft).thenCompose(__ -> status.getResponseFuture().thenRunAsync(() -> {
                 ProfileManager.clearCache(id);
+                EntitlementManager.clearCache(id);
                 ProfileManager.getProfile(id).thenAcceptAsync(profile -> {
                     if (profile == ProfileData.EMPTY)
                         throw new CompletionException(new IllegalStateException("Failed to download profile"));

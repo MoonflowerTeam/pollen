@@ -19,6 +19,7 @@ import java.util.*;
  * @since 1.0.0
  */
 public class GeometryModelTextureTable {
+
     public static final Codec<GeometryModelTextureTable> CODEC = Codec.unboundedMap(Codec.STRING, GeometryModelTexture.CODEC.listOf().xmap(list -> list.toArray(new GeometryModelTexture[0]), Arrays::asList)).xmap(GeometryModelTextureTable::new, table -> table.textures);
     public static GeometryModelTextureTable EMPTY = new GeometryModelTextureTable(new HashMap<>());
 
@@ -44,6 +45,13 @@ public class GeometryModelTextureTable {
      */
     public Collection<GeometryModelTexture[]> getTextures() {
         return this.textures.values();
+    }
+
+    /**
+     * @return All definitions for textures
+     */
+    public Map<String, GeometryModelTexture[]> getTextureDefinitions() {
+        return textures;
     }
 
     @Override

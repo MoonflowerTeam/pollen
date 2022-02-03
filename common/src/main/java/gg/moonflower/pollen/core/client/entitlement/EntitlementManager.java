@@ -88,6 +88,15 @@ public final class EntitlementManager {
     }
 
     /**
+     * Clears the cache of player entitlements.
+     *
+     * @param id The player to remove entitlements for
+     */
+    public static void clearCache(UUID id) {
+        PLAYER_ENTITLEMENTS.remove(id);
+    }
+
+    /**
      * @return All entitlements for all players
      */
     public static Stream<Entitlement> getAllEntitlements() {

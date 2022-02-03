@@ -2,10 +2,12 @@ package gg.moonflower.pollen.core.client.entitlement.type;
 
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.client.entitlement.Entitlement;
 import gg.moonflower.pollen.core.client.screen.button.ArrayEntry;
 import gg.moonflower.pollen.core.client.screen.button.EntitlementEntry;
+import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTexture;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -17,11 +19,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @ApiStatus.Internal
 public class DeveloperHalo extends AbstractHalo {
 
-    public static final Codec<DeveloperHalo> CODEC = Codec.unboundedMap(Codec.STRING, HaloData.CODEC).xmap(DeveloperHalo::new, halo -> halo.halos);
+    public static final Codec<DeveloperHalo> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.unboundedMap(Codec.STRING, HaloData.CODEC).fieldOf("halos").forGetter(halo -> halo.halos)
+    ).apply(instance, DeveloperHalo::new));
 
     private final Map<String, HaloData> halos;
     private String type;
@@ -39,16 +44,14 @@ public class DeveloperHalo extends AbstractHalo {
     @Override
     public void updateSettings(JsonObject settings) {
         super.updateSettings(settings);
-        if (settings.has("type")) {
-            this.type = GsonHelper.getAsString(settings, "type");
-            this.textureKey = new ResourceLocation(Pollen.MOD_ID, this.type);
-        }
+        if (settings.has("halo_type"))
+            this.setType(GsonHelper.getAsString(settings, "halo_type"));
     }
 
     @Override
     public JsonObject saveSettings() {
         JsonObject settings = super.saveSettings();
-        settings.addProperty("type", this.type);
+        settings.addProperty("halo_type", this.type);
         return settings;
     }
 
@@ -65,7 +68,17 @@ public class DeveloperHalo extends AbstractHalo {
 
     @Override
     public void registerTextures(BiConsumer<ResourceLocation, GeometryModelTextureTable> textureConsumer) {
-        this.halos.forEach((key, value) -> textureConsumer.accept(new ResourceLocation(Pollen.MOD_ID, key), value.getTextureTable()));
+        this.halos.forEach((key, value) -> {
+            textureConsumer.accept(new ResourceLocation(Pollen.MOD_ID, key), value.getTextureTable());
+            textureConsumer.accept(new ResourceLocation(Pollen.MOD_ID, key + "_emissive"), new GeometryModelTextureTable(value.getTextureTable().getTextureDefinitions().entrySet().stream().collect(Collectors.<Map.Entry<String, GeometryModelTexture[]>, String, GeometryModelTexture[]>toMap(Map.Entry::getKey, entry -> {
+                GeometryModelTexture[] textures = new GeometryModelTexture[entry.getValue().length];
+                for (int i = 0; i < textures.length; i++) {
+                    GeometryModelTexture texture = entry.getValue()[i];
+                    textures[i] = GeometryModelTexture.texture(texture).setGlowing(true).build();
+                }
+                return textures;
+            }))));
+        });
     }
 
     @Nullable
@@ -87,6 +100,12 @@ public class DeveloperHalo extends AbstractHalo {
 
     public void setType(String type) {
         this.type = type;
-        this.textureKey = new ResourceLocation(Pollen.MOD_ID, type);
+        this.textureKey = new ResourceLocation(Pollen.MOD_ID, type + (this.isEmissive() ? "_emissive" : ""));
+    }
+
+    @Override
+    public void setEmissive(boolean emissive) {
+        super.setEmissive(emissive);
+        this.textureKey = new ResourceLocation(Pollen.MOD_ID, type + (this.isEmissive() ? "_emissive" : ""));
     }
 }
