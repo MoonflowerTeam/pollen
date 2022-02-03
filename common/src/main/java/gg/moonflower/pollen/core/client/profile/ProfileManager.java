@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public final class ProfileManager {
 
-    public static final ProfileConnection CONNECTION = new ProfileConnection("http://localhost:8080/api/v1", "http://localhost:8080/link");
+    public static final ProfileConnection CONNECTION = new ProfileConnection("https://accounts.moonflower.gg/api/v1", "https://accounts.moonflower.gg/link");
 
     private static final Map<UUID, CompletableFuture<ProfileData>> PROFILES = new HashMap<>();
 

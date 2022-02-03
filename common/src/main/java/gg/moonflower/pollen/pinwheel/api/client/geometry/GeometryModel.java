@@ -217,6 +217,6 @@ public interface GeometryModel {
      * @return The buffer that should be used for the provided texture
      */
     default VertexConsumer getBuffer(MultiBufferSource buffer, GeometryAtlasTexture atlas, GeometryModelTexture texture) {
-        return atlas.getSprite(texture.getLocation()).wrap(buffer.getBuffer(texture.getLayer().getRenderType(atlas.getAtlasLocation())));
+        return atlas.getSprite(texture.getLocation()).wrap(buffer.getBuffer(texture.getLayer().getRenderType(texture, atlas.getAtlasLocation())));
     }
 }

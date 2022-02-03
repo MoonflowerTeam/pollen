@@ -289,19 +289,19 @@ public class ProfileConnection {
      * @throws IOException If any errors occurs when retrieving the URL
      */
     public LinkStatus linkPatreon() throws IOException {
+        this.token = null;
         return this.runAuthenticated(context -> {
             String url = this.linkUrl + "/minecraft?token=" + this.getBearerToken() + "&ref=minecraft";
             CompletableFuture<?> connectFuture = new CompletableFuture<>();
             CompletableFuture<?> responseFuture = new CompletableFuture<>();
             AtomicReference<ServerSocket> server = new AtomicReference<>();
             CompletableFuture.runAsync(() -> {
-                try (ServerSocket serverSocket = new ServerSocket(8001, 1)) {
+                try (ServerSocket serverSocket = new ServerSocket(8001)) {
                     server.set(serverSocket);
                     connectFuture.complete(null);
-                    try (Socket clientSocket = serverSocket.accept(); PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true); BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
-                        if (in.readLine().startsWith("POST"))
-                            responseFuture.complete(null);
-                        out.println(responseFuture.isDone() ? "HTTP/1.1 200 OK" : "HTTP/1.1 400 Bad Request");
+                    try (Socket clientSocket = serverSocket.accept(); PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
+                        out.println("HTTP/1.1 200 OK");
+                        responseFuture.complete(null);
                     }
                 } catch (Exception e) {
                     if (!connectFuture.isDone())
