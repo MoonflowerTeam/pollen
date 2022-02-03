@@ -78,7 +78,7 @@ public class ProfileConnection {
     private static Entitlement parseEntitlement(JsonObject json) throws JsonSyntaxException {
         String id = GsonHelper.getAsString(json, "_id");
         JsonObject entitlementJson = GsonHelper.getAsJsonObject(json, "entitlement");
-        String displayName = GsonHelper.getAsString(entitlementJson, "displayName");
+        String displayName = GsonHelper.getAsString(entitlementJson, "displayName", id);
         Entitlement.Type type = Entitlement.Type.byName(GsonHelper.getAsString(entitlementJson, "type"));
         if (type == null)
             throw new JsonSyntaxException("Unknown entitlement type: " + GsonHelper.getAsString(entitlementJson, "type"));
