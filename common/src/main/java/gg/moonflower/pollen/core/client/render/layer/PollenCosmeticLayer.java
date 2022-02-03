@@ -48,7 +48,7 @@ public class PollenCosmeticLayer<T extends LivingEntity> extends RenderLayer<T, 
                     return;
 
                 GeometryModelRenderer.copyModelAngles(this.getParentModel(), model);
-                GeometryModelRenderer.render(model, textureKey, matrixStack, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+                GeometryModelRenderer.render(model, textureKey, matrixStack, packedLight, OverlayTexture.NO_OVERLAY, cosmetic.getRed(), cosmetic.getGreen(), cosmetic.getBlue(), cosmetic.getAlpha());
             }
         });
     }

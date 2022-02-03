@@ -29,7 +29,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -75,13 +74,14 @@ public class ProfileConnection {
         return null;
     }
 
+    @Nullable
     private static Entitlement parseEntitlement(JsonObject json) throws JsonSyntaxException {
         String id = GsonHelper.getAsString(json, "_id");
         JsonObject entitlementJson = GsonHelper.getAsJsonObject(json, "entitlement");
         String displayName = GsonHelper.getAsString(entitlementJson, "displayName", id);
         Entitlement.Type type = Entitlement.Type.byName(GsonHelper.getAsString(entitlementJson, "type"));
         if (type == null)
-            throw new JsonSyntaxException("Unknown entitlement type: " + GsonHelper.getAsString(entitlementJson, "type"));
+            return null;
 
         DataResult<? extends Entitlement> result = type.codec().parse(JsonOps.INSTANCE, entitlementJson);
         if (result.error().isPresent())
@@ -112,6 +112,10 @@ public class ProfileConnection {
                     throw new ProfileNotFoundException();
                 return checkError(url, response);
             }
+        } catch (IOException | ProfileNotFoundException e) {
+            throw e;
+        } catch (Throwable t) {
+            throw new IOException(t);
         }
     }
 
@@ -184,7 +188,8 @@ public class ProfileConnection {
             for (JsonElement element : array) {
                 try {
                     Entitlement entitlement = parseEntitlement(element.getAsJsonObject());
-                    entitlementMap.put(entitlement.getRegistryName().getPath(), entitlement);
+                    if (entitlement != null)
+                        entitlementMap.put(entitlement.getRegistryName().getPath(), entitlement);
                 } catch (JsonParseException e) {
                     LOGGER.error("Failed to parse entitlement: " + element, e);
                 }
@@ -199,9 +204,10 @@ public class ProfileConnection {
      * Retrieves a single registered entitlement.
      *
      * @param entitlementId The id of the entitlement to retrieve
-     * @return The single entitlement
+     * @return The single entitlement or <code>null</code> if it is not a supported type
      * @throws IOException If any error occurs when loading data
      */
+    @Nullable
     public Entitlement getEntitlement(String entitlementId) throws IOException {
         try {
             return parseEntitlement(getJson(this.apiUrl + "/entitlement/" + entitlementId).getAsJsonObject());
