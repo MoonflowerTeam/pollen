@@ -32,11 +32,11 @@ public abstract class AbstractHalo extends Entitlement implements RenderableCosm
     @Override
     public void updateSettings(JsonObject settings) {
         if (settings.has("emissive"))
-            this.emissive = GsonHelper.getAsBoolean(settings, "emissive");
+            this.setEmissive(GsonHelper.getAsBoolean(settings, "emissive"));
         if (settings.has("visibility"))
-            this.visibility = Visibility.byName(GsonHelper.getAsString(settings, "visibility"));
+            this.setVisibility(Visibility.byName(GsonHelper.getAsString(settings, "visibility")));
         if (settings.has("display"))
-            this.display = Display.byName(GsonHelper.getAsString(settings, "display"));
+            this.setDisplay(Display.byName(GsonHelper.getAsString(settings, "display")));
     }
 
     @Override
