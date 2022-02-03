@@ -106,6 +106,6 @@ public class DeveloperHalo extends AbstractHalo {
     @Override
     public void setEmissive(boolean emissive) {
         super.setEmissive(emissive);
-        this.textureKey = new ResourceLocation(Pollen.MOD_ID, type + (this.isEmissive() ? "_emissive" : ""));
+        this.textureKey = new ResourceLocation(Pollen.MOD_ID, this.type + (this.isEmissive() ? "_emissive" : ""));
     }
 }

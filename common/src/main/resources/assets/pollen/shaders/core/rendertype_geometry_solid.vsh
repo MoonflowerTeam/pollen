@@ -17,6 +17,7 @@ uniform mat4 ProjMat;
 
 uniform vec3 Light0_Direction;
 uniform vec3 Light1_Direction;
+uniform int Glowing;
 
 out float vertexDistance;
 out vec4 vertexColor;
@@ -29,7 +30,7 @@ void main() {
     gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
 
     vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
-    vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
+    vertexColor = Glowing != 0 ? Color :minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
     lightMapColor = texelFetch(Sampler2, UV2 / 16, 0);
     overlayColor = texelFetch(Sampler1, UV1, 0);
     texCoord0 = UV0;
