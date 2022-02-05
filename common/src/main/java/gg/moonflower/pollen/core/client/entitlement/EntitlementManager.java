@@ -4,12 +4,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ibm.icu.impl.Pair;
 import com.mojang.authlib.yggdrasil.ProfileNotFoundException;
+import gg.moonflower.pollen.api.event.events.client.render.AddRenderLayersEvent;
 import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
 import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvents;
 import gg.moonflower.pollen.api.registry.resource.PollinatedPreparableReloadListener;
 import gg.moonflower.pollen.api.registry.resource.ResourceRegistry;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.client.profile.ProfileManager;
+import gg.moonflower.pollen.core.client.render.layer.PollenCosmeticLayer;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
 import net.minecraft.client.Minecraft;
@@ -63,6 +65,10 @@ public final class EntitlementManager {
     }
 
     public static void init() {
+        AddRenderLayersEvent.EVENT.register(context -> {
+            for (String skin : context.getSkins())
+                context.getSkin(skin).addLayer(new PollenCosmeticLayer<>(context.getSkin(skin)));
+        });
         ResourceRegistry.registerReloadListener(PackType.CLIENT_RESOURCES, new PollinatedPreparableReloadListener() {
             @Override
             public ResourceLocation getPollenId() {
