@@ -18,6 +18,7 @@ public class PollenLanguageProvider extends PollinatedLanguageProvider {
         this.add("options." + this.domain + ".entitlementList", "Moonflower Cosmetics...");
         this.add("options." + this.domain + ".entitlementList.title", "Moonflower Cosmetic Settings");
         this.add("options." + this.domain + ".entitlementList.none", "You have no cosmetics");
+        this.add("options." + this.domain + ".entitlementList.reload", "Refresh");
         this.add("argument." + this.domain + ".enum.invalid", "Invalid Enum Value");
         this.add("argument." + this.domain + ".color.invalid", "Invalid Color String");
         this.add("argument." + this.domain + ".time.unknown_unit", "Invalid Time Unit");
