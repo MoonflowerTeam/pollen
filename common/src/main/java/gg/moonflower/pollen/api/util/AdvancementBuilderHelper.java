@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.advancement;
+package gg.moonflower.pollen.api.util;
 
 import gg.moonflower.pollen.core.mixin.AdvancementRewardsBuilderAccessor;
 import net.minecraft.advancements.AdvancementRewards;

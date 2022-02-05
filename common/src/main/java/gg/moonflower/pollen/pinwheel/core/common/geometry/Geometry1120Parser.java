@@ -3,7 +3,7 @@ package gg.moonflower.pollen.pinwheel.core.common.geometry;
 import com.google.gson.*;
 import com.mojang.math.Vector3f;
 import gg.moonflower.pollen.pinwheel.api.common.geometry.GeometryModelData;
-import gg.moonflower.pollen.pinwheel.api.common.util.JSONTupleParser;
+import gg.moonflower.pollen.api.util.JSONTupleParser;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
 

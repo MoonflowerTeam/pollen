@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.pinwheel.api.common.animation;
 
 import com.google.gson.*;
-import gg.moonflower.pollen.pinwheel.api.common.util.JSONTupleParser;
+import gg.moonflower.pollen.api.util.JSONTupleParser;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 import net.minecraft.util.GsonHelper;
 

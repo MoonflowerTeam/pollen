@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.pinwheel.api.common.util;
+package gg.moonflower.pollen.api.util;
 
 import com.google.gson.*;
 import io.github.ocelot.molangcompiler.api.MolangCompiler;
@@ -8,10 +8,11 @@ import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * <p>Parses tuple values from JSON.</p>
+ * Parses tuple values from JSON.
  *
  * @author Ocelot
  * @since 1.0.0
@@ -19,6 +20,22 @@ import java.util.function.Supplier;
 public final class JSONTupleParser {
 
     private JSONTupleParser() {
+    }
+
+    public static <T> T[] getArray(JsonObject json, String name, T[] array, int minSize, Function<String, T> getter) {
+        if (!json.has(name))
+            return array;
+
+        JsonArray jsonArray = GsonHelper.getAsJsonArray(json, name);
+        if (jsonArray.size() < minSize)
+            throw new JsonSyntaxException("Expected " + name + " to have at least " + minSize + "elements");
+        if (array.length != jsonArray.size())
+            array = Arrays.copyOf(array, jsonArray.size());
+
+        for (int i = 0; i < jsonArray.size(); ++i)
+            array[i] = getter.apply(GsonHelper.convertToString(jsonArray.get(i), name + "[" + i + "]"));
+
+        return array;
     }
 
     /**
