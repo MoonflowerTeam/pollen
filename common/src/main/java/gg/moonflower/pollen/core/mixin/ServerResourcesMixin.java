@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.core.mixin;
 
-import gg.moonflower.pollen.api.modifier.ResourceModifierManager;
+import gg.moonflower.pollen.api.resource.modifier.ResourceModifierManager;
 import gg.moonflower.pollen.core.extensions.InjectableResourceManager;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.ServerResources;

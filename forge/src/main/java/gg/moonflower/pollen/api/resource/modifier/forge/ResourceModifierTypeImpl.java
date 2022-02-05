@@ -1,13 +1,14 @@
-package gg.moonflower.pollen.api.modifier.fabric;
+package gg.moonflower.pollen.api.resource.modifier.forge;
 
 import gg.moonflower.pollen.api.resource.modifier.serializer.DataModifierSerializer;
 import gg.moonflower.pollen.api.resource.modifier.serializer.ModifierSerializer;
 import gg.moonflower.pollen.api.resource.modifier.serializer.ResourceModifierSerializer;
 import gg.moonflower.pollen.api.resource.modifier.ResourceModifierType;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-public class ResourceModifierTypeImpl implements ResourceModifierType {
+public class ResourceModifierTypeImpl extends ForgeRegistryEntry<ResourceModifierTypeImpl> implements ResourceModifierType {
 
     private final ModifierSerializer serializer;
 

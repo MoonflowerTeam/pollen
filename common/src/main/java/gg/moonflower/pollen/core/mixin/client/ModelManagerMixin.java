@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.core.mixin.client;
 
-import gg.moonflower.pollen.api.modifier.ResourceModifierManager;
+import gg.moonflower.pollen.api.resource.modifier.ResourceModifierManager;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.server.packs.resources.ResourceManager;
