@@ -47,6 +47,7 @@ public class EntitlementListScreen extends Screen {
             EntitlementManager.clearCache(this.minecraft.getUser().getGameProfile().getId());
             this.minecraft.setScreen(new EntitlementListScreen(this.lastScreen));
         }));
+        
         this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 27, 200, 20, CommonComponents.GUI_DONE, button -> this.minecraft.setScreen(this.lastScreen)));
     }
 
