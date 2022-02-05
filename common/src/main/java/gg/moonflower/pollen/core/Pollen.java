@@ -64,10 +64,6 @@ public class Pollen {
         ItemOverrideModifierManager.init();
         DebugInputs.init();
         EntitlementManager.init();
-        AddRenderLayersEvent.EVENT.register(context -> {
-            for (String skin : context.getSkins())
-                Objects.requireNonNull(context.getSkin(skin)).addLayer(new PollenCosmeticLayer<>(context.getSkin(skin)));
-        });
         if (!Platform.isProduction())
             BlockRendererRegistry.register(Blocks.FLOWER_POT, new DebugPollenFlowerPotRenderer());
     }

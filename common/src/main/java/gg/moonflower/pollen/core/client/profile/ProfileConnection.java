@@ -18,10 +18,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.entity.EntityBuilder;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -38,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -55,11 +53,20 @@ public class ProfileConnection {
 
     private final String apiUrl;
     private final String linkUrl;
+    private final CompletableFuture<?> serverDown;
     private String token;
 
     public ProfileConnection(String apiUrl, String linkUrl) {
         this.apiUrl = apiUrl;
         this.linkUrl = linkUrl;
+        this.serverDown = CompletableFuture.runAsync(() -> {
+            try {
+                check(apiUrl);
+                check(linkUrl);
+            } catch (Exception e) {
+                throw new CompletionException(e);
+            }
+        }, HttpUtil.DOWNLOAD_EXECUTOR);
     }
 
     @Nullable
@@ -102,6 +109,15 @@ public class ProfileConnection {
             throw new IOException("Failed to connect to '" + url + "'. " + statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
         }
         return json;
+    }
+
+    private static StatusLine check(String url) throws IOException {
+        HttpHead head = new HttpHead(url);
+        try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build()) {
+            try (CloseableHttpResponse response = client.execute(head)) {
+                return response.getStatusLine();
+            }
+        }
     }
 
     private static JsonElement getProfileJson(String url) throws IOException, ProfileNotFoundException {
@@ -164,6 +180,19 @@ public class ProfileConnection {
         return result.get();
     }
 
+    private void checkConnection() throws IOException {
+        try {
+            this.serverDown.join(); // Will throw a CompletionException if completed exceptionally
+        } catch (Exception e) {
+            if (e instanceof CompletionException) {
+                Throwable cause = e.getCause();
+                if (cause instanceof IOException)
+                    throw (IOException) cause;
+            }
+            throw new IOException("Failed to connect to server", e);
+        }
+    }
+
     /**
      * Retrieves the data for a profile.
      *
@@ -172,6 +201,7 @@ public class ProfileConnection {
      * @throws IOException If any error occurs when loading data
      */
     public ProfileData getProfileData(UUID profileId) throws IOException, ProfileNotFoundException {
+        this.checkConnection();
         return GSON.fromJson(getProfileJson(this.apiUrl + "/user/" + profileId).getAsJsonObject(), ProfileData.class);
     }
 
@@ -182,6 +212,7 @@ public class ProfileConnection {
      * @throws IOException If any error occurs when loading data
      */
     public Map<String, Entitlement> getEntitlements() throws IOException, ProfileNotFoundException {
+        this.checkConnection();
         try {
             JsonArray array = getProfileJson(this.apiUrl + "/entitlement").getAsJsonArray();
             Map<String, Entitlement> entitlementMap = new HashMap<>();
@@ -209,6 +240,7 @@ public class ProfileConnection {
      */
     @Nullable
     public Entitlement getEntitlement(String entitlementId) throws IOException {
+        this.checkConnection();
         try {
             return parseEntitlement(getJson(this.apiUrl + "/entitlement/" + entitlementId).getAsJsonObject());
         } catch (JsonParseException e) {
@@ -224,6 +256,7 @@ public class ProfileConnection {
      * @throws IOException If any error occurs when loading data
      */
     public Map<String, JsonObject> getEntitlementSettings(UUID profileId) throws IOException, ProfileNotFoundException {
+        this.checkConnection();
         try {
             JsonArray array = getProfileJson(this.apiUrl + "/user/" + profileId + "/entitlements").getAsJsonArray();
             Map<String, JsonObject> entitlementMap = new HashMap<>();
@@ -253,6 +286,7 @@ public class ProfileConnection {
      * @throws IOException If any error occurs when loading data
      */
     public JsonObject getSettings(UUID profileId, String entitlementId) throws IOException, ProfileNotFoundException {
+        this.checkConnection();
         return getProfileJson(this.apiUrl + "/user/" + profileId + "/entitlements/" + entitlementId).getAsJsonObject();
     }
 
@@ -266,6 +300,7 @@ public class ProfileConnection {
      * @throws IOException If any error occurs when loading data
      */
     public JsonObject updateSettings(UUID profileId, String entitlementId, JsonObject newSettings) throws IOException, ProfileNotFoundException {
+        this.checkConnection();
         return this.runAuthenticated(context -> {
             String url = this.apiUrl + "/user/" + profileId + "/entitlements/" + entitlementId;
             HttpPatch patch = new HttpPatch(url);
@@ -295,6 +330,7 @@ public class ProfileConnection {
      * @throws IOException If any errors occurs when retrieving the URL
      */
     public LinkStatus linkPatreon() throws IOException {
+        this.checkConnection();
         this.token = null;
         return this.runAuthenticated(context -> {
             String url = this.linkUrl + "/minecraft?token=" + this.getBearerToken() + "&ref=minecraft";
