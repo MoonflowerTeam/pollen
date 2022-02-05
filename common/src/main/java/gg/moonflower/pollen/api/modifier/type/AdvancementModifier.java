@@ -1,17 +1,24 @@
-package gg.moonflower.pollen.api.advancement;
+package gg.moonflower.pollen.api.modifier.type;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
+import gg.moonflower.pollen.api.modifier.ResourceModifier;
+import gg.moonflower.pollen.api.modifier.ResourceModifierManager;
+import gg.moonflower.pollen.api.modifier.ResourceModifierType;
+import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.core.mixin.AdvancementBuilderAccessor;
 import gg.moonflower.pollen.core.mixin.AdvancementRewardsAccessor;
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.DeserializationContext;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.ServerResources;
 import net.minecraft.util.GsonHelper;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -20,11 +27,8 @@ import java.util.function.Function;
  * @author Ocelot
  * @since 1.0.0
  */
-public class AdvancementModifier {
+public class AdvancementModifier extends ResourceModifier<Advancement.Builder> {
 
-    private final ResourceLocation id;
-    private final ResourceLocation[] inject;
-    private final int priority;
     private final Map<String, Criterion> addCriteria;
     private final String[][] injectRequirements;
     private final String[][] addRequirements;
@@ -34,9 +38,7 @@ public class AdvancementModifier {
     private final ResourceLocation[] removeRecipes;
 
     public AdvancementModifier(ResourceLocation id, ResourceLocation[] inject, int priority, Map<String, Criterion> addCriteria, String[][] injectRequirements, String[][] addRequirements, AdvancementRewards addRewards, String[] removeRequirements, ResourceLocation[] removeLoot, ResourceLocation[] removeRecipes) {
-        this.id = id;
-        this.inject = inject;
-        this.priority = priority;
+        super(id, inject, priority);
         this.addCriteria = ImmutableMap.copyOf(addCriteria);
         this.injectRequirements = injectRequirements;
         this.addRequirements = addRequirements;
@@ -44,6 +46,14 @@ public class AdvancementModifier {
         this.removeRequirements = removeRequirements;
         this.removeLoot = removeLoot;
         this.removeRecipes = removeRecipes;
+    }
+
+    private String getCriteriaName(String criteria) {
+        if (criteria.contains(":"))
+            return criteria;
+        if (!this.addCriteria.containsKey(criteria) && this.addCriteria.containsKey(this.id.getNamespace() + ":" + criteria))
+            return this.id.getNamespace() + ":" + criteria;
+        return criteria;
     }
 
     private static <T> T[] insert(T[] a, T[] b) {
@@ -69,41 +79,28 @@ public class AdvancementModifier {
         return new AdvancementModifier.Builder();
     }
 
-    private String getCriteriaName(String criteria) {
-        if (criteria.contains(":"))
-            return criteria;
-        if (!this.addCriteria.containsKey(criteria) && this.addCriteria.containsKey(this.id.getNamespace() + ":" + criteria))
-            return this.id.getNamespace() + ":" + criteria;
-        return criteria;
-    }
-
     /**
-     * @return A {@link Builder} that can be reconstructed into this modifier
+     * @return A builder for this modifier
      */
     public AdvancementModifier.Builder deconstruct() {
         return new AdvancementModifier.Builder(this.inject, this.priority, this.addCriteria, this.injectRequirements, this.addRequirements, this.addRewards, this.removeRequirements, this.removeLoot, this.removeRecipes);
     }
 
-    /**
-     * Modifies the specified advancement with this modifier's modifications.
-     *
-     * @param advancement The advancement to modify
-     * @throws JsonParseException If this modifier is not valid for the specified advancement
-     */
-    public void modify(Advancement.Builder advancement) throws JsonParseException {
+    @Override
+    public void modify(Advancement.Builder resource) throws JsonParseException {
         for (String[] requirement : this.injectRequirements)
             for (String criteria : requirement) {
                 criteria = this.getCriteriaName(criteria);
-                if (!this.addCriteria.containsKey(criteria) && !advancement.getCriteria().containsKey(criteria))
+                if (!this.addCriteria.containsKey(criteria) && !resource.getCriteria().containsKey(criteria))
                     throw new JsonSyntaxException("Unknown required criterion '" + criteria + "'");
             }
 
-        AdvancementBuilderAccessor accessor = (AdvancementBuilderAccessor) advancement;
+        AdvancementBuilderAccessor accessor = (AdvancementBuilderAccessor) resource;
         if (!this.addCriteria.isEmpty())
-            advancement.getCriteria().putAll(this.addCriteria);
+            resource.getCriteria().putAll(this.addCriteria);
 
         String[][] requirements = accessor.getRequirements();
-        AdvancementRewards rewards = ((AdvancementBuilderAccessor) advancement).getRewards();
+        AdvancementRewards rewards = ((AdvancementBuilderAccessor) resource).getRewards();
         ResourceLocation[] loot = ((AdvancementRewardsAccessor) rewards).getLoot();
         ResourceLocation[] recipes = ((AdvancementRewardsAccessor) rewards).getRecipes();
         int experience = ((AdvancementRewardsAccessor) rewards).getExperience();
@@ -140,7 +137,7 @@ public class AdvancementModifier {
 
         // Remove unused criteria
         String[][] finalRequirements = requirements;
-        advancement.getCriteria().keySet().removeIf(criteria -> {
+        resource.getCriteria().keySet().removeIf(criteria -> {
             for (String[] requirement : finalRequirements)
                 if (ArrayUtils.contains(requirement, criteria))
                     return false;
@@ -166,58 +163,26 @@ public class AdvancementModifier {
         accessor.setRewards(new AdvancementRewards(experience, loot, recipes, ((AdvancementRewardsAccessor) rewards).getFunction()));
     }
 
-    /**
-     * @return The id of this modifier
-     */
-    public ResourceLocation getId() {
-        return this.id;
-    }
-
-    /**
-     * @return The advancements to inject into
-     */
-    public ResourceLocation[] getInject() {
-        return inject;
-    }
-
-    /**
-     * @return The injection priority of this modifier. Lower injection priorities are applied first
-     */
-    public int getInjectPriority() {
-        return priority;
-    }
-
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AdvancementModifier that = (AdvancementModifier) o;
-        return id.equals(that.id);
+    public ResourceModifierType getType() {
+        return ResourceModifierManager.ADVANCEMENT.get();
     }
 
-    @Override
-    public int hashCode() {
-        return this.id.hashCode();
-    }
+    public static class Builder extends ResourceModifier.Builder<AdvancementModifier, Builder> {
 
-    public static class Builder {
-
-        private final List<ResourceLocation> inject;
         private final Map<String, Criterion> addCriteria;
         private final Map<String, Integer> injectRequirementsKeys;
         private final List<String> addRequirementsKeys;
         private final List<String> removeRequirements;
         private final List<ResourceLocation> removeLoot;
         private final List<ResourceLocation> removeRecipes;
-        private int priority;
         private String[][] injectRequirements;
         private String[][] addRequirements;
         private RequirementsStrategy requirementsStrategy;
         private AdvancementRewards addRewards;
 
         private Builder(ResourceLocation[] inject, int priority, Map<String, Criterion> addCriteria, String[][] injectRequirements, String[][] addRequirements, AdvancementRewards addRewards, String[] removeRequirements, ResourceLocation[] removeLoot, ResourceLocation[] removeRecipes) {
-            this.inject = new LinkedList<>(Arrays.asList(inject));
-            this.priority = priority;
+            super(inject, priority);
             this.addCriteria = new LinkedHashMap<>(addCriteria);
             this.injectRequirementsKeys = new LinkedHashMap<>();
             this.addRequirementsKeys = new LinkedList<>();
@@ -231,8 +196,7 @@ public class AdvancementModifier {
         }
 
         private Builder() {
-            this.inject = new LinkedList<>();
-            this.priority = 1000;
+            super();
             this.addCriteria = new LinkedHashMap<>();
             this.injectRequirementsKeys = new LinkedHashMap<>();
             this.addRequirementsKeys = new LinkedList<>();
@@ -245,22 +209,6 @@ public class AdvancementModifier {
             this.removeRecipes = new LinkedList<>();
         }
 
-        private static <T> T[] getArray(JsonObject json, String name, T[] array, int minSize, Function<String, T> getter) {
-            if (!json.has(name))
-                return array;
-
-            JsonArray jsonArray = GsonHelper.getAsJsonArray(json, name);
-            if (jsonArray.size() < minSize)
-                throw new JsonSyntaxException("Expected " + name + " to have at least " + minSize + "elements");
-            if (array.length != jsonArray.size())
-                array = Arrays.copyOf(array, jsonArray.size());
-
-            for (int i = 0; i < jsonArray.size(); ++i)
-                array[i] = getter.apply(GsonHelper.convertToString(jsonArray.get(i), name + "[" + i + "]"));
-
-            return array;
-        }
-
         private static Map<String, Criterion> getCriteriaName(Map<String, Criterion> criteria, DeserializationContext context) {
             Map<String, Criterion> result = new HashMap<>(criteria.size());
             criteria.forEach((name, criterion) -> result.put(name.contains(":") ? name : context.getAdvancementId().getNamespace() + ":" + name, criterion));
@@ -270,19 +218,15 @@ public class AdvancementModifier {
         /**
          * Deserializes a new modifier from JSON.
          *
-         * @param json    The JSON to deserialize.
-         * @param context The context of deserialization
+         * @param name            The name of the
+         * @param serverResources The server resources instance
+         * @param json            The JSON to deserialize
+         * @param inject          The resources to inject into
+         * @param priority        The priority of this injection over others
          * @return The deserialized builder
          */
-        public static Builder fromJson(JsonObject json, DeserializationContext context) {
-            if (!json.has("inject"))
-                throw new JsonSyntaxException("Missing inject, expected to find a String or JsonArray");
-            JsonElement injectElement = json.get("inject");
-            if (!(injectElement.isJsonPrimitive() && injectElement.getAsJsonPrimitive().isString()) && !injectElement.isJsonArray())
-                throw new JsonSyntaxException("Expected inject to be a String or JsonArray, was " + GsonHelper.getType(injectElement));
-            ResourceLocation[] inject = injectElement.isJsonPrimitive() && injectElement.getAsJsonPrimitive().isString() ? new ResourceLocation[]{new ResourceLocation(GsonHelper.convertToString(injectElement, "inject"))} : getArray(json, "inject", new ResourceLocation[0], 1, ResourceLocation::new);
-
-            int priority = GsonHelper.getAsInt(json, "injectPriority", 1000);
+        public static Builder fromJson(ResourceLocation name, ServerResources serverResources, JsonObject json, ResourceLocation[] inject, int priority) {
+            DeserializationContext context = new DeserializationContext(name, serverResources.getPredicateManager());
             AdvancementRewards addRewards = json.has("addRewards") ? AdvancementRewards.deserialize(GsonHelper.getAsJsonObject(json, "addRewards")) : AdvancementRewards.EMPTY;
 
             Map<String, Criterion> addCriteria;
@@ -331,13 +275,13 @@ public class AdvancementModifier {
                 if (requirement.length == 0)
                     throw new JsonSyntaxException("Requirement entry cannot be empty");
 
-            String[] removeRequirements = getArray(json, "removeRequirements", new String[0], 0, Function.identity());
+            String[] removeRequirements = JSONTupleParser.getArray(json, "removeRequirements", new String[0], 0, Function.identity());
             ResourceLocation[] removeLoot;
             ResourceLocation[] removeRecipes;
             if (json.has("removeRewards")) {
                 JsonObject removeRewardsJson = GsonHelper.getAsJsonObject(json, "removeRewards");
-                removeLoot = getArray(removeRewardsJson, "loot", new ResourceLocation[0], 0, ResourceLocation::new);
-                removeRecipes = getArray(removeRewardsJson, "recipes", new ResourceLocation[0], 0, ResourceLocation::new);
+                removeLoot = JSONTupleParser.getArray(removeRewardsJson, "loot", new ResourceLocation[0], 0, ResourceLocation::new);
+                removeRecipes = JSONTupleParser.getArray(removeRewardsJson, "recipes", new ResourceLocation[0], 0, ResourceLocation::new);
             } else {
                 removeLoot = new ResourceLocation[0];
                 removeRecipes = new ResourceLocation[0];
@@ -346,24 +290,14 @@ public class AdvancementModifier {
             return new Builder(inject, priority, addCriteria, injectRequirements, addRequirements, addRewards, removeRequirements, removeLoot, removeRecipes);
         }
 
-        /**
-         * Adds an advancement to inject into.
-         *
-         * @param id The id of the advancement
-         */
-        public AdvancementModifier.Builder injectInto(ResourceLocation id) {
-            this.inject.add(id);
+        @Override
+        protected Builder getThis() {
             return this;
         }
 
-        /**
-         * Sets the priority of this modifier. Lower injection priorities are applied first.
-         *
-         * @param priority The new priority of this modifier. By default, this is <code>1000</code>.
-         */
-        public AdvancementModifier.Builder injectPriority(int priority) {
-            this.priority = priority;
-            return this;
+        @Override
+        protected ResourceModifierType getType() {
+            return ResourceModifierManager.ADVANCEMENT.get();
         }
 
         /**
@@ -485,12 +419,7 @@ public class AdvancementModifier {
             }
         }
 
-        /**
-         * Constructs a new modifier with the specified id.
-         *
-         * @param id The id of the modifier to construct
-         * @return A new modifier instance
-         */
+        @Override
         public AdvancementModifier build(ResourceLocation id) {
             if (this.inject.isEmpty())
                 throw new IllegalStateException("'inject' must be defined");
@@ -498,47 +427,16 @@ public class AdvancementModifier {
             return new AdvancementModifier(id, this.inject.toArray(new ResourceLocation[0]), this.priority, this.addCriteria, this.injectRequirements, this.addRequirements, this.addRewards, this.removeRequirements.toArray(new String[0]), this.removeLoot.toArray(new ResourceLocation[0]), this.removeRecipes.toArray(new ResourceLocation[0]));
         }
 
-        /**
-         * Saves this modifier into the specified consumer. Used for datagens.
-         *
-         * @param consumer The consumer to accept modifiers
-         * @param id       The id of the modifier to construct
-         * @return A new modifier instance
-         */
-        public AdvancementModifier save(Consumer<AdvancementModifier> consumer, ResourceLocation id) {
-            AdvancementModifier modifier = this.build(id);
-            consumer.accept(modifier);
-            return modifier;
-        }
-
-        /**
-         * @return A JSON representing this modifier
-         */
-        public JsonObject serializeToJson() {
-            if (this.inject.isEmpty())
-                throw new IllegalStateException("'inject' must be defined");
+        @Override
+        protected void serializeProperties(JsonObject json) {
             this.initRequirements();
-
-            JsonObject jsonObject = new JsonObject();
-
-            if (this.inject.size() == 1) {
-                jsonObject.addProperty("inject", this.inject.get(0).toString());
-            } else {
-                JsonArray injectJson = new JsonArray();
-                for (ResourceLocation inject : this.inject)
-                    injectJson.add(inject.toString());
-                jsonObject.add("inject", injectJson);
-            }
-
-            if (this.priority != 1000)
-                jsonObject.addProperty("priority", this.priority);
 
             if (!this.addCriteria.isEmpty()) {
                 JsonObject addCriteriaJson = new JsonObject();
                 for (Map.Entry<String, Criterion> entry : this.addCriteria.entrySet()) {
                     addCriteriaJson.add(entry.getKey(), entry.getValue().serializeToJson());
                 }
-                jsonObject.add("addCriteria", addCriteriaJson);
+                json.add("addCriteria", addCriteriaJson);
             }
 
             if (this.addRequirements.length > 0) {
@@ -551,7 +449,7 @@ public class AdvancementModifier {
 
                     addRequirementsJson.add(addRequirementJson);
                 }
-                jsonObject.add("addRequirements", addRequirementsJson);
+                json.add("addRequirements", addRequirementsJson);
             }
 
             if (this.injectRequirements.length > 0) {
@@ -564,33 +462,31 @@ public class AdvancementModifier {
 
                     injectRequirementsJson.add(injectRequirementJson);
                 }
-                jsonObject.add("injectRequirements", injectRequirementsJson);
+                json.add("injectRequirements", injectRequirementsJson);
             }
 
-            jsonObject.add("addRewards", this.addRewards.serializeToJson());
+            json.add("addRewards", this.addRewards.serializeToJson());
 
             if (!this.removeRequirements.isEmpty()) {
                 JsonArray removeRequirementsJson = new JsonArray();
                 for (String criterion : this.removeRequirements)
                     removeRequirementsJson.add(criterion);
-                jsonObject.add("removeRequirements", removeRequirementsJson);
+                json.add("removeRequirements", removeRequirementsJson);
             }
 
             if (!this.removeLoot.isEmpty()) {
                 JsonArray removeLootJson = new JsonArray();
                 for (ResourceLocation loot : this.removeLoot)
                     removeLootJson.add(loot.toString());
-                jsonObject.add("removeLoot", removeLootJson);
+                json.add("removeLoot", removeLootJson);
             }
 
             if (!this.removeRecipes.isEmpty()) {
                 JsonArray removeRecipesJson = new JsonArray();
                 for (ResourceLocation recipe : this.removeRecipes)
                     removeRecipesJson.add(recipe.toString());
-                jsonObject.add("removeRecipes", removeRecipesJson);
+                json.add("removeRecipes", removeRecipesJson);
             }
-
-            return jsonObject;
         }
     }
 }

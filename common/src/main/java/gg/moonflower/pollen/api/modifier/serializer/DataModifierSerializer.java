@@ -1,0 +1,19 @@
+package gg.moonflower.pollen.api.modifier.serializer;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import gg.moonflower.pollen.api.modifier.ResourceModifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.ServerResources;
+
+/**
+ * Creates a data modifier from JSON.
+ *
+ * @author Ocelot
+ * @since 1.0.0
+ */
+@FunctionalInterface
+public interface DataModifierSerializer extends ModifierSerializer {
+
+    ResourceModifier.Builder<?, ?> deserialize(ResourceLocation name, ServerResources serverResources, JsonObject json, ResourceLocation[] inject, int priority) throws JsonParseException;
+}

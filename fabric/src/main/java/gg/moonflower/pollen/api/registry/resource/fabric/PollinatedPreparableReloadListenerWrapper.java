@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.api.registry.resource.fabric;
 
 import gg.moonflower.pollen.api.registry.resource.PollinatedPreparableReloadListener;
+import gg.moonflower.pollen.api.registry.resource.ReloadStartListener;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -12,12 +13,18 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 @ApiStatus.Internal
-public class PollinatedPreparableReloadListenerWrapper implements IdentifiableResourceReloadListener {
+public class PollinatedPreparableReloadListenerWrapper implements ReloadStartListener, IdentifiableResourceReloadListener {
 
     private final PollinatedPreparableReloadListener listener;
 
     public PollinatedPreparableReloadListenerWrapper(PollinatedPreparableReloadListener listener) {
         this.listener = listener;
+    }
+
+    @Override
+    public void onReloadStart(ResourceManager resourceManager, Executor backgroundExecutor, Executor gameExecutor) {
+        if (this.listener instanceof ReloadStartListener)
+            ((ReloadStartListener) this.listener).onReloadStart(resourceManager, backgroundExecutor, gameExecutor);
     }
 
     @Override
