@@ -3,8 +3,6 @@ package gg.moonflower.pollen.api.resource.condition;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import dev.architectury.injectables.annotations.ExpectPlatform;
-import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.ResourceConditionRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
@@ -13,17 +11,16 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 @ApiStatus.Internal
 public class ConditionalTagEntry implements Tag.Entry {
 
     private final Tag.Entry entry;
-    private final JsonElement conditions;
+    private final JsonObject json;
 
-    public ConditionalTagEntry(Tag.Entry entry, JsonElement conditions) {
+    public ConditionalTagEntry(Tag.Entry entry, JsonObject json) {
         this.entry = entry;
-        this.conditions = conditions;
+        this.json = json;
     }
 
     @Override
@@ -45,7 +42,7 @@ public class ConditionalTagEntry implements Tag.Entry {
                     json.add(entry.getKey(), entry.getValue());
             }
 
-            json.add(ResourceConditionRegistry.getConditionsKey(), this.conditions);
+            json.add(ResourceConditionRegistry.getConditionsKey(), this.json.get(ResourceConditionRegistry.getConditionsKey()));
             jsonArray.add(json);
         }
     }

@@ -29,7 +29,7 @@ public class SimpleJsonResourceReloadListenerMixin {
         if ((Object) this instanceof RecipeManager) // Forge already handles recipes
             return;
 
-        profiler.push("Pollen resource conditions: %s".formatted(this.dataType));
+        profiler.push(String.format("Pollen resource conditions: %s", this.dataType));
 
         Iterator<Map.Entry<ResourceLocation, JsonElement>> it = cir.getReturnValue().entrySet().iterator();
 
