@@ -1,22 +1,19 @@
 package gg.moonflower.pollen.core;
 
-import gg.moonflower.pollen.api.advancement.AdvancementModifierManager;
-import gg.moonflower.pollen.api.client.model.ItemOverrideModifierManager;
 import gg.moonflower.pollen.api.command.PollenSuggestionProviders;
 import gg.moonflower.pollen.api.command.argument.ColorArgumentType;
 import gg.moonflower.pollen.api.command.argument.EnumArgument;
 import gg.moonflower.pollen.api.command.argument.TimeArgumentType;
 import gg.moonflower.pollen.api.crafting.PollenRecipeTypes;
-import gg.moonflower.pollen.api.event.events.client.render.AddRenderLayersEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.api.resource.modifier.ResourceModifierManager;
 import gg.moonflower.pollen.api.sync.SyncedDataManager;
 import gg.moonflower.pollen.core.client.entitlement.EntitlementManager;
 import gg.moonflower.pollen.core.client.loader.CosmeticModelLoader;
 import gg.moonflower.pollen.core.client.loader.CosmeticTextureLoader;
 import gg.moonflower.pollen.core.client.render.DebugPollenFlowerPotRenderer;
 import gg.moonflower.pollen.core.client.render.PollenShaderTypes;
-import gg.moonflower.pollen.core.client.render.layer.PollenCosmeticLayer;
 import gg.moonflower.pollen.core.datagen.PollenLanguageProvider;
 import gg.moonflower.pollen.core.network.PollenMessages;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
@@ -30,8 +27,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 @ApiStatus.Internal
 public class Pollen {
@@ -55,13 +50,13 @@ public class Pollen {
     private static void onClient() {
         VanillaModelMapping.load(); // Loads the class to prevent lag spikes in-game
         SyncedDataManager.initClient();
+        ResourceModifierManager.initClient();
         GeometryModelManager.init();
         GeometryTextureManager.init();
         AnimationManager.init();
         PollenShaderTypes.init();
         GeometryModelManager.addLoader(new CosmeticModelLoader());
         GeometryTextureManager.addProvider(new CosmeticTextureLoader());
-        ItemOverrideModifierManager.init();
         DebugInputs.init();
         EntitlementManager.init();
         if (!Platform.isProduction())
@@ -70,7 +65,7 @@ public class Pollen {
 
     private static void onCommon() {
         SyncedDataManager.init();
-        AdvancementModifierManager.init();
+        ResourceModifierManager.init();
         PollenRecipeTypes.RECIPE_SERIALIZERS.register(PLATFORM);
         PollenRecipeTypes.RECIPES.register(PLATFORM);
     }
