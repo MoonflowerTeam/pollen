@@ -13,16 +13,16 @@ import net.minecraft.tags.Tag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.storage.loot.ConstantIntValue;
 import net.minecraft.world.level.storage.loot.Deserializers;
 import net.minecraft.world.level.storage.loot.LootPool;
-import net.minecraft.world.level.storage.loot.RandomIntGenerator;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.entries.TagEntry;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.functions.SetNbtFunction;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -113,7 +113,7 @@ public class LootModifier extends ResourceModifier<LootTableConstructingEvent.Co
          * @param count The count to set the item to
          * @param items The items to add
          */
-        public Builder addItems(RandomIntGenerator count, ItemLike... items) {
+        public Builder addItems(NumberProvider count, ItemLike... items) {
             LootPool.Builder pool = LootPool.lootPool();
             for (ItemLike item : items)
                 pool.add(LootItem.lootTableItem(item).apply(SetItemCountFunction.setCount(count)));
@@ -130,7 +130,7 @@ public class LootModifier extends ResourceModifier<LootTableConstructingEvent.Co
             for (ItemStack stack : stacks) {
                 LootPoolSingletonContainer.Builder<?> builder = LootItem.lootTableItem(stack.getItem());
                 if (stack.getCount() != 1)
-                    builder.apply(SetItemCountFunction.setCount(ConstantIntValue.exactly(stack.getCount())));
+                    builder.apply(SetItemCountFunction.setCount(ConstantValue.exactly(stack.getCount())));
                 if (stack.hasTag())
                     builder.apply(SetNbtFunction.setTag(stack.getTag().copy()));
                 pool.add(builder);
@@ -153,7 +153,7 @@ public class LootModifier extends ResourceModifier<LootTableConstructingEvent.Co
          * @param tag   The tag to get items from
          * @param count The count to set the items to
          */
-        public Builder addTag(Tag<Item> tag, RandomIntGenerator count) {
+        public Builder addTag(Tag<Item> tag, NumberProvider count) {
             return this.addPool(LootPool.lootPool().add(TagEntry.expandTag(tag).apply(SetItemCountFunction.setCount(count))).build());
         }
 
