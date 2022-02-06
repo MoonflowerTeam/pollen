@@ -4,7 +4,6 @@ import com.google.gson.*;
 import gg.moonflower.pollen.api.resource.modifier.ResourceModifier;
 import gg.moonflower.pollen.api.resource.modifier.ResourceModifierManager;
 import gg.moonflower.pollen.api.resource.modifier.ResourceModifierType;
-import gg.moonflower.pollen.core.mixin.client.ItemOverrideDeserializerAccessor;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverride;
 import net.minecraft.resources.ResourceLocation;
@@ -21,7 +20,7 @@ import java.util.*;
  */
 public class ModelOverrideModifier extends ResourceModifier<BlockModel> {
 
-    private static final Gson GSON = new GsonBuilder().registerTypeAdapter(ItemOverride.class, ItemOverrideDeserializerAccessor.invokeInit()).create();
+    private static final Gson GSON = new GsonBuilder().registerTypeAdapter(ItemOverride.class, new ItemOverride.Deserializer()).create();
 
     private final ItemOverride[] overrides;
 

@@ -49,4 +49,9 @@ public class ConditionalTagEntry implements Tag.Entry {
             jsonArray.add(json);
         }
     }
+
+    @Override
+    public boolean verifyIfPresent(Predicate<ResourceLocation> predicate, Predicate<ResourceLocation> predicate2) {
+        return true;
+    }
 }
