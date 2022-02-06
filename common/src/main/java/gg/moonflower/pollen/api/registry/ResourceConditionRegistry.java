@@ -1,8 +1,9 @@
 package gg.moonflower.pollen.api.registry;
 
+import com.google.gson.JsonObject;
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import gg.moonflower.pollen.api.resource.condition.PollinatedResourceCondition;
 import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.api.resource.condition.PollinatedResourceCondition;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -25,5 +26,15 @@ public final class ResourceConditionRegistry {
     @ExpectPlatform
     public static void register(ResourceLocation name, PollinatedResourceCondition condition) {
         Platform.error();
+    }
+
+    @ExpectPlatform
+    public static boolean test(JsonObject json) {
+        return Platform.error();
+    }
+
+    @ExpectPlatform
+    public static String getConditionsKey() {
+        return Platform.error();
     }
 }

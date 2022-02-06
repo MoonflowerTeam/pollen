@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.api.registry.forge;
 
+import com.google.gson.JsonObject;
 import gg.moonflower.pollen.api.resource.condition.PollinatedResourceCondition;
 import gg.moonflower.pollen.api.resource.condition.forge.*;
 import gg.moonflower.pollen.core.Pollen;
@@ -41,5 +42,13 @@ public class ResourceConditionRegistryImpl {
 
     public static IConditionSerializer<?> get(PollinatedResourceCondition condition) {
         return CONDITIONS.stream().filter(serializer -> serializer instanceof PollinatedRecipeConditionWrapper.Serializer && ((PollinatedRecipeConditionWrapper.Serializer) serializer).getCondition() == condition).findFirst().orElseThrow(() -> new IllegalStateException("Unregistered condition: " + condition));
+    }
+
+    public static boolean test(JsonObject json) {
+        return CraftingHelper.processConditions(json, "conditions");
+    }
+
+    public static String getConditionsKey() {
+        return "conditions";
     }
 }
