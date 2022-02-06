@@ -11,6 +11,7 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 @ApiStatus.Internal
 public class ConditionalTagEntry implements Tag.Entry {
@@ -49,6 +50,6 @@ public class ConditionalTagEntry implements Tag.Entry {
 
     @Override
     public boolean verifyIfPresent(Predicate<ResourceLocation> predicate, Predicate<ResourceLocation> predicate2) {
-        return true;
+        return !ResourceConditionRegistry.test(this.json) || this.entry.verifyIfPresent(predicate, predicate2);
     }
 }
