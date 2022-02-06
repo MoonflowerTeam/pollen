@@ -28,7 +28,7 @@ public class SimpleReloadableResourceManagerMixin {
     @Final
     private List<PreparableReloadListener> listeners;
 
-    @Inject(at = @At("HEAD"), method = "createReload")
+    @Inject(method = "createReload", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;isDebugEnabled()Z", remap = false))
     private void reload(Executor executor, Executor executor2, CompletableFuture<Unit> completableFuture, List<PackResources> list, CallbackInfoReturnable<CompletableFuture<Unit>> info) {
         ResourceRegistryImpl.inject(this.type, this.listeners);
     }
