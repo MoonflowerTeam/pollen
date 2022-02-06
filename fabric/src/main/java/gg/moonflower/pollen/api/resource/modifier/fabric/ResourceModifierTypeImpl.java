@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.modifier.fabric;
+package gg.moonflower.pollen.api.resource.modifier.fabric;
 
 import gg.moonflower.pollen.api.resource.modifier.serializer.DataModifierSerializer;
 import gg.moonflower.pollen.api.resource.modifier.serializer.ModifierSerializer;

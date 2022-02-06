@@ -32,6 +32,6 @@ public class TagBuilderMixin implements TagBuilderExtension {
     @Inject(method = "parseEntry", at = @At("RETURN"), cancellable = true)
     private static void modifyEntry(JsonElement jsonElement, CallbackInfoReturnable<Tag.Entry> cir) {
         if (jsonElement.isJsonObject() && jsonElement.getAsJsonObject().has(ResourceConditionRegistry.getConditionsKey()))
-            cir.setReturnValue(new ConditionalTagEntry(cir.getReturnValue(), jsonElement.getAsJsonObject().get(ResourceConditionRegistry.getConditionsKey())));
+            cir.setReturnValue(new ConditionalTagEntry(cir.getReturnValue(), jsonElement.getAsJsonObject()));
     }
 }
