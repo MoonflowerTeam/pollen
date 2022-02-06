@@ -56,22 +56,6 @@ public class AdvancementModifier extends ResourceModifier<Advancement.Builder> {
         return criteria;
     }
 
-    private static <T> T[] insert(T[] a, T[] b) {
-        T[] expanded = Arrays.copyOf(a, a.length + b.length);
-        System.arraycopy(b, 0, expanded, a.length, b.length);
-        return expanded;
-    }
-
-    private static <T> T[] remove(T[] array, T remove) {
-        for (int i = 0; i < array.length; i++) {
-            if (remove.equals(array[i])) {
-                System.arraycopy(array, i + 1, array, i, array.length - i - 1); // Copy the rest of the array down
-                array = Arrays.copyOf(array, array.length - 1); // Shrink array by 1
-            }
-        }
-        return array;
-    }
-
     /**
      * @return A new advancement modifier builder
      */
@@ -108,7 +92,7 @@ public class AdvancementModifier extends ResourceModifier<Advancement.Builder> {
         if (this.removeRequirements.length > 0) { // Remove first to clear out any unwanted requirements
             for (String remove : this.removeRequirements) { // Loop through all requirements to remove
                 for (int i = 0; i < requirements.length; i++) { // Loop through all requirements
-                    String[] requirement = requirements[i] = remove(requirements[i], remove);
+                    String[] requirement = requirements[i] = JSONTupleParser.remove(requirements[i], remove);
                     if (requirement.length == 0) { // If empty, it's not needed anymore
                         System.arraycopy(requirements, i + 1, requirements, i, requirements.length - i - 1); // Copy the rest of the array down
                         requirements = Arrays.copyOf(requirements, requirements.length - 1); // Shrink array by 1
@@ -125,11 +109,11 @@ public class AdvancementModifier extends ResourceModifier<Advancement.Builder> {
                 String[] requirement = this.injectRequirements[i];
                 if (requirement.length == 0)
                     continue;
-                requirements[i] = insert(requirements[i], requirement);
+                requirements[i] = JSONTupleParser.insert(requirements[i], requirement);
             }
         }
         if (this.addRequirements.length > 0) // Add to the end of the requirements
-            requirements = insert(requirements, this.addRequirements);
+            requirements = JSONTupleParser.insert(requirements, this.addRequirements);
 
         for (String[] requirement : requirements) // Rename requirements with namespaces
             for (int i = 0; i < requirement.length; i++)
@@ -149,15 +133,15 @@ public class AdvancementModifier extends ResourceModifier<Advancement.Builder> {
         AdvancementRewardsAccessor addRewards = (AdvancementRewardsAccessor) this.addRewards;
         if (this.removeLoot.length > 0) // Remove loot
             for (ResourceLocation remove : this.removeLoot)
-                loot = remove(loot, remove);
+                loot = JSONTupleParser.remove(loot, remove);
         if (this.removeRecipes.length > 0) // Remove recipes
             for (ResourceLocation remove : this.removeRecipes)
-                recipes = remove(recipes, remove);
+                recipes = JSONTupleParser.remove(recipes, remove);
 
         if (addRewards.getLoot().length > 0) // Add loot
-            loot = insert(loot, addRewards.getLoot());
+            loot = JSONTupleParser.insert(loot, addRewards.getLoot());
         if (addRewards.getRecipes().length > 0) // Add recipes
-            recipes = insert(recipes, addRewards.getRecipes());
+            recipes = JSONTupleParser.insert(recipes, addRewards.getRecipes());
         experience += addRewards.getExperience(); // Add Experience
 
         accessor.setRewards(new AdvancementRewards(experience, loot, recipes, ((AdvancementRewardsAccessor) rewards).getFunction()));
