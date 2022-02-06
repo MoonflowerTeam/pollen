@@ -25,7 +25,7 @@ public class ConditionalTagEntry implements Tag.Entry {
 
     @Override
     public <T> boolean build(Function<ResourceLocation, Tag<T>> function, Function<ResourceLocation, T> function2, Consumer<T> consumer) {
-        return true; // Add nothing because this entry failed conditions
+        return !ResourceConditionRegistry.test(this.json) || this.entry.build(function, function2, consumer);
     }
 
     @Override
