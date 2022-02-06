@@ -3,15 +3,17 @@ package gg.moonflower.pollen.api.resource.modifier;
 import com.google.common.base.Suppliers;
 import com.google.gson.*;
 import gg.moonflower.pollen.api.event.events.AdvancementConstructingEvent;
+import gg.moonflower.pollen.api.event.events.LootTableConstructingEvent;
 import gg.moonflower.pollen.api.event.events.client.resource.ModelEvents;
-import gg.moonflower.pollen.api.resource.modifier.serializer.DataModifierSerializer;
-import gg.moonflower.pollen.api.resource.modifier.serializer.ResourceModifierSerializer;
-import gg.moonflower.pollen.api.resource.modifier.type.AdvancementModifier;
-import gg.moonflower.pollen.api.resource.modifier.type.ModelOverrideModifier;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
 import gg.moonflower.pollen.api.registry.resource.PollinatedPreparableReloadListener;
 import gg.moonflower.pollen.api.registry.resource.ReloadStartListener;
 import gg.moonflower.pollen.api.registry.resource.ResourceRegistry;
+import gg.moonflower.pollen.api.resource.modifier.serializer.DataModifierSerializer;
+import gg.moonflower.pollen.api.resource.modifier.serializer.ResourceModifierSerializer;
+import gg.moonflower.pollen.api.resource.modifier.type.AdvancementModifier;
+import gg.moonflower.pollen.api.resource.modifier.type.LootModifier;
+import gg.moonflower.pollen.api.resource.modifier.type.ModelOverrideModifier;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.resources.ResourceLocation;
@@ -48,12 +50,19 @@ public final class ResourceModifierManager {
 
     public static final PollinatedRegistry<ResourceModifierType> REGISTRY = PollinatedRegistry.createSimple(ResourceModifierType.class, new ResourceLocation(Pollen.MOD_ID, "resource_modifier"));
     public static final Supplier<ResourceModifierType> ADVANCEMENT = REGISTRY.register("advancement", () -> ResourceModifierType.create(AdvancementModifier.Builder::fromJson));
+    public static final Supplier<ResourceModifierType> LOOT = REGISTRY.register("loot", () -> ResourceModifierType.create(LootModifier.Builder::fromJson));
     public static final Supplier<ResourceModifierType> MODEL_OVERRIDE = REGISTRY.register("model_override", () -> ResourceModifierType.create(ModelOverrideModifier.Builder::fromJson));
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Map<ResourceLocation, ResourceModifier<?>> DATA_MODIFIERS = new HashMap<>();
     private static final Map<ResourceLocation, ResourceModifier<?>> RESOURCE_MODIFIERS = new HashMap<>();
-    private static final Supplier<ClientReloader> CLIENT_RELOADER = Suppliers.memoize(ClientReloader::new);
+
+    private static SidedReloader serverReloader = null;
+    private static final Supplier<SidedReloader> CLIENT_RELOADER = Suppliers.memoize(() -> new SidedReloader("resource", RESOURCE_MODIFIERS, type -> (n, json, inject, priority) -> {
+        if (!(type.getSerializer() instanceof ResourceModifierSerializer))
+            throw new JsonSyntaxException(REGISTRY.getKey(type) + " is not a resource modifier");
+        return ((ResourceModifierSerializer) type.getSerializer()).deserialize(n, json, inject, priority);
+    }));
 
     private ResourceModifierManager() {
     }
@@ -67,6 +76,18 @@ public final class ResourceModifierManager {
                 LOGGER.error("Failed to apply advancement modifier {}: {}", modifier.getId(), e.getMessage());
             }
         }));
+        LootTableConstructingEvent.EVENT.register(context -> {
+            ResourceLocation id = context.getId();
+            if (id == null)
+                return;
+            getDataModifiersFor(LOOT.get(), id).forEachOrdered(modifier -> {
+                try {
+                    modifier.modify(context);
+                } catch (Exception e) {
+                    LOGGER.error("Failed to apply loot modifier {}: {}", modifier.getId(), e.getMessage());
+                }
+            });
+        });
     }
 
     @ApiStatus.Internal
@@ -84,7 +105,16 @@ public final class ResourceModifierManager {
 
     @ApiStatus.Internal
     public static PreparableReloadListener createServerReloader(ServerResources serverResources) {
-        return new ServerReloader(serverResources);
+        return serverReloader = new SidedReloader("data", DATA_MODIFIERS, type -> (n, json, inject, priority) -> {
+            if (!(type.getSerializer() instanceof DataModifierSerializer))
+                throw new JsonSyntaxException(REGISTRY.getKey(type) + " is not a data modifier");
+            return ((DataModifierSerializer) type.getSerializer()).deserialize(n, serverResources, json, inject, priority);
+        });
+    }
+
+    @ApiStatus.Internal
+    public static CompletableFuture<Void> getServerCompleteFuture() {
+        return serverReloader.getCompleteFuture();
     }
 
     @ApiStatus.Internal
@@ -156,69 +186,31 @@ public final class ResourceModifierManager {
         return function.apply(type).deserialize(name, json, inject, priority).build(name);
     }
 
-    private static class ServerReloader extends SimpleJsonResourceReloadListener implements PollinatedPreparableReloadListener {
-
-        private static final Gson GSON = new GsonBuilder().create();
-        private final ServerResources serverResources;
-
-        private ServerReloader(ServerResources serverResources) {
-            super(GSON, "data_modifiers");
-            this.serverResources = serverResources;
-        }
-
-        @Override
-        protected void apply(Map<ResourceLocation, JsonElement> map, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
-            Map<ResourceLocation, ResourceModifier<?>> modifiers = new HashMap<>();
-            map.forEach((name, element) -> {
-                try {
-                    modifiers.put(name, deserialize(name, element, type -> (n, json, inject, priority) -> {
-                        if (!(type.getSerializer() instanceof DataModifierSerializer))
-                            throw new JsonSyntaxException(REGISTRY.getKey(type) + " is not a data modifier");
-                        return ((DataModifierSerializer) type.getSerializer()).deserialize(n, this.serverResources, json, inject, priority);
-                    }));
-                } catch (Exception e) {
-                    LOGGER.error("Parsing error loading custom data modifier {}: {}", name, e.getMessage());
-                }
-            });
-            DATA_MODIFIERS.clear();
-            DATA_MODIFIERS.putAll(modifiers);
-
-            LOGGER.info("Loaded {} data modifiers", DATA_MODIFIERS.size());
-        }
-
-        @Override
-        public ResourceLocation getPollenId() {
-            return new ResourceLocation(Pollen.MOD_ID, "data_modifiers");
-        }
-    }
-
-    private static class ClientReloader implements ReloadStartListener, PollinatedPreparableReloadListener {
+    private static class SidedReloader implements ReloadStartListener, PollinatedPreparableReloadListener {
 
         private static final Gson GSON = new GsonBuilder().create();
 
+        private final String type;
         private final PreparableReloadListener listener;
         private CompletableFuture<Void> completeFuture;
 
-        private ClientReloader() {
+        private SidedReloader(String type, Map<ResourceLocation, ResourceModifier<?>> resourceModifiers, Function<ResourceModifierType, ResourceModifierSerializer> function) {
+            this.type = type;
             this.listener = new SimpleJsonResourceReloadListener(GSON, "resource_modifiers") {
                 @Override
                 protected void apply(Map<ResourceLocation, JsonElement> map, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
                     Map<ResourceLocation, ResourceModifier<?>> modifiers = new HashMap<>();
                     map.forEach((name, element) -> {
                         try {
-                            modifiers.put(name, deserialize(name, element, type -> (n, json, inject, priority) -> {
-                                if (!(type.getSerializer() instanceof ResourceModifierSerializer))
-                                    throw new JsonSyntaxException(REGISTRY.getKey(type) + " is not a resource modifier");
-                                return ((ResourceModifierSerializer) type.getSerializer()).deserialize(n, json, inject, priority);
-                            }));
+                            modifiers.put(name, deserialize(name, element, function));
                         } catch (Exception e) {
-                            LOGGER.error("Parsing error loading custom resource modifier {}: {}", name, e.getMessage());
+                            LOGGER.error("Parsing error loading custom {} modifier {}: {}", type, name, e.getMessage());
                         }
                     });
-                    RESOURCE_MODIFIERS.clear();
-                    RESOURCE_MODIFIERS.putAll(modifiers);
+                    resourceModifiers.clear();
+                    resourceModifiers.putAll(modifiers);
 
-                    LOGGER.info("Loaded {} resource modifiers", RESOURCE_MODIFIERS.size());
+                    LOGGER.info("Loaded {} {} modifiers", modifiers.size(), type);
                 }
             };
         }
@@ -235,7 +227,7 @@ public final class ResourceModifierManager {
 
         @Override
         public ResourceLocation getPollenId() {
-            return new ResourceLocation(Pollen.MOD_ID, "resource_modifiers");
+            return new ResourceLocation(Pollen.MOD_ID, this.type + "_modifiers");
         }
 
         public CompletableFuture<Void> getCompleteFuture() {

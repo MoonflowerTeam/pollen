@@ -22,6 +22,22 @@ public final class JSONTupleParser {
     private JSONTupleParser() {
     }
 
+    public static <T> T[] insert(T[] a, T[] b) {
+        T[] expanded = Arrays.copyOf(a, a.length + b.length);
+        System.arraycopy(b, 0, expanded, a.length, b.length);
+        return expanded;
+    }
+
+    public static <T> T[] remove(T[] array, T remove) {
+        for (int i = 0; i < array.length; i++) {
+            if (remove.equals(array[i])) {
+                System.arraycopy(array, i + 1, array, i, array.length - i - 1); // Copy the rest of the array down
+                array = Arrays.copyOf(array, array.length - 1); // Shrink array by 1
+            }
+        }
+        return array;
+    }
+
     public static <T> T[] getArray(JsonObject json, String name, T[] array, int minSize, Function<String, T> getter) {
         if (!json.has(name))
             return array;
