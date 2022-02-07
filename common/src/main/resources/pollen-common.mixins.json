@@ -30,16 +30,20 @@
     "GrindstoneMenuRepairSlotMixin",
     "GrindstoneMenuResultSlotMixin",
     "LivingEntityMixin",
-    "LootTableAccessor",
-    "LootTableDeserializerMixin",
-    "LootTablesMixin",
     "PotionBrewingMixin",
     "ServerAdvancementManagerMixin",
     "ServerPlayerMixin",
     "ServerResourcesMixin",
     "SimpleReloadableResourceManagerMixin",
     "TagBuilderMixin",
-    "TagsProviderAccessor"
+    "TagsProviderAccessor",
+    "loot.LootPoolAccessor",
+    "loot.LootPoolBuilderAccessor",
+    "loot.LootPoolEntryContainerAccessor",
+    "loot.LootTableAccessor",
+    "loot.LootTableBuilderAccessor",
+    "loot.LootTableDeserializerMixin",
+    "loot.LootTablesMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.core.mixin;
+package gg.moonflower.pollen.core.mixin.loot;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
