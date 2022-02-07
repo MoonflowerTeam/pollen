@@ -97,7 +97,7 @@ public final class ResourceModifierManager {
         ModelEvents.LOAD_BLOCK_MODEL.register((location, model) -> getResourceModifiersFor(MODEL_OVERRIDE.get(), location).forEachOrdered(modifier -> {
             try {
                 modifier.modify(model);
-            } catch (JsonParseException e) {
+            } catch (Exception e) {
                 LOGGER.error("Failed to apply model override modifier {}: {}", modifier.getId(), e.getMessage());
             }
         }));
