@@ -41,10 +41,6 @@ public class LootModifier extends ResourceModifier<LootTableConstructingEvent.Co
     private final int[] removePools;
     private final int[] removeFunctions;
 
-    @Nullable
-    @ApiStatus.Internal
-    public static ResourceLocation loadingId;
-
     public LootModifier(ResourceLocation id, ResourceLocation[] inject, int priority, LootContextParamSet lootContextParamSet, LootPool[] addPools, LootItemFunction[] addFunctions, Map<Integer, List<LootPool>> injectPools, Map<Integer, Set<Integer>> removePoolEntries, Map<Integer, Set<Integer>> removePoolConditions, Map<Integer, Set<Integer>> removePoolFunctions, int[] removePools, int[] removeFunctions) {
         super(id, inject, priority);
         this.lootContextParamSet = lootContextParamSet;

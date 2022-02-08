@@ -78,8 +78,6 @@ public final class ResourceModifierManager {
         }));
         LootTableConstructingEvent.EVENT.register(context -> {
             ResourceLocation id = context.getId();
-            if (id == null)
-                return;
             getDataModifiersFor(LOOT.get(), id).forEachOrdered(modifier -> {
                 try {
                     modifier.modify(context);

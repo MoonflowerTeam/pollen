@@ -4,7 +4,6 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.api.registry.EventRegistry;
-import gg.moonflower.pollen.api.resource.modifier.type.LootModifier;
 import gg.moonflower.pollen.core.mixin.loot.LootPoolAccessor;
 import gg.moonflower.pollen.core.mixin.loot.LootPoolBuilderAccessor;
 import gg.moonflower.pollen.core.mixin.loot.LootTableAccessor;
@@ -17,10 +16,10 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Called for each new loot table deserialized from JSON.
@@ -50,8 +49,7 @@ public interface LootTableConstructingEvent {
     class Context {
 
         private final LootTable source;
-        private final JsonObject json;
-        private final JsonDeserializationContext context;
+        private final ResourceLocation loadingId;
 
         private final LootTable.Builder builder;
         private final Map<Integer, LootPoolModifier> modifyPools;
@@ -59,10 +57,9 @@ public interface LootTableConstructingEvent {
         private final Set<Integer> removeFunctions;
         private boolean changed;
 
-        public Context(LootTable source, JsonObject json, JsonDeserializationContext context) {
+        public Context(ResourceLocation loadingId, LootTable source) {
+            this.loadingId = loadingId;
             this.source = source;
-            this.json = json;
-            this.context = context;
 
             this.builder = LootTable.lootTable().setParamSet(source.getParamSet());
             this.modifyPools = new HashMap<>();
@@ -361,9 +358,8 @@ public interface LootTableConstructingEvent {
         /**
          * @return The id of the loot table currently being modified or <code>null</code> if unknown
          */
-        @Nullable
         public ResourceLocation getId() {
-            return LootModifier.loadingId;
+            return loadingId;
         }
 
         /**
@@ -371,20 +367,6 @@ public interface LootTableConstructingEvent {
          */
         public LootTable getLootTable() {
             return source;
-        }
-
-        /**
-         * @return The raw JSON the loot table came from
-         */
-        public JsonObject getJson() {
-            return json;
-        }
-
-        /**
-         * @return The JSON deserialization context
-         */
-        public JsonDeserializationContext getJsonContext() {
-            return context;
         }
 
         private static class LootPoolModifier {
