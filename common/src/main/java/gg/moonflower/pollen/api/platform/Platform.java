@@ -10,6 +10,7 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tags.TagContainer;
 import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.world.item.crafting.RecipeManager;
 import org.jetbrains.annotations.ApiStatus;
@@ -29,6 +30,10 @@ import java.util.stream.Stream;
 public abstract class Platform {
 
     private static final boolean FORGE = ArchitecturyTarget.getCurrentTarget().equals(PlatformOnly.FORGE);
+    private static final Supplier<TagContainer> CLIENT_TAG_CONTAINER = () -> {
+        ClientPacketListener listener = Minecraft.getInstance().getConnection();
+        return listener != null ? listener.getTags() : null;
+    };
     private static final Supplier<RecipeManager> CLIENT_RECIPE_MANAGER = () -> {
         ClientPacketListener listener = Minecraft.getInstance().getConnection();
         return listener != null ? listener.getRecipeManager() : null;
@@ -98,6 +103,19 @@ public abstract class Platform {
         return Optional.ofNullable(Pollen.getRunningServer());
     }
 
+    /**
+     * @return The tag container for the running server or client
+     */
+    public static Optional<TagContainer> getTags() {
+        MinecraftServer server = Pollen.getRunningServer();
+        if (server != null)
+            return Optional.of(server.getTags());
+        return isClient() ? Optional.ofNullable(CLIENT_TAG_CONTAINER.get()) : Optional.empty();
+    }
+
+    /**
+     * @return The recipe manager for the running server or client
+     */
     public static Optional<RecipeManager> getRecipeManager() {
         MinecraftServer server = Pollen.getRunningServer();
         if (server != null)

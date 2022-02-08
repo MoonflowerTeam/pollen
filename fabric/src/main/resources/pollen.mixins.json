@@ -30,6 +30,7 @@
     "AxeItemMixin",
     "ContainerProviderImplMixin",
     "DedicatedServerMixin",
+    "EntityMixin",
     "ExplosionMixin",
     "LevelMixin",
     "LevelResourceAccessor",
