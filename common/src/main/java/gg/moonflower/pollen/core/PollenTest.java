@@ -40,7 +40,7 @@ public class PollenTest {
     public static final Supplier<FlowingFluid> TEST_FLUID = FLUIDS.register("test", TestFluid.Source::new);
     public static final Supplier<FlowingFluid> FLOWING_TEST_FLUID = FLUIDS.register("flowing_test", TestFluid.Flowing::new);
     public static final Supplier<Block> TEST = BLOCKS.register("test", () -> new PollinatedLiquidBlock(TEST_FLUID.get(), BlockBehaviour.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops()));
-    public static final Supplier<Item> TEST_BUCKET = ITEMS.register("test", () -> new BucketItemBase(TEST_FLUID, true, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).tab(CreativeModeTab.TAB_MISC)));
+    public static final Supplier<Item> TEST_BUCKET = ITEMS.register("test", () -> new BucketItemBase(TEST_FLUID, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).tab(CreativeModeTab.TAB_MISC)));
 
     static void init() {
         ITEMS.register(Pollen.PLATFORM);

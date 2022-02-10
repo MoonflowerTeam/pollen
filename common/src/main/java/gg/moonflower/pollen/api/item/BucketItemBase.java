@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.api.item;
 
+import gg.moonflower.pollen.core.mixin.BucketItemAccessor;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,10 +15,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -44,17 +42,15 @@ import java.util.function.Supplier;
  */
 public class BucketItemBase extends BucketItem {
 
-    private final Supplier<? extends Fluid> fluid;
-    private final boolean addToMisc;
+    protected final Supplier<? extends Fluid> fluid;
 
-    public BucketItemBase(Supplier<? extends Fluid> fluid, boolean addToMisc, Properties builder) {
+    public BucketItemBase(Supplier<? extends Fluid> fluid, Properties builder) {
         super(null, builder);
-        this.addToMisc = addToMisc;
         this.fluid = fluid;
     }
 
-    public BucketItemBase(Fluid fluid, boolean addToMisc, Properties builder) {
-        this(() -> fluid, addToMisc, builder);
+    public BucketItemBase(Fluid fluid, Properties builder) {
+        this(() -> fluid, builder);
     }
 
     @Override
@@ -102,9 +98,9 @@ public class BucketItemBase extends BucketItem {
 
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
-        if (this.allowdedIn(group) || (this.addToMisc && group == CreativeModeTab.TAB_MISC)) {
+        if (this.allowdedIn(group) || group == CreativeModeTab.TAB_MISC) {
             if (items.stream().anyMatch(stack -> stack.getItem() instanceof BucketItem)) {
-                Optional<ItemStack> optional = items.stream().filter(stack -> stack.getItem() instanceof BucketItem && "minecraft".equals(Registry.ITEM.getKey(stack.getItem()).getNamespace())).reduce((a, b) -> b);
+                Optional<ItemStack> optional = items.stream().filter(stack -> stack.getItem() instanceof BucketItem && "minecraft".equals(Registry.ITEM.getKey(stack.getItem()).getNamespace()) && (stack.getItem() == Items.WATER_BUCKET || ((BucketItemAccessor) stack.getItem()).getContent() != Fluids.WATER)).reduce((a, b) -> b);
                 if (optional.isPresent() && items.contains(optional.get())) {
                     items.add(items.indexOf(optional.get()) + 1, new ItemStack(this));
                     return;

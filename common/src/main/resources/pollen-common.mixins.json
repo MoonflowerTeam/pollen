@@ -29,6 +29,7 @@
     "AdvancementBuilderMixin",
     "AdvancementRewardsAccessor",
     "AdvancementRewardsBuilderAccessor",
+    "BucketItemAccessor",
     "EntityMixin",
     "GrindstoneMenuMixin",
     "GrindstoneMenuRepairSlotMixin",
