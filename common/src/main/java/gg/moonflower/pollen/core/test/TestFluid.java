@@ -96,7 +96,7 @@ public abstract class TestFluid extends FlowingFluid implements PollinatedFluid 
 
     @Override
     public Optional<SoundEvent> getEmptySound() {
-        return Optional.of(SoundEvents.BUCKET_EMPTY_FISH);
+        return Optional.of(SoundEvents.BUCKET_EMPTY_LAVA);
     }
 
     @Override

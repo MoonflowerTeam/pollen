@@ -81,13 +81,6 @@ public interface PollinatedFluid {
     }
 
     /**
-     * @return The sound to play when this fluid is picked up
-     */
-    default Optional<SoundEvent> getPickupSound() {
-        return Optional.of(SoundEvents.BUCKET_EMPTY);
-    }
-
-    /**
      * @return The sound to play when this fluid is placed
      */
     default Optional<SoundEvent> getEmptySound() {
