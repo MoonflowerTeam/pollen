@@ -25,3 +25,7 @@ transitive-accessible method net/minecraft/world/entity/ai/village/poi/PoiType r
 
 transitive-accessible method net/minecraft/core/particles/SimpleParticleType <init> (Z)V
 transitive-accessible method net/minecraft/core/particles/ParticleType <init> (ZLnet/minecraft/core/particles/ParticleOptions$Deserializer;)V
+
+transitive-accessible method net/minecraft/world/entity/Entity getSwimSound ()Lnet/minecraft/sounds/SoundEvent;
+transitive-accessible method net/minecraft/world/entity/Entity getSwimSplashSound ()Lnet/minecraft/sounds/SoundEvent;
+transitive-accessible method net/minecraft/world/entity/Entity getSwimHighSpeedSplashSound ()Lnet/minecraft/sounds/SoundEvent;

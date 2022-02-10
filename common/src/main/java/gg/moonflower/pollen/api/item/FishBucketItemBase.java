@@ -2,6 +2,8 @@ package gg.moonflower.pollen.api.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -15,6 +17,8 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.animal.AbstractFish;
 import net.minecraft.world.entity.animal.TropicalFish;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -23,6 +27,7 @@ import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -35,14 +40,28 @@ public class FishBucketItemBase extends BucketItemBase {
 
     private final Supplier<? extends EntityType<?>> entityType;
 
-    public FishBucketItemBase(Supplier<? extends EntityType<?>> entityType, Supplier<? extends Fluid> fluid, boolean addToMisc, Properties builder) {
-        super(fluid, addToMisc, builder);
+    public FishBucketItemBase(Supplier<? extends EntityType<?>> entityType, Supplier<? extends Fluid> fluid, Properties builder) {
+        super(fluid, builder);
         this.entityType = entityType;
     }
 
-    public FishBucketItemBase(EntityType<?> entityType, Fluid fluid, boolean addToMisc, Properties builder) {
-        super(fluid, addToMisc, builder);
+    public FishBucketItemBase(EntityType<?> entityType, Fluid fluid, Properties builder) {
+        super(fluid, builder);
         this.entityType = () -> entityType;
+    }
+
+    @Override
+    public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
+        if (this.allowdedIn(group)) {
+            if (items.stream().anyMatch(stack -> stack.getItem() instanceof BucketItem)) {
+                Optional<ItemStack> optional = items.stream().filter(stack -> stack.getItem() instanceof BucketItem && "minecraft".equals(Registry.ITEM.getKey(stack.getItem()).getNamespace())).reduce((a, b) -> b);
+                if (optional.isPresent() && items.contains(optional.get())) {
+                    items.add(items.indexOf(optional.get()) + 1, new ItemStack(this));
+                    return;
+                }
+            }
+            items.add(new ItemStack(this));
+        }
     }
 
     @Override
