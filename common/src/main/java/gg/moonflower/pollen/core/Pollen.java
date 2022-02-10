@@ -66,7 +66,7 @@ public class Pollen {
         RegisterAtlasSpriteEvent.event(InventoryMenu.BLOCK_ATLAS).register((atlas, registry) -> {
             for (Fluid fluid : Registry.FLUID) {
                 if (!(fluid instanceof PollinatedFluid))
-                    return;
+                    continue;
                 PollinatedFluid pollinatedFluid = (PollinatedFluid) fluid;
                 registry.accept(pollinatedFluid.getStillTextureName());
                 registry.accept(pollinatedFluid.getFlowingTextureName());

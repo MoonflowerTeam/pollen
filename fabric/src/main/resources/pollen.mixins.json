@@ -5,6 +5,7 @@
   "plugin": "gg.moonflower.pollen.core.mixin.fabric.PollenFabricMixinPlugin",
   "minVersion": "0.8",
   "client": [
+    "client.BlockColorsAccessor",
     "client.CameraAccessor",
     "client.ClientHandshakePacketListenerImplMixin",
     "client.ClientLevelMixin",
@@ -23,6 +24,7 @@
     "sodium.ChunkRenderDataMixin",
     "sodium.ChunkRenderManagerMixin",
     "sodium.ChunkRenderRebuildTaskMixin",
+    "sodium.FluidRendererMixin",
     "sodium.LevelRendererSodiumMixin",
     "sodium.SodiumWorldRendererAccessor"
   ],
@@ -32,7 +34,6 @@
     "DedicatedServerMixin",
     "EntityMixin",
     "ExplosionMixin",
-    "LevelMixin",
     "LevelMixin",
     "LevelResourceAccessor",
     "LivingEntityMixin",

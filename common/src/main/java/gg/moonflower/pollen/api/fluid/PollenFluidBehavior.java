@@ -113,8 +113,6 @@ public interface PollenFluidBehavior {
         return SoundEvents.AMBIENT_UNDERWATER_EXIT;
     }
 
-    // TODO ambient sounds
-
     /**
      * Applies the physics of this fluid on the specified entity.
      *

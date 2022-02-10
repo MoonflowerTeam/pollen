@@ -31,8 +31,8 @@ import java.util.Random;
 
 public abstract class TestFluid extends FlowingFluid implements PollinatedFluid {
 
-    private static final ResourceLocation STILL = new ResourceLocation("block/lava");
-    private static final ResourceLocation FLOW = new ResourceLocation("block/lava_flow");
+    private static final ResourceLocation STILL = new ResourceLocation(Pollen.MOD_ID, "block/void");
+    private static final ResourceLocation FLOW = new ResourceLocation(Pollen.MOD_ID, "block/void_flow");
 
     @Override
     public ResourceLocation getStillTextureName() {
@@ -62,14 +62,13 @@ public abstract class TestFluid extends FlowingFluid implements PollinatedFluid 
     @Environment(EnvType.CLIENT)
     @Override
     public void animateTick(Level level, BlockPos pos, FluidState state, Random random) {
-        if (!state.isSource() && !state.getValue(FALLING)) {
-            if (random.nextInt(64) == 0) {
-                level.playLocalSound((double) pos.getX() + 0.5, (double) pos.getY() + 0.5, (double) pos.getZ() + 0.5, SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, random.nextFloat() * 0.25F + 0.75F, random.nextFloat() + 0.5F, false);
-            }
-        } else if (random.nextInt(10) == 0) {
-            level.addParticle(ParticleTypes.UNDERWATER, (double) pos.getX() + random.nextDouble(), (double) pos.getY() + random.nextDouble(), (double) pos.getZ() + random.nextDouble(), 0.0, 0.0, 0.0);
-        }
-
+//        if (!state.isSource() && !state.getValue(FALLING)) {
+//            if (random.nextInt(64) == 0) {
+//                level.playLocalSound((double) pos.getX() + 0.5, (double) pos.getY() + 0.5, (double) pos.getZ() + 0.5, SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, random.nextFloat() * 0.25F + 0.75F, random.nextFloat() + 0.5F, false);
+//            }
+//        } else if (random.nextInt(10) == 0) {
+//            level.addParticle(ParticleTypes.UNDERWATER, (double) pos.getX() + random.nextDouble(), (double) pos.getY() + random.nextDouble(), (double) pos.getZ() + random.nextDouble(), 0.0, 0.0, 0.0);
+//        }
     }
 
     @Nullable

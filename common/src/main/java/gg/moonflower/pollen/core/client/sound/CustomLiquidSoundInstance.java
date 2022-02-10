@@ -7,7 +7,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.level.material.Fluid;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public class CustomLiquidSoundInstance extends AbstractTickableSoundInstance {
 
     private final LocalPlayer player;
@@ -15,7 +17,7 @@ public class CustomLiquidSoundInstance extends AbstractTickableSoundInstance {
     private int fade;
 
     public CustomLiquidSoundInstance(LocalPlayer player, Tag<Fluid> fluid, SoundEvent sound) {
-        super(SoundEvents.AMBIENT_UNDERWATER_LOOP, SoundSource.AMBIENT);
+        super(sound, SoundSource.AMBIENT);
         this.player = player;
         this.fluid = fluid;
         this.looping = true;
