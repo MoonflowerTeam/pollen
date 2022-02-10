@@ -10,6 +10,8 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -19,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Indicates a fluid has custom defined behavior.
@@ -77,6 +80,20 @@ public interface PollinatedFluid {
 
         context.fogDensity(f);
         context.fogMode(GL11.GL_EXP2);
+    }
+
+    /**
+     * @return The sound to play when this fluid is picked up
+     */
+    default Optional<SoundEvent> getPickupSound() {
+        return Optional.of(SoundEvents.BUCKET_EMPTY);
+    }
+
+    /**
+     * @return The sound to play when this fluid is placed
+     */
+    default Optional<SoundEvent> getEmptySound() {
+        return Optional.of(SoundEvents.BUCKET_EMPTY);
     }
 
     /**

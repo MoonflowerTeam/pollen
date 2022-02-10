@@ -12,9 +12,9 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -33,6 +33,7 @@ import net.minecraft.world.level.material.FluidState;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
+import java.util.Optional;
 import java.util.Random;
 
 public abstract class TestFluid extends FlowingFluid implements PollinatedFluid {
@@ -90,11 +91,14 @@ public abstract class TestFluid extends FlowingFluid implements PollinatedFluid 
 //        }
     }
 
-    @Nullable
-    @Environment(EnvType.CLIENT)
     @Override
-    public ParticleOptions getDripParticle() {
-        return ParticleTypes.DRIPPING_WATER;
+    public Optional<SoundEvent> getPickupSound() {
+        return Optional.of(SoundEvents.BUCKET_FILL_LAVA);
+    }
+
+    @Override
+    public Optional<SoundEvent> getEmptySound() {
+        return Optional.of(SoundEvents.BUCKET_EMPTY_FISH);
     }
 
     @Override

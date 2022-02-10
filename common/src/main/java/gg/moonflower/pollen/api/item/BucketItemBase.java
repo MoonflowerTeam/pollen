@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.api.item;
 
+import gg.moonflower.pollen.api.fluid.PollinatedFluid;
 import gg.moonflower.pollen.core.mixin.BucketItemAccessor;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -8,6 +9,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -153,11 +155,28 @@ public class BucketItemBase extends BucketItem {
     }
 
     protected void playFillSound(@Nullable Player player, LevelAccessor level, BlockPos pos) {
-        level.playSound(player, pos, this.getContent().is(FluidTags.LAVA) ? SoundEvents.BUCKET_FILL_LAVA : SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+        Fluid content = this.getContent();
+        SoundEvent soundEvent;
+        if (content instanceof PollinatedFluid) {
+            soundEvent = ((PollinatedFluid) content).getPickupSound().orElse(null);
+        } else {
+            soundEvent = content.is(FluidTags.LAVA) ? SoundEvents.BUCKET_FILL_LAVA : SoundEvents.BUCKET_FILL;
+        }
+
+        level.playSound(player, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
     protected void playEmptySound(@Nullable Player player, LevelAccessor level, BlockPos pos) {
-        level.playSound(player, pos, this.getContent().is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+        Fluid content = this.getContent();
+        SoundEvent soundEvent;
+        if (content instanceof PollinatedFluid) {
+            soundEvent = ((PollinatedFluid) content).getEmptySound().orElse(null);
+        } else {
+            soundEvent = content.is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;
+        }
+
+        if (soundEvent != null)
+            level.playSound(player, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
     public Fluid getContent() {
