@@ -46,7 +46,7 @@ public class FogRendererMixin {
     private static void setupColor(Camera camera, float partialTicks, ClientLevel level, int renderDistanceChunks, float bossColorModifier, CallbackInfo ci) {
         capturePartialTicks = partialTicks;
 
-        Fluid fluid = camera.getFluidInCamera().getType();
+        Fluid fluid = level.getFluidState(camera.getBlockPosition()).getType();
         if (fluid instanceof PollinatedFluid) {
             biomeChangedTime = -1;
 
@@ -84,7 +84,7 @@ public class FogRendererMixin {
 
     @Inject(method = "setupFog", at = @At("HEAD"), cancellable = true)
     private static void setupFog(Camera camera, FogRenderer.FogMode fogType, float farPlaneDistance, boolean nearFog, CallbackInfo ci) {
-        Fluid fluid = camera.getFluidInCamera().getType();
+        Fluid fluid = camera.getEntity().level.getFluidState(camera.getBlockPosition()).getType();
         if (fluid instanceof PollinatedFluid) {
             ((PollinatedFluid) fluid).applyFog(Minecraft.getInstance().gameRenderer, camera, CONTEXT, farPlaneDistance, capturePartialTicks);
             ci.cancel();

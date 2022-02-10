@@ -23,13 +23,12 @@ public class CustomLiquidSoundInstance extends AbstractTickableSoundInstance {
         this.looping = true;
         this.delay = 0;
         this.volume = 1.0F;
-        this.priority = true;
         this.relative = true;
     }
 
     @Override
     public void tick() {
-        if (!this.player.removed && this.fade >= 0) {
+        if (!this.player.isRemoved() && this.fade >= 0) {
             if (this.player.getFluidHeight(this.fluid) > 0.0) {
                 ++this.fade;
             } else {

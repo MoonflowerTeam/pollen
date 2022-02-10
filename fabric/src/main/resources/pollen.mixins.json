@@ -28,7 +28,6 @@
     "sodium.ChunkRenderDataMixin",
     "sodium.ChunkRenderManagerMixin",
     "sodium.ChunkRenderRebuildTaskMixin",
-    "sodium.FluidRendererMixin",
     "sodium.LevelRendererSodiumMixin",
     "sodium.SodiumWorldRendererAccessor"
   ],

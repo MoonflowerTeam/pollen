@@ -108,28 +108,9 @@ public final class FogEvents {
     public interface FogContext {
 
         /**
-         * Enabled fog rendering.
-         */
-        void enableFog();
-
-        /**
          * Disables fog rendering.
          */
         void disableFog();
-
-        /**
-         * Sets the mode for fog rendering.
-         *
-         * @param glMode The mode of rendering. One of:<br><table><tr><td>{@link org.lwjgl.opengl.GL11#GL_EXP EXP}</td><td>{@link org.lwjgl.opengl.GL11#GL_EXP2 EXP2}</td><td>{@link org.lwjgl.opengl.GL11#GL_LINEAR LINEAR}</td><td>{@link org.lwjgl.opengl.GL14#GL_FRAGMENT_DEPTH FRAGMENT_DEPTH}</td><td>{@link org.lwjgl.opengl.GL15#GL_FOG_COORD FOG_COORD}</td></tr></table>
-         */
-        void fogMode(int glMode);
-
-        /**
-         * Sets the fog density value.
-         *
-         * @param density The new value
-         */
-        void fogDensity(float density);
 
         /**
          * Sets the near plane for fog to start at from the camera.
@@ -144,10 +125,5 @@ public final class FogEvents {
          * @param farPlane The new value
          */
         void fogEnd(float farPlane);
-
-        /**
-         * Sets up normal fog distance.
-         */
-        void setupNvFogDistance();
     }
 }

@@ -59,8 +59,6 @@ public abstract class TestFluid extends FlowingFluid implements PollinatedFluid 
     public void applyFog(GameRenderer renderer, Camera camera, FogEvents.FogContext context, float distance, float partialTicks) {
         context.fogEnd(1.0F);
         context.fogStart(0.2F);
-        context.fogMode(GL11.GL_LINEAR);
-        RenderSystem.setupNvFogDistance();
     }
 
     @Override
@@ -104,7 +102,7 @@ public abstract class TestFluid extends FlowingFluid implements PollinatedFluid 
 
     @Override
     protected void beforeDestroyingBlock(LevelAccessor level, BlockPos pos, BlockState state) {
-        BlockEntity blockEntity = state.getBlock().isEntityBlock() ? level.getBlockEntity(pos) : null;
+        BlockEntity blockEntity = state.hasBlockEntity() ? level.getBlockEntity(pos) : null;
         Block.dropResources(state, level, pos, blockEntity);
     }
 

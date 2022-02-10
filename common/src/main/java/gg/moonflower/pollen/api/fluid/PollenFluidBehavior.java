@@ -192,7 +192,7 @@ public interface PollenFluidBehavior {
         Entity vehicle = entity.isVehicle() && entity.getControllingPassenger() != null ? entity.getControllingPassenger() : entity;
         float f = vehicle == entity ? 0.2F : 0.9F;
         Vec3 vec3 = vehicle.getDeltaMovement();
-        float g = Mth.sqrt(vec3.x * vec3.x * 0.2F + vec3.y * vec3.y + vec3.z * vec3.z * 0.2F) * f;
+        float g = Mth.sqrt((float) (vec3.x * vec3.x * 0.2F + vec3.y * vec3.y + vec3.z * vec3.z * 0.2F)) * f;
         if (g > 1.0F) {
             g = 1.0F;
         }

@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.core.mixin.client;
+package gg.moonflower.pollen.core.mixin.forge.client;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import gg.moonflower.pollen.api.fluid.PollinatedFluid;

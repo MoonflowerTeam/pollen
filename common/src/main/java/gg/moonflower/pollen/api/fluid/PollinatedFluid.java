@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.api.fluid;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import gg.moonflower.pollen.api.event.events.client.render.FogEvents;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -65,18 +66,18 @@ public interface PollinatedFluid {
     default void applyFog(GameRenderer renderer, Camera camera, FogEvents.FogContext context, float distance, float partialTicks) {
         Entity entity = camera.getEntity();
 
-        float f = 0.05F;
+        float g = 192.0F;
         if (entity instanceof LocalPlayer) {
-            LocalPlayer localPlayer = (LocalPlayer) entity;
-            f -= localPlayer.getWaterVision() * localPlayer.getWaterVision() * 0.03F;
+            LocalPlayer localPlayer = (LocalPlayer)entity;
+            g *= Math.max(0.25F, localPlayer.getWaterVision());
             Biome biome = localPlayer.level.getBiome(localPlayer.blockPosition());
             if (biome.getBiomeCategory() == Biome.BiomeCategory.SWAMP) {
-                f += 0.005F;
+                g *= 0.85F;
             }
         }
 
-        context.fogDensity(f);
-        context.fogMode(GL11.GL_EXP2);
+        RenderSystem.setShaderFogStart(-8.0F);
+        RenderSystem.setShaderFogEnd(g * 0.5F);
     }
 
     /**

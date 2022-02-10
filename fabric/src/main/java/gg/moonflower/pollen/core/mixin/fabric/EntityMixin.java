@@ -2,6 +2,7 @@ package gg.moonflower.pollen.core.mixin.fabric;
 
 import gg.moonflower.pollen.api.platform.Platform;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagCollection;
@@ -44,9 +45,9 @@ public abstract class EntityMixin {
         FluidState fluidState = this.level.getFluidState(blockPos);
 
         Platform.getTags().ifPresent(tags -> {
-            TagCollection<Fluid> fluidTags = tags.getFluids();
+            TagCollection<Fluid> fluidTags = tags.getOrEmpty(Registry.FLUID_REGISTRY);
             for (Tag<Fluid> tag : fluidTags.getAllTags().values()) {
-                if ((!(tag instanceof Tag.Named) || !FluidTags.getWrappers().contains(tag)) && fluidState.is(tag)) {
+                if ((!(tag instanceof Tag.Named) || !FluidTags.getStaticTags().contains(tag)) && fluidState.is(tag)) {
                     double e = (float) blockPos.getY() + fluidState.getHeight(this.level, blockPos);
                     if (e > d) {
                         this.fluidOnEyes = tag;
@@ -60,7 +61,7 @@ public abstract class EntityMixin {
 
     @Inject(method = "isEyeInFluid", at = @At("HEAD"), cancellable = true)
     public void isEyeInFluid(Tag<Fluid> tag, CallbackInfoReturnable<Boolean> cir) {
-        if (this.fluidOnEyes == null || tag instanceof Tag.Named && FluidTags.getWrappers().contains(tag))
+        if (this.fluidOnEyes == null || tag instanceof Tag.Named && FluidTags.getStaticTags().contains(tag))
             return;
         cir.setReturnValue(tag.getValues().size() == this.fluidOnEyes.getValues().size() && tag.getValues().containsAll(this.fluidOnEyes.getValues()));
     }

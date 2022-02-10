@@ -5,12 +5,17 @@ import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvents;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
+import gg.moonflower.pollen.api.fluid.PollinatedFluid;
+import gg.moonflower.pollen.api.fluid.fabric.CustomFluidRenderHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.InvalidateRenderStateCallback;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
@@ -33,5 +38,11 @@ public class PollenFabricClient implements ClientModInitializer {
 
         ClientEntityEvents.ENTITY_LOAD.register(EntityEvents.JOIN.invoker()::onJoin);
         ClientEntityEvents.ENTITY_UNLOAD.register(EntityEvents.LEAVE.invoker()::onLeave);
+
+        for (Fluid fluid : Registry.FLUID) {
+            if (!(fluid instanceof PollinatedFluid))
+                continue;
+            FluidRenderHandlerRegistry.INSTANCE.register(fluid, new CustomFluidRenderHandler((PollinatedFluid) fluid));
+        }
     }
 }

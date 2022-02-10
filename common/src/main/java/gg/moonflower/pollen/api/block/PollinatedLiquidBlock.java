@@ -19,13 +19,13 @@ public class PollinatedLiquidBlock extends LiquidBlock {
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
         if (this.shouldSpreadLiquid(level, pos))
-            level.getLiquidTicks().scheduleTick(pos, state.getFluidState().getType(), this.fluid.getTickDelay(level));
+            level.scheduleTick(pos, state.getFluidState().getType(), this.fluid.getTickDelay(level));
     }
 
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
         if (this.shouldSpreadLiquid(level, pos))
-            level.getLiquidTicks().scheduleTick(pos, state.getFluidState().getType(), this.fluid.getTickDelay(level));
+            level.scheduleTick(pos, state.getFluidState().getType(), this.fluid.getTickDelay(level));
     }
 
     private boolean shouldSpreadLiquid(Level level, BlockPos pos) {

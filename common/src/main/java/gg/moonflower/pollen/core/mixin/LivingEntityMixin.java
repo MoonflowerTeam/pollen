@@ -75,7 +75,7 @@ public abstract class LivingEntityMixin extends Entity {
             if (!behavior.shouldEntityDrown(livingEntity))
                 return;
 
-            if (!this.canBreatheUnderwater() && !MobEffectUtil.hasWaterBreathing(livingEntity) && !((Object) this instanceof Player && ((Player) livingEntity).abilities.invulnerable)) {
+            if (!this.canBreatheUnderwater() && !MobEffectUtil.hasWaterBreathing(livingEntity) && !((Object) this instanceof Player && ((Player) livingEntity).getAbilities().invulnerable)) {
                 this.setAirSupply(this.captureAirSupply);
                 this.setAirSupply(this.decreaseAirSupply(this.getAirSupply()));
                 if (this.getAirSupply() == -20) {
