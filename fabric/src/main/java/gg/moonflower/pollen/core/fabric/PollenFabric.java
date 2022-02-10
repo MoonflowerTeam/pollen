@@ -10,6 +10,7 @@ import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
 import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.api.resource.condition.fabric.PollinatedResourceConditionImpl;
 import gg.moonflower.pollen.common.trades.VillagerTradeManager;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.command.ConfigCommand;
@@ -55,6 +56,7 @@ public class PollenFabric implements ModInitializer {
     @Override
     public void onInitialize() {
         Pollen.init();
+        PollinatedResourceConditionImpl.init();
 
         ConfigTracker.INSTANCE.loadConfigs(PollinatedConfigType.COMMON, FabricLoader.getInstance().getConfigDir());
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
