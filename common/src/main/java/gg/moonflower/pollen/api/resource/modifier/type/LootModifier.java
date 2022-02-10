@@ -14,7 +14,6 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -40,10 +39,6 @@ public class LootModifier extends ResourceModifier<LootTableConstructingEvent.Co
     private final Map<Integer, Set<Integer>> removePoolFunctions;
     private final int[] removePools;
     private final int[] removeFunctions;
-
-    @Nullable
-    @ApiStatus.Internal
-    public static ResourceLocation loadingId;
 
     public LootModifier(ResourceLocation id, ResourceLocation[] inject, int priority, LootContextParamSet lootContextParamSet, LootPool[] addPools, LootItemFunction[] addFunctions, Map<Integer, List<LootPool>> injectPools, Map<Integer, Set<Integer>> removePoolEntries, Map<Integer, Set<Integer>> removePoolConditions, Map<Integer, Set<Integer>> removePoolFunctions, int[] removePools, int[] removeFunctions) {
         super(id, inject, priority);
@@ -258,6 +253,8 @@ public class LootModifier extends ResourceModifier<LootTableConstructingEvent.Co
                     JsonObject injectPoolJson = GsonHelper.convertToJsonObject(injectPoolsJson.get(i), "injectPools[" + i + "]");
                     int index = GsonHelper.getAsInt(injectPoolJson, "index");
                     injectPoolJson.addProperty("rolls", 0);
+                    if (!injectPoolJson.has("entries"))
+                        injectPoolJson.add("entries", new JsonArray());
                     injectPools.computeIfAbsent(index, __ -> new ArrayList<>()).add(GSON.fromJson(injectPoolJson, LootPool.class));
                 }
             }

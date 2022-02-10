@@ -17,6 +17,7 @@
     "FMLHandshakeHandlerMixin",
     "FolderRepositorySourceAccessor",
     "ForgeInternalHandlerMixin",
+    "LootTablesMixin",
     "PackRepositoryAccessor",
     "PackRepositoryMixin",
     "SimpleReloadableResourceManagerMixin"

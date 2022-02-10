@@ -33,6 +33,7 @@
     "EntityMixin",
     "ExplosionMixin",
     "LevelMixin",
+    "LevelMixin",
     "LevelResourceAccessor",
     "LivingEntityMixin",
     "MinecraftServerMixin",
