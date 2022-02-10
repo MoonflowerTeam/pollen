@@ -22,6 +22,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -140,6 +141,12 @@ public abstract class TestFluid extends FlowingFluid implements PollinatedFluid 
     @Override
     protected float getExplosionResistance() {
         return 100.0F;
+    }
+
+    @Nullable
+    @Override
+    public BlockState getInteractionState(Level level, FluidState fluidState, BlockPos pos, BlockPos neighborPos) {
+        return level.getBlockState(neighborPos).is(Blocks.DIAMOND_BLOCK) ? Blocks.EMERALD_BLOCK.defaultBlockState() : null;
     }
 
     public static class Flowing extends TestFluid {

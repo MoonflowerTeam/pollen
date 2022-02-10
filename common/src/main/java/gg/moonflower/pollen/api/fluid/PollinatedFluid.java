@@ -99,4 +99,15 @@ public interface PollinatedFluid {
     default BlockState getInteractionState(Level level, FluidState fluidState, BlockPos pos, BlockPos neighborPos) {
         return null;
     }
+
+    /**
+     * Plays an effect for when this fluid interacts with another block. By default, it does the water/lava hiss.
+     *
+     * @param level      The level the fluid is in
+     * @param fluidState The state of the fluid
+     * @param pos        The position of the fluid
+     */
+    default void playInteractionEffect(Level level, FluidState fluidState, BlockPos pos) {
+        level.levelEvent(1501, pos, 0);
+    }
 }
