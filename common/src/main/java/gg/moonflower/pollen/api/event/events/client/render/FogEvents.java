@@ -46,11 +46,10 @@ public final class FogEvents {
          *
          * @param renderer     The renderer instance
          * @param camera       The camera instance
-         * @param context      The setter for fog values
          * @param distance     The expected far-plane of the fog
          * @param partialTicks The percentage from last tick to this tick
          */
-        void setupFogDensity(GameRenderer renderer, Camera camera, FogContext context, float distance, float partialTicks);
+        void setupFogDensity(GameRenderer renderer, Camera camera, float distance, float partialTicks);
 
     }
 
@@ -97,33 +96,5 @@ public final class FogEvents {
          * @param blue The new blue value
          */
         void setBlue(float blue);
-    }
-
-    /**
-     * Context for customizing fog during the density phase.
-     *
-     * @author Ocelot
-     * @since 1.0.0
-     */
-    public interface FogContext {
-
-        /**
-         * Disables fog rendering.
-         */
-        void disableFog();
-
-        /**
-         * Sets the near plane for fog to start at from the camera.
-         *
-         * @param nearPlane The new value
-         */
-        void fogStart(float nearPlane);
-
-        /**
-         * Sets the far plane for fog to end at from the camera.
-         *
-         * @param farPlane The new value
-         */
-        void fogEnd(float farPlane);
     }
 }

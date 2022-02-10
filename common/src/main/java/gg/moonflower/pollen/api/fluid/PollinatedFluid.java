@@ -1,7 +1,6 @@
 package gg.moonflower.pollen.api.fluid;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import gg.moonflower.pollen.api.event.events.client.render.FogEvents;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Camera;
@@ -17,7 +16,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL11;
 
 import java.util.Arrays;
 
@@ -58,17 +56,16 @@ public interface PollinatedFluid {
      *
      * @param renderer     The renderer instance
      * @param camera       The camera instance
-     * @param context      The setter for fog values
      * @param distance     The expected far-plane of the fog
      * @param partialTicks The percentage from last tick to this tick
      */
     @Environment(EnvType.CLIENT)
-    default void applyFog(GameRenderer renderer, Camera camera, FogEvents.FogContext context, float distance, float partialTicks) {
+    default void applyFog(GameRenderer renderer, Camera camera, float distance, float partialTicks) {
         Entity entity = camera.getEntity();
 
         float g = 192.0F;
         if (entity instanceof LocalPlayer) {
-            LocalPlayer localPlayer = (LocalPlayer)entity;
+            LocalPlayer localPlayer = (LocalPlayer) entity;
             g *= Math.max(0.25F, localPlayer.getWaterVision());
             Biome biome = localPlayer.level.getBiome(localPlayer.blockPosition());
             if (biome.getBiomeCategory() == Biome.BiomeCategory.SWAMP) {

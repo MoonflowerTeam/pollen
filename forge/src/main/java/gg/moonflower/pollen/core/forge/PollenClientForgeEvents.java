@@ -5,7 +5,6 @@ import gg.moonflower.pollen.api.event.events.client.render.FogEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvents;
 import gg.moonflower.pollen.core.Pollen;
-import gg.moonflower.pollen.core.client.FogContextImpl;
 import gg.moonflower.pollen.core.extensions.MouseHandlerExtension;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
@@ -21,8 +20,6 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Internal
 @Mod.EventBusSubscriber(modid = Pollen.MOD_ID, value = Dist.CLIENT)
 public class PollenClientForgeEvents {
-
-    private static final FogEvents.FogContext FOG_CONTEXT = new FogContextImpl();
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.TickEvent.ClientTickEvent event) {
@@ -83,12 +80,12 @@ public class PollenClientForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(EntityViewRenderEvent.FogColors event) {
-        FogEvents.FOG_COLOR.invoker().setupFogColors(event.getRenderer(), event.getInfo(), new FogColorContextImpl(event), (float) event.getRenderPartialTicks());
+        FogEvents.FOG_COLOR.invoker().setupFogColors(event.getRenderer(), event.getCamera(), new FogColorContextImpl(event), (float) event.getPartialTicks());
     }
 
     @SubscribeEvent
     public static void onEvent(EntityViewRenderEvent.RenderFogEvent event) {
-        FogEvents.FOG_DENSITY.invoker().setupFogDensity(event.getRenderer(), event.getInfo(), FOG_CONTEXT, event.getFarPlaneDistance(), (float) event.getRenderPartialTicks());
+        FogEvents.FOG_DENSITY.invoker().setupFogDensity(event.getRenderer(), event.getCamera(), event.getFarPlaneDistance(), (float) event.getPartialTicks());
     }
 
     private static class FogColorContextImpl implements FogEvents.ColorContext {

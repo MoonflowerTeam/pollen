@@ -56,9 +56,9 @@ public abstract class TestFluid extends FlowingFluid implements PollinatedFluid 
     }
 
     @Override
-    public void applyFog(GameRenderer renderer, Camera camera, FogEvents.FogContext context, float distance, float partialTicks) {
-        context.fogEnd(1.0F);
-        context.fogStart(0.2F);
+    public void applyFog(GameRenderer renderer, Camera camera, float distance, float partialTicks) {
+        RenderSystem.setShaderFogEnd(1.0F);
+        RenderSystem.setShaderFogStart(0.2F);
     }
 
     @Override

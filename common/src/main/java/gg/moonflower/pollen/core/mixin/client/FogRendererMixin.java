@@ -2,7 +2,6 @@ package gg.moonflower.pollen.core.mixin.client;
 
 import gg.moonflower.pollen.api.event.events.client.render.FogEvents;
 import gg.moonflower.pollen.api.fluid.PollinatedFluid;
-import gg.moonflower.pollen.core.client.FogContextImpl;
 import net.minecraft.Util;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -33,8 +32,6 @@ public class FogRendererMixin {
 
     @Shadow
     private static long biomeChangedTime;
-    @Unique
-    private static final FogEvents.FogContext CONTEXT = new FogContextImpl();
     @Unique
     private static float capturePartialTicks;
     @Unique
@@ -86,7 +83,7 @@ public class FogRendererMixin {
     private static void setupFog(Camera camera, FogRenderer.FogMode fogType, float farPlaneDistance, boolean nearFog, CallbackInfo ci) {
         Fluid fluid = camera.getEntity().level.getFluidState(camera.getBlockPosition()).getType();
         if (fluid instanceof PollinatedFluid) {
-            ((PollinatedFluid) fluid).applyFog(Minecraft.getInstance().gameRenderer, camera, CONTEXT, farPlaneDistance, capturePartialTicks);
+            ((PollinatedFluid) fluid).applyFog(Minecraft.getInstance().gameRenderer, camera, farPlaneDistance, capturePartialTicks);
             ci.cancel();
         }
     }
