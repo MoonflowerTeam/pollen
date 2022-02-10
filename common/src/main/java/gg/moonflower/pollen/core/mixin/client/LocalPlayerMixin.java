@@ -5,6 +5,7 @@ import gg.moonflower.pollen.api.fluid.PollenFluidBehavior;
 import gg.moonflower.pollen.api.registry.FluidBehaviorRegistry;
 import gg.moonflower.pollen.core.client.sound.CustomLiquidSoundInstance;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
@@ -19,6 +20,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.HashSet;
@@ -31,11 +33,31 @@ public abstract class LocalPlayerMixin extends Player {
     @Shadow
     @Final
     protected Minecraft minecraft;
+    @Shadow
+    public Input input;
+
+    @Shadow
+    public abstract void setSprinting(boolean sprinting);
+
     @Unique
     private final Set<Tag<Fluid>> wasInFluids = new HashSet<>();
 
     private LocalPlayerMixin(Level level, BlockPos blockPos, float f, GameProfile gameProfile) {
         super(level, blockPos, f, gameProfile);
+    }
+
+    @Inject(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isFallFlying()Z", shift = At.Shift.BEFORE))
+    public void updateCustomFluidDescent(CallbackInfo ci) {
+        if (this.isInWater() || !this.input.shiftKeyDown || !this.isAffectedByFluids())
+            return;
+        if (FluidBehaviorRegistry.getFluids().stream().filter(tag -> this.fluidHeight.getDouble(tag) > 0.0).anyMatch(tag -> Objects.requireNonNull(FluidBehaviorRegistry.get(tag)).canDescend(this)))
+            this.goDownInWater();
+    }
+
+    @Inject(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;setSprinting(Z)V", ordinal = 1, shift = At.Shift.AFTER))
+    public void updateCustomFluidSprint(CallbackInfo ci) {
+        if (this.isSprinting() && FluidBehaviorRegistry.getFluids().stream().filter(tag -> this.fluidHeight.getDouble(tag) > 0.0).anyMatch(tag -> !Objects.requireNonNull(FluidBehaviorRegistry.get(tag)).canSprint(this)))
+            this.setSprinting(false);
     }
 
     @Inject(method = "updateIsUnderwater", at = @At("TAIL"))

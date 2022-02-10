@@ -33,17 +33,20 @@ public final class FluidBehaviorRegistry {
     }
 
     @ApiStatus.Internal
-    public static void doFluidPushing(Tag<Fluid> tag, Entity entity) {
-        if (!(entity.getVehicle() instanceof Boat)) {
-            PollenFluidBehavior behavior = FluidBehaviorRegistry.get(tag);
-            if (behavior == null)
-                return;
-            if (entity.updateFluidHeightAndDoFluidPushing(tag, behavior.getMotionScale(entity))) {
-                if (behavior.canExtinguishFire(entity))
-                    entity.clearFire();
-                if (behavior.negatesFallDamage(entity))
-                    entity.fallDistance = 0;
-            }
+    public static boolean doFluidPushing(Tag<Fluid> tag, Entity entity) {
+        if (entity.getVehicle() instanceof Boat)
+            return false;
+
+        PollenFluidBehavior behavior = FluidBehaviorRegistry.get(tag);
+        if (behavior == null)
+            return false;
+        if (entity.updateFluidHeightAndDoFluidPushing(tag, behavior.getMotionScale(entity))) {
+            if (behavior.canExtinguishFire(entity))
+                entity.clearFire();
+            if (behavior.negatesFallDamage(entity))
+                entity.fallDistance = 0;
+            return true;
         }
+        return false;
     }
 }

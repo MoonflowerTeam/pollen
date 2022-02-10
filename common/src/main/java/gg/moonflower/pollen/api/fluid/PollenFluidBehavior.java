@@ -4,6 +4,7 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,12 +15,39 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Random;
+
 /**
  * Hooks for specifying exactly how a fluid should interact with entities.
  *
  * @author Ocelot
+ * @since 1.0.0
  */
 public interface PollenFluidBehavior {
+
+    /**
+     * @param player The player trying to descend
+     * @return Whether that player can descend by holding sneak in this fluid
+     */
+    default boolean canDescend(Player player) {
+        return true;
+    }
+
+    /**
+     * @param entity The entity trying to ascend
+     * @return Whether that entity can ascend by holding jump in this fluid
+     */
+    default boolean canAscend(LivingEntity entity) {
+        return true;
+    }
+
+    /**
+     * @param player The player trying to sprint
+     * @return Whether that player can sprint in this fluid
+     */
+    default boolean canSprint(Player player) {
+        return true;
+    }
 
     /**
      * @param entity The entity to check
@@ -39,15 +67,16 @@ public interface PollenFluidBehavior {
     }
 
     /**
+     * @param entity The entity drowning
      * @return The particle to use while drowning or <code>null</code> to remove particles
      */
     @Nullable
-    default ParticleOptions getDrowningParticles() {
+    default ParticleOptions getDrowningParticles(LivingEntity entity) {
         return ParticleTypes.BUBBLE;
     }
 
     /**
-     * @param entity The entity to check
+     * @param entity The entity drowning
      * @return The amount of damage to deal to the specified entity while drowning in this fluid
      */
     default float getDrowningDamage(LivingEntity entity) {
@@ -82,8 +111,8 @@ public interface PollenFluidBehavior {
      * @param entity The entity to check
      * @return The amount of speed to move the entity at while in this fluid
      */
-    default float getSlowDown(LivingEntity entity) {
-        return entity.isSprinting() ? 0.9F : 0.8F;
+    default double getSlowDown(LivingEntity entity) {
+        return entity.isSprinting() ? 0.9 : 0.8;
     }
 
     /**
@@ -123,7 +152,7 @@ public interface PollenFluidBehavior {
      */
     default void applyPhysics(LivingEntity entity, Vec3 travelVector, double fallSpeed, boolean falling) {
         double e = entity.getY();
-        float f = this.getSlowDown(entity);
+        double f = this.getSlowDown(entity);
         float g = 0.02F;
         float h = (float) EnchantmentHelper.getDepthStrider(entity);
         if (h > 3.0F)
@@ -149,8 +178,43 @@ public interface PollenFluidBehavior {
         entity.setDeltaMovement(vec3.multiply(f, 0.8F, f));
         Vec3 vec32 = entity.getFluidFallingAdjustedMovement(fallSpeed, falling, entity.getDeltaMovement());
         entity.setDeltaMovement(vec32);
-        if (entity.horizontalCollision && entity.isFree(vec32.x, vec32.y + 0.6F - entity.getY() + e, vec32.z)) {
+        if (entity.horizontalCollision && entity.isFree(vec32.x, vec32.y + 0.6F - entity.getY() + e, vec32.z))
             entity.setDeltaMovement(vec32.x, 0.3F, vec32.z);
+    }
+
+    /**
+     * Applies the liquid splash effect. The default implementation mimics water.
+     *
+     * @param entity The entity splashing
+     * @param random The random instance for effects
+     */
+    default void doSplashEffect(Entity entity, Random random) {
+        Entity vehicle = entity.isVehicle() && entity.getControllingPassenger() != null ? entity.getControllingPassenger() : entity;
+        float f = vehicle == entity ? 0.2F : 0.9F;
+        Vec3 vec3 = vehicle.getDeltaMovement();
+        float g = Mth.sqrt(vec3.x * vec3.x * 0.2F + vec3.y * vec3.y + vec3.z * vec3.z * 0.2F) * f;
+        if (g > 1.0F) {
+            g = 1.0F;
+        }
+
+        if (g < 0.25) {
+            entity.playSound(entity.getSwimSplashSound(), g, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.4F);
+        } else {
+            entity.playSound(entity.getSwimHighSpeedSplashSound(), g, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.4F);
+        }
+
+        float h = Mth.floor(entity.getY());
+
+        for (int i = 0; i < 1.0F + entity.getBbWidth() * 20.0F; ++i) {
+            double d = (random.nextDouble() * 2.0 - 1.0) * entity.getBbWidth();
+            double e = (random.nextDouble() * 2.0 - 1.0) * entity.getBbWidth();
+            entity.level.addParticle(ParticleTypes.BUBBLE, entity.getX() + d, h + 1.0F, entity.getZ() + e, vec3.x, vec3.y - random.nextDouble() * 0.2F, vec3.z);
+        }
+
+        for (int i = 0; i < 1.0F + entity.getBbWidth() * 20.0F; ++i) {
+            double d = (random.nextDouble() * 2.0 - 1.0) * entity.getBbWidth();
+            double e = (random.nextDouble() * 2.0 - 1.0) * entity.getBbWidth();
+            entity.level.addParticle(ParticleTypes.SPLASH, entity.getX() + d, h + 1.0F, entity.getZ() + e, vec3.x, vec3.y, vec3.z);
         }
     }
 }

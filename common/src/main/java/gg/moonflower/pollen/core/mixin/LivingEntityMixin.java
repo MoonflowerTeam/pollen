@@ -82,7 +82,7 @@ public abstract class LivingEntityMixin extends Entity {
                     this.setAirSupply(0);
                     Vec3 vec3 = this.getDeltaMovement();
 
-                    ParticleOptions particle = behavior.getDrowningParticles();
+                    ParticleOptions particle = behavior.getDrowningParticles(livingEntity);
                     if (particle != null) {
                         for (int i = 0; i < 8; ++i) {
                             double f = this.random.nextDouble() - this.random.nextDouble();
@@ -119,7 +119,7 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(method = "jumpInLiquid", at = @At("HEAD"), cancellable = true)
     public void jumpInLiquid(Tag<Fluid> fluidTag, CallbackInfo ci) {
         if (!this.isInWater() && fluidTag == FluidTags.WATER) {
-            FluidBehaviorRegistry.getFluids().stream().filter(tag -> this.getFluidHeight(tag) > 0.0).findFirst().ifPresent(this::jumpInLiquid);
+            FluidBehaviorRegistry.getFluids().stream().filter(tag -> Objects.requireNonNull(FluidBehaviorRegistry.get(tag)).canAscend((LivingEntity)(Object)this) && this.getFluidHeight(tag) > 0.0).findFirst().ifPresent(this::jumpInLiquid);
             ci.cancel();
         }
     }

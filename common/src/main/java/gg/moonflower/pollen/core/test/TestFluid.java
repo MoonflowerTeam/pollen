@@ -1,22 +1,26 @@
 package gg.moonflower.pollen.core.test;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import gg.moonflower.pollen.api.event.events.client.render.FogEvents;
 import gg.moonflower.pollen.api.fluid.PollinatedFluid;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.PollenTest;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.Camera;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -26,6 +30,7 @@ import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.opengl.GL11;
 
 import java.util.Random;
 
@@ -42,6 +47,19 @@ public abstract class TestFluid extends FlowingFluid implements PollinatedFluid 
     @Override
     public ResourceLocation getFlowingTextureName() {
         return FLOW;
+    }
+
+    @Override
+    public int getFogColor(Camera camera, ClientLevel level, Biome biome, float partialTicks) {
+        return 0x0E0E10;
+    }
+
+    @Override
+    public void applyFog(GameRenderer renderer, Camera camera, FogEvents.FogContext context, float distance, float partialTicks) {
+        context.fogEnd(1.0F);
+        context.fogStart(0.2F);
+        context.fogMode(GL11.GL_LINEAR);
+        RenderSystem.setupNvFogDistance();
     }
 
     @Override
@@ -110,8 +128,8 @@ public abstract class TestFluid extends FlowingFluid implements PollinatedFluid 
     }
 
     @Override
-    public int getTickDelay(LevelReader levelReader) {
-        return 5;
+    public int getTickDelay(LevelReader level) {
+        return 40;
     }
 
     @Override

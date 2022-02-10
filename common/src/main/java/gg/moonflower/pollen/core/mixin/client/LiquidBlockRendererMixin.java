@@ -44,6 +44,7 @@ public class LiquidBlockRendererMixin {
     @Inject(method = "setupSprites", at = @At("TAIL"))
     public void setupSprites(CallbackInfo ci) {
         this.customFluidSprites.clear();
+        this.fluidStateCache.clear();
         for (Fluid fluid : Registry.FLUID) {
             if (!(fluid instanceof PollinatedFluid))
                 continue;

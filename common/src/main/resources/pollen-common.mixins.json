@@ -11,6 +11,7 @@
     "client.ClientPacketListenerMixin",
     "client.CompiledChunkMixin",
     "client.EntityRenderDispatcherAccessor",
+    "client.FogRendererMixin",
     "client.ItemOverrideDeserializerAccessor",
     "client.ItemRendererMixin",
     "client.LevelRendererMixin",
