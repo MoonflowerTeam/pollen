@@ -20,8 +20,7 @@
   "environment": "*",
   "mixins": [
     "${id}-common.mixins.json",
-    "${id}.mixins.json",
-    "fabric-resource-conditions-api-v1.mixins.json"
+    "${id}.mixins.json"
   ],
   "accessWidener": "${id}.accesswidener",
   "entrypoints": {
