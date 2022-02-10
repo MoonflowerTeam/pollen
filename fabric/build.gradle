@@ -84,7 +84,7 @@ dependencies {
     include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cardinal_components_version}"
     // Needed for making sure render changes apply
     modCompileOnly "curse.maven:sodium-394468:3605309"
-    modCompileOnly "curse.maven:irisshaders-455508:3605379"
+    modCompileOnly "curse.maven:irisshaders-455508:3612857"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
