@@ -14,7 +14,6 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -254,6 +253,8 @@ public class LootModifier extends ResourceModifier<LootTableConstructingEvent.Co
                     JsonObject injectPoolJson = GsonHelper.convertToJsonObject(injectPoolsJson.get(i), "injectPools[" + i + "]");
                     int index = GsonHelper.getAsInt(injectPoolJson, "index");
                     injectPoolJson.addProperty("rolls", 0);
+                    if (!injectPoolJson.has("entries"))
+                        injectPoolJson.add("entries", new JsonArray());
                     injectPools.computeIfAbsent(index, __ -> new ArrayList<>()).add(GSON.fromJson(injectPoolJson, LootPool.class));
                 }
             }
