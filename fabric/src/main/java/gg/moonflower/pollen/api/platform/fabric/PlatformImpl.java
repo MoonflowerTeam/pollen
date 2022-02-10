@@ -15,14 +15,14 @@ import java.util.stream.Stream;
 @ApiStatus.Internal
 public class PlatformImpl {
 
-    private static final Supplier<BlockableEventLoop<?>> CLIENT_EXECUTOR = Minecraft::getInstance;
+    private static final Supplier<Supplier<BlockableEventLoop<?>>> CLIENT_EXECUTOR = () -> Minecraft::getInstance;
 
     public static boolean isProduction() {
         return !FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
     public static BlockableEventLoop<?> getGameExecutor() {
-        return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ? CLIENT_EXECUTOR.get() : Platform.getRunningServer().orElseThrow(IllegalStateException::new);
+        return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ? CLIENT_EXECUTOR.get().get() : Platform.getRunningServer().orElseThrow(IllegalStateException::new);
     }
 
     public static boolean isModLoaded(String modId) {
