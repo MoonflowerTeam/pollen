@@ -39,7 +39,6 @@
     "loot.LootPoolEntryContainerAccessor",
     "loot.LootTableAccessor",
     "loot.LootTableBuilderAccessor",
-    "loot.LootTableDeserializerMixin",
     "loot.LootTablesMixin"
   ],
   "injectors": {

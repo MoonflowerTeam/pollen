@@ -18,6 +18,7 @@
     "FolderRepositorySourceAccessor",
     "ForgeInternalHandlerMixin",
     "HandshakeHandlerMixin",
+    "LootTablesMixin",
     "PackRepositoryAccessor",
     "PackRepositoryMixin",
     "SimpleReloadableResourceManagerMixin"
