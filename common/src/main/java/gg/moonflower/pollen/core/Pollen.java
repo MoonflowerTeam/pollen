@@ -9,6 +9,7 @@ import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.event.events.registry.client.RegisterAtlasSpriteEvent;
 import gg.moonflower.pollen.api.fluid.PollinatedFluid;
 import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.api.registry.ResourceConditionRegistry;
 import gg.moonflower.pollen.api.resource.modifier.ResourceModifierManager;
 import gg.moonflower.pollen.api.sync.SyncedDataManager;
 import gg.moonflower.pollen.core.client.entitlement.EntitlementManager;
@@ -17,6 +18,7 @@ import gg.moonflower.pollen.core.client.loader.CosmeticTextureLoader;
 import gg.moonflower.pollen.core.client.render.PollenShaderTypes;
 import gg.moonflower.pollen.core.datagen.PollenLanguageProvider;
 import gg.moonflower.pollen.core.network.PollenMessages;
+import gg.moonflower.pollen.core.resource.condition.ConfigResourceCondition;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.VanillaModelMapping;
@@ -65,9 +67,8 @@ public class Pollen {
         EntitlementManager.init();
         RegisterAtlasSpriteEvent.event(InventoryMenu.BLOCK_ATLAS).register((atlas, registry) -> {
             for (Fluid fluid : Registry.FLUID) {
-                if (!(fluid instanceof PollinatedFluid))
+                if (!(fluid instanceof PollinatedFluid pollinatedFluid))
                     continue;
-                PollinatedFluid pollinatedFluid = (PollinatedFluid) fluid;
                 registry.accept(pollinatedFluid.getStillTextureName());
                 registry.accept(pollinatedFluid.getFlowingTextureName());
             }
@@ -79,6 +80,7 @@ public class Pollen {
     private static void onCommon() {
         SyncedDataManager.init();
         ResourceModifierManager.init();
+        ResourceConditionRegistry.register(ConfigResourceCondition.NAME, new ConfigResourceCondition());
         PollenRecipeTypes.RECIPE_SERIALIZERS.register(PLATFORM);
         PollenRecipeTypes.RECIPES.register(PLATFORM);
         if (!Platform.isProduction())

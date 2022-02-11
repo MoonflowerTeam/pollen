@@ -6,6 +6,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 @ApiStatus.Internal
@@ -15,5 +16,9 @@ public class ConfigManagerImpl {
         Pair<T, FabricConfigSpec> pair = new PollinatedConfigBuilderImpl().configure(consumer);
         ConfigTracker.INSTANCE.trackConfig(new PollinatedModConfigImpl(type, pair.getRight(), FabricLoader.getInstance().getModContainer(modId).orElseThrow(() -> new IllegalStateException("Unknown mod: " + modId)), fileName));
         return pair.getLeft();
+    }
+
+    public static Optional<PollinatedModConfigImpl> get(String modId, PollinatedConfigType type) {
+        return ConfigTracker.INSTANCE.getConfig(modId, type);
     }
 }
