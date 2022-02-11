@@ -1,6 +1,9 @@
 package gg.moonflower.pollen.core;
 
 import gg.moonflower.pollen.api.block.PollinatedLiquidBlock;
+import gg.moonflower.pollen.api.config.ConfigManager;
+import gg.moonflower.pollen.api.config.PollinatedConfigBuilder;
+import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.item.BucketItemBase;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.FluidBehaviorRegistry;
@@ -12,6 +15,7 @@ import gg.moonflower.pollen.core.client.render.DebugPollenFlowerPotRenderer;
 import gg.moonflower.pollen.core.test.TestFluid;
 import gg.moonflower.pollen.core.test.TestPollenFluidBehavior;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
@@ -26,6 +30,8 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Material;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal
@@ -35,6 +41,7 @@ public class PollenTest {
     private static final PollinatedBlockRegistry BLOCKS = PollinatedRegistry.createBlock(ITEMS);
     private static final PollinatedFluidRegistry FLUIDS = PollinatedRegistry.createFluid(Pollen.MOD_ID);
 
+    public static final TestConfig CONFIG = ConfigManager.register(Pollen.MOD_ID, PollinatedConfigType.COMMON, TestConfig::new);
     public static final Tag<Fluid> TEST_TAG = TagRegistry.bindFluid(new ResourceLocation(Pollen.MOD_ID, "test"));
 
     public static final Supplier<FlowingFluid> TEST_FLUID = FLUIDS.register("test", TestFluid.Source::new);
@@ -61,5 +68,15 @@ public class PollenTest {
     }
 
     static void onCommonPost(Platform.ModSetupContext context) {
+    }
+
+    public static class TestConfig {
+
+        private TestConfig(PollinatedConfigBuilder builder) {
+            builder.define("testBoolean", true);
+            builder.defineInRange("testNumber", 4, 0, 8);
+            builder.defineEnum("testTime", TimeUnit.SECONDS, TimeUnit.values());
+            builder.defineInList("testInList", Direction.NORTH, Arrays.asList(Direction.values()));
+        }
     }
 }

@@ -4,6 +4,7 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.platform.Platform;
 
 import java.util.Locale;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -39,6 +40,18 @@ public class ConfigManager {
      */
     @ExpectPlatform
     public static <T> T register(String modId, PollinatedConfigType type, String fileName, Function<PollinatedConfigBuilder, T> consumer) {
+        return Platform.error();
+    }
+
+    /**
+     * Retrieves a mod config by the specified mod id and type.
+     *
+     * @param modId The id of the mod to get config for
+     * @param type  The type of config to get
+     * @return The config retrieved or nothing if not registered
+     */
+    @ExpectPlatform
+    public static Optional<PollinatedModConfig> get(String modId, PollinatedConfigType type) {
         return Platform.error();
     }
 }

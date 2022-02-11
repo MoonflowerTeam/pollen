@@ -3,7 +3,9 @@ package gg.moonflower.pollen.api.resource.condition;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import gg.moonflower.pollen.api.config.PollinatedModConfig;
 import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.core.resource.condition.ConfigResourceCondition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.item.Item;
@@ -166,5 +168,15 @@ public interface PollinatedResourceCondition {
     @ExpectPlatform
     static PollinatedResourceConditionProvider anyModsLoaded(String... modIds) {
         return Platform.error();
+    }
+
+    /**
+     * Checks to see if any the specified mods are loaded.
+     *
+     * @param modIds The IDs of the mods to check
+     * @return A condition checking if any mod is loaded
+     */
+    static <T> PollinatedResourceConditionProvider config(T config, String... modIds) {
+        return new ConfigResourceCondition.Provider();
     }
 }

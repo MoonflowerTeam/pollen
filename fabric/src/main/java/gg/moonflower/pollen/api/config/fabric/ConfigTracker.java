@@ -105,4 +105,8 @@ public class ConfigTracker {
     public String getConfigFileName(String modId, PollinatedConfigType type) {
         return Optional.ofNullable(this.configsByMod.getOrDefault(modId, Collections.emptyMap()).getOrDefault(type, null)).map(PollinatedModConfigImpl::getFullPath).map(Object::toString).orElse(null);
     }
+
+    public Optional<PollinatedModConfigImpl> getConfig(String modId, PollinatedConfigType type) {
+        return Optional.ofNullable(this.configsByMod.getOrDefault(modId, Collections.emptyMap()).getOrDefault(type, null));
+    }
 }
