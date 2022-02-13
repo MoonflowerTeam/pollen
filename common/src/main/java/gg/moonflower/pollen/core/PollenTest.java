@@ -41,20 +41,14 @@ public class PollenTest {
     private static final PollinatedBlockRegistry BLOCKS = PollinatedRegistry.createBlock(ITEMS);
     private static final PollinatedFluidRegistry FLUIDS = PollinatedRegistry.createFluid(Pollen.MOD_ID);
 
-    public static final TestConfig CONFIG = ConfigManager.register(Pollen.MOD_ID, PollinatedConfigType.COMMON, TestConfig::new);
     public static final Tag<Fluid> TEST_TAG = TagRegistry.bindFluid(new ResourceLocation(Pollen.MOD_ID, "test"));
 
     public static final Supplier<FlowingFluid> TEST_FLUID = FLUIDS.register("test", TestFluid.Source::new);
     public static final Supplier<FlowingFluid> FLOWING_TEST_FLUID = FLUIDS.register("flowing_test", TestFluid.Flowing::new);
-    public static final Supplier<Block> TEST = BLOCKS.register("test", () -> new PollinatedLiquidBlock(TEST_FLUID.get(), BlockBehaviour.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops()));
+    public static final Supplier<Block> TEST = BLOCKS.register("test", () -> new PollinatedLiquidBlock(TEST_FLUID, BlockBehaviour.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops()));
     public static final Supplier<Item> TEST_BUCKET = ITEMS.register("test", () -> new BucketItemBase(TEST_FLUID, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).tab(CreativeModeTab.TAB_MISC)));
 
     static void init() {
-        ITEMS.register(Pollen.PLATFORM);
-        BLOCKS.register(Pollen.PLATFORM);
-        FLUIDS.register(Pollen.PLATFORM);
-
-        FluidBehaviorRegistry.register(TEST_TAG, new TestPollenFluidBehavior());
     }
 
     static void onClient() {
@@ -62,21 +56,16 @@ public class PollenTest {
     }
 
     static void onCommon() {
+        ITEMS.register(Pollen.PLATFORM);
+        BLOCKS.register(Pollen.PLATFORM);
+        FLUIDS.register(Pollen.PLATFORM);
+
+        FluidBehaviorRegistry.register(TEST_TAG, new TestPollenFluidBehavior());
     }
 
     static void onClientPost(Platform.ModSetupContext context) {
     }
 
     static void onCommonPost(Platform.ModSetupContext context) {
-    }
-
-    public static class TestConfig {
-
-        private TestConfig(PollinatedConfigBuilder builder) {
-            builder.define("testBoolean", true);
-            builder.defineInRange("testNumber", 4, 0, 8);
-            builder.defineEnum("testTime", TimeUnit.SECONDS, TimeUnit.values());
-            builder.defineInList("testInList", Direction.NORTH, Arrays.asList(Direction.values()));
-        }
     }
 }

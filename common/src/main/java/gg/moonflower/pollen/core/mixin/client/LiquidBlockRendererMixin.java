@@ -50,7 +50,7 @@ public class LiquidBlockRendererMixin {
                 continue;
             PollinatedFluid pollinatedFluid = (PollinatedFluid) fluid;
             Function<ResourceLocation, TextureAtlasSprite> atlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
-            this.customFluidSprites.put(fluid, new TextureAtlasSprite[]{atlas.apply(pollinatedFluid.getStillTextureName()), atlas.apply(pollinatedFluid.getFlowingTextureName())});
+            this.customFluidSprites.put(fluid, new TextureAtlasSprite[]{atlas.apply(pollinatedFluid.getStillTextureName()), atlas.apply(pollinatedFluid.getFlowingTextureName()), pollinatedFluid.getOverlayTextureName() != null ? atlas.apply(pollinatedFluid.getOverlayTextureName()) : null});
         }
     }
 

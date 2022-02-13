@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.core.mixin.loot;
+package gg.moonflower.pollen.core.mixin.fabric.loot;
 
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -12,10 +12,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface LootTableAccessor {
 
     @Accessor
-    LootItemFunction[] getFunctions();
-
-    @Invoker("<init>")
-    static LootTable init(LootContextParamSet lootContextParamSet, LootPool[] lootPools, LootItemFunction[] lootItemFunctions) {
-        throw new AssertionError();
-    }
+    LootPool[] getPools();
 }
