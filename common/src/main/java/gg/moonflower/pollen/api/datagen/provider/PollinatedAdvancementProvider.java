@@ -2,6 +2,8 @@ package gg.moonflower.pollen.api.datagen.provider;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import gg.moonflower.pollen.api.resource.condition.PollinatedResourceConditionProvider;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
@@ -12,15 +14,14 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
  * @author Ocelot
  * @since 1.0.0
  */
-public abstract class PollinatedAdvancementProvider implements DataProvider {
+public abstract class PollinatedAdvancementProvider extends ConditionalDataProvider implements DataProvider {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -47,8 +48,12 @@ public abstract class PollinatedAdvancementProvider implements DataProvider {
                 throw new IllegalStateException("Duplicate advancement " + advancement.getId());
 
             Path path = createPath(folder, advancement);
+
+            JsonObject json = advancement.deconstruct().serializeToJson();
+            this.injectConditions(advancement.getId(), json);
+
             try {
-                DataProvider.save(GSON, cache, advancement.deconstruct().serializeToJson(), path);
+                DataProvider.save(GSON, cache, json, path);
             } catch (IOException e) {
                 LOGGER.error("Couldn't save advancement {}", path, e);
             }

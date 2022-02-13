@@ -56,7 +56,7 @@ public class PollinatedResourceConditionImpl {
     }
 
     public static PollinatedResourceConditionProvider and(PollinatedResourceConditionProvider... values) {
-        return wrap(DefaultResourceConditions.and(Arrays.stream(values).map(ConditionWrapper::new).toArray(ConditionJsonProvider[]::new)));
+        return wrap(DefaultResourceConditions.and(Arrays.stream(values).map(PollinatedResourceConditionImpl::wrap).toArray(ConditionJsonProvider[]::new)));
     }
 
     public static PollinatedResourceConditionProvider FALSE() {
@@ -68,11 +68,11 @@ public class PollinatedResourceConditionImpl {
     }
 
     public static PollinatedResourceConditionProvider not(PollinatedResourceConditionProvider value) {
-        return wrap(DefaultResourceConditions.not(new ConditionWrapper(value)));
+        return wrap(DefaultResourceConditions.not(wrap(value)));
     }
 
     public static PollinatedResourceConditionProvider or(PollinatedResourceConditionProvider... values) {
-        return wrap(DefaultResourceConditions.or(Arrays.stream(values).map(ConditionWrapper::new).toArray(ConditionJsonProvider[]::new)));
+        return wrap(DefaultResourceConditions.or(Arrays.stream(values).map(PollinatedResourceConditionImpl::wrap).toArray(ConditionJsonProvider[]::new)));
     }
 
     public static PollinatedResourceConditionProvider itemExists(ResourceLocation name) {
@@ -110,8 +110,12 @@ public class PollinatedResourceConditionImpl {
         return wrap(DefaultResourceConditions.anyModLoaded(modIds));
     }
 
-    private static PollinatedResourceConditionProvider wrap(ConditionJsonProvider condition) {
-        return new ResourceConditionProviderWrapper(condition);
+    public static PollinatedResourceConditionProvider wrap(ConditionJsonProvider condition) {
+        return new PollinatedResourceConditionWrapper(condition);
+    }
+
+    public static ConditionJsonProvider wrap(PollinatedResourceConditionProvider condition) {
+        return new ConditionJsonWrapper(condition);
     }
 
     private static ConditionJsonProvider registryKeyExistsProvider(ResourceLocation id, String jsonKey, ResourceLocation key) {
@@ -132,11 +136,11 @@ public class PollinatedResourceConditionImpl {
         return registry.containsKey(new ResourceLocation(GsonHelper.getAsString(object, jsonKey)));
     }
 
-    private static class ConditionWrapper implements ConditionJsonProvider {
+    private static class ConditionJsonWrapper implements ConditionJsonProvider {
 
         private final PollinatedResourceConditionProvider provider;
 
-        private ConditionWrapper(PollinatedResourceConditionProvider provider) {
+        private ConditionJsonWrapper(PollinatedResourceConditionProvider provider) {
             this.provider = provider;
         }
 
@@ -151,11 +155,11 @@ public class PollinatedResourceConditionImpl {
         }
     }
 
-    private static class ResourceConditionProviderWrapper implements PollinatedResourceConditionProvider {
+    private static class PollinatedResourceConditionWrapper implements PollinatedResourceConditionProvider {
 
         private final ConditionJsonProvider condition;
 
-        public ResourceConditionProviderWrapper(ConditionJsonProvider condition) {
+        public PollinatedResourceConditionWrapper(ConditionJsonProvider condition) {
             this.condition = condition;
         }
 

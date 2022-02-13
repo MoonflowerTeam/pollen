@@ -2,14 +2,13 @@ package gg.moonflower.pollen.core.resource.condition;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.google.gson.*;
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.config.ConfigManager;
 import gg.moonflower.pollen.api.config.PollinatedConfigBuilder;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.config.PollinatedModConfig;
-import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.resource.condition.PollinatedResourceCondition;
 import gg.moonflower.pollen.api.resource.condition.PollinatedResourceConditionProvider;
+import gg.moonflower.pollen.api.util.NumberCompareMode;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -18,15 +17,11 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiPredicate;
 
 @ApiStatus.Internal
 public class ConfigResourceCondition implements PollinatedResourceCondition {
 
     public static final ResourceLocation NAME = new ResourceLocation(Pollen.MOD_ID, "config");
-
-    private static final ConfigEntry<Object> DEFAULT = new SimpleEntry();
-    private static final ConfigEntry<Number> NUMBER = new NumberEntry();
 
     @Override
     public boolean test(JsonObject json) throws JsonParseException {
@@ -50,8 +45,8 @@ public class ConfigResourceCondition implements PollinatedResourceCondition {
 
     private static boolean testEntry(Object value, JsonObject json, JsonElement jsonValue) {
         if (value instanceof Number)
-            return NUMBER.test((Number) value, json, jsonValue);
-        return DEFAULT.test(value, json, jsonValue);
+            return testNumber((Number) value, json, jsonValue);
+        return testSimple(value, jsonValue);
     }
 
     private static PollinatedConfigType byName(String name) {
@@ -61,11 +56,45 @@ public class ConfigResourceCondition implements PollinatedResourceCondition {
         throw new JsonSyntaxException("Unknown config type: " + name);
     }
 
-    public static class Provider implements PollinatedResourceConditionProvider {
+    private static boolean testSimple(Object entry, JsonElement value) {
+        return String.valueOf(entry).equals(toString(value));
+    }
+
+    private static String toString(JsonElement json) {
+        if (json == null || json.isJsonNull())
+            return "null";
+        if (json.isJsonPrimitive())
+            return json.getAsString();
+        throw new JsonSyntaxException("Unsupported generic config type: " + GsonHelper.getType(json));
+    }
+
+    private static boolean testNumber(Number entry, JsonObject json, JsonElement value) {
+        if (!value.isJsonPrimitive() || !value.getAsJsonPrimitive().isNumber())
+            throw new JsonSyntaxException("Expected Number, got " + GsonHelper.getType(value));
+        JsonPrimitive primitiveValue = value.getAsJsonPrimitive();
+        NumberCompareMode compareMode = json.has("mode") ? NumberCompareMode.byName(GsonHelper.getAsString(json, "mode")) : NumberCompareMode.EQUAL;
+        return compareMode.test(entry, primitiveValue.getAsNumber());
+    }
+
+    public static class SimpleProvider implements PollinatedResourceConditionProvider {
+
+        private final String modId;
+        private final PollinatedConfigType type;
+        private final String key;
+        private final String value;
+
+        public SimpleProvider(String modId, PollinatedConfigType type, String key, Object value) {
+            this.modId = modId;
+            this.type = type;
+            this.key = key;
+            this.value = String.valueOf(value);
+        }
 
         @Override
         public void write(JsonObject json) {
-
+            json.addProperty("config", this.modId + ":" + this.type.name().toLowerCase(Locale.ROOT));
+            json.addProperty("name", this.key);
+            json.addProperty("value", this.value);
         }
 
         @Override
@@ -74,60 +103,20 @@ public class ConfigResourceCondition implements PollinatedResourceCondition {
         }
     }
 
-    @FunctionalInterface
-    private interface ConfigEntry<T> {
+    public static class NumberProvider extends SimpleProvider {
 
-        boolean test(T entry, JsonObject json, JsonElement value);
-    }
+        private final NumberCompareMode mode;
 
-    private static class SimpleEntry implements ConfigEntry<Object> {
+        public NumberProvider(String modId, PollinatedConfigType type, String key, Number value, NumberCompareMode mode) {
+            super(modId, type, key, value);
+            this.mode = mode;
+        }
 
         @Override
-        public boolean test(Object entry, JsonObject json, JsonElement value) {
-            return String.valueOf(entry).equals(toString(value));
-        }
-
-        private static String toString(JsonElement json) {
-            if (json == null || json.isJsonNull())
-                return "null";
-            if (json.isJsonPrimitive())
-                return json.getAsString();
-            throw new JsonSyntaxException("Unsupported generic config type: " + GsonHelper.getType(json));
-        }
-    }
-
-    private static class NumberEntry implements ConfigEntry<Number> {
-
-        @Override
-        public boolean test(Number entry, JsonObject json, JsonElement value) {
-            if (!value.isJsonPrimitive() || !value.getAsJsonPrimitive().isNumber())
-                throw new JsonSyntaxException("Expected Number, got " + GsonHelper.getType(value));
-            JsonPrimitive primitiveValue = value.getAsJsonPrimitive();
-            CompareMode compareMode = json.has("mode") ? CompareMode.byName(GsonHelper.getAsString(json, "mode")) : CompareMode.EQUAL;
-            return compareMode.comparator.test(entry, primitiveValue.getAsNumber());
-        }
-
-        enum CompareMode {
-            GREATER_THAN(">", (entry, primitiveValue) -> entry.doubleValue() > primitiveValue.doubleValue()),
-            LESS_THAN("<", (entry, primitiveValue) -> entry.doubleValue() < primitiveValue.doubleValue()),
-            GREATER_THAN_OR_EQUAL(">=", (entry, primitiveValue) -> entry.doubleValue() >= primitiveValue.doubleValue()),
-            LESS_THAN_OR_EQUAL("<=", (entry, primitiveValue) -> entry.doubleValue() <= primitiveValue.doubleValue()),
-            EQUAL("=", (entry, primitiveValue) -> entry.doubleValue() == primitiveValue.doubleValue());
-
-            private final String symbol;
-            private final BiPredicate<Number, Number> comparator;
-
-            CompareMode(String symbol, BiPredicate<Number, Number> comparator) {
-                this.symbol = symbol;
-                this.comparator = comparator;
-            }
-
-            private static CompareMode byName(String name) {
-                for (CompareMode mode : values())
-                    if (mode.name().toLowerCase(Locale.ROOT).equals(name) || mode.symbol.equals(name))
-                        return mode;
-                throw new JsonSyntaxException("Unknown compare mode: " + name);
-            }
+        public void write(JsonObject json) {
+            super.write(json);
+            if (this.mode != NumberCompareMode.EQUAL)
+                json.addProperty("mode", this.mode.getSymbol());
         }
     }
 }

@@ -1,5 +1,8 @@
 package gg.moonflower.pollen.api.datagen.provider.tags;
 
+import com.google.gson.JsonObject;
+import gg.moonflower.pollen.api.resource.condition.ConditionalTagEntry;
+import gg.moonflower.pollen.api.resource.condition.PollinatedResourceConditionProvider;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import gg.moonflower.pollen.core.extensions.TagBuilderExtension;
 import gg.moonflower.pollen.core.mixin.TagsProviderAccessor;
@@ -45,11 +48,13 @@ public abstract class PollinatedTagsProvider<T> extends TagsProvider<T> {
     public static class PollinatedTagAppender<T> extends TagsProvider.TagAppender<T> {
 
         private final Tag.Builder builder;
+        private final Registry<T> registry;
         private final String source;
 
         protected PollinatedTagAppender(Tag.Builder builder, Registry<T> registry, String source) {
             super(builder, registry, source);
             this.builder = builder;
+            this.registry = registry;
             this.source = source;
         }
 
@@ -99,6 +104,40 @@ public abstract class PollinatedTagsProvider<T> extends TagsProvider<T> {
 
         public PollinatedTagAppender<T> replace(boolean value) {
             ((TagBuilderExtension) this.builder).pollen_replace(value);
+            return this;
+        }
+
+        private static JsonObject createConditionJson(PollinatedResourceConditionProvider[] conditions) {
+            JsonObject json = new JsonObject();
+            PollinatedResourceConditionProvider.write(json, conditions);
+            return json;
+        }
+
+        public PollinatedTagAppender<T> addConditional(T item, PollinatedResourceConditionProvider... conditions) {
+            if (conditions.length == 0)
+                return this.add(item);
+            this.builder.add(new ConditionalTagEntry(new Tag.ElementEntry(this.registry.getKey(item)), createConditionJson(conditions)), this.source);
+            return this;
+        }
+
+        public PollinatedTagAppender<T> addConditionalTag(Tag.Named<T> tag, PollinatedResourceConditionProvider... conditions) {
+            if (conditions.length == 0)
+                return this.addTag(tag);
+            this.builder.add(new ConditionalTagEntry(new Tag.TagEntry(tag.getName()), createConditionJson(conditions)), this.source);
+            return this;
+        }
+
+        public PollinatedTagAppender<T> addConditionalOptional(ResourceLocation item, PollinatedResourceConditionProvider... conditions) {
+            if (conditions.length == 0)
+                return this.addOptional(item);
+            this.builder.add(new ConditionalTagEntry(new Tag.OptionalElementEntry(item), createConditionJson(conditions)), this.source);
+            return this;
+        }
+
+        public PollinatedTagAppender<T> addConditionalOptionalTag(ResourceLocation tag, PollinatedResourceConditionProvider... conditions) {
+            if (conditions.length == 0)
+                return this.addOptionalTag(tag);
+            this.builder.add(new ConditionalTagEntry(new Tag.OptionalTagEntry(tag), createConditionJson(conditions)), this.source);
             return this;
         }
     }
