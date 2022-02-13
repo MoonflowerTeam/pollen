@@ -66,6 +66,8 @@ public class PollinatedFabricLoginChannel extends PollinatedNetworkChannelImpl i
     }
 
     private void processServer(MinecraftServer server, ServerLoginPacketListenerImpl listener, boolean understood, FriendlyByteBuf data, ServerLoginNetworking.LoginSynchronizer synchronizer, PacketSender responseSender) {
+        if (!understood)
+            throw new IllegalStateException("Client failed to process server message");
         NetworkRegistry.processMessage(this.deserialize(data, PollinatedPacketDirection.LOGIN_SERVERBOUND), new PollinatedFabricPacketContext(listener.getConnection(), synchronizer, PollinatedPacketDirection.LOGIN_SERVERBOUND) {
             @Override
             public void reply(PollinatedPacket<?> packet) {

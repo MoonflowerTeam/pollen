@@ -3,8 +3,9 @@ package gg.moonflower.pollen.api.resource.condition;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import gg.moonflower.pollen.api.config.PollinatedModConfig;
+import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.api.util.NumberCompareMode;
 import gg.moonflower.pollen.core.resource.condition.ConfigResourceCondition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
@@ -171,12 +172,29 @@ public interface PollinatedResourceCondition {
     }
 
     /**
-     * Checks to see if any the specified mods are loaded.
+     * Checks to see if the specified key in the config for the specified mod is equal to the specified value. If the config is not present, the condition returns false.
      *
-     * @param modIds The IDs of the mods to check
-     * @return A condition checking if any mod is loaded
+     * @param modId The id of the mod to get config for
+     * @param type  The type of config to get for the mod
+     * @param key   The key of the config name
+     * @param value The value the config must be
+     * @return A condition checking for config
      */
-    static <T> PollinatedResourceConditionProvider config(T config, String... modIds) {
-        return new ConfigResourceCondition.Provider();
+    static PollinatedResourceConditionProvider config(String modId, PollinatedConfigType type, String key, Object value) {
+        return new ConfigResourceCondition.SimpleProvider(modId, type, key, value);
+    }
+
+    /**
+     * Checks to see how the specified number compares to the specified value. If the config is not present, the condition returns false.
+     *
+     * @param modId       The id of the mod to get config for
+     * @param type        The type of config to get for the mod
+     * @param key         The key of the config name
+     * @param value       The value the config is compared to
+     * @param compareMode The type of comparison to make with the config value. By default, this is {@link NumberCompareMode#EQUAL}
+     * @return A condition checking for config numbers
+     */
+    static PollinatedResourceConditionProvider config(String modId, PollinatedConfigType type, String key, Number value, NumberCompareMode compareMode) {
+        return new ConfigResourceCondition.NumberProvider(modId, type, key, value, compareMode);
     }
 }

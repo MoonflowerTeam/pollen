@@ -1,6 +1,8 @@
 package gg.moonflower.pollen.api.resource.condition;
 
 import com.google.gson.JsonObject;
+import dev.architectury.injectables.annotations.ExpectPlatform;
+import gg.moonflower.pollen.api.platform.Platform;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -24,4 +26,15 @@ public interface PollinatedResourceConditionProvider {
      * @return The name of the condition this provider is for
      */
     ResourceLocation getName();
+
+    /**
+     * Writes the specified conditions into the specified json.
+     *
+     * @param conditionalObject The json to write into
+     * @param conditions         The providers for creating conditions
+     */
+    @ExpectPlatform
+    static void write(JsonObject conditionalObject, PollinatedResourceConditionProvider... conditions) {
+        Platform.error();
+    }
 }
