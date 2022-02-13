@@ -2,10 +2,7 @@ package gg.moonflower.pollen.core.client.render.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import gg.moonflower.pollen.core.client.entitlement.EntitlementManager;
-import gg.moonflower.pollen.core.client.entitlement.ModelEntitlement;
 import gg.moonflower.pollen.core.client.entitlement.RenderableCosmetic;
-import gg.moonflower.pollen.core.client.entitlement.TexturedEntitlement;
-import gg.moonflower.pollen.core.client.entitlement.type.SimpleCosmetic;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModel;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelRenderer;
@@ -48,7 +45,7 @@ public class PollenCosmeticLayer<T extends LivingEntity> extends RenderLayer<T, 
                     return;
 
                 GeometryModelRenderer.copyModelAngles(this.getParentModel(), model);
-                GeometryModelRenderer.render(model, textureKey, matrixStack, packedLight, OverlayTexture.NO_OVERLAY, cosmetic.getRed(), cosmetic.getGreen(), cosmetic.getBlue(), cosmetic.getAlpha());
+                GeometryModelRenderer.render(model, textureKey, buffer, matrixStack, packedLight, OverlayTexture.NO_OVERLAY, cosmetic.getRed(), cosmetic.getGreen(), cosmetic.getBlue(), cosmetic.getAlpha());
             }
         });
     }

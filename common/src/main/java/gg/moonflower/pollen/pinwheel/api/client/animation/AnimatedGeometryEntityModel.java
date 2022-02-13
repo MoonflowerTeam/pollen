@@ -15,6 +15,7 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FrameTimer;
@@ -499,8 +500,12 @@ public class AnimatedGeometryEntityModel<T extends Entity> extends EntityModel<T
 
     @Override
     public void renderToBuffer(PoseStack matrixStack, VertexConsumer builder, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+        this.renderToBuffer(matrixStack, Minecraft.getInstance().renderBuffers().bufferSource(), packedLight, packedOverlay, red, green, blue, alpha);
+    }
+
+    public void renderToBuffer(PoseStack matrixStack, MultiBufferSource source, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         matrixStack.translate(0, 1.5F, 0); // what?
-        GeometryModelRenderer.render(this.getModel(), this.texture, matrixStack, packedLight, packedOverlay, red, green, blue, alpha);
+        GeometryModelRenderer.render(this.getModel(), this.texture, source, matrixStack, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
     /**
