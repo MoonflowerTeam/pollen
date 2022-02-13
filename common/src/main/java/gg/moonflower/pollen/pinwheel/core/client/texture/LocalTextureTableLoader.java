@@ -34,7 +34,7 @@ public class LocalTextureTableLoader implements TextureTableLoader {
     private String[] hashTables;
 
     public LocalTextureTableLoader() {
-        this("textures/models");
+        this("textures/geometry");
     }
 
     public LocalTextureTableLoader(@Nullable String folder) {
