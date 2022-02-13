@@ -25,7 +25,7 @@ public class CustomFluidRenderHandler implements FluidRenderHandler {
 
     public CustomFluidRenderHandler(PollinatedFluid fluid) {
         this.fluid = fluid;
-        this.sprites = new TextureAtlasSprite[2];
+        this.sprites = new TextureAtlasSprite[3];
     }
 
     @Override
@@ -38,11 +38,8 @@ public class CustomFluidRenderHandler implements FluidRenderHandler {
         this.fluidStateCache.clear();
         this.sprites[0] = textureAtlas.getSprite(this.fluid.getStillTextureName());
         this.sprites[1] = textureAtlas.getSprite(this.fluid.getFlowingTextureName());
-
-        // TODO add overlay texture
-//        if (overlayTexture != null) {
-//            sprites[2] = textureAtlas.getSprite(overlayTexture);
-//        }
+        if (this.fluid.getOverlayTextureName() != null)
+            this.sprites[2] = textureAtlas.getSprite(this.fluid.getOverlayTextureName());
     }
 
     @Override

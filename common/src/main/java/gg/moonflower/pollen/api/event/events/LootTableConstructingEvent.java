@@ -77,8 +77,8 @@ public interface LootTableConstructingEvent {
 
             LootPool.Builder builder = LootPool.lootPool().setRolls(sourceAccessor.getRolls());
             LootPoolBuilderAccessor accessor = (LootPoolBuilderAccessor) builder;
-            accessor.getEntries().addAll(getEntries(pools.get(index)));
-            accessor.getConditions().addAll(getConditions(pools.get(index)));
+            accessor.getEntries().addAll(Arrays.asList(sourceAccessor.getEntries()));
+            accessor.getConditions().addAll(Arrays.asList(sourceAccessor.getConditions()));
             accessor.getFunctions().addAll(Arrays.asList(sourceAccessor.getFunctions()));
             accessor.setBonusRolls(sourceAccessor.getBonusRolls());
 
@@ -116,8 +116,8 @@ public interface LootTableConstructingEvent {
                 LootPoolBuilderAccessor builderAccessor = (LootPoolBuilderAccessor) poolBuilder;
                 LootPoolModifier modifier = entry.getValue();
 
-                builderAccessor.getEntries().addAll(getEntries(pool)); // Add existing entries
-                builderAccessor.getConditions().addAll(getConditions(pool)); // Add existing functions
+                builderAccessor.getEntries().addAll(Arrays.asList(poolAccessor.getEntries())); // Add existing entries
+                builderAccessor.getConditions().addAll(Arrays.asList(poolAccessor.getConditions())); // Add existing functions
                 builderAccessor.getFunctions().addAll(Arrays.asList(poolAccessor.getFunctions())); // Add existing functions
 
                 int[] removeEntriesArray = modifier.removeEntries.stream().mapToInt(i -> i).sorted().toArray();
@@ -210,8 +210,8 @@ public interface LootTableConstructingEvent {
                 LootPoolBuilderAccessor poolAccessor = (LootPoolBuilderAccessor) pool;
                 for (LootPool injectPool : pools) {
                     LootPoolAccessor injectPoolAccessor = (LootPoolAccessor) injectPool;
-                    poolAccessor.getEntries().addAll(getEntries(injectPool));
-                    poolAccessor.getConditions().addAll(getConditions(injectPool));
+                    poolAccessor.getEntries().addAll(Arrays.asList(injectPoolAccessor.getEntries()));
+                    poolAccessor.getConditions().addAll(Arrays.asList(injectPoolAccessor.getConditions()));
                     poolAccessor.getFunctions().addAll(Arrays.asList(injectPoolAccessor.getFunctions()));
                 }
             });
@@ -382,18 +382,9 @@ public interface LootTableConstructingEvent {
         }
     }
 
+    @ApiStatus.Internal
     @ExpectPlatform
     static List<LootPool> getPools(LootTable lootTable) {
-        return Platform.error();
-    }
-
-    @ExpectPlatform
-    static List<LootPoolEntryContainer> getEntries(LootPool lootPool) {
-        return Platform.error();
-    }
-
-    @ExpectPlatform
-    static List<LootItemCondition> getConditions(LootPool lootPool) {
         return Platform.error();
     }
 }

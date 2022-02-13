@@ -48,7 +48,6 @@
     "ServerLevelMixin",
     "ServerPlayerMixin",
     "TagsProviderMixin",
-    "loot.LootPoolAccessor",
     "loot.LootTableAccessor"
   ],
   "injectors": {
