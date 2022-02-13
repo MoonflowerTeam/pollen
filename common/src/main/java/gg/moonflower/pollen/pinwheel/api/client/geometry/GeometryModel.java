@@ -14,9 +14,11 @@ import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * <p>An abstract part for geometry models that can be queried by {@link LocalGeometryModelLoader}.</p>
@@ -211,12 +213,13 @@ public interface GeometryModel {
     /**
      * Fetches an {@link VertexConsumer} for the specified texture.
      *
-     * @param buffer  The render type buffers
-     * @param atlas   The atlas to get the textures from
-     * @param texture The texture to use
+     * @param buffer             The render type buffers
+     * @param atlas              The atlas to get the textures from
+     * @param texture            The texture to use
+     * @param renderTypeConsumer Additional render type properties to apply or <code>null</code> for nothing
      * @return The buffer that should be used for the provided texture
      */
-    default VertexConsumer getBuffer(MultiBufferSource buffer, GeometryAtlasTexture atlas, GeometryModelTexture texture) {
-        return atlas.getSprite(texture.getLocation()).wrap(buffer.getBuffer(texture.getLayer().getRenderType(texture, atlas.getAtlasLocation())));
+    default VertexConsumer getBuffer(MultiBufferSource buffer, GeometryAtlasTexture atlas, GeometryModelTexture texture, @Nullable Consumer<RenderType.CompositeState.CompositeStateBuilder> renderTypeConsumer) {
+        return atlas.getSprite(texture.getLocation()).wrap(buffer.getBuffer(texture.getLayer().getRenderType(texture, atlas, renderTypeConsumer)));
     }
 }

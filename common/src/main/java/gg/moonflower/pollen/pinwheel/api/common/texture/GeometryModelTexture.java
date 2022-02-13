@@ -4,7 +4,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModel;
+import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryAtlasTexture;
 import gg.moonflower.pollen.pinwheel.core.client.geometry.GeometryRenderTypes;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.codec.binary.Base32;
@@ -16,12 +19,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 /**
- * <p>A single texture used on a {@link GeometryModel}.</p>
+ * A single texture used on a {@link GeometryModel}.
  *
  * @author Ocelot
  * @since 1.0.0
@@ -212,7 +216,7 @@ public class GeometryModelTexture {
     }
 
     /**
-     * <p>Supported render types for textures.</p>
+     * Supported render types for textures.
      *
      * @author Ocelot
      */
@@ -224,9 +228,9 @@ public class GeometryModelTexture {
         TRANSLUCENT(() -> GeometryRenderTypes::getGeometryTranslucent),
         TRANSLUCENT_CULL(() -> GeometryRenderTypes::getGeometryTranslucentCull);
 
-        private final Supplier<BiFunction<GeometryModelTexture, ResourceLocation, RenderType>> renderTypeGetter;
+        private final Supplier<RenderTypeFunction> renderTypeGetter;
 
-        TextureLayer(Supplier<BiFunction<GeometryModelTexture, ResourceLocation, RenderType>> renderTypeGetter) {
+        TextureLayer(Supplier<RenderTypeFunction> renderTypeGetter) {
             this.renderTypeGetter = renderTypeGetter;
         }
 
@@ -246,17 +250,26 @@ public class GeometryModelTexture {
         /**
          * Fetches the render type for the specified location.
          *
-         * @param texture       The texture to get a texture for
-         * @param atlasLocation The location of the texture atlas to use
+         * @param texture            The texture to get a texture for
+         * @param atlas              The texture atlas to use
+         * @param renderTypeConsumer Additional properties to apply to the render type
          * @return The render type for this layer
          */
-        public RenderType getRenderType(GeometryModelTexture texture, ResourceLocation atlasLocation) {
-            return this.renderTypeGetter.get().apply(texture, atlasLocation);
+        @Environment(EnvType.CLIENT)
+        public RenderType getRenderType(GeometryModelTexture texture, GeometryAtlasTexture atlas, @Nullable Consumer<RenderType.CompositeState.CompositeStateBuilder> renderTypeConsumer) {
+            return this.renderTypeGetter.get().apply(texture, atlas, renderTypeConsumer);
         }
     }
 
+    @FunctionalInterface
+    private interface RenderTypeFunction {
+
+        @Environment(EnvType.CLIENT)
+        RenderType apply(GeometryModelTexture texture, GeometryAtlasTexture atlas, @Nullable Consumer<RenderType.CompositeState.CompositeStateBuilder> renderTypeConsumer);
+    }
+
     /**
-     * <p>Constructs new geometry model textures.</p>
+     * Constructs new geometry model textures.
      *
      * @author Ocelot
      * @since 1.0.0
