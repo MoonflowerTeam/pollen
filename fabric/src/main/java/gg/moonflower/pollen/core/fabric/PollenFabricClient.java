@@ -4,6 +4,7 @@ import gg.moonflower.pollen.api.event.events.client.render.ReloadRendersEvent;
 import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvents;
+import gg.moonflower.pollen.api.event.events.registry.client.RegisterAtlasSpriteEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
 import gg.moonflower.pollen.api.fluid.PollinatedFluid;
 import gg.moonflower.pollen.api.fluid.fabric.CustomFluidRenderHandler;
@@ -15,6 +16,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.InvalidateRenderStateCallback;
 import net.minecraft.core.Registry;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -38,6 +40,16 @@ public class PollenFabricClient implements ClientModInitializer {
 
         ClientEntityEvents.ENTITY_LOAD.register(EntityEvents.JOIN.invoker()::onJoin);
         ClientEntityEvents.ENTITY_UNLOAD.register(EntityEvents.LEAVE.invoker()::onLeave);
+
+        RegisterAtlasSpriteEvent.event(InventoryMenu.BLOCK_ATLAS).register((atlas, registry) -> {
+            for (Fluid fluid : Registry.FLUID) {
+                if (!(fluid instanceof PollinatedFluid))
+                    continue;
+                PollinatedFluid pollinatedFluid = (PollinatedFluid) fluid;
+                registry.accept(pollinatedFluid.getStillTextureName());
+                registry.accept(pollinatedFluid.getFlowingTextureName());
+            }
+        });
 
         for (Fluid fluid : Registry.FLUID) {
             if (!(fluid instanceof PollinatedFluid))

@@ -47,7 +47,9 @@
     "ServerLevelEntityCallbacksMixin",
     "ServerLevelMixin",
     "ServerPlayerMixin",
-    "TagsProviderMixin"
+    "TagsProviderMixin",
+    "loot.LootPoolAccessor",
+    "loot.LootTableAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

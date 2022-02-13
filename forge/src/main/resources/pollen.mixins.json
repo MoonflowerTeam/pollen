@@ -16,13 +16,15 @@
   "mixins": [
     "AxeItemMixin",
     "EntityMixin",
+    "FluidMixin",
     "FolderRepositorySourceAccessor",
-    "ForgeInternalHandlerMixin",
     "HandshakeHandlerMixin",
+    "LivingEntityMixin",
     "LootTablesMixin",
     "PackRepositoryAccessor",
     "PackRepositoryMixin",
-    "SimpleReloadableResourceManagerMixin"
+    "SimpleReloadableResourceManagerMixin",
+    "loot.LootTableAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

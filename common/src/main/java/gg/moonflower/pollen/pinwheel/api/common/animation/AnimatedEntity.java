@@ -5,6 +5,8 @@ import gg.moonflower.pollen.core.network.play.ClientboundSyncAnimationPacket;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimatedModel;
 import gg.moonflower.pollen.pinwheel.core.client.animation.AnimationEffectSound;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -88,6 +90,7 @@ public interface AnimatedEntity extends AnimationEffectSource {
      * @param animation   The animation the effect is playing for
      * @param soundEffect The effect to play
      */
+    @Environment(EnvType.CLIENT)
     @Override
     default void handleSoundEffect(AnimationData animation, AnimationData.SoundEffect soundEffect) {
         if (!(this instanceof Entity))
@@ -109,6 +112,7 @@ public interface AnimatedEntity extends AnimationEffectSource {
      * @param yOffset        The y offset of the effect from the origin of the model
      * @param zOffset        The z offset of the effect from the origin of the model
      */
+    @Environment(EnvType.CLIENT)
     @Override
     default void handleParticleEffect(AnimationData animation, AnimationData.ParticleEffect particleEffect, double xOffset, double yOffset, double zOffset) {
         if (!(this instanceof Entity))
@@ -122,6 +126,7 @@ public interface AnimatedEntity extends AnimationEffectSource {
      * @param animation      The animation the effect is playing for
      * @param timelineEffect The effect on the timeline
      */
+    @Environment(EnvType.CLIENT)
     @Override
     default void handleTimelineEffect(AnimationData animation, AnimationData.TimelineEffect timelineEffect) {
     }

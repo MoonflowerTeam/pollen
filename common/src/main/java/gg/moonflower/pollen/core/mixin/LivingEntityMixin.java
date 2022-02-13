@@ -111,11 +111,6 @@ public abstract class LivingEntityMixin extends Entity {
         return value || FluidBehaviorRegistry.getFluids().stream().anyMatch(tag -> this.getFluidHeight(tag) > 0.0);
     }
 
-    @ModifyVariable(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getFluidJumpThreshold()D", shift = At.Shift.BEFORE), ordinal = 6)
-    public double modifyFluidHeight(double value) {
-        return value == 0 ? FluidBehaviorRegistry.getFluids().stream().mapToDouble(this::getFluidHeight).filter(tag -> tag > 0.0).findFirst().orElse(0.0) : value;
-    }
-
     @Inject(method = "jumpInLiquid", at = @At("HEAD"), cancellable = true)
     public void jumpInLiquid(Tag<Fluid> fluidTag, CallbackInfo ci) {
         if (!this.isInWater() && fluidTag == FluidTags.WATER) {
@@ -125,11 +120,11 @@ public abstract class LivingEntityMixin extends Entity {
     }
 
     @Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getFluidState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/material/FluidState;"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-    public void travelInCustomFluid(Vec3 travelVector, CallbackInfo ci, double fallSpeed, boolean falling) {
+    public void travelInCustomFluid(Vec3 travelVector, CallbackInfo ci, double fallSpeed) {
         if (this.isAffectedByFluids() && !this.canStandOnFluid(this.level.getFluidState(this.blockPosition()).getType())) {
             FluidBehaviorRegistry.getFluids().stream().filter(tag -> this.getFluidHeight(tag) > 0.0).forEach(tag -> {
                 PollenFluidBehavior behavior = Objects.requireNonNull(FluidBehaviorRegistry.get(tag));
-                behavior.applyPhysics((LivingEntity) (Object) this, travelVector, fallSpeed, falling);
+                behavior.applyPhysics((LivingEntity) (Object) this, travelVector, fallSpeed, this.getDeltaMovement().y <= 0.0D);
                 ci.cancel();
             });
             if (ci.isCancelled())

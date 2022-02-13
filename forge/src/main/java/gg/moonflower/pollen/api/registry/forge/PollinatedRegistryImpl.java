@@ -49,7 +49,7 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> PollinatedRegistry<T> create(Registry<T> registry, String modId) {
         IForgeRegistry forgeRegistry = RegistryManager.ACTIVE.getRegistry((ResourceKey) registry.key());
-        return forgeRegistry != null ? new PollinatedRegistryImpl(forgeRegistry, modId) : PollinatedRegistry.createVanilla(registry, modId);
+        return forgeRegistry != null ? new PollinatedRegistryImpl(forgeRegistry, modId) : createVanilla(registry, modId);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -58,27 +58,6 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
             return createVanilla(((PollinatedRegistry.VanillaImpl<T>) registry).getRegistry(), modId);
         PollinatedRegistryImpl<?> impl = (PollinatedRegistryImpl<?>) registry;
         return new PollinatedRegistryImpl(impl.registry, impl.codec, modId);
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <T> PollinatedRegistry<T> createSimple(Class<T> type, ResourceLocation registryId) {
-        DeferredRegister<?> deferredRegister = createDeferredRegister((Class<? extends IForgeRegistryEntry>) type, registryId);
-        return new PollinatedRegistryImpl(deferredRegister, makeCodec(deferredRegister, registryId, null), registryId.getNamespace());
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <T> PollinatedRegistry<T> createDefaulted(Class<T> type, ResourceLocation registryId, ResourceLocation defaultId) {
-        DeferredRegister<?> deferredRegister = createDeferredRegister((Class<? extends IForgeRegistryEntry>) type, registryId);
-        return new PollinatedRegistryImpl(deferredRegister, makeCodec(deferredRegister, registryId, defaultId), registryId.getNamespace());
-    }
-
-    private static <T extends IForgeRegistryEntry<T>> DeferredRegister<T> createDeferredRegister(Class<T> type, ResourceLocation registryId) {
-        return DeferredRegister.create(type, registryId.getNamespace());
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T extends IForgeRegistryEntry<T>> ForgeRegistryCodec<T> makeCodec(DeferredRegister<?> deferredRegister, ResourceLocation registryId, @Nullable ResourceLocation defaultKey) {
-        return ForgeRegistryCodec.create(((DeferredRegister<T>) deferredRegister).makeRegistry(registryId.getPath(), () -> new RegistryBuilder<T>().setDefaultKey(defaultKey)));
     }
 
     @Override

@@ -21,7 +21,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ItemRenderer.class)
 public class ItemRendererMixin {
@@ -41,19 +40,19 @@ public class ItemRendererMixin {
         this.capturedItem = itemStack.getItem();
     }
 
-    @ModifyVariable(method = "render", index = 8, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z", ordinal = 0, shift = At.Shift.BEFORE), argsOnly = true)
+    @ModifyVariable(method = "render", ordinal = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;", ordinal = 0, shift = At.Shift.BEFORE), argsOnly = true)
     public BakedModel render(BakedModel original) {
         if (ItemRendererRegistry.getHandModel(this.capturedItem) != null)
             return this.itemModelShaper.getItemModel(this.capturedItem);
         return original;
     }
 
-    @Inject(method = "getModel", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILSOFT)
+    @Inject(method = "getModel", at = @At("HEAD"))
     public void capture(ItemStack itemStack, Level level, LivingEntity livingEntity, int i, CallbackInfoReturnable<BakedModel> cir) {
         this.capturedHandItem = itemStack.getItem();
     }
 
-    @ModifyVariable(method = "getModel", index = 5, at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/renderer/ItemModelShaper;getItemModel(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/client/resources/model/BakedModel;", shift = At.Shift.AFTER))
+    @ModifyVariable(method = "getModel", ordinal = 0, at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/renderer/ItemModelShaper;getItemModel(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/client/resources/model/BakedModel;", shift = At.Shift.AFTER))
     public BakedModel getModel(BakedModel original) {
         ModelResourceLocation modelLocation = ItemRendererRegistry.getHandModel(this.capturedHandItem);
         if (modelLocation != null)

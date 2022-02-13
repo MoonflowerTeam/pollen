@@ -1,8 +1,8 @@
 package gg.moonflower.pollen.api.event.events;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.event.PollinatedEvent;
+import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.EventRegistry;
 import gg.moonflower.pollen.core.mixin.loot.LootPoolAccessor;
 import gg.moonflower.pollen.core.mixin.loot.LootPoolBuilderAccessor;
@@ -19,7 +19,6 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * Called for each new loot table deserialized from JSON.
@@ -65,7 +64,7 @@ public interface LootTableConstructingEvent {
             this.modifyPools = new HashMap<>();
             this.removePools = new HashSet<>();
             this.removeFunctions = new HashSet<>();
-            ((LootTableBuilderAccessor) this.builder).getPools().addAll(Arrays.asList(((LootTableAccessor) source).getPools()));
+            ((LootTableBuilderAccessor) this.builder).getPools().addAll(getPools(source));
             ((LootTableBuilderAccessor) this.builder).getFunctions().addAll(Arrays.asList(((LootTableAccessor) source).getFunctions()));
         }
 
@@ -78,8 +77,8 @@ public interface LootTableConstructingEvent {
 
             LootPool.Builder builder = LootPool.lootPool().setRolls(sourceAccessor.getRolls());
             LootPoolBuilderAccessor accessor = (LootPoolBuilderAccessor) builder;
-            accessor.getEntries().addAll(Arrays.asList(sourceAccessor.getEntries()));
-            accessor.getConditions().addAll(Arrays.asList(sourceAccessor.getConditions()));
+            accessor.getEntries().addAll(getEntries(pools.get(index)));
+            accessor.getConditions().addAll(getConditions(pools.get(index)));
             accessor.getFunctions().addAll(Arrays.asList(sourceAccessor.getFunctions()));
             accessor.setBonusRolls(sourceAccessor.getBonusRolls());
 
@@ -117,8 +116,8 @@ public interface LootTableConstructingEvent {
                 LootPoolBuilderAccessor builderAccessor = (LootPoolBuilderAccessor) poolBuilder;
                 LootPoolModifier modifier = entry.getValue();
 
-                builderAccessor.getEntries().addAll(Arrays.asList(poolAccessor.getEntries())); // Add existing entries
-                builderAccessor.getConditions().addAll(Arrays.asList(poolAccessor.getConditions())); // Add existing functions
+                builderAccessor.getEntries().addAll(getEntries(pool)); // Add existing entries
+                builderAccessor.getConditions().addAll(getConditions(pool)); // Add existing functions
                 builderAccessor.getFunctions().addAll(Arrays.asList(poolAccessor.getFunctions())); // Add existing functions
 
                 int[] removeEntriesArray = modifier.removeEntries.stream().mapToInt(i -> i).sorted().toArray();
@@ -211,8 +210,8 @@ public interface LootTableConstructingEvent {
                 LootPoolBuilderAccessor poolAccessor = (LootPoolBuilderAccessor) pool;
                 for (LootPool injectPool : pools) {
                     LootPoolAccessor injectPoolAccessor = (LootPoolAccessor) injectPool;
-                    poolAccessor.getEntries().addAll(Arrays.asList(injectPoolAccessor.getEntries()));
-                    poolAccessor.getConditions().addAll(Arrays.asList(injectPoolAccessor.getConditions()));
+                    poolAccessor.getEntries().addAll(getEntries(injectPool));
+                    poolAccessor.getConditions().addAll(getConditions(injectPool));
                     poolAccessor.getFunctions().addAll(Arrays.asList(injectPoolAccessor.getFunctions()));
                 }
             });
@@ -381,5 +380,20 @@ public interface LootTableConstructingEvent {
                 this.removeFunctions = new HashSet<>();
             }
         }
+    }
+
+    @ExpectPlatform
+    static List<LootPool> getPools(LootTable lootTable) {
+        return Platform.error();
+    }
+
+    @ExpectPlatform
+    static List<LootPoolEntryContainer> getEntries(LootPool lootPool) {
+        return Platform.error();
+    }
+
+    @ExpectPlatform
+    static List<LootItemCondition> getConditions(LootPool lootPool) {
+        return Platform.error();
     }
 }

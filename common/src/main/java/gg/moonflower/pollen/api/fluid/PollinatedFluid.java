@@ -43,6 +43,14 @@ public interface PollinatedFluid {
     ResourceLocation getFlowingTextureName();
 
     /**
+     * @return The location of the overlay texture image
+     */
+    @Nullable
+    default ResourceLocation getOverlayTextureName() {
+        return null;
+    }
+
+    /**
      * @param camera       The current camera
      * @param level        The client level instance
      * @param biome        The biome the player is in

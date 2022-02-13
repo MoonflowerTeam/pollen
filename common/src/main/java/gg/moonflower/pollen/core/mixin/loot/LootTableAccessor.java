@@ -12,9 +12,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface LootTableAccessor {
 
     @Accessor
-    LootPool[] getPools();
-
-    @Accessor
     LootItemFunction[] getFunctions();
 
     @Invoker("<init>")

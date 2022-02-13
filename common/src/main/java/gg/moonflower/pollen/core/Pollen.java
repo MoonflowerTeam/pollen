@@ -6,8 +6,6 @@ import gg.moonflower.pollen.api.command.argument.EnumArgument;
 import gg.moonflower.pollen.api.command.argument.TimeArgumentType;
 import gg.moonflower.pollen.api.crafting.PollenRecipeTypes;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
-import gg.moonflower.pollen.api.event.events.registry.client.RegisterAtlasSpriteEvent;
-import gg.moonflower.pollen.api.fluid.PollinatedFluid;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.ResourceConditionRegistry;
 import gg.moonflower.pollen.api.resource.modifier.ResourceModifierManager;
@@ -25,10 +23,7 @@ import gg.moonflower.pollen.pinwheel.api.client.geometry.VanillaModelMapping;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
-import net.minecraft.core.Registry;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,14 +60,6 @@ public class Pollen {
         GeometryTextureManager.addProvider(new CosmeticTextureLoader());
         DebugInputs.init();
         EntitlementManager.init();
-        RegisterAtlasSpriteEvent.event(InventoryMenu.BLOCK_ATLAS).register((atlas, registry) -> {
-            for (Fluid fluid : Registry.FLUID) {
-                if (!(fluid instanceof PollinatedFluid pollinatedFluid))
-                    continue;
-                registry.accept(pollinatedFluid.getStillTextureName());
-                registry.accept(pollinatedFluid.getFlowingTextureName());
-            }
-        });
         if (!Platform.isProduction())
             PollenTest.onClient();
     }

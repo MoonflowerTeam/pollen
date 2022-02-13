@@ -12,12 +12,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface LootPoolAccessor {
 
     @Accessor
-    LootPoolEntryContainer[] getEntries();
-
-    @Accessor
-    LootItemCondition[] getConditions();
-
-    @Accessor
     LootItemFunction[] getFunctions();
 
     @Accessor

@@ -48,7 +48,7 @@ public class BucketItemBase extends BucketItem {
     protected final Supplier<? extends Fluid> fluid;
 
     public BucketItemBase(Supplier<? extends Fluid> fluid, Properties builder) {
-        super(null, builder);
+        super(Fluids.EMPTY, builder);
         this.fluid = fluid;
     }
 
@@ -58,7 +58,7 @@ public class BucketItemBase extends BucketItem {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        Fluid content = this.getContent();
+        Fluid content = this.getFluid();
         ItemStack itemStack = player.getItemInHand(hand);
         BlockHitResult hitResult = getPlayerPOVHitResult(level, player, content == Fluids.EMPTY ? ClipContext.Fluid.SOURCE_ONLY : ClipContext.Fluid.NONE);
         if (hitResult.getType() == HitResult.Type.MISS)
@@ -116,7 +116,7 @@ public class BucketItemBase extends BucketItem {
 
     @Override
     public boolean emptyContents(@Nullable Player player, Level level, BlockPos blockPos, @Nullable BlockHitResult blockHitResult) {
-        Fluid content = this.getContent();
+        Fluid content = this.getFluid();
         if (!(content instanceof FlowingFluid))
             return false;
 
@@ -156,8 +156,9 @@ public class BucketItemBase extends BucketItem {
         }
     }
 
+    @Override
     protected void playEmptySound(@Nullable Player player, LevelAccessor level, BlockPos pos) {
-        Fluid content = this.getContent();
+        Fluid content = this.getFluid();
         SoundEvent soundEvent;
         if (content instanceof PollinatedFluid) {
             soundEvent = ((PollinatedFluid) content).getEmptySound().orElse(null);
@@ -170,7 +171,7 @@ public class BucketItemBase extends BucketItem {
         level.gameEvent(player, GameEvent.FLUID_PLACE, pos);
     }
 
-    public Fluid getContent() {
+    public Fluid getFluid() {
         return this.fluid.get();
     }
 }
