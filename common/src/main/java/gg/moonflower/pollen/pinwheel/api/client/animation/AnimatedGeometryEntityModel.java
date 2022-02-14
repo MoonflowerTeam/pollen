@@ -533,6 +533,13 @@ public class AnimatedGeometryEntityModel<T extends Entity> extends EntityModel<T
     }
 
     /**
+     * @return The names of the animations this entity model is playing
+     */
+    public ResourceLocation[] getAnimationNames() {
+        return this.animations;
+    }
+
+    /**
      * @return The animations this entity model is playing
      */
     public AnimationData[] getAnimations() {
