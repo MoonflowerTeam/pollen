@@ -212,6 +212,7 @@ public final class ResourceModifierManager {
                     LOGGER.info("Loaded {} {} modifiers", modifiers.size(), type);
                 }
             };
+            this.completeFuture = CompletableFuture.completedFuture(null);
         }
 
         @Override
