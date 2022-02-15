@@ -22,14 +22,15 @@ public class SimpleJsonResourceReloadListenerMixin {
 
     @Shadow
     @Final
-    private String dataType;
+    private String directory;
 
+    @SuppressWarnings("ConstantConditions")
     @Inject(at = @At("RETURN"), method = "prepare")
     public void applyResourceConditions(ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfoReturnable<Map<ResourceLocation, JsonElement>> cir) {
         if ((Object) this instanceof RecipeManager) // Forge already handles recipes
             return;
 
-        profiler.push(String.format("Pollen resource conditions: %s", this.dataType));
+        profiler.push(String.format("Pollen resource conditions: %s", this.directory));
 
         Iterator<Map.Entry<ResourceLocation, JsonElement>> it = cir.getReturnValue().entrySet().iterator();
 

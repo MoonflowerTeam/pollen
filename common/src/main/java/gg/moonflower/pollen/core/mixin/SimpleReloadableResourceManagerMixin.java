@@ -35,7 +35,7 @@ public class SimpleReloadableResourceManagerMixin implements InjectableResourceM
         this.recentlyRegistered.add(preparableReloadListener);
     }
 
-    @Inject(method = "createReload", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;isDebugEnabled()Z", shift = At.Shift.BEFORE))
+    @Inject(method = "createReload", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;isDebugEnabled()Z", shift = At.Shift.BEFORE, remap = false))
     public void onReload(Executor backgroundExecutor, Executor gameExecutor, List<PreparableReloadListener> list, CompletableFuture<Unit> completableFuture, CallbackInfoReturnable<ReloadInstance> cir) {
         this.listeners.forEach(listener -> {
             if (listener instanceof ReloadStartListener)

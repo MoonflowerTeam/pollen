@@ -39,13 +39,13 @@ import java.util.function.Function;
 @Mixin(FluidRenderer.class)
 public class FluidRendererMixin {
 
-    @Shadow
+    @Shadow(remap = false)
     @Final
     private BiomeColorBlender biomeColorBlender;
-    @Shadow
+    @Shadow(remap = false)
     @Final
     private int[] quadColors;
-    @Shadow
+    @Shadow(remap = false)
     @Final
     private QuadLightData quadLightData;
     @Unique
@@ -74,7 +74,7 @@ public class FluidRendererMixin {
         this.captureFluid = fluidState;
     }
 
-    @ModifyVariable(method = "render", at = @At(value = "INVOKE", target = "Lme/jellysquid/mods/sodium/client/model/light/LightPipelineProvider;getLighter(Lme/jellysquid/mods/sodium/client/model/light/LightMode;)Lme/jellysquid/mods/sodium/client/model/light/LightPipeline;"), ordinal = 6)
+    @ModifyVariable(method = "render", at = @At(value = "INVOKE", target = "Lme/jellysquid/mods/sodium/client/model/light/LightPipelineProvider;getLighter(Lme/jellysquid/mods/sodium/client/model/light/LightMode;)Lme/jellysquid/mods/sodium/client/model/light/LightPipeline;", remap = false), ordinal = 6)
     public boolean modifyIsLava(boolean value) {
         return value || this.customFluidSprites.containsKey(this.captureFluid.getType());
     }

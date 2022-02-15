@@ -29,7 +29,7 @@ public class ChunkRenderDispatcherRebuildTaskMixin {
     @Nullable
     protected RenderChunkRegion region;
 
-    @Inject(method = "compile", at = @At(value = "INVOKE_ASSIGN", target = "Lcom/google/common/collect/Sets;newHashSet()Ljava/util/HashSet;", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
+    @Inject(method = "compile", at = @At(value = "INVOKE_ASSIGN", target = "Lcom/google/common/collect/Sets;newHashSet()Ljava/util/HashSet;", shift = At.Shift.BEFORE, remap = false), locals = LocalCapture.CAPTURE_FAILHARD)
     public void compile(float x, float y, float z, ChunkRenderDispatcher.CompiledChunk chunk, ChunkBufferBuilderPack pack, CallbackInfoReturnable<Set<BlockEntity>> cir, int i, BlockPos originPos, BlockPos offset) {
         if (this.region != null) {
             for (BlockPos pos : BlockPos.betweenClosed(originPos, offset)) {

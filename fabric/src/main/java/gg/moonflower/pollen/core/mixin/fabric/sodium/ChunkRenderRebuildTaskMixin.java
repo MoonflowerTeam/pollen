@@ -28,7 +28,7 @@ import java.util.Set;
 @Mixin(ChunkRenderRebuildTask.class)
 public abstract class ChunkRenderRebuildTaskMixin<T extends ChunkGraphicsState> extends ChunkRenderBuildTask<T> {
 
-    @Shadow
+    @Shadow(remap = false)
     @Final
     private ChunkRenderContainer<T> render;
 
