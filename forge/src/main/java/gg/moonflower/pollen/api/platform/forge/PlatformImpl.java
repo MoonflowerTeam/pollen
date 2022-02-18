@@ -33,4 +33,8 @@ public class PlatformImpl {
     public static boolean isClient() {
         return FMLLoader.getDist().isClient();
     }
+
+    public static boolean isOptifineLoaded() {
+        return isModLoaded("optifine");
+    }
 }

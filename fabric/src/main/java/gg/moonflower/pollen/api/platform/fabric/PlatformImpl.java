@@ -36,4 +36,8 @@ public class PlatformImpl {
     public static boolean isClient() {
         return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
     }
+
+    public static boolean isOptifineLoaded() {
+        return isModLoaded("optifabric");
+    }
 }

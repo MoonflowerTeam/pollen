@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -25,22 +26,34 @@ import java.util.Set;
 @Mixin(targets = "net/minecraft/client/renderer/chunk/ChunkRenderDispatcher$RenderChunk$RebuildTask")
 public class ChunkRenderDispatcherRebuildTaskMixin {
 
+    @Unique
+    private RenderChunkRegion captureRegion;
+
     @Shadow
     @Nullable
     protected RenderChunkRegion region;
 
-    @Inject(method = "compile", at = @At(value = "INVOKE_ASSIGN", target = "Lcom/google/common/collect/Sets;newHashSet()Ljava/util/HashSet;", shift = At.Shift.BEFORE, remap = false), locals = LocalCapture.CAPTURE_FAILHARD)
-    public void compile(float x, float y, float z, ChunkRenderDispatcher.CompiledChunk chunk, ChunkBufferBuilderPack pack, CallbackInfoReturnable<Set<BlockEntity>> cir, int i, BlockPos originPos, BlockPos offset) {
-        if (this.region != null) {
-            for (BlockPos pos : BlockPos.betweenClosed(originPos, offset)) {
-                BlockState state = this.region.getBlockState(pos);
-                if (state.isAir())
-                    continue;
-                BlockRenderer renderer = BlockRendererRegistry.getFirst(state.getBlock());
-                if (renderer != null && renderer.getRenderShape(state) != RenderShape.MODEL)
-                    ((CompiledChunkExtension) chunk).pollen_getBlockRenderers().add(pos.immutable());
-                if (BlockRendererRegistry.get(state.getBlock()).stream().anyMatch(r -> r instanceof TickableBlockRenderer))
-                    ((CompiledChunkExtension) chunk).pollen_getTickingBlockRenderers().add(pos.immutable());
+    @Inject(method = "compile", at = @At("HEAD"))
+    public void captureRegion(float f, float g, float h, ChunkRenderDispatcher.CompiledChunk compiledChunk, ChunkBufferBuilderPack chunkBufferBuilderPack, CallbackInfoReturnable<Set<BlockEntity>> cir) {
+        this.captureRegion = this.region;
+    }
+
+    @Inject(method = "compile", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;<init>()V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
+    public void compile(float x, float y, float z, ChunkRenderDispatcher.CompiledChunk chunk, ChunkBufferBuilderPack pack, CallbackInfoReturnable<Set<BlockEntity>> cir, int i, BlockPos originPos) {
+        if (this.captureRegion != null) {
+            try {
+                for (BlockPos pos : BlockPos.betweenClosed(originPos, originPos.offset(15, 15, 15))) {
+                    BlockState state = this.captureRegion.getBlockState(pos);
+                    if (state.isAir())
+                        continue;
+                    BlockRenderer renderer = BlockRendererRegistry.getFirst(state.getBlock());
+                    if (renderer != null && renderer.getRenderShape(state) != RenderShape.MODEL)
+                        ((CompiledChunkExtension) chunk).pollen_getTickingBlockRenderers().add(pos.immutable());
+                    if (BlockRendererRegistry.get(state.getBlock()).stream().anyMatch(r -> r instanceof TickableBlockRenderer))
+                        ((CompiledChunkExtension) chunk).pollen_getTickingBlockRenderers().add(pos.immutable());
+                }
+            } catch (NullPointerException t) {
+                t.printStackTrace(); // just in case
             }
         }
     }
