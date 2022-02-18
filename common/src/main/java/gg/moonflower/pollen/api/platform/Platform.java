@@ -70,6 +70,14 @@ public abstract class Platform {
     }
 
     /**
+     * @return Whether Optifine is breaking the game
+     */
+    @ExpectPlatform
+    public static boolean isOptifineLoaded() {
+        return Platform.error();
+    }
+
+    /**
      * @return The main game executor. This is the Minecraft Client or Server instance
      */
     @ExpectPlatform
