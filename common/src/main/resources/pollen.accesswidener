@@ -31,3 +31,7 @@ transitive-accessible method net/minecraft/world/entity/Entity getSwimSplashSoun
 transitive-accessible method net/minecraft/world/entity/Entity getSwimHighSpeedSplashSound ()Lnet/minecraft/sounds/SoundEvent;
 
 transitive-accessible class net/minecraft/client/renderer/RenderType$CompositeState
+
+transitive-accessible method net/minecraft/world/entity/ai/memory/MemoryModuleType <init> (Ljava/util/Optional;)V
+transitive-accessible method net/minecraft/world/entity/ai/sensing/SensorType <init> (Ljava/util/function/Supplier;)V
+transitive-accessible method net/minecraft/world/entity/schedule/Activity <init> (Ljava/lang/String;)V
