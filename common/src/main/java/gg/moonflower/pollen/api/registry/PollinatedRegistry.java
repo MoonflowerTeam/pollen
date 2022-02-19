@@ -75,13 +75,23 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
     }
 
     /**
-     * Creates a {@link PollinatedRegistry} for registering fluids. The mod id from the item registry is used as the id for the fluid registry.
+     * Creates a {@link PollinatedRegistry} for registering fluids.
      *
      * @param domain The domain of the mod
      * @return A specialized fluid registry that can fully handle fluids
      */
     public static PollinatedFluidRegistry createFluid(String domain) {
         return new PollinatedFluidRegistry(create(Registry.FLUID, domain));
+    }
+
+    /**
+     * Creates a {@link PollinatedRegistry} for registering entities and Ai. Ai registries are automatically set to use the domain provided.
+     *
+     * @param domain The domain of the mod
+     * @return A specialized entity registry that can also register Ai
+     */
+    public static PollinatedEntityRegistry createEntity(String domain) {
+        return new PollinatedEntityRegistry(create(Registry.ENTITY_TYPE, domain));
     }
 
     /**
