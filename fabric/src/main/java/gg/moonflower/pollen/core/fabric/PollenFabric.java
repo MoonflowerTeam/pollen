@@ -74,8 +74,8 @@ public class PollenFabric implements ModInitializer {
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STOPPING.register(server -> ServerLifecycleEvents.STOPPING.invoker().stopping(server));
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STOPPED.register(server -> ServerLifecycleEvents.STOPPED.invoker().stopped(server));
 
-        ServerChunkEvents.CHUNK_LOAD.register((level, chunk)->ChunkEvents.LOAD.invoker().load(level, chunk));
-        ServerChunkEvents.CHUNK_UNLOAD.register((level, chunk)->ChunkEvents.UNLOAD.invoker().unload(level, chunk));
+        ServerChunkEvents.CHUNK_LOAD.register((level, chunk) -> ChunkEvents.LOAD.invoker().load(level, chunk));
+        ServerChunkEvents.CHUNK_UNLOAD.register((level, chunk) -> ChunkEvents.UNLOAD.invoker().unload(level, chunk));
 
         UseItemCallback.EVENT.register((player, level, hand) -> PlayerInteractionEvents.RIGHT_CLICK_ITEM.invoker().interaction(player, level, hand));
         UseBlockCallback.EVENT.register((player, level, hand, result) -> PlayerInteractionEvents.RIGHT_CLICK_BLOCK.invoker().interaction(player, level, hand, result));
@@ -87,9 +87,8 @@ public class PollenFabric implements ModInitializer {
         EntityTrackingEvents.START_TRACKING.register((entity, player) -> ServerPlayerTrackingEvents.START_TRACKING_ENTITY.invoker().startTracking(player, entity));
         EntityTrackingEvents.STOP_TRACKING.register((entity, player) -> ServerPlayerTrackingEvents.STOP_TRACKING_ENTITY.invoker().stopTracking(player, entity));
 
-        // May have different results than forge, needs to be tested more
-        ServerEntityEvents.ENTITY_LOAD.register(EntityEvents.JOIN.invoker()::onJoin);
-        ServerEntityEvents.ENTITY_UNLOAD.register(EntityEvents.LEAVE.invoker()::onLeave);
+        ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> EntityEvents.JOIN.invoker().onJoin(entity, level));
+        ServerEntityEvents.ENTITY_UNLOAD.register((entity, level) -> EntityEvents.LEAVE.invoker().onLeave(entity, level));
 
         LootTableLoadingCallback.EVENT.register((resourceManager, manager, id, supplier, setter) -> {
             LootTableConstructingEvent.Context context = new LootTableConstructingEvent.Context(id, supplier.build());

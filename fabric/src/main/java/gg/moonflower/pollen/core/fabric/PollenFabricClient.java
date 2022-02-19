@@ -38,8 +38,8 @@ public class PollenFabricClient implements ClientModInitializer {
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> ClientNetworkEvents.LOGIN.invoker().login(client.gameMode, client.player, handler.getConnection()));
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientNetworkEvents.LOGOUT.invoker().logout(client.gameMode, client.player, handler.getConnection()));
 
-        ClientEntityEvents.ENTITY_LOAD.register(EntityEvents.JOIN.invoker()::onJoin);
-        ClientEntityEvents.ENTITY_UNLOAD.register(EntityEvents.LEAVE.invoker()::onLeave);
+        ClientEntityEvents.ENTITY_LOAD.register((entity, level) -> EntityEvents.JOIN.invoker().onJoin(entity, level));
+        ClientEntityEvents.ENTITY_UNLOAD.register((entity, level) -> EntityEvents.LEAVE.invoker().onLeave(entity, level));
 
         RegisterAtlasSpriteEvent.event(InventoryMenu.BLOCK_ATLAS).register((atlas, registry) -> {
             for (Fluid fluid : Registry.FLUID) {
