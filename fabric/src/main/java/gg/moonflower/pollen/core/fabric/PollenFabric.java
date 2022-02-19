@@ -68,18 +68,18 @@ public class PollenFabric implements ModInitializer {
 
         ServerTickEvents.START_SERVER_TICK.register(level -> TickEvents.SERVER_PRE.invoker().tick());
         ServerTickEvents.END_SERVER_TICK.register(level -> TickEvents.SERVER_POST.invoker().tick());
-        ServerTickEvents.START_WORLD_TICK.register(TickEvents.LEVEL_PRE.invoker()::tick);
-        ServerTickEvents.END_WORLD_TICK.register(TickEvents.LEVEL_POST.invoker()::tick);
+        ServerTickEvents.START_WORLD_TICK.register(level -> TickEvents.LEVEL_PRE.invoker().tick(level));
+        ServerTickEvents.END_WORLD_TICK.register(level -> TickEvents.LEVEL_POST.invoker().tick(level));
 
-        net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STOPPING.register(ServerLifecycleEvents.STOPPING.invoker()::stopping);
-        net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STOPPED.register(ServerLifecycleEvents.STOPPED.invoker()::stopped);
+        net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STOPPING.register(server -> ServerLifecycleEvents.STOPPING.invoker().stopping(server));
+        net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STOPPED.register(server -> ServerLifecycleEvents.STOPPED.invoker().stopped(server));
 
-        ServerChunkEvents.CHUNK_LOAD.register(ChunkEvents.LOAD.invoker()::load);
-        ServerChunkEvents.CHUNK_UNLOAD.register(ChunkEvents.UNLOAD.invoker()::unload);
+        ServerChunkEvents.CHUNK_LOAD.register((level, chunk)->ChunkEvents.LOAD.invoker().load(level, chunk));
+        ServerChunkEvents.CHUNK_UNLOAD.register((level, chunk)->ChunkEvents.UNLOAD.invoker().unload(level, chunk));
 
-        UseItemCallback.EVENT.register(PlayerInteractionEvents.RIGHT_CLICK_ITEM.invoker()::interaction);
-        UseBlockCallback.EVENT.register(PlayerInteractionEvents.RIGHT_CLICK_BLOCK.invoker()::interaction);
-        AttackBlockCallback.EVENT.register(PlayerInteractionEvents.LEFT_CLICK_BLOCK.invoker()::interaction);
+        UseItemCallback.EVENT.register((player, level, hand) -> PlayerInteractionEvents.RIGHT_CLICK_ITEM.invoker().interaction(player, level, hand));
+        UseBlockCallback.EVENT.register((player, level, hand, result) -> PlayerInteractionEvents.RIGHT_CLICK_BLOCK.invoker().interaction(player, level, hand, result));
+        AttackBlockCallback.EVENT.register((player, level, hand, pos, direction) -> PlayerInteractionEvents.LEFT_CLICK_BLOCK.invoker().interaction(player, level, hand, pos, direction));
         UseEntityCallback.EVENT.register((player, world, hand, entity, entityHitResult) -> PlayerInteractionEvents.RIGHT_CLICK_ENTITY.invoker().interaction(player, world, hand, entity));
 
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> CommandRegistryEvent.EVENT.invoker().registerCommands(dispatcher, dedicated ? Commands.CommandSelection.DEDICATED : Platform.getRunningServer().isPresent() ? Commands.CommandSelection.INTEGRATED : Commands.CommandSelection.ALL));

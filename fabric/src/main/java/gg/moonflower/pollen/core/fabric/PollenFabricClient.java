@@ -27,11 +27,11 @@ public class PollenFabricClient implements ClientModInitializer {
     public void onInitializeClient() {
         ClientTickEvents.START_CLIENT_TICK.register(client -> TickEvents.CLIENT_PRE.invoker().tick());
         ClientTickEvents.END_CLIENT_TICK.register(client -> TickEvents.CLIENT_POST.invoker().tick());
-        ClientTickEvents.START_WORLD_TICK.register(TickEvents.LEVEL_PRE.invoker()::tick);
-        ClientTickEvents.END_WORLD_TICK.register(TickEvents.LEVEL_POST.invoker()::tick);
+        ClientTickEvents.START_WORLD_TICK.register(level -> TickEvents.LEVEL_PRE.invoker().tick(level));
+        ClientTickEvents.END_WORLD_TICK.register(level -> TickEvents.LEVEL_POST.invoker().tick(level));
 
-        ClientChunkEvents.CHUNK_LOAD.register(ChunkEvents.LOAD.invoker()::load);
-        ClientChunkEvents.CHUNK_UNLOAD.register(ChunkEvents.UNLOAD.invoker()::unload);
+        ClientChunkEvents.CHUNK_LOAD.register((level, chunk) -> ChunkEvents.LOAD.invoker().load(level, chunk));
+        ClientChunkEvents.CHUNK_UNLOAD.register((level, chunk) -> ChunkEvents.UNLOAD.invoker().unload(level, chunk));
 
         InvalidateRenderStateCallback.EVENT.register(() -> ReloadRendersEvent.EVENT.invoker().reloadRenders());
 
