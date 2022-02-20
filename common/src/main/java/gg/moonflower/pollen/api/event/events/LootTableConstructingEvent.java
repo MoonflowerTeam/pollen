@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 /**
- * Called for each new loot table deserialized from JSON.
+ * Fired for each new loot table deserialized from JSON.
  *
  * @author Ocelot
  * @since 1.0.0

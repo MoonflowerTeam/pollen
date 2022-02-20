@@ -5,7 +5,7 @@ import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.api.registry.EventRegistry;
 
 /**
- * Events fired for config data changes.
+ * Fired for config data changes.
  *
  * @author Ocelot
  * @since 1.0.0

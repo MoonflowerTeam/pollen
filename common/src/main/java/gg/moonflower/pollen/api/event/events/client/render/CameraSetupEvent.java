@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.GameRenderer;
  * @author Ocelot
  * @since 1.0.0
  */
+@FunctionalInterface
 public interface CameraSetupEvent {
 
     PollinatedEvent<CameraSetupEvent> EVENT = EventRegistry.createLoop(CameraSetupEvent.class);

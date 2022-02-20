@@ -12,7 +12,21 @@ public final class ModelEvents {
     private ModelEvents() {
     }
 
+    /**
+     * Fired each time a new block model is loaded.
+     *
+     * @author Jackson
+     * @since 1.0.0
+     */
+    @FunctionalInterface
     public interface LoadBlockModel {
+
+        /**
+         * Called when a block model is loaded.
+         *
+         * @param location The location of the model
+         * @param model    The model loaded
+         */
         void load(ResourceLocation location, BlockModel model);
     }
 }

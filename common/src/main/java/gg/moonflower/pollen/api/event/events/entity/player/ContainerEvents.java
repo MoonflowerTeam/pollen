@@ -5,10 +5,6 @@ import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
-/**
- * @author Jackson
- * @since 1.0.0
- */
 public final class ContainerEvents {
 
     public static final PollinatedEvent<Open> OPEN = EventRegistry.createLoop(Open.class);
@@ -17,24 +13,38 @@ public final class ContainerEvents {
     private ContainerEvents() {
     }
 
+    /**
+     * Fired when a player opens a container.
+     *
+     * @author Jackson
+     * @since 1.0.0
+     */
     @FunctionalInterface
     public interface Open {
+
         /**
-         * Fired when a player opens a container.
+         * Called when the specified player opens the specified container.
          *
-         * @param player    The player opening the container.
-         * @param container The container being opened.
+         * @param player    The player opening the container
+         * @param container The container being opened
          */
         void open(Player player, AbstractContainerMenu container);
     }
 
+    /**
+     * Fired when a player closes a container.
+     *
+     * @author Jackson
+     * @since 1.0.0
+     */
     @FunctionalInterface
     public interface Close {
+
         /**
-         * Fired when a player closes a container.
+         * Called when the specified player closes the specified container.
          *
-         * @param player    The player closing the container.
-         * @param container The container being closed.
+         * @param player    The player closing the container
+         * @param container The container being closed
          */
         void close(Player player, AbstractContainerMenu container);
     }

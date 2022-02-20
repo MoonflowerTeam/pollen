@@ -25,11 +25,17 @@ public final class ServerLifecycleEvents {
     private ServerLifecycleEvents() {
     }
 
+    /**
+     * Fired when the server is about to load the level.
+     *
+     * @author Ocelot
+     * @since 1.0.0
+     */
     @FunctionalInterface
     public interface PreStart {
 
         /**
-         * Fired when the server is about to load the level.
+         * Called just before the server loads the level.
          *
          * @param server The server currently starting
          * @return <code>true</code> to continue server start, <code>false</code> to stop the server from starting
@@ -37,11 +43,17 @@ public final class ServerLifecycleEvents {
         boolean preStarting(MinecraftServer server);
     }
 
+    /**
+     * Fired when the server is currently starting after loading the level and info.
+     *
+     * @author Ocelot
+     * @since 1.0.0
+     */
     @FunctionalInterface
     public interface Starting {
 
         /**
-         * Fired when the server is currently starting after loading the level and info.
+         * Called when the server is currently starting after loading the level and info.
          *
          * @param server The server currently starting
          * @return <code>true</code> to continue server start, <code>false</code> to stop the server from starting
@@ -49,18 +61,54 @@ public final class ServerLifecycleEvents {
         boolean starting(MinecraftServer server);
     }
 
+    /**
+     * Fired after the server has fully started.
+     *
+     * @author Ocelot
+     * @since 1.0.0
+     */
     @FunctionalInterface
     public interface Started {
+
+        /**
+         * Called when the specified server has started.
+         *
+         * @param server The server started
+         */
         void started(MinecraftServer server);
     }
 
+    /**
+     * Fired when the server starts to stop.
+     *
+     * @author Ocelot
+     * @since 1.0.0
+     */
     @FunctionalInterface
     public interface Stopping {
+
+        /**
+         * Called when the specified server has started to stop.
+         *
+         * @param server The server stopping
+         */
         void stopping(MinecraftServer server);
     }
 
+    /**
+     * Fired after the server has fully stopped.
+     *
+     * @author Ocelot
+     * @since 1.0.0
+     */
     @FunctionalInterface
     public interface Stopped {
+
+        /**
+         * Called when the specified server has stopped.
+         *
+         * @param server The server stopped
+         */
         void stopped(MinecraftServer server);
     }
 }

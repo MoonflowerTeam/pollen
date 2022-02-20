@@ -15,12 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Supplier;
 
-/**
- * Modifies trades for a merchant type.
- *
- * @author Jackson
- * @since 1.0.0
- */
 public final class ModifyTradesEvents {
 
     public static final PollinatedEvent<ModifyVillager> VILLAGER = EventRegistry.createLoop(ModifyVillager.class);
@@ -31,6 +25,9 @@ public final class ModifyTradesEvents {
 
     /**
      * Registers new trades into all villager types trader.
+     *
+     * @author Jackson, Ocelot
+     * @since 1.0.0
      */
     @FunctionalInterface
     public interface ModifyVillager {
@@ -66,6 +63,9 @@ public final class ModifyTradesEvents {
 
     /**
      * Registers new trades into the wandering trader.
+     *
+     * @author Jackson, Ocelot
+     * @since 1.0.0
      */
     @FunctionalInterface
     public interface ModifyWanderer {

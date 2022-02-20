@@ -24,46 +24,134 @@ public final class TickEvents {
     });
     public static final PollinatedEvent<LivingPost> LIVING_POST = EventRegistry.createLoop(LivingPost.class);
 
-    private TickEvents() {}
+    private TickEvents() {
+    }
 
+    /**
+     * Fired on the client side at the start of the tick.
+     *
+     * @author Jackson
+     * @since 1.0.0
+     */
     @FunctionalInterface
     public interface ClientPre {
+
+        /**
+         * Called at the start of the client side tick.
+         */
         void tick();
     }
 
+    /**
+     * Fired on the client side at the end of the tick.
+     *
+     * @author Jackson
+     * @since 1.0.0
+     */
     @FunctionalInterface
     public interface ClientPost {
+
+        /**
+         * Called at the end of the client side tick.
+         */
         void tick();
     }
 
+    /**
+     * Fired on the server side at the start of the tick.
+     *
+     * @author Jackson
+     * @since 1.0.0
+     */
     @FunctionalInterface
     public interface ServerPre {
+
+        /**
+         * Called at the start of the server side tick.
+         */
         void tick();
     }
 
+    /**
+     * Fired on the server side at the end of the tick.
+     *
+     * @author Jackson
+     * @since 1.0.0
+     */
     @FunctionalInterface
     public interface ServerPost {
+
+        /**
+         * Called at the end of the server side tick.
+         */
         void tick();
     }
 
+    /**
+     * Fired on both sides at the start of the level tick.
+     *
+     * @author Jackson
+     * @since 1.0.0
+     */
     @FunctionalInterface
     public interface LevelPre {
+
+        /**
+         * Called at the start of the specified level tick.
+         *
+         * @param level The level ticking
+         */
         void tick(Level level);
     }
 
+    /**
+     * Fired on both sides at the end of the level tick.
+     *
+     * @author Jackson
+     * @since 1.0.0
+     */
     @FunctionalInterface
     public interface LevelPost {
+
+        /**
+         * Called at the end of the specified level tick.
+         *
+         * @param level The level ticking
+         */
         void tick(Level level);
     }
 
+    /**
+     * Fired on both sides at the start of the living entity tick.
+     *
+     * @author Jackson
+     * @since 1.0.0
+     */
     @FunctionalInterface
     public interface LivingPre {
+
+        /**
+         * Called at the start of the specified entity tick.
+         *
+         * @param entity The entity ticking
+         */
         boolean tick(LivingEntity entity);
     }
 
+    /**
+     * Fired on both sides at the end of the living entity tick.
+     *
+     * @author Jackson
+     * @since 1.0.0
+     */
     @FunctionalInterface
     public interface LivingPost {
+
+        /**
+         * Called at the end of the specified entity tick.
+         *
+         * @param entity The entity ticking
+         */
         void tick(LivingEntity entity);
     }
-
 }

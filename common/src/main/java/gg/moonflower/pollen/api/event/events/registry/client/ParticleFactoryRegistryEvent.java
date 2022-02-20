@@ -10,7 +10,11 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Registers particle factories when it is safe to do so.
+ *
+ * @author Ocelot
+ * @since 1.0.0
  */
+@FunctionalInterface
 public interface ParticleFactoryRegistryEvent {
 
     PollinatedEvent<ParticleFactoryRegistryEvent> EVENT = EventRegistry.createLoop(ParticleFactoryRegistryEvent.class);
