@@ -63,17 +63,7 @@ public class AnimatedGeometryEntityModel<T extends Entity> extends EntityModel<T
         // Skip above_top_solid
         // Skip actor_count
         // Anim Time handled by AnimatedModel
-        builder.setQuery("approx_eq", -1, context ->
-        {
-            if (context.getParameters() <= 1)
-                return 1.0F;
-
-            float first = context.resolve(0);
-            for (int i = 1; i < context.getParameters(); i++)
-                if (Math.abs(context.resolve(i) - first) > 0.0000001)
-                    return 0.0F;
-            return 1.0F;
-        });
+        // approx_eq handles by AnimatedModel
         builder.setQuery("armor_color_slot", 1, context ->
         {
             if (!(entity instanceof LivingEntity))
@@ -91,25 +81,7 @@ public class AnimatedGeometryEntityModel<T extends Entity> extends EntityModel<T
         });
         // Skip armor_material_slot
         // Skip armor_texture_slot
-        builder.setQuery("average_frame_time", () ->
-        {
-            FrameTimer frameTimer = Minecraft.getInstance().getFrameTimer();
-            return (float) frameTimer.getLog()[frameTimer.getLogEnd()] / 1_000_000_000F; // ns to s
-        });
-        builder.setQuery("average_frame_time", 1, context ->
-        {
-            int duration = (int) Math.min(context.resolve(0), 240); // Extended from 30 to 240 since that's what FrameTimer stores
-            if (duration <= 0)
-                throw new MolangException("Invalid argument for average_frame_time(): " + duration);
-            FrameTimer frameTimer = Minecraft.getInstance().getFrameTimer();
-            return (float) IntStream.range(0, duration).mapToLong(i ->
-            {
-                int wrappedIndex = frameTimer.getLogEnd() - i;
-                while (wrappedIndex < 0)
-                    wrappedIndex += 240;
-                return frameTimer.getLog()[wrappedIndex];
-            }).sum() / duration / 1_000_000_000F; // ns to s
-        });
+        // average_frame_time handled by AnimatedModel
         builder.setQuery("block_face", 6.0F); // Undefined
         builder.setQuery("blocking", () -> entity.canBeCollidedWith() ? 1.0F : 0.0F);
         builder.setQuery("body_x_rotation", 0.0F);
