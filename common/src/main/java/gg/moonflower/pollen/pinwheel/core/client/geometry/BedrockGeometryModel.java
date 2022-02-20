@@ -10,11 +10,14 @@ import gg.moonflower.pollen.pinwheel.api.common.animation.AnimationData;
 import gg.moonflower.pollen.pinwheel.api.common.geometry.GeometryModelData;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTexture;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
+import io.github.ocelot.molangcompiler.api.bridge.MolangJavaFunction;
+import io.github.ocelot.molangcompiler.api.exception.MolangException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
+import net.minecraft.util.FrameTimer;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
@@ -22,12 +25,39 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author Ocelot
  */
 @ApiStatus.Internal
 public class BedrockGeometryModel extends Model implements GeometryModel, AnimatedModel {
+
+    private static final MolangJavaFunction APPROX_EQUALS = context ->
+    {
+        if (context.getParameters() <= 1)
+            return 1.0F;
+
+        float first = context.resolve(0);
+        for (int i = 1; i < context.getParameters(); i++)
+            if (Math.abs(context.resolve(i) - first) > 0.0000001)
+                return 0.0F;
+        return 1.0F;
+    };
+    private static final MolangJavaFunction AVERAGE_FRAME_TIME = context ->
+    {
+        int duration = (int) Math.min(context.resolve(0), 240); // Extended from 30 to 240 since that's what FrameTimer stores
+        if (duration <= 0)
+            throw new MolangException("Invalid argument for average_frame_time(): " + duration);
+        FrameTimer frameTimer = Minecraft.getInstance().getFrameTimer();
+        return (float) IntStream.range(0, duration).mapToLong(i ->
+        {
+            int wrappedIndex = frameTimer.getLogEnd() - i;
+            while (wrappedIndex < 0)
+                wrappedIndex += 240;
+            return frameTimer.getLog()[wrappedIndex];
+        }).sum() / duration / 1_000_000_000F; // ns to s
+    };
 
     private static final Vector3f POSITION = new Vector3f();
     private static final Vector3f ROTATION = new Vector3f();
@@ -229,6 +259,13 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
         if (animations.length == 0)
             return;
 
+        runtime.setQuery("approx_eq", -1, APPROX_EQUALS);
+        runtime.setQuery("average_frame_time", () ->
+        {
+            FrameTimer frameTimer = Minecraft.getInstance().getFrameTimer();
+            return (float) frameTimer.getLog()[frameTimer.getLogEnd()] / 1_000_000_000F; // ns to s
+        });
+        runtime.setQuery("average_frame_time", 1, AVERAGE_FRAME_TIME);
         runtime.setQuery("delta_time", Minecraft.getInstance()::getFrameTime);
         runtime.setQuery("life_time", animationTime);
 
