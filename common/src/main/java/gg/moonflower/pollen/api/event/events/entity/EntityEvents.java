@@ -5,12 +5,6 @@ import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 
-/**
- * Events for modifying entities when they join or leave a world.
- *
- * @author abigailfails
- * @since 1.0.0
- */
 public final class EntityEvents {
 
     public static final PollinatedEvent<Join> JOIN = EventRegistry.create(Join.class, events -> (entity, level) -> {
@@ -25,18 +19,40 @@ public final class EntityEvents {
     }
 
     /**
-     * Called when an entity joins the world. It is not added if the event returns true.
+     * Fired when an entity joins the level.
+     *
+     * @author abigailfails
+     * @since 1.0.0
      */
     @FunctionalInterface
     public interface Join {
+
+        /**
+         * Called when the specified entity is trying to spawn into the specified level.
+         *
+         * @param entity The entity to spawn
+         * @param level  The level to add the entity to
+         * @return <code>true</code> to prevent the entity from being added
+         */
         boolean onJoin(Entity entity, Level level);
     }
 
     /**
-     * Called when an entity leaves the world.
+     * Fired when an entity leaves the level.
+     *
+     * @author abigailfails
+     * @since 1.0.0
      */
     @FunctionalInterface
     public interface Leave {
+
+
+        /**
+         * Called when the specified entity has left the specified level.
+         *
+         * @param entity The entity to spawn
+         * @param level  The level to add the entity to
+         */
         void onLeave(Entity entity, Level level);
     }
 }

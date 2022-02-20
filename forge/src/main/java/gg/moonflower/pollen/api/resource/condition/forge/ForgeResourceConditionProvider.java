@@ -8,6 +8,7 @@ import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
@@ -20,8 +21,10 @@ public class ForgeResourceConditionProvider implements PollinatedResourceConditi
 
     static {
         try {
+            Field field = CraftingHelper.class.getDeclaredField("conditions");
+            field.setAccessible(true);
             //noinspection unchecked
-            CONDITIONS = (Map<ResourceLocation, IConditionSerializer<?>>) CraftingHelper.class.getDeclaredField("conditions").get(null);
+            CONDITIONS = (Map<ResourceLocation, IConditionSerializer<?>>) field.get(null);
         } catch (Exception e) {
             throw new RuntimeException("Failed to load conditions", e);
         }

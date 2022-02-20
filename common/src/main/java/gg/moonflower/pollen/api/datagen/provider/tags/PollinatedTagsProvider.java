@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.api.datagen.provider.tags;
 
 import com.google.gson.JsonObject;
+import gg.moonflower.pollen.api.datagen.provider.ConditionalDataProvider;
 import gg.moonflower.pollen.api.resource.condition.ConditionalTagEntry;
 import gg.moonflower.pollen.api.resource.condition.PollinatedResourceConditionProvider;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
@@ -12,6 +13,9 @@ import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
+import net.minecraft.world.level.material.Fluid;
+
+import java.util.*;
 
 /**
  * Wraps {@link TagsProvider} to enable optional tags.
@@ -19,13 +23,38 @@ import net.minecraft.tags.Tag;
  * @author Ocelot
  * @since 1.0.0
  */
-public abstract class PollinatedTagsProvider<T> extends TagsProvider<T> {
+public abstract class PollinatedTagsProvider<T> extends TagsProvider<T> implements ConditionalDataProvider {
 
+    private final Map<ResourceLocation, List<PollinatedResourceConditionProvider>> providers;
     private final String domain;
 
     public PollinatedTagsProvider(DataGenerator generator, PollinatedModContainer container, Registry<T> registry) {
         super(generator, registry);
+        this.providers = new HashMap<>();
         this.domain = container.getId();
+    }
+
+    /**
+     * Adds a condition to the specified tag.
+     *
+     * @param tag       The tag to add conditions to
+     * @param providers The conditions to add
+     */
+    public void addConditions(Tag.Named<T> tag, PollinatedResourceConditionProvider... providers) {
+        this.addConditions(tag.getName(), providers);
+    }
+
+    @Override
+    public void addConditions(ResourceLocation id, PollinatedResourceConditionProvider... providers) {
+        if (providers.length == 0)
+            return;
+        this.providers.computeIfAbsent(id, __ -> new ArrayList<>()).addAll(Arrays.asList(providers));
+    }
+
+    @Override
+    public void injectConditions(ResourceLocation id, JsonObject json) {
+        if (this.providers.containsKey(id))
+            PollinatedResourceConditionProvider.write(json, this.providers.get(id).toArray(new PollinatedResourceConditionProvider[0]));
     }
 
     @Override

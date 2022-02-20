@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.core.resource.condition;
 
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.google.gson.*;
 import gg.moonflower.pollen.api.config.ConfigManager;
 import gg.moonflower.pollen.api.config.PollinatedConfigBuilder;
@@ -16,7 +15,6 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Locale;
 import java.util.Optional;
-import java.util.Set;
 
 @ApiStatus.Internal
 public class ConfigResourceCondition implements PollinatedResourceCondition {
@@ -27,20 +25,18 @@ public class ConfigResourceCondition implements PollinatedResourceCondition {
     public boolean test(JsonObject json) throws JsonParseException {
         ResourceLocation configId = new ResourceLocation(GsonHelper.getAsString(json, "config"));
         Optional<PollinatedModConfig> optional = ConfigManager.get(configId.getNamespace(), byName(configId.getPath()));
-        if (!optional.isPresent())
+        if (!optional.isPresent() || optional.get().getConfigData() == null)
             return false;
 
         String configKey = GsonHelper.getAsString(json, "name");
         if (!json.has("value"))
             throw new JsonSyntaxException("Expected 'value'");
 
-        Set<? extends UnmodifiableConfig.Entry> configValues = optional.get().getConfigData().entrySet();
-        Optional<? extends UnmodifiableConfig.Entry> entry = configValues.stream().filter(value -> value.getKey().equals(configKey)).findFirst();
-        if (!entry.isPresent())
+        Object entry = optional.get().getConfigData().get(configKey);
+        if (entry == null)
             throw new JsonSyntaxException("Unknown config key: " + configKey);
 
-        Object value = entry.get().getValue();
-        return testEntry(value instanceof PollinatedConfigBuilder.ConfigValue<?> ? ((PollinatedConfigBuilder.ConfigValue<?>) value).get() : value, json, json.get("value"));
+        return testEntry(entry instanceof PollinatedConfigBuilder.ConfigValue<?> ? ((PollinatedConfigBuilder.ConfigValue<?>) entry).get() : entry, json, json.get("value"));
     }
 
     private static boolean testEntry(Object value, JsonObject json, JsonElement jsonValue) {

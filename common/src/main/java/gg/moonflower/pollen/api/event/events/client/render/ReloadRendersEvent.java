@@ -17,5 +17,8 @@ public interface ReloadRendersEvent {
             event.reloadRenders();
     });
 
+    /**
+     * Called when renderers reload.
+     */
     void reloadRenders();
 }

@@ -6,7 +6,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.critereon.DeserializationContext;
 
 /**
- * Called for each new advancement deserialized from JSON.
+ * Fired for each new advancement deserialized from JSON.
  *
  * @author Ocelot
  * @since 1.0.0
@@ -20,6 +20,8 @@ public interface AdvancementConstructingEvent {
     });
 
     /**
+     * Called each time an advancement is deserialized.
+     *
      * @param builder The builder for the advancement. Modify the builder just before the advancement is deserialized from JSON
      * @param context The context for deserialization
      */

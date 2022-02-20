@@ -19,6 +19,7 @@ public final class FogEvents {
      * @author Ocelot
      * @since 1.0.0
      */
+    @FunctionalInterface
     public interface SetupColor {
 
         /**
@@ -39,6 +40,7 @@ public final class FogEvents {
      * @author Ocelot
      * @since 1.0.0
      */
+    @FunctionalInterface
     public interface SetupDensity {
 
         /**

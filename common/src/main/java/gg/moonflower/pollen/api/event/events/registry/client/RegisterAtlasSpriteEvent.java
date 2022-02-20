@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.function.Consumer;
 
 /**
- * Called for each {@link net.minecraft.client.renderer.texture.TextureAtlas} to register new sprites.
+ * Fired for each {@link net.minecraft.client.renderer.texture.TextureAtlas} to register new sprites.
  *
  * @author Ocelot
  * @since 1.0.0

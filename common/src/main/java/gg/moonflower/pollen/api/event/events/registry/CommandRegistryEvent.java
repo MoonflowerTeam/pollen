@@ -21,6 +21,8 @@ public interface CommandRegistryEvent {
     });
 
     /**
+     * Called to add commands to the dispatcher.
+     *
      * @param dispatcher The dispatcher instance. This is used to physically register the commands
      * @param selection  The environment for what commands to register
      */

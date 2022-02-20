@@ -38,6 +38,7 @@
     "SimpleReloadableResourceManagerMixin",
     "TagBuilderMixin",
     "TagsProviderAccessor",
+    "TagsProviderMixin",
     "loot.LootPoolAccessor",
     "loot.LootPoolBuilderAccessor",
     "loot.LootPoolEntryContainerAccessor",

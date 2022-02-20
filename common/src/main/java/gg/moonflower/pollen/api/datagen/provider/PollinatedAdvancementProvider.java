@@ -3,7 +3,6 @@ package gg.moonflower.pollen.api.datagen.provider;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import gg.moonflower.pollen.api.resource.condition.PollinatedResourceConditionProvider;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
@@ -21,7 +20,7 @@ import java.util.function.Consumer;
  * @author Ocelot
  * @since 1.0.0
  */
-public abstract class PollinatedAdvancementProvider extends ConditionalDataProvider implements DataProvider {
+public abstract class PollinatedAdvancementProvider extends SimpleConditionalDataProvider {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();

@@ -8,12 +8,6 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-/**
- * Events involving explosions.
- *
- * @author abigailfails
- * @since 1.0.0
- */
 public final class ExplosionEvents {
 
     public static final PollinatedEvent<Start> START = EventRegistry.create(Start.class, events -> (level, explosion) -> {
@@ -27,25 +21,39 @@ public final class ExplosionEvents {
     private ExplosionEvents() {
     }
 
+    /**
+     * Fired when an explosion is about to occur
+     *
+     * @author abigailfails
+     * @since 1.0.0
+     */
     @FunctionalInterface
     public interface Start {
+
         /**
-         * Fired when an explosion is about to occur
+         * Called at the start of every explosion.
          *
-         * @param level     The level of the explosion
-         * @param explosion The explosion
-         * @return Whether the explosion should continue
+         * @param level     The level the explosion is in
+         * @param explosion The explosion itself
+         * @return <code>true</code> to continue exploding, or <code>false</code> to cancel the explosion completely
          */
         boolean start(Level level, Explosion explosion);
     }
 
+    /**
+     * Fired when an explosion has lists of affected entities, which can be changed.
+     *
+     * @author abigailfails
+     * @since 1.0.0
+     */
     @FunctionalInterface
     public interface Detonate {
+
         /**
-         * Fired when an explosion has lists of affected entities, which can be changed.
+         * Called when an explosion has lists of affected entities, which can be changed.
          *
-         * @param level      The level of the explosion
-         * @param explosion  The explosion
+         * @param level      The level the explosion is in
+         * @param explosion  The explosion itself
          * @param entityList The list of entities affected.
          */
         void detonate(Level level, Explosion explosion, List<Entity> entityList);

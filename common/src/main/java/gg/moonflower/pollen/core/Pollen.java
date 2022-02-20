@@ -95,6 +95,8 @@ public class Pollen {
 
     private static void onDataInit(Platform.DataSetupContext context) {
         context.getGenerator().addProvider(new PollenLanguageProvider(context.getGenerator(), context.getMod()));
+        if (!Platform.isProduction())
+            PollenTest.onDataInit(context);
     }
 
     @Nullable

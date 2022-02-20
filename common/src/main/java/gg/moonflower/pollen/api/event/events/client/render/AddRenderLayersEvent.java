@@ -20,6 +20,7 @@ import java.util.Set;
  * @author Ocelot
  * @since 1.0.0
  */
+@FunctionalInterface
 public interface AddRenderLayersEvent {
 
     PollinatedEvent<AddRenderLayersEvent> EVENT = EventRegistry.createLoop(AddRenderLayersEvent.class);
