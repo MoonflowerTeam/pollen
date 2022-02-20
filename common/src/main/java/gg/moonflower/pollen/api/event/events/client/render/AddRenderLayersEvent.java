@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 /**
- * Called each time layers need to be added to living entity renderers.
+ * Fired each time layers need to be added to living entity renderers.
  *
  * @author Ocelot
  * @since 1.0.0
