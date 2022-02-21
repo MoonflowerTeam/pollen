@@ -1,7 +1,6 @@
 package gg.moonflower.pollen.core.mixin.fabric.client;
 
 import gg.moonflower.pollen.api.event.events.client.render.FogEvents;
-import gg.moonflower.pollen.core.client.FogContextImpl;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -15,9 +14,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(FogRenderer.class)
 public class FogRendererMixin {
-
-    @Unique
-    private static final FogEvents.FogContext CONTEXT = new FogContextImpl();
 
     @Shadow
     private static float fogRed;
@@ -69,6 +65,6 @@ public class FogRendererMixin {
 
     @Inject(method = "setupFog", at = @At("TAIL"))
     private static void modifyFogDensity(Camera camera, FogRenderer.FogMode fogType, float farPlaneDistance, boolean nearFog, CallbackInfo ci) {
-        FogEvents.FOG_DENSITY.invoker().setupFogDensity(Minecraft.getInstance().gameRenderer, camera, CONTEXT, farPlaneDistance, capturePartialTicks);
+        FogEvents.FOG_DENSITY.invoker().setupFogDensity(Minecraft.getInstance().gameRenderer, camera, farPlaneDistance, capturePartialTicks);
     }
 }
