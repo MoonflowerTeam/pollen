@@ -20,7 +20,7 @@ public class EntitlementsList extends ContainerObjectSelectionList<EntitlementsL
     public EntitlementsList(Minecraft arg, int i, int j, int k, int l, int m) {
         super(arg, i, j, k, l, m);
         this.centerListVertically = false;
-        this.setRenderBackground(false);
+        this.setRenderBackground(arg.level == null);
     }
 
     private static AbstractWidget createButton(Screen parent, Entitlement entitlement, int x) {
