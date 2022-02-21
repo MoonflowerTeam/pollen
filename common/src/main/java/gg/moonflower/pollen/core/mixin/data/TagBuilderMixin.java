@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.core.mixin;
+package gg.moonflower.pollen.core.mixin.data;
 
 import com.google.gson.JsonElement;
 import gg.moonflower.pollen.api.registry.ResourceConditionRegistry;

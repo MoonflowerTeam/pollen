@@ -43,7 +43,7 @@
     "PlayerListMixin",
     "ServerLevelMixin",
     "ServerPlayerMixin",
-    "TagsProviderMixin",
+    "data.TagsProviderMixin",
     "loot.LootPoolAccessor",
     "loot.LootTableAccessor"
   ],

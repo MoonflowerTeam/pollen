@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.api.util;
 
-import gg.moonflower.pollen.core.mixin.AdvancementRewardsBuilderAccessor;
+import gg.moonflower.pollen.core.mixin.data.AdvancementRewardsBuilderAccessor;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.resources.ResourceLocation;
 

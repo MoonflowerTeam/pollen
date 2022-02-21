@@ -4,14 +4,13 @@ import com.google.gson.JsonObject;
 import gg.moonflower.pollen.api.datagen.provider.ConditionalDataProvider;
 import gg.moonflower.pollen.api.resource.condition.PollinatedResourceConditionProvider;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
-import gg.moonflower.pollen.core.mixin.TagsProviderAccessor;
+import gg.moonflower.pollen.core.mixin.data.TagsProviderAccessor;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.material.Fluid;
 
 import java.util.*;
 
