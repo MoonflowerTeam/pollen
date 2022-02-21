@@ -6,14 +6,13 @@ import gg.moonflower.pollen.api.resource.condition.ConditionalTagEntry;
 import gg.moonflower.pollen.api.resource.condition.PollinatedResourceConditionProvider;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import gg.moonflower.pollen.core.extensions.TagBuilderExtension;
-import gg.moonflower.pollen.core.mixin.TagsProviderAccessor;
+import gg.moonflower.pollen.core.mixin.data.TagsProviderAccessor;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
-import net.minecraft.world.level.material.Fluid;
 
 import java.util.*;
 

@@ -47,7 +47,7 @@
     "ServerLevelEntityCallbacksMixin",
     "ServerLevelMixin",
     "ServerPlayerMixin",
-    "TagsProviderMixin",
+    "data.TagsProviderMixin",
     "loot.LootTableAccessor"
   ],
   "injectors": {

@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import gg.moonflower.pollen.api.datagen.provider.ConditionalDataProvider;
 import gg.moonflower.pollen.api.resource.condition.PollinatedResourceConditionProvider;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
-import gg.moonflower.pollen.core.mixin.TagsProviderAccessor;
+import gg.moonflower.pollen.core.mixin.data.TagsProviderAccessor;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
