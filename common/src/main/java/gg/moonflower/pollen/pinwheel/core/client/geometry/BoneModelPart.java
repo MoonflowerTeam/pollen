@@ -75,22 +75,13 @@ public class BoneModelPart extends ModelPart implements AnimatedModelPart {
 
         Vector3f origin = cube.getOrigin();
         Vector3f size = cube.getSize();
-        Vector3f rotation = cube.getRotation();
-        Vector3f pivot = cube.getPivotX();
         float x = origin.x() / 16f;
         float y = origin.y() / 16f;
         float z = origin.z() / 16f;
         float sizeX = size.x() / 16f;
         float sizeY = size.y() / 16f;
         float sizeZ = size.z() / 16f;
-        float rotationX = rotation.x();
-        float rotationY = rotation.y();
-        float rotationZ = rotation.z();
-        float pivotX = pivot.x() / 16f;
-        float pivotY = -pivot.y() / 16f;
-        float pivotZ = pivot.z() / 16f;
         float inflate = (cube.isOverrideInflate() ? cube.getInflate() : this.bone.getInflate()) / 16f;
-        boolean mirror = cube.isOverrideMirror() ? cube.isMirror() : this.bone.isMirror();
 
         float x1 = x + sizeX;
         float y1 = y + sizeY;
@@ -101,11 +92,25 @@ public class BoneModelPart extends ModelPart implements AnimatedModelPart {
         x1 = x1 + inflate;
         y1 = y1 + inflate;
         z1 = z1 + inflate;
+
+        if (x == x1 && y == y1 && z == z1)
+            return;
+
+        boolean mirror = cube.isOverrideMirror() ? cube.isMirror() : this.bone.isMirror();
         if (mirror) {
             float f3 = x1;
             x1 = x;
             x = f3;
         }
+
+        Vector3f rotation = cube.getRotation();
+        Vector3f pivot = cube.getPivotX();
+        float rotationX = rotation.x();
+        float rotationY = rotation.y();
+        float rotationZ = rotation.z();
+        float pivotX = pivot.x() / 16f;
+        float pivotY = -pivot.y() / 16f;
+        float pivotZ = pivot.z() / 16f;
 
         PoseStack matrixStack = new PoseStack();
         matrixStack.translate(pivotX, pivotY, pivotZ);
@@ -117,12 +122,21 @@ public class BoneModelPart extends ModelPart implements AnimatedModelPart {
         Matrix4f matrix4f = entry.pose();
         Matrix3f matrix3f = entry.normal();
 
-        this.addFace(cube, matrix4f, matrix3f, x1, y1, z, x, y1, z, x, y, z, x1, y, z, Direction.NORTH);
-        this.addFace(cube, matrix4f, matrix3f, x, y1, z, x, y1, z1, x, y, z1, x, y, z, Direction.EAST);
-        this.addFace(cube, matrix4f, matrix3f, x, y1, z1, x1, y1, z1, x1, y, z1, x, y, z1, Direction.SOUTH);
-        this.addFace(cube, matrix4f, matrix3f, x1, y1, z1, x1, y1, z, x1, y, z, x1, y, z1, Direction.WEST);
-        this.addFace(cube, matrix4f, matrix3f, x, y, z1, x1, y, z1, x1, y, z, x, y, z, Direction.DOWN);
-        this.addFace(cube, matrix4f, matrix3f, x1, y1, z1, x, y1, z1, x, y1, z, x1, y1, z, Direction.UP);
+        if (y != y1) {
+            if (x != x1) {
+                this.addFace(cube, matrix4f, matrix3f, x1, y1, z, x, y1, z, x, y, z, x1, y, z, Direction.NORTH);
+                this.addFace(cube, matrix4f, matrix3f, x, y1, z1, x1, y1, z1, x1, y, z1, x, y, z1, Direction.SOUTH);
+            }
+            if (z != z1) {
+                this.addFace(cube, matrix4f, matrix3f, x, y1, z, x, y1, z1, x, y, z1, x, y, z, Direction.EAST);
+                this.addFace(cube, matrix4f, matrix3f, x1, y1, z1, x1, y1, z, x1, y, z, x1, y, z1, Direction.WEST);
+            }
+        }
+
+        if (x != x1 && z != z1) {
+            this.addFace(cube, matrix4f, matrix3f, x, y, z1, x1, y, z1, x1, y, z, x, y, z, Direction.DOWN);
+            this.addFace(cube, matrix4f, matrix3f, x1, y1, z1, x, y1, z1, x, y1, z, x1, y1, z, Direction.UP);
+        }
     }
 
     private void addPolyMesh(GeometryModelData.PolyMesh polyMesh) {
