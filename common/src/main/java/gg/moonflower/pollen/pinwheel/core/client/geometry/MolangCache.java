@@ -5,9 +5,11 @@ import io.github.ocelot.molangcompiler.api.MolangExpression;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import it.unimi.dsi.fastutil.floats.Float2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatArrayMap;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
 
+@ApiStatus.Internal
 public class MolangCache {
 
     private final Map<Float, MolangEnvironment> environmentCache;
