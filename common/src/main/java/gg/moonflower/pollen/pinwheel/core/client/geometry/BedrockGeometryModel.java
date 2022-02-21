@@ -12,6 +12,7 @@ import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTexture;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import io.github.ocelot.molangcompiler.api.bridge.MolangJavaFunction;
 import io.github.ocelot.molangcompiler.api.exception.MolangException;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
@@ -20,18 +21,22 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.FrameTimer;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 /**
  * @author Ocelot
  */
 @ApiStatus.Internal
 public class BedrockGeometryModel extends Model implements GeometryModel, AnimatedModel {
+
+    private static final Logger LOGGER = LogManager.getLogger("MoLang");
 
     private static final MolangJavaFunction APPROX_EQUALS = context ->
     {
@@ -44,19 +49,36 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
                 return 0.0F;
         return 1.0F;
     };
-    private static final MolangJavaFunction AVERAGE_FRAME_TIME = context ->
+    private static final MolangJavaFunction LAST_FRAME_TIME = context ->
     {
-        int duration = (int) Math.min(context.resolve(0), 240); // Extended from 30 to 240 since that's what FrameTimer stores
-        if (duration <= 0)
-            throw new MolangException("Invalid argument for average_frame_time(): " + duration);
         FrameTimer frameTimer = Minecraft.getInstance().getFrameTimer();
-        return (float) IntStream.range(0, duration).mapToLong(i ->
-        {
-            int wrappedIndex = frameTimer.getLogEnd() - i;
-            while (wrappedIndex < 0)
-                wrappedIndex += 240;
-            return frameTimer.getLog()[wrappedIndex];
-        }).sum() / duration / 1_000_000_000F; // ns to s
+        long[] log = frameTimer.getLog();
+        int index = (int) Math.min(context.resolve(0), log.length - 1); // Extended from 30 to 240 since that's what FrameTimer stores
+        if (index == 0)
+            return (float) log[frameTimer.getLogEnd()] / 1_000_000_000F; // ns to s
+        if (index < 0)
+            throw new MolangException("Invalid argument for last_frame_time(): " + index);
+        int wrappedIndex = frameTimer.getLogEnd() - index;
+        while (wrappedIndex < 0)
+            wrappedIndex += 240;
+        return (float) log[frameTimer.wrapIndex(wrappedIndex)] / 1_000_000_000F; // ns to s
+    };
+    private static final MolangJavaFunction AVERAGE_FRAME_TIME = context -> applyFrame((int) context.resolve(0), stream -> OptionalLong.of(stream.sum())) / context.resolve(0);
+    private static final MolangJavaFunction MAX_FRAME_TIME = context -> applyFrame((int) context.resolve(0), LongStream::max);
+    private static final MolangJavaFunction MIN_FRAME_TIME = context -> applyFrame((int) context.resolve(0), LongStream::min);
+    private static final MolangJavaFunction CAMERA_ROTATION = context ->
+    {
+        int param = (int) context.resolve(0);
+        if (param < 0 || param >= 2)
+            throw new MolangException("Invalid argument for camera_rotation: " + param);
+        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        return param == 0 ? camera.getXRot() : camera.getYRot();
+    };
+    private static final MolangJavaFunction LOG = context ->
+    {
+        float value = context.resolve(0);
+        LOGGER.info(value);
+        return value;
     };
 
     private static final Vector3f POSITION = new Vector3f();
@@ -134,69 +156,6 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
         this.modelKeys = parts.values().toArray(new String[0]);
     }
 
-    private static void get(float animationTime, MolangRuntime.Builder runtime, float startValue, AnimationData.KeyFrame[] frames, Vector3f result) {
-        if (frames.length == 1) {
-            float x = frames[0].getTransformPostX().safeResolve(runtime.create(startValue));
-            float y = frames[0].getTransformPostY().safeResolve(runtime.create(startValue));
-            float z = frames[0].getTransformPostZ().safeResolve(runtime.create(startValue));
-            result.set(x, y, z);
-            return;
-        }
-
-        for (int i = 0; i < frames.length; i++) {
-            AnimationData.KeyFrame to = frames[i];
-            if ((to.getTime() < animationTime && i < frames.length - 1) || to.getTime() == 0)
-                continue;
-
-            AnimationData.KeyFrame from = i == 0 ? null : frames[i - 1];
-            float progress = (from == null ? animationTime / to.getTime() : Math.min(1.0F, (animationTime - from.getTime()) / (to.getTime() - from.getTime())));
-            switch (to.getLerpMode()) {
-                case LINEAR:
-                    lerp(progress, runtime, startValue, from, to, result);
-                    break;
-                case CATMULLROM:
-                    catmullRom(progress, runtime, startValue, i > 1 ? frames[i - 2] : null, from, to, i < frames.length - 1 ? frames[i + 1] : null, result);
-                    break;
-            }
-            break;
-        }
-    }
-
-    private static void lerp(float progress, MolangRuntime.Builder runtime, float startValue, @Nullable AnimationData.KeyFrame from, AnimationData.KeyFrame to, Vector3f result) {
-        float fromX = from == null ? startValue : from.getTransformPostX().safeResolve(runtime.create(startValue));
-        float fromY = from == null ? startValue : from.getTransformPostY().safeResolve(runtime.create(startValue));
-        float fromZ = from == null ? startValue : from.getTransformPostZ().safeResolve(runtime.create(startValue));
-
-        float x = Mth.lerp(progress, fromX, to.getTransformPreX().safeResolve(runtime.create(startValue)));
-        float y = Mth.lerp(progress, fromY, to.getTransformPreY().safeResolve(runtime.create(startValue)));
-        float z = Mth.lerp(progress, fromZ, to.getTransformPreZ().safeResolve(runtime.create(startValue)));
-        result.set(x, y, z);
-    }
-
-    private static void catmullRom(float progress, MolangRuntime.Builder runtime, float startValue, @Nullable AnimationData.KeyFrame before, @Nullable AnimationData.KeyFrame from, AnimationData.KeyFrame to, @Nullable AnimationData.KeyFrame after, Vector3f result) {
-        float fromX = from == null ? startValue : from.getTransformPostX().safeResolve(runtime.create(startValue));
-        float fromY = from == null ? startValue : from.getTransformPostY().safeResolve(runtime.create(startValue));
-        float fromZ = from == null ? startValue : from.getTransformPostZ().safeResolve(runtime.create(startValue));
-
-        float beforeX = before == null ? fromX : before.getTransformPostX().safeResolve(runtime.create(startValue));
-        float beforeY = before == null ? fromY : before.getTransformPostY().safeResolve(runtime.create(startValue));
-        float beforeZ = before == null ? fromZ : before.getTransformPostZ().safeResolve(runtime.create(startValue));
-
-        float toX = to.getTransformPreX().safeResolve(runtime.create(startValue));
-        float toY = to.getTransformPreY().safeResolve(runtime.create(startValue));
-        float toZ = to.getTransformPreZ().safeResolve(runtime.create(startValue));
-
-        float afterX = after == null ? toX : after.getTransformPreX().safeResolve(runtime.create(startValue));
-        float afterY = after == null ? toY : after.getTransformPreY().safeResolve(runtime.create(startValue));
-        float afterZ = after == null ? toZ : after.getTransformPreZ().safeResolve(runtime.create(startValue));
-
-        result.set(catmullRom(beforeX, fromX, toX, afterX, progress), catmullRom(beforeY, fromY, toY, afterY, progress), catmullRom(beforeZ, fromZ, toZ, afterZ, progress));
-    }
-
-    private static float catmullRom(float p0, float p1, float p2, float p3, float t) {
-        return 0.5F * ((2 * p1) + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t + (-p0 + 3 * p1 - 3 * p2 + p3) * t * t * t);
-    }
-
     @Override
     public void renderToBuffer(PoseStack matrixStack, VertexConsumer builder, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
     }
@@ -265,9 +224,29 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
             FrameTimer frameTimer = Minecraft.getInstance().getFrameTimer();
             return (float) frameTimer.getLog()[frameTimer.getLogEnd()] / 1_000_000_000F; // ns to s
         });
-        runtime.setQuery("average_frame_time", 1, AVERAGE_FRAME_TIME);
-        runtime.setQuery("delta_time", Minecraft.getInstance()::getFrameTime);
+        runtime.setQuery("delta_time", Minecraft.getInstance().getFrameTime());
         runtime.setQuery("life_time", animationTime);
+        runtime.setQuery("average_frame_time", 1, AVERAGE_FRAME_TIME);
+        runtime.setQuery("last_frame_time", () ->
+        {
+            FrameTimer frameTimer = Minecraft.getInstance().getFrameTimer();
+            return (float) frameTimer.getLog()[frameTimer.getLogEnd()] / 1_000_000_000F; // ns to s
+        });
+        runtime.setQuery("last_frame_time", 1, LAST_FRAME_TIME);
+        runtime.setQuery("maximum_frame_time", () ->
+        {
+            FrameTimer frameTimer = Minecraft.getInstance().getFrameTimer();
+            return (float) frameTimer.getLog()[frameTimer.getLogEnd()] / 1_000_000_000F; // ns to s
+        });
+        runtime.setQuery("maximum_frame_time", 1, MAX_FRAME_TIME);
+        runtime.setQuery("minimum_frame_time", () ->
+        {
+            FrameTimer frameTimer = Minecraft.getInstance().getFrameTimer();
+            return (float) frameTimer.getLog()[frameTimer.getLogEnd()] / 1_000_000_000F; // ns to s
+        });
+        runtime.setQuery("minimum_frame_time", 1, MIN_FRAME_TIME);
+        runtime.setQuery("camera_rotation", 1, CAMERA_ROTATION);
+        runtime.setQuery("log", 1, LOG);
 
         animationTime %= AnimatedModel.getAnimationLength(animationTime, animations);
 
@@ -313,5 +292,89 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
 
     public String getActiveMaterial() {
         return activeMaterial;
+    }
+
+    private static void get(float animationTime, MolangRuntime.Builder runtime, float startValue, AnimationData.KeyFrame[] frames, Vector3f result) {
+        if (frames.length == 1) {
+            float x = frames[0].getTransformPostX().safeResolve(runtime.create(startValue));
+            float y = frames[0].getTransformPostY().safeResolve(runtime.create(startValue));
+            float z = frames[0].getTransformPostZ().safeResolve(runtime.create(startValue));
+            result.set(x, y, z);
+            return;
+        }
+
+        for (int i = 0; i < frames.length; i++) {
+            AnimationData.KeyFrame to = frames[i];
+            if ((to.getTime() < animationTime && i < frames.length - 1) || to.getTime() == 0)
+                continue;
+
+            AnimationData.KeyFrame from = i == 0 ? null : frames[i - 1];
+            float progress = (from == null ? animationTime / to.getTime() : Math.min(1.0F, (animationTime - from.getTime()) / (to.getTime() - from.getTime())));
+            switch (to.getLerpMode()) {
+                case LINEAR:
+                    lerp(progress, runtime, startValue, from, to, result);
+                    break;
+                case CATMULLROM:
+                    catmullRom(progress, runtime, startValue, i > 1 ? frames[i - 2] : null, from, to, i < frames.length - 1 ? frames[i + 1] : null, result);
+                    break;
+            }
+            break;
+        }
+    }
+
+    private static void lerp(float progress, MolangRuntime.Builder runtime, float startValue, @Nullable AnimationData.KeyFrame from, AnimationData.KeyFrame to, Vector3f result) {
+        float fromX = from == null ? startValue : from.getTransformPostX().safeResolve(runtime.create(startValue));
+        float fromY = from == null ? startValue : from.getTransformPostY().safeResolve(runtime.create(startValue));
+        float fromZ = from == null ? startValue : from.getTransformPostZ().safeResolve(runtime.create(startValue));
+
+        float x = Mth.lerp(progress, fromX, to.getTransformPreX().safeResolve(runtime.create(startValue)));
+        float y = Mth.lerp(progress, fromY, to.getTransformPreY().safeResolve(runtime.create(startValue)));
+        float z = Mth.lerp(progress, fromZ, to.getTransformPreZ().safeResolve(runtime.create(startValue)));
+        result.set(x, y, z);
+    }
+
+    private static void catmullRom(float progress, MolangRuntime.Builder runtime, float startValue, @Nullable AnimationData.KeyFrame before, @Nullable AnimationData.KeyFrame from, AnimationData.KeyFrame to, @Nullable AnimationData.KeyFrame after, Vector3f result) {
+        float fromX = from == null ? startValue : from.getTransformPostX().safeResolve(runtime.create(startValue));
+        float fromY = from == null ? startValue : from.getTransformPostY().safeResolve(runtime.create(startValue));
+        float fromZ = from == null ? startValue : from.getTransformPostZ().safeResolve(runtime.create(startValue));
+
+        float beforeX = before == null ? fromX : before.getTransformPostX().safeResolve(runtime.create(startValue));
+        float beforeY = before == null ? fromY : before.getTransformPostY().safeResolve(runtime.create(startValue));
+        float beforeZ = before == null ? fromZ : before.getTransformPostZ().safeResolve(runtime.create(startValue));
+
+        float toX = to.getTransformPreX().safeResolve(runtime.create(startValue));
+        float toY = to.getTransformPreY().safeResolve(runtime.create(startValue));
+        float toZ = to.getTransformPreZ().safeResolve(runtime.create(startValue));
+
+        float afterX = after == null ? toX : after.getTransformPreX().safeResolve(runtime.create(startValue));
+        float afterY = after == null ? toY : after.getTransformPreY().safeResolve(runtime.create(startValue));
+        float afterZ = after == null ? toZ : after.getTransformPreZ().safeResolve(runtime.create(startValue));
+
+        result.set(catmullRom(beforeX, fromX, toX, afterX, progress), catmullRom(beforeY, fromY, toY, afterY, progress), catmullRom(beforeZ, fromZ, toZ, afterZ, progress));
+    }
+
+    private static float catmullRom(float p0, float p1, float p2, float p3, float t) {
+        return 0.5F * ((2 * p1) + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t + (-p0 + 3 * p1 - 3 * p2 + p3) * t * t * t);
+    }
+
+    private static float applyFrame(int count, FrameFunction terminator) throws MolangException {
+        FrameTimer frameTimer = Minecraft.getInstance().getFrameTimer();
+        long[] log = frameTimer.getLog();
+        int duration = Math.min(count, log.length - 1); // Extended from 30 to 240 since that's what FrameTimer stores
+        if (duration == 0)
+            return (float) frameTimer.getLog()[frameTimer.getLogEnd()] / 1_000_000_000F; // ns to s
+        if (duration < 0)
+            throw new MolangException("Invalid argument for last_frame_time(): " + duration);
+        int wrappedIndex = frameTimer.getLogEnd() - duration;
+        while (wrappedIndex < 0)
+            wrappedIndex += 240;
+
+        int finalWrappedIndex = wrappedIndex;
+        return (float) terminator.apply(LongStream.range(0, duration).map(i -> frameTimer.getLog()[frameTimer.wrapIndex((int) (finalWrappedIndex + i))])).orElse(0L) / 1_000_000_000F; // ns to s
+    }
+
+    @FunctionalInterface
+    private interface FrameFunction {
+        OptionalLong apply(LongStream stream) throws MolangException;
     }
 }
