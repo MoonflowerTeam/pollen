@@ -67,7 +67,7 @@ public class FogRendererMixin {
         }, partialTicks);
     }
 
-    @Inject(method = "setupFog", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setupNvFogDistance()V", shift = At.Shift.AFTER))
+    @Inject(method = "setupFog", at = @At("TAIL"))
     private static void modifyFogDensity(Camera camera, FogRenderer.FogMode fogType, float farPlaneDistance, boolean nearFog, CallbackInfo ci) {
         FogEvents.FOG_DENSITY.invoker().setupFogDensity(Minecraft.getInstance().gameRenderer, camera, CONTEXT, farPlaneDistance, capturePartialTicks);
     }
