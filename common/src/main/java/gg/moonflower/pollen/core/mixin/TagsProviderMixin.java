@@ -21,12 +21,12 @@ public class TagsProviderMixin<T> {
     @Unique
     private ResourceLocation id;
 
-    @Inject(method = "lambda$run$2", at = @At("HEAD"))
-    public void captureId(Function<ResourceLocation, Tag<T>> function, Function<ResourceLocation, T> function2, HashCache hashCache, ResourceLocation id, Tag.Builder builder, CallbackInfo ci) {
+    @Inject(method = "lambda$run$1", at = @At("HEAD"))
+    public void captureId(HashCache hashCache, ResourceLocation id, Tag.Builder builder, CallbackInfo ci) {
         this.id = id;
     }
 
-    @ModifyVariable(method = "lambda$run$2", ordinal = 0, at = @At(value = "STORE"))
+    @ModifyVariable(method = "lambda$run$1", ordinal = 0, at = @At(value = "STORE"))
     public JsonObject modifyJson(JsonObject value) {
         if (this instanceof ConditionalDataProvider)
             ((ConditionalDataProvider) this).injectConditions(this.id, value);
