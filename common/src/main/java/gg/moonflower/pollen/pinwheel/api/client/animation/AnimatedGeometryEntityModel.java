@@ -154,16 +154,14 @@ public class AnimatedGeometryEntityModel<T extends Entity> extends EntityModel<T
         model.resetTransformation();
         if (model instanceof AnimatedModel && this.animations.length > 0) {
             ProfilerFiller profiler = Minecraft.getInstance().getProfiler();
-            profiler.push("Set up " + entity + " animation");
-            profiler.push("Create Runtime");
+            profiler.push("createMolangRuntime");
             MolangRuntime.Builder builder = this.createRuntime(entity, limbSwing, limbSwingAmount, netHeadYaw, headPitch);
             if (entity instanceof MolangVariableProvider)
                 builder.setVariables((MolangVariableProvider) entity);
             if (this.variableProvider != null)
                 builder.setVariables(this.variableProvider);
-            profiler.popPush("Apply Animation");
+            profiler.popPush("applyMolangAnimation");
             ((AnimatedModel) model).applyAnimations(animationTicks / 20F, builder, this.getAnimations());
-            profiler.pop();
             profiler.pop();
         }
     }
