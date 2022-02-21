@@ -71,7 +71,7 @@ public class ProfileConnection {
 
     @Nullable
     private static JsonElement getJsonResponse(HttpEntity entity) {
-        if (ContentType.APPLICATION_JSON.toString().equals(entity.getContentType().getValue())) {
+        if (entity.getContentType() != null && ContentType.APPLICATION_JSON.toString().equals(entity.getContentType().getValue())) {
             try (InputStreamReader reader = new InputStreamReader(entity.getContent())) {
                 return new JsonParser().parse(reader);
             } catch (Throwable t) {
@@ -202,7 +202,7 @@ public class ProfileConnection {
      */
     public ProfileData getProfileData(UUID profileId) throws IOException, ProfileNotFoundException {
         this.checkConnection();
-        return GSON.fromJson(getProfileJson(this.apiUrl + "/user/" + profileId).getAsJsonObject(), ProfileData.class);
+        return GSON.fromJson(getProfileJson(this.apiUrl + "/user/minecraft/" + profileId).getAsJsonObject(), ProfileData.class);
     }
 
     /**
@@ -258,7 +258,7 @@ public class ProfileConnection {
     public Map<String, JsonObject> getEntitlementSettings(UUID profileId) throws IOException, ProfileNotFoundException {
         this.checkConnection();
         try {
-            JsonArray array = getProfileJson(this.apiUrl + "/user/" + profileId + "/entitlements").getAsJsonArray();
+            JsonArray array = getProfileJson(this.apiUrl + "/user/minecraft/" + profileId + "/entitlements").getAsJsonArray();
             Map<String, JsonObject> entitlementMap = new HashMap<>();
             for (JsonElement element : array) {
                 try {
@@ -287,7 +287,7 @@ public class ProfileConnection {
      */
     public JsonObject getSettings(UUID profileId, String entitlementId) throws IOException, ProfileNotFoundException {
         this.checkConnection();
-        return getProfileJson(this.apiUrl + "/user/" + profileId + "/entitlements/" + entitlementId).getAsJsonObject();
+        return getProfileJson(this.apiUrl + "/user/minecraft/" + profileId + "/entitlements/" + entitlementId).getAsJsonObject();
     }
 
     /**
@@ -302,7 +302,7 @@ public class ProfileConnection {
     public JsonObject updateSettings(UUID profileId, String entitlementId, JsonObject newSettings) throws IOException, ProfileNotFoundException {
         this.checkConnection();
         return this.runAuthenticated(context -> {
-            String url = this.apiUrl + "/user/" + profileId + "/entitlements/" + entitlementId;
+            String url = this.apiUrl + "/user/minecraft/" + profileId + "/entitlements/" + entitlementId;
             HttpPatch patch = new HttpPatch(url);
             patch.setHeader("Authorization", "Bearer " + this.getBearerToken());
             patch.setEntity(EntityBuilder.create().setText(GSON.toJson(newSettings)).setContentType(ContentType.APPLICATION_JSON).build());

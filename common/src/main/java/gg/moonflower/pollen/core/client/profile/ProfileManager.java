@@ -1,7 +1,6 @@
 package gg.moonflower.pollen.core.client.profile;
 
 import com.mojang.authlib.yggdrasil.ProfileNotFoundException;
-import gg.moonflower.pollen.api.platform.Platform;
 import net.minecraft.util.HttpUtil;
 
 import java.io.IOException;
@@ -15,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public final class ProfileManager {
 
-    private static final String HOST = Platform.isProduction() ? "accounts.moonflower.gg" : "localhost";
+    private static final String HOST = "accounts.moonflower.gg";
     public static final ProfileConnection CONNECTION = new ProfileConnection("https://" + HOST + "/api/v1", "https://" + HOST + "/link");
 
     private static final Map<UUID, CompletableFuture<ProfileData>> PROFILES = new HashMap<>();
