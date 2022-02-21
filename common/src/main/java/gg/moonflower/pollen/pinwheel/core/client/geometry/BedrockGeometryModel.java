@@ -260,8 +260,10 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
             }
 
             float blendWeight = animation.getBlendWeight().safeResolve(runtime.create(1.0F));
+            if (Math.abs(blendWeight) <= 1E-6) // No need to add if weight is 0
+                continue;
             for (AnimationData.BoneAnimation boneAnimation : animation.getBoneAnimations()) {
-                if (!this.modelParts.containsKey(boneAnimation.getName()) || animation.getBoneAnimations().length == 0)
+                if (!this.modelParts.containsKey(boneAnimation.getName()))
                     continue;
 
                 POSITION.set(0, 0, 0);
