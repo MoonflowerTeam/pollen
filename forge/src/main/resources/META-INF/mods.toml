@@ -10,8 +10,8 @@ displayName = "${name}"
 authors = "Moonflower"
 credits = "Jackson, Ocelot"
 description = "Pollen is a library mod which includes various utilities and platform bridges for Fabric and Forge using Architectury."
-#updateJSONURL = ""
-#logoFile = ""
+displayURL= "https://www.moonflower.gg/"
+logoFile = "logo.png"
 
 [[dependencies.${id}]]
 modId = "forge"
