@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.function.Function;
 
 @Mixin(TagsProvider.class)
-public class TagsProviderMixin<T> {
+public class TagsProviderMixin {
 
     @Unique
     private ResourceLocation captureId;
@@ -29,7 +29,7 @@ public class TagsProviderMixin<T> {
     }
 
     @Inject(method = "method_27046", at = @At("HEAD"))
-    public void captureId(Function<ResourceLocation, Tag<T>> function, Function<ResourceLocation, T> function2, HashCache hashCache, ResourceLocation id, Tag.Builder builder, CallbackInfo ci) {
+    public void captureId(HashCache hashCache, ResourceLocation id, Tag.Builder builder, CallbackInfo ci) {
         this.captureId = id;
     }
 
