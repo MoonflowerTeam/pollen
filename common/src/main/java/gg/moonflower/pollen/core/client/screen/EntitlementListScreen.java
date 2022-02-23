@@ -42,12 +42,22 @@ public class EntitlementListScreen extends Screen {
         this.entitlementsFuture.thenAcceptAsync(map -> this.list.add(this, map.values().stream().filter(Entitlement::hasSettings).sorted(Comparator.comparing(entitlement -> entitlement.getDisplayName().getString())).toArray(Entitlement[]::new)), this.minecraft);
         this.addWidget(this.list);
 
-        int refreshWidth = this.minecraft.font.width(RELOAD) + 32;
-        this.addRenderableWidget(new Button(this.width - refreshWidth - 6, 6, refreshWidth, 20, RELOAD, button -> {
-            EntitlementManager.clearCache(this.minecraft.getUser().getGameProfile().getId());
-            this.minecraft.setScreen(new EntitlementListScreen(this.lastScreen));
-        }));
-        
+        // If on a cracked account, don't even bother adding the button
+        if (this.minecraft.getUser().getGameProfile().getId() != null) {
+            int refreshWidth = this.minecraft.font.width(RELOAD) + 32;
+            Button refreshButton = new Button(this.width - refreshWidth - 6, 6, refreshWidth, 20, RELOAD, button -> {
+                EntitlementManager.clearCache(this.minecraft.getUser().getGameProfile().getId());
+                this.minecraft.setScreen(new EntitlementListScreen(this.lastScreen));
+            });
+
+            // If still loading entitlements
+            if (!this.entitlementsFuture.isDone()) {
+                refreshButton.active = false; // Prevent spamming the button while refreshing
+                this.entitlementsFuture.thenRunAsync(() -> refreshButton.active = true, this.minecraft);
+            }
+            this.addRenderableWidget(refreshButton);
+        }
+
         this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 27, 200, 20, CommonComponents.GUI_DONE, button -> this.minecraft.setScreen(this.lastScreen)));
     }
 

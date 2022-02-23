@@ -20,7 +20,6 @@
     "FolderRepositorySourceAccessor",
     "HandshakeHandlerMixin",
     "LivingEntityMixin",
-    "LootTablesMixin",
     "PackRepositoryAccessor",
     "PackRepositoryMixin",
     "SimpleReloadableResourceManagerMixin",

@@ -176,7 +176,6 @@ public final class EntitlementManager {
         private final UUID id;
         private volatile CompletableFuture<Map<String, Entitlement>> future;
         private volatile long expireTime;
-        private long failCount;
 
         private EntitlementData(UUID id) {
             this.id = id;
@@ -213,7 +212,6 @@ public final class EntitlementManager {
                 }));
 
                 this.expireTime = System.currentTimeMillis() + CACHE_TIME;
-                this.failCount = 0;
                 Minecraft.getInstance().execute(() -> {
                     if (entitlementMap.values().stream().anyMatch(entitlement -> entitlement instanceof ModelEntitlement))
                         GeometryModelManager.reload(false);
@@ -224,8 +222,7 @@ public final class EntitlementManager {
             }, Minecraft.getInstance()).exceptionally(e -> {
                 if (!(e instanceof ProfileNotFoundException || (e instanceof CompletionException && e.getCause() instanceof ProfileNotFoundException)))
                     LOGGER.error("Failed to retrieve entitlements for " + this.id, e);
-                this.failCount++;
-                this.expireTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(this.failCount * 10);
+                this.expireTime = System.currentTimeMillis() + CACHE_TIME;
                 return new HashMap<>();
             });
         }
