@@ -12,9 +12,12 @@ import gg.moonflower.pollen.api.registry.resource.ResourceRegistry;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.client.profile.ProfileManager;
 import gg.moonflower.pollen.core.client.render.layer.PollenCosmeticLayer;
+import gg.moonflower.pollen.core.network.PollenMessages;
+import gg.moonflower.pollen.core.network.play.ServerboundUpdateSettingsPacket;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -66,8 +69,11 @@ public final class EntitlementManager {
 
     public static void init() {
         AddRenderLayersEvent.EVENT.register(context -> {
-            for (String skin : context.getSkins())
-                context.getSkin(skin).addLayer(new PollenCosmeticLayer<>(context.getSkin(skin)));
+            for (String skin : context.getSkins()) {
+                PlayerRenderer renderer = context.getSkin(skin);
+                if (renderer != null)
+                    renderer.addLayer(new PollenCosmeticLayer<>(context.getSkin(skin)));
+            }
         });
         ResourceRegistry.registerReloadListener(PackType.CLIENT_RESOURCES, new PollinatedPreparableReloadListener() {
             @Override
@@ -156,6 +162,9 @@ public final class EntitlementManager {
                 }
             }
             unchangedElements.forEach(json::remove);
+
+            if (!json.entrySet().isEmpty() && Minecraft.getInstance().getConnection() != null)
+                PollenMessages.PLAY.sendToServer(new ServerboundUpdateSettingsPacket(entitlementId, json));
 
             return Pair.of(entitlement, json);
         }, Minecraft.getInstance()).thenAcceptAsync(pair -> {

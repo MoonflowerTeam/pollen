@@ -10,4 +10,6 @@ import org.jetbrains.annotations.ApiStatus;
 public interface PollenClientPlayPacketHandler {
 
     void handleSyncAnimationPacket(ClientboundSyncAnimationPacket msg, PollinatedPacketContext ctx);
+
+    void handleUpdateSettingsPacket(ClientboundUpdateSettingsPacket msg, PollinatedPacketContext ctx);
 }

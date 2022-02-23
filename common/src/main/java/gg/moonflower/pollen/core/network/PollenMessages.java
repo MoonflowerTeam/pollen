@@ -11,7 +11,9 @@ import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.network.login.ClientboundSyncPlayerDataKeysPacket;
 import gg.moonflower.pollen.core.network.login.PollenClientLoginPacketHandler;
 import gg.moonflower.pollen.core.network.play.ClientboundSyncAnimationPacket;
+import gg.moonflower.pollen.core.network.play.ClientboundUpdateSettingsPacket;
 import gg.moonflower.pollen.core.network.play.PollenClientPlayPacketHandler;
+import gg.moonflower.pollen.core.network.play.ServerboundUpdateSettingsPacket;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -23,11 +25,13 @@ import java.util.function.Supplier;
 @ApiStatus.Internal
 public class PollenMessages {
 
-    public static final PollinatedPlayNetworkChannel PLAY = NetworkRegistry.createPlay(new ResourceLocation(Pollen.MOD_ID, "play"), "1", PollenMessages::createClientPlayHandler, Object::new);
+    public static final PollinatedPlayNetworkChannel PLAY = NetworkRegistry.createPlay(new ResourceLocation(Pollen.MOD_ID, "play"), "2", PollenMessages::createClientPlayHandler, PollenServerPlayPacketHandlerImpl::new);
     public static final PollinatedLoginNetworkChannel LOGIN = NetworkRegistry.createLogin(new ResourceLocation(Pollen.MOD_ID, "login"), "1", PollenMessages::createClientLoginHandler, Object::new);
 
     public static void init() {
         PLAY.register(ClientboundSyncAnimationPacket.class, ClientboundSyncAnimationPacket::new, PollinatedPacketDirection.PLAY_CLIENTBOUND);
+        PLAY.register(ClientboundUpdateSettingsPacket.class, ClientboundUpdateSettingsPacket::new, PollinatedPacketDirection.PLAY_CLIENTBOUND);
+        PLAY.register(ServerboundUpdateSettingsPacket.class, ServerboundUpdateSettingsPacket::new, PollinatedPacketDirection.PLAY_SERVERBOUND);
 
         LOGIN.register(ServerboundAckPacket.class, ServerboundAckPacket::new);
         LOGIN.registerLogin(ClientboundSyncPlayerDataKeysPacket.class, ClientboundSyncPlayerDataKeysPacket::new, (Supplier<ClientboundSyncPlayerDataKeysPacket>) ClientboundSyncPlayerDataKeysPacket::new);
