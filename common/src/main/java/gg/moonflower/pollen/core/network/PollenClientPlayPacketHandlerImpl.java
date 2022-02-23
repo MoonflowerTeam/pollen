@@ -1,13 +1,16 @@
 package gg.moonflower.pollen.core.network;
 
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
+import gg.moonflower.pollen.core.client.entitlement.EntitlementManager;
 import gg.moonflower.pollen.core.network.play.ClientboundSyncAnimationPacket;
+import gg.moonflower.pollen.core.network.play.ClientboundUpdateSettingsPacket;
 import gg.moonflower.pollen.core.network.play.PollenClientPlayPacketHandler;
 import gg.moonflower.pollen.pinwheel.api.common.animation.AnimatedEntity;
 import gg.moonflower.pollen.pinwheel.api.common.animation.AnimationState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -49,6 +52,23 @@ public class PollenClientPlayPacketHandlerImpl implements PollenClientPlayPacket
             }
 
             entity.setAnimationState(animations[animationId]);
+        });
+    }
+
+    @Override
+    public void handleUpdateSettingsPacket(ClientboundUpdateSettingsPacket msg, PollinatedPacketContext ctx) {
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level == null)
+            return;
+
+        ctx.enqueueWork(() -> {
+            Player player = level.getPlayerByUUID(msg.getPlayer());
+            if (player == null) {
+                LOGGER.warn("Server sent settings for unknown player: " + msg.getSettings());
+                return;
+            }
+
+            EntitlementManager.updateEntitlementSettings(msg.getPlayer(), msg.getEntitlement(), entitlement -> entitlement.updateSettings(msg.getSettings()));
         });
     }
 }
