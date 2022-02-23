@@ -46,6 +46,7 @@ import java.util.function.Consumer;
  */
 public class ProfileConnection {
 
+    // FIXME People are repeatedly connecting to the api, seems like something is trying to reconnect over and over in seconds? Verify fixed
     private static final String USER_AGENT = "Pollen/" + PollinatedModContainer.get(Pollen.MOD_ID).orElseThrow(() -> new IllegalStateException("No Pollen? wtf")).getVersion() + "/" + SharedConstants.getCurrentVersion().getName();
     private static final int MAX_AUTH_ATTEMPTS = 2;
     private static final Logger LOGGER = LogManager.getLogger();
