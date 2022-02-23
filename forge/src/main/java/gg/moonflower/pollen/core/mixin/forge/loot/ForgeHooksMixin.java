@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class ForgeHooksMixin {
 
     @ModifyVariable(method = "loadLootTable", at = @At("HEAD"), ordinal = 0, remap = false, argsOnly = true)
-    public boolean modifyCustom(boolean value) {
+    private static boolean modifyCustom(boolean value) {
         return false;
     }
 }
