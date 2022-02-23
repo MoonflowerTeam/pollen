@@ -23,6 +23,7 @@
     "PackRepositoryAccessor",
     "PackRepositoryMixin",
     "SimpleReloadableResourceManagerMixin",
+    "loot.ForgeHooksMixin",
     "loot.LootPoolAccessor",
     "loot.LootTableAccessor"
   ],
