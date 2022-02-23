@@ -59,14 +59,12 @@ public class ProfileConnection {
     public ProfileConnection(String apiUrl, String linkUrl) {
         this.apiUrl = apiUrl;
         this.linkUrl = linkUrl;
-        this.serverDown = new CompletableFuture<>();
-        CompletableFuture.runAsync(() -> {
+        this.serverDown = CompletableFuture.runAsync(() -> {
             try {
                 HttpHead head = new HttpHead(apiUrl);
                 try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build()) {
                     try (CloseableHttpResponse response = client.execute(head)) {
-                        if (response.getStatusLine().getStatusCode() != 200)
-                            throw new IOException("Server Down");
+                        // Check for a connection without error
                     }
                 }
             } catch (Exception e) {
