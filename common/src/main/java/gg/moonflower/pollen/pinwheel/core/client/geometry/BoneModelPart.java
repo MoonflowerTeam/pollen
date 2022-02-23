@@ -207,7 +207,7 @@ public class BoneModelPart extends ModelPart implements AnimatedModelPart {
     public void render(PoseStack matrixStack, VertexConsumer builder, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         super.render(matrixStack, builder, packedLight, packedOverlay, red, green, blue, alpha);
 
-        if (this.visible && (!this.quads.isEmpty() || !this.polygons.isEmpty() || !this.children.isEmpty())) {
+        if (this.visible && alpha > 0 && (!this.quads.isEmpty() || !this.polygons.isEmpty() || !this.children.isEmpty())) {
             matrixStack.pushPose();
             this.translateAndRotate(matrixStack);
 
