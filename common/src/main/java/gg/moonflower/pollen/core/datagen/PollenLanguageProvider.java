@@ -26,6 +26,8 @@ public class PollenLanguageProvider extends PollinatedLanguageProvider {
         this.add("argument." + this.domain + ".time.big", "Time must not be more than %s); found %s");
         this.add("commands." + this.domain + ".config.success", "Config for %s of type %s found at %s");
         this.add("commands." + this.domain + ".config.fail", "Config for %s of type %s not found");
+        this.add("screen." + this.domain + ".moonflowerServerDown.header", "Moonflower Servers are Down");
+        this.add("screen." + this.domain + ".moonflowerServerDown.message", "Unfortunately, the cosmetic servers are down right now so you will not be able to see or manage cosmetics. Please try again later.");
         this.add("screen." + this.domain + ".linkPatreon.header", "Link Patreon");
         this.add("screen." + this.domain + ".linkPatreon.message", "You must link your Minecraft account to your Patreon account before you can access your Moonflower cosmetics. This will continue in an external browser, do you wish to proceed?");
         this.add("screen." + this.domain + ".linkPatreon.waiting", "Waiting for response from server...");

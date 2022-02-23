@@ -59,10 +59,16 @@ public class ProfileConnection {
     public ProfileConnection(String apiUrl, String linkUrl) {
         this.apiUrl = apiUrl;
         this.linkUrl = linkUrl;
-        this.serverDown = CompletableFuture.runAsync(() -> {
+        this.serverDown = new CompletableFuture<>();
+        CompletableFuture.runAsync(() -> {
             try {
-                check(apiUrl);
-                check(linkUrl);
+                HttpHead head = new HttpHead(apiUrl);
+                try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build()) {
+                    try (CloseableHttpResponse response = client.execute(head)) {
+                        if (response.getStatusLine().getStatusCode() != 200)
+                            throw new IOException("Server Down");
+                    }
+                }
             } catch (Exception e) {
                 throw new CompletionException(e);
             }
@@ -109,15 +115,6 @@ public class ProfileConnection {
             throw new IOException("Failed to connect to '" + url + "'. " + statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
         }
         return json;
-    }
-
-    private static StatusLine check(String url) throws IOException {
-        HttpHead head = new HttpHead(url);
-        try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build()) {
-            try (CloseableHttpResponse response = client.execute(head)) {
-                return response.getStatusLine();
-            }
-        }
     }
 
     private static JsonElement getProfileJson(String url) throws IOException, ProfileNotFoundException {
@@ -191,6 +188,12 @@ public class ProfileConnection {
             }
             throw new IOException("Failed to connect to server", e);
         }
+    }
+
+    public CompletableFuture<Boolean> isServerDown() {
+        if (this.serverDown.isCompletedExceptionally())
+            return CompletableFuture.completedFuture(true);
+        return this.serverDown.handle((__, e) -> e != null);
     }
 
     /**
