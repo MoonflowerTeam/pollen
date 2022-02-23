@@ -57,7 +57,7 @@ public final class EntitlementManager {
             if (entity instanceof Player)
                 PLAYER_ENTITLEMENTS.remove(entity.getUUID());
         });
-        ClientNetworkEvents.LOGOUT.register((controller, player, connection) -> clearCache());
+        ClientNetworkEvents.LOGOUT.register((controller, player, connection) -> PLAYER_ENTITLEMENTS.keySet().removeIf(id -> !player.getUUID().equals(id))); // Clear other player entitlements
     }
 
     private EntitlementManager() {
@@ -89,7 +89,7 @@ public final class EntitlementManager {
     }
 
     public static CompletableFuture<Void> reload(boolean force, PreparableReloadListener.PreparationBarrier stage, Executor gameExecutor) {
-        return (loaded && !force) ? stage.wait(null) : CompletableFuture.allOf(ProfileManager.getProfile(Minecraft.getInstance().getUser().getGameProfile().getId()), getEntitlementsFuture(Minecraft.getInstance().getUser().getGameProfile().getId())).thenCompose(stage::wait).thenRunAsync(() -> loaded = true, gameExecutor); // Preload player cosmetics
+        return (loaded && !force) ? stage.wait(null) : ProfileManager.getProfile(Minecraft.getInstance().getUser().getGameProfile().getId()).thenCompose(stage::wait).thenRunAsync(() -> loaded = true, gameExecutor); // Preload player profile
     }
 
     /**
