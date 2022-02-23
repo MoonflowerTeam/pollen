@@ -29,6 +29,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 @ApiStatus.Internal
 @Mod.EventBusSubscriber(modid = Pollen.MOD_ID)
 public class SyncedDataManagerImpl {
@@ -37,8 +39,8 @@ public class SyncedDataManagerImpl {
     public static final Capability<ForgeDataComponent> CAPABILITY = null;
 
     @SuppressWarnings("ConstantConditions")
-    private static ForgeDataComponent getDataComponent(Entity entity) {
-        return entity.getCapability(CAPABILITY).orElseThrow(() -> new IllegalStateException("Failed to get capability"));
+    private static LazyOptional<ForgeDataComponent> getDataComponent(Entity entity) {
+        return entity.getCapability(CAPABILITY);
     }
 
     public static void init() {
@@ -67,9 +69,10 @@ public class SyncedDataManagerImpl {
         if (event.getPlayer() instanceof ServerPlayer) {
             ServerPlayer player = (ServerPlayer) event.getPlayer();
             Entity target = event.getTarget();
-            ForgeDataComponent component = getDataComponent(player);
-            if (component.shouldSyncWith(target, player))
-                PollenMessages.PLAY.sendTo(player, new ClientboundUpdateSyncedDataPacket(target, player, true));
+            getDataComponent(player).ifPresent(component -> {
+                if (component.shouldSyncWith(target, player))
+                    PollenMessages.PLAY.sendTo(player, new ClientboundUpdateSyncedDataPacket(target, player, true));
+            });
         }
     }
 
@@ -77,60 +80,69 @@ public class SyncedDataManagerImpl {
     public static void onPlayerJoinWorld(EntityJoinWorldEvent event) {
         if (event.getEntity() instanceof ServerPlayer) {
             ServerPlayer player = (ServerPlayer) event.getEntity();
-            ForgeDataComponent component = getDataComponent(player);
-            if (component.shouldSyncWith(player, player))
-                PollenMessages.PLAY.sendTo(player, new ClientboundUpdateSyncedDataPacket(player, player, true));
+            getDataComponent(player).ifPresent(component -> {
+                if (component.shouldSyncWith(player, player))
+                    PollenMessages.PLAY.sendTo(player, new ClientboundUpdateSyncedDataPacket(player, player, true));
+            });
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
         if (event.getOriginal() instanceof ServerPlayer && event.getPlayer() instanceof ServerPlayer) {
             ServerPlayer original = (ServerPlayer) event.getOriginal();
             ServerPlayer player = (ServerPlayer) event.getPlayer();
 
-            original.getCapability(CAPABILITY).ifPresent(oldHolder -> {
-                ForgeDataComponent newHolder = getDataComponent(player);
-                if (oldHolder.shouldCopyForRespawn(!event.isWasDeath(), player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)))
-                    newHolder.copyForRespawn(oldHolder, !event.isWasDeath());
+            Optional<ForgeDataComponent> originalOptional = getDataComponent(original).resolve();
+            Optional<ForgeDataComponent> copyOptional = getDataComponent(original).resolve();
 
-                if (newHolder.shouldSyncWith(player, player))
-                    PollenMessages.PLAY.sendTo(player, new ClientboundUpdateSyncedDataPacket(player, player, true));
-            });
+            if (!originalOptional.isPresent() || !copyOptional.isPresent())
+                return;
+
+            ForgeDataComponent oldHolder = originalOptional.get();
+            ForgeDataComponent newHolder = copyOptional.get();
+            if (oldHolder.shouldCopyForRespawn(!event.isWasDeath(), player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)))
+                newHolder.copyForRespawn(oldHolder, !event.isWasDeath());
+
+            if (newHolder.shouldSyncWith(player, player))
+                PollenMessages.PLAY.sendTo(player, new ClientboundUpdateSyncedDataPacket(player, player, true));
         }
     }
 
     public static void sync(Entity entity) {
-        ForgeDataComponent component = getDataComponent(entity);
-        if (component.isDirty()) {
-            for (ServerPlayer other : ((ServerLevel) entity.level).getServer().getPlayerList().getPlayers()) {
-                if (component.shouldSyncWith(entity, other))
-                    PollenMessages.PLAY.sendTo(other, new ClientboundUpdateSyncedDataPacket(entity, other, false));
+        getDataComponent(entity).ifPresent(component -> {
+            if (component.isDirty()) {
+                for (ServerPlayer other : ((ServerLevel) entity.level).getServer().getPlayerList().getPlayers()) {
+                    if (component.shouldSyncWith(entity, other))
+                        PollenMessages.PLAY.sendTo(other, new ClientboundUpdateSyncedDataPacket(entity, other, false));
+                }
+                component.clean();
             }
-            component.clean();
-        }
+        });
     }
 
     public static <T> void set(Entity entity, SyncedDataKey<T> key, T value) {
-        getDataComponent(entity).setValue(key, value);
-        SyncedDataManager.markDirty();
+        getDataComponent(entity).ifPresent(component -> {
+            SyncedDataManager.markDirty();
+            component.setValue(key, value);
+        });
     }
 
     public static <T> T get(Entity entity, SyncedDataKey<T> key) {
-        return getDataComponent(entity).getValue(key);
+        LazyOptional<ForgeDataComponent> optional = getDataComponent(entity);
+        return optional.isPresent() ? optional.orElseThrow(() -> new IllegalStateException("Component should be present")).getValue(key) : key.getDefaultValueSupplier().get();
     }
 
     public static void writePacketData(FriendlyByteBuf buf, Entity provider, Entity entity, boolean sync) {
         if (sync) {
-            getDataComponent(entity).writeSyncPacket(buf, provider, entity);
+            getDataComponent(entity).ifPresent(component -> component.writeSyncPacket(buf, provider, entity));
         } else {
-            getDataComponent(entity).writeUpdatePacket(buf, provider, entity);
+            getDataComponent(entity).ifPresent(component -> component.writeUpdatePacket(buf, provider, entity));
         }
     }
 
     public static void readPacketData(FriendlyByteBuf buf, Entity entity) {
-        getDataComponent(entity).applySyncPacket(buf);
+        getDataComponent(entity).ifPresent(component -> component.applySyncPacket(buf));
     }
 
     public static class Provider implements ICapabilitySerializable<CompoundTag> {
