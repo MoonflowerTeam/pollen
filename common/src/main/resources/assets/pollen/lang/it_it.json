@@ -1,0 +1,19 @@
+{
+  "argument.pollen.color.invalid": "Stringa di Colore Invalida",
+  "argument.pollen.enum.invalid": "Valore Enum Invalido",
+  "argument.pollen.time.big": "Tempo non può essere più di %s); trovato %s",
+  "argument.pollen.time.low": "Tempo non può essere meno di %s); trovato %s",
+  "argument.pollen.time.unknown_unit": "Unità di Tempo Invalida",
+  "commands.pollen.config.fail": "Config per %s di tipo %s non trovato",
+  "commands.pollen.config.success": "Config per %s di tipo %s trovato a %s",
+  "gui.jei.category.pollen.grindstone.experience": "XP: %s - %s",
+  "options.pollen.entitlementList": "Cosmetici Moonflower...",
+  "options.pollen.entitlementList.none": "Non hai alcun cosmetico",
+  "options.pollen.entitlementList.reload": "Ricarica",
+  "options.pollen.entitlementList.title": "Impostazioni cosmetici Moonflower",
+  "pack.source.forgemod": "Mod per Forge",
+  "screen.pollen.linkPatreon.error": "Impossibile collegare Patreon",
+  "screen.pollen.linkPatreon.header": "Collega Patreon",
+  "screen.pollen.linkPatreon.message": "Devi collegare il tuo account Patreon al tuo account Minecraft per accedere ai Cosmetici Moonflower. Ciò aprirà una finestra in un browser esterno, desideri procedere?",
+  "screen.pollen.linkPatreon.waiting": "Aspettando una risposta dal server..."
+}

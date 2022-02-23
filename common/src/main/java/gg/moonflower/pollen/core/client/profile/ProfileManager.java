@@ -2,6 +2,7 @@ package gg.moonflower.pollen.core.client.profile;
 
 import com.mojang.authlib.yggdrasil.ProfileNotFoundException;
 import net.minecraft.util.HttpUtil;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -26,8 +27,8 @@ public final class ProfileManager {
         PROFILES.remove(id);
     }
 
-    public static synchronized CompletableFuture<ProfileData> getProfile(UUID id) {
-        return PROFILES.computeIfAbsent(id, __ -> CompletableFuture.supplyAsync(() -> {
+    public static synchronized CompletableFuture<ProfileData> getProfile(@Nullable UUID id) {
+        return id == null ? CompletableFuture.completedFuture(ProfileData.EMPTY) : PROFILES.computeIfAbsent(id, __ -> CompletableFuture.supplyAsync(() -> {
             try {
                 return CONNECTION.getProfileData(id);
             } catch (ProfileNotFoundException ignored) {
