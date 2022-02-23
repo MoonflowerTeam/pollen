@@ -19,7 +19,6 @@
     "FolderRepositorySourceAccessor",
     "ForgeInternalHandlerMixin",
     "LivingEntityMixin",
-    "LootTablesMixin",
     "PackRepositoryAccessor",
     "PackRepositoryMixin",
     "SimpleReloadableResourceManagerMixin",

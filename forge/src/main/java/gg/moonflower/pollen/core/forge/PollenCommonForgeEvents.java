@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.core.forge;
 
+import gg.moonflower.pollen.api.event.events.LootTableConstructingEvent;
 import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.ModifyTradesEvents;
 import gg.moonflower.pollen.api.event.events.entity.SetTargetEvent;
@@ -18,6 +19,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
@@ -224,5 +226,12 @@ public class PollenCommonForgeEvents {
     @SubscribeEvent
     public static void onEvent(PlayerContainerEvent.Close event) {
         ContainerEvents.CLOSE.invoker().close(event.getPlayer(), event.getContainer());
+    }
+
+    @SubscribeEvent
+    public static void onEvent(LootTableLoadEvent event) {
+        LootTableConstructingEvent.Context context = new LootTableConstructingEvent.Context(event.getName(), event.getTable());
+        LootTableConstructingEvent.EVENT.invoker().modifyLootTable(context);
+        event.setTable(context.apply());
     }
 }

@@ -2,18 +2,20 @@ package gg.moonflower.pollen.api.resource.modifier.type;
 
 import com.google.common.collect.Iterables;
 import com.google.gson.*;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.event.events.LootTableConstructingEvent;
+import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.resource.modifier.ResourceModifier;
 import gg.moonflower.pollen.api.resource.modifier.ResourceModifierManager;
 import gg.moonflower.pollen.api.resource.modifier.ResourceModifierType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ServerResources;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.level.storage.loot.Deserializers;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -28,7 +30,7 @@ import java.util.stream.IntStream;
  */
 public class LootModifier extends ResourceModifier<LootTableConstructingEvent.Context> {
 
-    private static final Gson GSON = Deserializers.createLootTableSerializer().create();
+    private static final Gson GSON = createLootTableSerializer().create();
 
     private final LootContextParamSet lootContextParamSet;
     private final LootPool[] addPools;
@@ -51,6 +53,18 @@ public class LootModifier extends ResourceModifier<LootTableConstructingEvent.Co
         this.removePoolFunctions = removePoolFunctions;
         this.removePools = removePools;
         this.removeFunctions = removeFunctions;
+    }
+
+    @ApiStatus.Internal
+    @ExpectPlatform
+    public static GsonBuilder createLootTableSerializer() {
+        return Platform.error();
+    }
+
+    @ApiStatus.Internal
+    @ExpectPlatform
+    public static void initPool(JsonObject json) {
+        Platform.error();
     }
 
     /**
@@ -238,6 +252,7 @@ public class LootModifier extends ResourceModifier<LootTableConstructingEvent.Co
          * @return The deserialized builder
          */
         public static Builder fromJson(ResourceLocation name, ServerResources serverResources, JsonObject json, ResourceLocation[] inject, int priority) {
+            initPool(json);
             LootPool[] addPools = json.has("addPools") ? GSON.fromJson(json.get("addPools"), LootPool[].class) : new LootPool[0];
             LootItemFunction[] addFunctions = json.has("addFunctions") ? GSON.fromJson(json.get("addFunctions"), LootItemFunction[].class) : new LootItemFunction[0];
             LootContextParamSet lootContextParamSet = null;
