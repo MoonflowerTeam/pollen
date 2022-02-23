@@ -7,6 +7,8 @@ import net.minecraft.world.level.storage.loot.*;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.reflect.Type;
@@ -35,8 +37,8 @@ public class LootModifierImpl {
             LootPoolEntryContainer[] lootPoolEntryContainers = GsonHelper.getAsObject(jsonObject, "entries", jsonDeserializationContext, LootPoolEntryContainer[].class);
             LootItemCondition[] lootItemConditions = GsonHelper.getAsObject(jsonObject, "conditions", new LootItemCondition[0], jsonDeserializationContext, LootItemCondition[].class);
             LootItemFunction[] lootItemFunctions = GsonHelper.getAsObject(jsonObject, "functions", new LootItemFunction[0], jsonDeserializationContext, LootItemFunction[].class);
-            RandomIntGenerator randomIntGenerator = RandomIntGenerators.deserialize(jsonObject.get("rolls"), jsonDeserializationContext);
-            RandomValueBounds randomValueBounds = GsonHelper.getAsObject(jsonObject, "bonus_rolls", new RandomValueBounds(0.0F, 0.0F), jsonDeserializationContext, RandomValueBounds.class);
+            NumberProvider randomIntGenerator = GsonHelper.getAsObject(jsonObject, "rolls", jsonDeserializationContext, NumberProvider.class);
+            NumberProvider randomValueBounds = GsonHelper.getAsObject(jsonObject, "bonus_rolls", ConstantValue.exactly(0.0F), jsonDeserializationContext, NumberProvider.class);
 
             if (poolName == null)
                 poolCount++;

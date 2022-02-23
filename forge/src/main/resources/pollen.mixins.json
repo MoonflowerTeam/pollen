@@ -23,6 +23,7 @@
     "PackRepositoryAccessor",
     "PackRepositoryMixin",
     "SimpleReloadableResourceManagerMixin",
+    "loot.LootPoolAccessor",
     "loot.LootTableAccessor"
   ],
   "injectors": {
