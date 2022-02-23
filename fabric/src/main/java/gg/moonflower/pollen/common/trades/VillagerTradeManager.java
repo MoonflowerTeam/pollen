@@ -59,13 +59,19 @@ public class VillagerTradeManager {
 
     private static void registerVillagerTrades() {
         for (VillagerProfession prof : Registry.VILLAGER_PROFESSION) {
-            Int2ObjectMap<VillagerTrades.ItemListing[]> vanillaTrades = VANILLA_TRADES.getOrDefault(prof, new Int2ObjectOpenHashMap<>());
+            Int2ObjectMap<VillagerTrades.ItemListing[]> vanillaTrades = VANILLA_TRADES.get(prof);
             Int2ObjectMap<ModifyTradesEvents.TradeRegistry> newTrades = new Int2ObjectOpenHashMap<>();
             for (int i = 1; i < 6; i++) {
                 newTrades.put(i, new ModifyTradesEvents.TradeRegistry());
             }
 
-            vanillaTrades.int2ObjectEntrySet().forEach(e -> Arrays.stream(e.getValue()).forEach(newTrades.get(e.getIntKey())::add));
+            if (vanillaTrades == null)
+                vanillaTrades = new Int2ObjectOpenHashMap<>();
+            vanillaTrades.int2ObjectEntrySet().forEach(e -> {
+                Validate.exclusiveBetween(0, 6, e.getIntKey(), "Tier must be between 1 and 5");
+                Arrays.stream(e.getValue()).forEach(newTrades.get(e.getIntKey())::add);
+            });
+
             ModifyTradesEvents.VILLAGER.invoker().modifyTrades(new ModifyTradesEvents.ModifyVillager.Context() {
                 @Override
                 public VillagerProfession getProfession() {
