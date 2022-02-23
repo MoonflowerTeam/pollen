@@ -79,7 +79,7 @@ public class ProfileConnection {
     private static JsonElement getJsonResponse(HttpEntity entity) {
         if (entity.getContentType() != null && ContentType.APPLICATION_JSON.toString().equals(entity.getContentType().getValue())) {
             try (InputStreamReader reader = new InputStreamReader(entity.getContent())) {
-                return new JsonParser().parse(reader);
+                return JsonParser.parseReader(reader);
             } catch (Throwable t) {
                 t.printStackTrace();
             }

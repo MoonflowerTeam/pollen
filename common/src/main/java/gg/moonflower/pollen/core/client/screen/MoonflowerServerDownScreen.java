@@ -41,12 +41,12 @@ public class MoonflowerServerDownScreen extends Screen {
         super.init();
         this.message = MultiLineLabel.create(this.font, CONTENT, this.width - 50);
         int i = (this.message.getLineCount() + 1) * 9 * 2;
-        this.addButton(new Button(this.width / 2 - 100, 100 + i, 200, 20, CommonComponents.GUI_DONE, arg -> this.minecraft.setScreen(this.previous)));
+        this.addRenderableWidget(new Button(this.width / 2 - 100, 100 + i, 200, 20, CommonComponents.GUI_DONE, arg -> this.minecraft.setScreen(this.previous)));
     }
 
     @Override
-    public String getNarrationMessage() {
-        return NARRATION.getString();
+    public Component getNarrationMessage() {
+        return NARRATION;
     }
 
     @Override
