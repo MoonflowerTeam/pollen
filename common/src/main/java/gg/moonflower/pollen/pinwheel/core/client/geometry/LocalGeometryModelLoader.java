@@ -31,33 +31,22 @@ public final class LocalGeometryModelLoader implements BackgroundLoader<Map<Reso
     public CompletableFuture<Map<ResourceLocation, GeometryModel>> reload(ResourceManager resourceManager, Executor backgroundExecutor, Executor gameExecutor) {
         return CompletableFuture.supplyAsync(() ->
         {
-            Map<ResourceLocation, GeometryModelData> modelLocations = new HashMap<>();
+            Map<ResourceLocation, GeometryModel> modelLocations = new HashMap<>();
             for (ResourceLocation modelLocation : resourceManager.listResources(FOLDER, name -> name.endsWith(".json"))) {
                 try (Resource resource = resourceManager.getResource(modelLocation)) {
                     GeometryModelData[] models = GeometryModelParser.parseModel(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
                     for (GeometryModelData model : models) {
                         ResourceLocation id = new ResourceLocation(modelLocation.getNamespace(), model.getDescription().getIdentifier());
-                        if (modelLocations.put(id, model) != null)
+                        if (modelLocations.put(id, model.create()) != null)
                             LOGGER.warn("Duplicate geometry model with id '" + id + "'");
                     }
                 } catch (Exception e) {
                     LOGGER.error("Failed to load geometry file '" + modelLocation.getNamespace() + ":" + modelLocation.getPath().substring(FOLDER.length(), modelLocation.getPath().length() - 5) + "'", e);
                 }
             }
+
             LOGGER.info("Loaded " + modelLocations.size() + " geometry models.");
             return modelLocations;
-        }, backgroundExecutor).thenApplyAsync(modelLocations ->
-        {
-            Map<ResourceLocation, GeometryModel> models = new HashMap<>();
-            modelLocations.forEach((name, model) ->
-            {
-                try {
-                    models.put(name, model.create());
-                } catch (Exception e) {
-                    LOGGER.error("Failed to create model: " + name, e);
-                }
-            });
-            return models;
-        }, gameExecutor);
+        }, backgroundExecutor);
     }
 }
