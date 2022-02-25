@@ -78,13 +78,13 @@ processResources {
     inputs.property "id", rootProject.mod_id
     inputs.property "name", rootProject.mod_name
     inputs.property "version", rootProject.mod_version
-    inputs.property "repo", rootProject.repo_name
+    inputs.property "repo", rootProject.name
 
     filesMatching(["META-INF/mods.toml", "pack.mcmeta"]) {
         expand "id": rootProject.mod_id,
                 "name": rootProject.mod_name,
                 "version": rootProject.mod_version,
-                "repo": rootProject.repo_name
+                "repo": rootProject.name
     }
 
     doLast {
