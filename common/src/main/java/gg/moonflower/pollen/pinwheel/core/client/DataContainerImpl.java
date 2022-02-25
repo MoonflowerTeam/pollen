@@ -1,13 +1,13 @@
 package gg.moonflower.pollen.pinwheel.core.client;
 
-import gg.moonflower.pollen.core.extensions.ClientLevelExtension;
 import gg.moonflower.pollen.pinwheel.api.client.blockdata.BlockData;
 import gg.moonflower.pollen.pinwheel.api.client.blockdata.BlockDataKey;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRenderer;
-import net.minecraft.client.multiplayer.ClientLevel;
+import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererTicker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelReader;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
@@ -16,11 +16,11 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Internal
 public class DataContainerImpl {
 
-    private final ClientLevel level;
+    private final BlockGetter level;
     private final BlockPos.MutableBlockPos pos;
     private final BlockRenderer.DataContainer container;
 
-    public DataContainerImpl(ClientLevel level) {
+    public DataContainerImpl(BlockGetter level) {
         this.level = level;
         this.pos = new BlockPos.MutableBlockPos();
         this.container = new BlockRenderer.DataContainer() {
@@ -42,8 +42,8 @@ public class DataContainerImpl {
     }
 
     private void scheduleTick(BlockPos pos) {
-        if (!this.pos.equals(pos))
-            ((ClientLevelExtension) this.level).pollen_scheduleTick(pos);
+        if (this.level instanceof BlockRendererTicker && !this.pos.equals(pos))
+            ((BlockRendererTicker) this.level).scheduleBlockRendererTick(pos);
     }
 
     private <T> BlockData<T> get(BlockDataKey<T> key, BlockPos pos) {
@@ -53,9 +53,5 @@ public class DataContainerImpl {
     public BlockRenderer.DataContainer get(BlockPos pos) {
         this.pos.set(pos);
         return this.container;
-    }
-
-    public Level getLevel() {
-        return level;
     }
 }
