@@ -45,7 +45,7 @@ public class ChunkRenderDispatcherRebuildTaskMixin {
                     if (state.isAir())
                         continue;
                     if (BlockRendererDispatcher.shouldRender(state))
-                        ((CompiledChunkExtension) chunk).pollen_getBlockRenderers().add(pos.immutable());
+                        ((CompiledChunkExtension) chunk).pollen_getBlockRenderPositions().add(pos.immutable());
                     if (BlockRendererRegistry.get(state.getBlock()).stream().anyMatch(r -> r instanceof TickableBlockRenderer))
                         ((CompiledChunkExtension) chunk).pollen_getTickingBlockRenderers().add(pos.immutable());
                 }
