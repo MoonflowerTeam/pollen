@@ -5,6 +5,7 @@
   "minVersion": "0.8",
   "client": [
     "client.AgeableListModelAccessor",
+    "client.BlockStateMixin",
     "client.BlockModelShaperMixin",
     "client.ChunkRenderDispatcherRebuildTaskMixin",
     "client.ClientLevelMixin",
@@ -25,10 +26,6 @@
     "client.WolfAccessor"
   ],
   "mixins": [
-    "data.AdvancementBuilderAccessor",
-    "data.AdvancementBuilderMixin",
-    "data.AdvancementRewardsAccessor",
-    "data.AdvancementRewardsBuilderAccessor",
     "BucketItemAccessor",
     "EntityMixin",
     "GrindstoneMenuMixin",
@@ -40,6 +37,10 @@
     "ServerPlayerMixin",
     "ServerResourcesMixin",
     "SimpleReloadableResourceManagerMixin",
+    "data.AdvancementBuilderAccessor",
+    "data.AdvancementBuilderMixin",
+    "data.AdvancementRewardsAccessor",
+    "data.AdvancementRewardsBuilderAccessor",
     "data.TagBuilderMixin",
     "data.TagsProviderAccessor",
     "loot.LootPoolAccessor",

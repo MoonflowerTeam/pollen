@@ -22,11 +22,4 @@ public class BlockRendererMixin {
         BlockRenderer renderer = BlockRendererRegistry.getFirst(original.getBlock());
         return renderer != null ? renderer.getRenderState(original) : original;
     }
-
-    @Inject(method = "renderModel", at = @At("HEAD"), remap = false, cancellable = true)
-    public void renderModel(BlockAndTintGetter world, BlockState state, BlockPos pos, BakedModel model, ChunkModelBuffers buffers, boolean cull, long seed, CallbackInfoReturnable<Boolean> cir) {
-        BlockRenderer renderer = BlockRendererRegistry.getFirst(state.getBlock());
-        if (renderer != null && renderer.getRenderShape(state) == RenderShape.INVISIBLE)
-            cir.setReturnValue(false);
-    }
 }

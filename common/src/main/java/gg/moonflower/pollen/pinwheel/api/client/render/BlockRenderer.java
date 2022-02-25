@@ -55,7 +55,6 @@ public interface BlockRenderer {
      * @param packedOverlay The overlay coordinates to use on the render
      * @deprecated Use {@link #render(LevelReader, BlockPos, DataContainer, MultiBufferSource, PoseStack, Camera, GameRenderer, LightTexture, int, int, float)} instead. TODO remove in 2.0.0
      */
-    @ApiStatus.OverrideOnly
     void render(Level level, BlockPos pos, DataContainer container, MultiBufferSource buffer, PoseStack matrixStack, float partialTicks, Camera camera, GameRenderer gameRenderer, LightTexture lightmap, Matrix4f projection, int packedLight, int packedOverlay);
 
     /**
@@ -87,6 +86,7 @@ public interface BlockRenderer {
      * {@link RenderShape#ENTITYBLOCK_ANIMATED} will cause this renderer to apply and vanilla behavior<p>
      * {@link RenderShape#MODEL} will cause vanilla behavior
      */
+    @ApiStatus.OverrideOnly
     default RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE;
     }

@@ -2,6 +2,7 @@ package gg.moonflower.pollen.core.mixin.fabric.sodium;
 
 import gg.moonflower.pollen.core.extensions.fabric.sodium.ChunkRenderDataExtension;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRenderer;
+import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererDispatcher;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
 import gg.moonflower.pollen.pinwheel.api.client.render.TickableBlockRenderer;
 import me.jellysquid.mods.sodium.client.render.chunk.ChunkGraphicsState;
@@ -40,8 +41,7 @@ public abstract class ChunkRenderRebuildTaskMixin<T extends ChunkGraphicsState> 
             BlockState state = cache.getWorldSlice().getBlockState(pos);
             if (state.isAir())
                 continue;
-            BlockRenderer renderer = BlockRendererRegistry.getFirst(state.getBlock());
-            if (renderer != null && renderer.getRenderShape(state) != RenderShape.MODEL)
+            if (BlockRendererDispatcher.shouldRender(state))
                 blockRenderPositions.add(pos.immutable());
             if (BlockRendererRegistry.get(state.getBlock()).stream().anyMatch(r -> r instanceof TickableBlockRenderer))
                 tickingBlockRenderPositions.add(pos.immutable());
