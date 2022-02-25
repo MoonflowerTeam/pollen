@@ -9,18 +9,15 @@ import gg.moonflower.pollen.api.client.render.PollenDimensionSpecialEffects;
 import gg.moonflower.pollen.core.client.render.PollenDimensionRenderContextImpl;
 import gg.moonflower.pollen.core.extensions.LevelRendererExtension;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRenderer;
+import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererDispatcher;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
-import gg.moonflower.pollen.pinwheel.core.client.DataContainerImpl;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.BlockDestructionProgress;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
@@ -32,9 +29,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
-import java.util.Map;
 import java.util.SortedSet;
-import java.util.WeakHashMap;
 
 @Mixin(LevelRenderer.class)
 public abstract class LevelRendererMixin implements LevelRendererExtension {
@@ -60,8 +55,6 @@ public abstract class LevelRendererMixin implements LevelRendererExtension {
     private Matrix4f captureProjection;
     @Unique
     private final PollenDimensionSpecialEffects.RenderContext renderContext = new PollenDimensionRenderContextImpl(() -> this.ticks, () -> this.capturePartialTicks, () -> this.captureCamera, () -> this.level, () -> this.captureMatrixStack, () -> this.captureProjection);
-    @Unique
-    private final Map<ResourceKey<Level>, DataContainerImpl> dataContainer = new WeakHashMap<>(3);
 
     @Inject(method = "renderLevel", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/LevelRenderer;globalBlockEntities:Ljava/util/Set;", shift = At.Shift.BEFORE, ordinal = 0))
     public void renderBlockRenders(PoseStack matrixStack, float partialTicks, long finishTimeNano, boolean drawBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightmap, Matrix4f projection, CallbackInfo ci) {
@@ -92,24 +85,9 @@ public abstract class LevelRendererMixin implements LevelRendererExtension {
                 }
             }
 
-            for (BlockRenderer renderer : renderers) {
-                matrixStack.pushPose();
-                renderer.render(this.level, pos, this.pollen_getDataContainer(this.level, pos), buffer, matrixStack, partialTicks, camera, gameRenderer, lightmap, projection, LevelRenderer.getLightColor(this.level, pos), OverlayTexture.NO_OVERLAY);
-                matrixStack.popPose();
-            }
+            BlockRendererDispatcher.render(this.level, matrixStack, buffer, camera, renderers, pos, LevelRenderer.getLightColor(this.level, state, pos), OverlayTexture.NO_OVERLAY, partialTicks);
             matrixStack.popPose();
         });
-    }
-
-    @Inject(method = "setLevel", at = @At("HEAD"))
-    public void setLevel(ClientLevel levelClient, CallbackInfo ci) {
-        if (this.level != null)
-            this.dataContainer.remove(this.level.dimension());
-    }
-
-    @Override
-    public BlockRenderer.DataContainer pollen_getDataContainer(ClientLevel level, BlockPos pos) {
-        return this.dataContainer.computeIfAbsent(level.dimension(), __ -> new DataContainerImpl(level)).get(pos);
     }
 
     @Inject(method = "renderLevel", at = @At("HEAD"))

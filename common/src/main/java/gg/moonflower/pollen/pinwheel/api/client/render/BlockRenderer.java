@@ -11,8 +11,10 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Acts as a custom renderer for any block, instead of just tile entities.
@@ -51,8 +53,31 @@ public interface BlockRenderer {
      * @param projection    The projection matrix of the scene
      * @param packedLight   The light of the block
      * @param packedOverlay The overlay coordinates to use on the render
+     * @deprecated Use {@link #render(LevelReader, BlockPos, DataContainer, MultiBufferSource, PoseStack, Camera, GameRenderer, LightTexture, int, int, float)} instead. TODO remove in 2.0.0
      */
+    @ApiStatus.OverrideOnly
     void render(Level level, BlockPos pos, DataContainer container, MultiBufferSource buffer, PoseStack matrixStack, float partialTicks, Camera camera, GameRenderer gameRenderer, LightTexture lightmap, Matrix4f projection, int packedLight, int packedOverlay);
+
+    /**
+     * Called after normal block entity renders.
+     *
+     * @param level         The level the block is in
+     * @param pos           The position of the block to render
+     * @param container     The container for retrieving {@link BlockData}
+     * @param buffer        The buffer for drawing into the level
+     * @param matrixStack   The stack of matrix transformations for moving renders
+     * @param camera        The current camera perspective the game is being rendered from
+     * @param gameRenderer  The renderer for the game
+     * @param lightmap      The light map texture. Mainly used to disable the light map if desired
+     * @param packedLight   The light of the block
+     * @param packedOverlay The overlay coordinates to use on the render
+     * @param partialTicks  The percentage from last tick to this tick
+     */
+    @ApiStatus.OverrideOnly
+    default void render(LevelReader level, BlockPos pos, DataContainer container, MultiBufferSource buffer, PoseStack matrixStack, Camera camera, GameRenderer gameRenderer, LightTexture lightmap, int packedLight, int packedOverlay, float partialTicks) {
+        if (level instanceof Level)
+            this.render((Level) level, pos, container, buffer, matrixStack, partialTicks, camera, gameRenderer, lightmap, null, packedLight, packedOverlay);
+    }
 
     /**
      * Defines how the renderer will be applied to the specified block state.

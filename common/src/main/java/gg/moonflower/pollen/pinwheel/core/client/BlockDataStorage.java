@@ -4,8 +4,10 @@ import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvents;
 import gg.moonflower.pollen.pinwheel.api.client.blockdata.BlockData;
 import gg.moonflower.pollen.pinwheel.api.client.blockdata.BlockDataKey;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -21,15 +23,15 @@ import java.util.function.Supplier;
 @ApiStatus.Internal
 public class BlockDataStorage {
 
-    private static final Map<Level, BlockDataStorage> DATA = new WeakHashMap<>(3); // There are only 3 vanilla dimensions so only expand if mods add more
-    private final Level level;
+    private static final Map<BlockGetter, BlockDataStorage> DATA = new WeakHashMap<>(3); // There are only 3 vanilla dimensions so only expand if mods add more
+    private final BlockGetter level;
     private final Map<BlockPos, Map<BlockDataKey<?>, BlockData<?>>> data;
 
     static {
         ClientNetworkEvents.LOGOUT.register((controller, player, connection) -> DATA.clear());
     }
 
-    private BlockDataStorage(Level level) {
+    private BlockDataStorage(BlockGetter level) {
         this.level = level;
         this.data = new HashMap<>();
     }
@@ -47,7 +49,7 @@ public class BlockDataStorage {
         this.data.keySet().removeIf(pos -> pos.getX() >= chunkPos.getMinBlockX() && pos.getX() < chunkPos.getMaxBlockX() && pos.getZ() >= chunkPos.getMinBlockZ() && pos.getZ() < chunkPos.getMaxBlockZ());
     }
 
-    public static BlockDataStorage get(Level level) {
+    public static BlockDataStorage get(BlockGetter level) {
         return DATA.computeIfAbsent(level, BlockDataStorage::new);
     }
 

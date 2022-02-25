@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.core.mixin.client;
 
-import gg.moonflower.pollen.core.extensions.ClientLevelExtension;
+import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererTicker;
 import gg.moonflower.pollen.core.extensions.LevelRendererExtension;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRenderer;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
@@ -30,7 +30,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 @Mixin(ClientLevel.class)
-public abstract class ClientLevelMixin extends Level implements ClientLevelExtension {
+public abstract class ClientLevelMixin extends Level implements BlockRendererTicker {
 
     @Shadow
     @Final
@@ -47,13 +47,8 @@ public abstract class ClientLevelMixin extends Level implements ClientLevelExten
     }
 
     @Override
-    public void pollen_scheduleTick(BlockPos pos, BlockState state) {
+    public void scheduleBlockRendererTick(BlockPos pos, BlockState state) {
         this.pendingUpdates.put(pos.immutable(), state);
-    }
-
-    @Override
-    public void pollen_scheduleTick(BlockPos pos) {
-        this.pollen_scheduleTick(pos, this.getBlockState(pos));
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
