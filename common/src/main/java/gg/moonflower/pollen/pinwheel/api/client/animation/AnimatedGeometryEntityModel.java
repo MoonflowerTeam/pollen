@@ -172,8 +172,10 @@ public class AnimatedGeometryEntityModel<T extends Entity> extends EntityModel<T
     }
 
     public void renderToBuffer(PoseStack matrixStack, MultiBufferSource source, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        matrixStack.translate(0, 1.5F, 0); // what?
+        matrixStack.pushPose();
+        matrixStack.translate(0, 1.501F, 0); // LivingEntityRenderer translates after scaling, so we have to undo that
         GeometryModelRenderer.render(this.getModel(), this.texture, source, matrixStack, packedLight, packedOverlay, red, green, blue, alpha);
+        matrixStack.popPose();
     }
 
     /**

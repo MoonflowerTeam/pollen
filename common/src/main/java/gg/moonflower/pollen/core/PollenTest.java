@@ -1,7 +1,6 @@
 package gg.moonflower.pollen.core;
 
 import gg.moonflower.pollen.api.block.PollinatedLiquidBlock;
-import gg.moonflower.pollen.api.datagen.provider.tags.PollinatedFluidTagsProvider;
 import gg.moonflower.pollen.api.item.BucketItemBase;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.FluidBehaviorRegistry;
@@ -9,14 +8,11 @@ import gg.moonflower.pollen.api.registry.PollinatedBlockRegistry;
 import gg.moonflower.pollen.api.registry.PollinatedFluidRegistry;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
 import gg.moonflower.pollen.api.registry.resource.TagRegistry;
-import gg.moonflower.pollen.api.resource.condition.PollinatedResourceCondition;
-import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import gg.moonflower.pollen.core.client.render.DebugPollenFlowerPotRenderer;
 import gg.moonflower.pollen.core.test.TestFluid;
 import gg.moonflower.pollen.core.test.TestPollenFluidBehavior;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
 import net.minecraft.core.Registry;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.item.CreativeModeTab;
@@ -68,15 +64,5 @@ public class PollenTest {
     }
 
     static void onDataInit(Platform.DataSetupContext context) {
-        DataGenerator dataGenerator = context.getGenerator();
-        PollinatedModContainer container = context.getMod();
-        dataGenerator.addProvider(new PollinatedFluidTagsProvider(dataGenerator, container) {
-            @Override
-            protected void addTags() {
-                super.addTags();
-                this.tag(TEST_TAG).add(TEST_FLUID.get());
-                this.addConditions(TEST_TAG, PollinatedResourceCondition.allModsLoaded("pollen"));
-            }
-        });
     }
 }

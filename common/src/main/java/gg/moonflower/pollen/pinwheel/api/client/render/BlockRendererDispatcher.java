@@ -10,7 +10,9 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -66,6 +68,17 @@ public final class BlockRendererDispatcher {
             renderer.render(level, pos, getDataContainer(level, pos), buffer, matrixStack, camera, gameRenderer, gameRenderer.lightTexture(), packedLight, packedOverlay, partialTicks);
             matrixStack.popPose();
         }
+    }
+
+    /**
+     * Checks to see if the custom block renderer for the specified state should be rendered.
+     *
+     * @param state The state to check
+     * @return If the {@link BlockRenderer} should render
+     */
+    public static boolean shouldRender(BlockState state) {
+        BlockRenderer renderer = BlockRendererRegistry.getFirst(state.getBlock());
+        return renderer != null && renderer.getRenderShape(state) != RenderShape.MODEL;
     }
 
     /**

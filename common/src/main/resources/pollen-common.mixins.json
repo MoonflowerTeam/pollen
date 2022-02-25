@@ -6,6 +6,7 @@
   "client": [
     "client.AgeableListModelAccessor",
     "client.BlockModelShaperMixin",
+    "client.BlockStateMixin",
     "client.ChunkRenderDispatcherRebuildTaskMixin",
     "client.ClientLevelMixin",
     "client.ClientPacketListenerMixin",
