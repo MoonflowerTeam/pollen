@@ -13,7 +13,7 @@ description = "Pollen is a library mod which includes various utilities and plat
 displayURL= "https://www.moonflower.gg/"
 logoFile = "logo.png"
 
-[modproperties.catalogue]
+[modproperties.${id}]
 catalogueImageIcon="icon.png"
 
 [[dependencies.${id}]]
