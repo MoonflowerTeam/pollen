@@ -72,9 +72,7 @@ public class AdvancedFboTextureAttachment extends AbstractTexture implements Adv
 
     private void _attach(int target, int attachment) {
         Validate.isTrue(this.attachmentType < GL_DEPTH_ATTACHMENT || attachment == 0, "Only one depth buffer attachment is supported.");
-        for (int level = 0; level <= this.getMipmapLevels(); level++) {
-            GlStateManager._glFramebufferTexture2D(target, this.attachmentType + attachment, GL_TEXTURE_2D, this.getId(), level);
-        }
+        GlStateManager._glFramebufferTexture2D(target, this.attachmentType + attachment, GL_TEXTURE_2D, this.getId(), 0); // Only draw into the first level
     }
 
     public int getMipmapLevels() {
