@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(ForgeHooks.class)
 public class ForgeHooksMixin {
 
-    @ModifyVariable(method = "loadLootTable", at = @At("HEAD"), ordinal = 0, remap = false, argsOnly = true)
-    private static boolean modifyCustom(boolean value) {
+    @ModifyVariable(method = "loadLootTable", at = @At(value = "INVOKE", target = "Ljava/util/Deque;push(Ljava/lang/Object;)V", shift = At.Shift.AFTER, remap = false), remap = false, argsOnly = true)
+    private static boolean modifyCustomBefore(boolean value) {
         return false;
     }
 }
