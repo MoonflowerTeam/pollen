@@ -65,11 +65,11 @@ public final class VoxelShapeHelper {
             case UP:
                 return Block.box(x1, z1, y1, x2, z2, y2);
             case DOWN:
-                return Block.box(x1, 16 - z1, y1, x2, 16 - z2, y2);
+                return Block.box(x1, 16 - z2, y1, x2, 16 - z1, y2);
             case NORTH:
-                return Block.box(16 - x1, y1, 16 - z2, 16 - x2, y2, 16 - z1);
+                return Block.box(16 - x2, y1, 16 - z2, 16 - x1, y2, 16 - z1);
             case EAST:
-                return Block.box(z1, y1, 16 - x1, z2, y2, 16 - x2);
+                return Block.box(z1, y1, 16 - x2, z2, y2, 16 - x1);
             case SOUTH:
                 return Block.box(x1, y1, z1, x2, y2, z2);
             case WEST:
