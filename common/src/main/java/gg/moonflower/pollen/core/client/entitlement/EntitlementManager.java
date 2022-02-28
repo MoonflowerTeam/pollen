@@ -57,7 +57,7 @@ public final class EntitlementManager {
             if (entity instanceof Player)
                 PLAYER_ENTITLEMENTS.remove(entity.getUUID());
         });
-        ClientNetworkEvents.LOGOUT.register((controller, player, connection) -> PLAYER_ENTITLEMENTS.keySet().removeIf(id -> !player.getUUID().equals(id))); // Clear other player entitlements
+        ClientNetworkEvents.LOGOUT.register((controller, player, connection) -> PLAYER_ENTITLEMENTS.keySet().removeIf(id -> player != null && !player.getUUID().equals(id))); // Clear other player entitlements
     }
 
     private EntitlementManager() {
