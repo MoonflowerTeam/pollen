@@ -77,7 +77,7 @@ public class VillagerTradeManager {
             }
 
             int minTier = vanillaTrades.keySet().stream().mapToInt(Integer::intValue).min().orElse(1);
-            int maxTier = vanillaTrades.keySet().stream().mapToInt(Integer::intValue).min().orElse(5);
+            int maxTier = vanillaTrades.keySet().stream().mapToInt(Integer::intValue).max().orElse(5);
 
             ModifyTradesEvents.VILLAGER.invoker().modifyTrades(new ModifyTradesEvents.ModifyVillager.Context() {
                 @Override
