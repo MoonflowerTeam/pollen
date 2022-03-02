@@ -181,6 +181,8 @@ public class PollenCommonForgeEvents {
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.village.VillagerTradesEvent event) {
         Int2ObjectMap<ModifyTradesEvents.TradeRegistry> newTrades = new Int2ObjectOpenHashMap<>();
+        int minTier = event.getTrades().keySet().stream().mapToInt(Integer::intValue).min().orElse(1);
+        int maxTier = event.getTrades().keySet().stream().mapToInt(Integer::intValue).min().orElse(5);
         ModifyTradesEvents.VILLAGER.invoker().modifyTrades(new ModifyTradesEvents.ModifyVillager.Context() {
             @Override
             public VillagerProfession getProfession() {
@@ -189,8 +191,18 @@ public class PollenCommonForgeEvents {
 
             @Override
             public ModifyTradesEvents.TradeRegistry getTrades(int tier) {
-                Validate.exclusiveBetween(0, 6, tier, "Tier must be between 1 and 5");
+                Validate.inclusiveBetween(minTier, maxTier, tier, "Tier must be between " + minTier + " and " + maxTier);
                 return newTrades.computeIfAbsent(tier, key -> new ModifyTradesEvents.TradeRegistry());
+            }
+
+            @Override
+            public int getMinTier() {
+                return minTier;
+            }
+
+            @Override
+            public int getMaxTier() {
+                return maxTier;
             }
         });
 
