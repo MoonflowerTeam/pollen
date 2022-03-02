@@ -182,7 +182,7 @@ public class PollenCommonForgeEvents {
     public static void onEvent(net.minecraftforge.event.village.VillagerTradesEvent event) {
         Int2ObjectMap<ModifyTradesEvents.TradeRegistry> newTrades = new Int2ObjectOpenHashMap<>();
         int minTier = event.getTrades().keySet().stream().mapToInt(Integer::intValue).min().orElse(1);
-        int maxTier = event.getTrades().keySet().stream().mapToInt(Integer::intValue).min().orElse(5);
+        int maxTier = event.getTrades().keySet().stream().mapToInt(Integer::intValue).max().orElse(5);
         ModifyTradesEvents.VILLAGER.invoker().modifyTrades(new ModifyTradesEvents.ModifyVillager.Context() {
             @Override
             public VillagerProfession getProfession() {
