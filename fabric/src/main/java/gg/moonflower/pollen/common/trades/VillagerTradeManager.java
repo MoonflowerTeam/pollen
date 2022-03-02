@@ -61,16 +61,23 @@ public class VillagerTradeManager {
         for (VillagerProfession prof : Registry.VILLAGER_PROFESSION) {
             Int2ObjectMap<VillagerTrades.ItemListing[]> vanillaTrades = VANILLA_TRADES.get(prof);
             Int2ObjectMap<ModifyTradesEvents.TradeRegistry> newTrades = new Int2ObjectOpenHashMap<>();
-            for (int i = 1; i < 6; i++) {
-                newTrades.put(i, new ModifyTradesEvents.TradeRegistry());
+
+            if (vanillaTrades != null) {
+                // Create trades for each
+                for (Map.Entry<Integer, VillagerTrades.ItemListing[]> entry : vanillaTrades.int2ObjectEntrySet()) {
+                    ModifyTradesEvents.TradeRegistry registry = new ModifyTradesEvents.TradeRegistry();
+                    registry.addAll(Arrays.asList(entry.getValue()));
+                    newTrades.put(entry.getKey().intValue(), registry);
+                }
+            } else {
+                // There are no default trades to fill
+                vanillaTrades = new Int2ObjectOpenHashMap<>();
+                for (int i = 1; i < 6; i++)
+                    newTrades.put(i, new ModifyTradesEvents.TradeRegistry());
             }
 
-            if (vanillaTrades == null)
-                vanillaTrades = new Int2ObjectOpenHashMap<>();
-            vanillaTrades.int2ObjectEntrySet().forEach(e -> {
-                Validate.exclusiveBetween(0, 6, e.getIntKey(), "Tier must be between 1 and 5");
-                Arrays.stream(e.getValue()).forEach(newTrades.get(e.getIntKey())::add);
-            });
+            int minTier = vanillaTrades.keySet().stream().mapToInt(Integer::intValue).min().orElse(1);
+            int maxTier = vanillaTrades.keySet().stream().mapToInt(Integer::intValue).min().orElse(5);
 
             ModifyTradesEvents.VILLAGER.invoker().modifyTrades(new ModifyTradesEvents.ModifyVillager.Context() {
                 @Override
@@ -80,8 +87,18 @@ public class VillagerTradeManager {
 
                 @Override
                 public ModifyTradesEvents.TradeRegistry getTrades(int tier) {
-                    Validate.exclusiveBetween(0, 6, tier, "Tier must be between 1 and 5");
+                    Validate.inclusiveBetween(minTier, maxTier, tier, "Tier must be between " + minTier + " and " + maxTier);
                     return newTrades.get(tier);
+                }
+
+                @Override
+                public int getMinTier() {
+                    return minTier;
+                }
+
+                @Override
+                public int getMaxTier() {
+                    return maxTier;
                 }
             });
             Int2ObjectMap<VillagerTrades.ItemListing[]> modifiedTrades = new Int2ObjectOpenHashMap<>();

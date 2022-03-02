@@ -54,10 +54,20 @@ public final class ModifyTradesEvents {
             /**
              * Retrieves the registry of trades for the specified tier.
              *
-             * @param tier A number between 1 and 5 to retrieve the tier of trades
+             * @param tier A number between {@link #getMinTier()} and {@link #getMaxTier()} to retrieve the tier of trades
              * @return The registry for that tier
              */
             TradeRegistry getTrades(int tier);
+
+            /**
+             * @return The minimum tier for trades. Vanilla is 1
+             */
+            int getMinTier();
+
+            /**
+             * @return The maximum tier for trades. Vanilla is 5
+             */
+            int getMaxTier();
         }
     }
 
