@@ -39,20 +39,17 @@ public abstract class PollinatedFabricPacketContext implements PollinatedPacketC
     @Override
     public void disconnect(Component message) {
         switch (this.direction) {
-            case PLAY_SERVERBOUND:
+            case PLAY_SERVERBOUND -> {
                 this.connection.send(new ClientboundDisconnectPacket(message), future -> this.connection.disconnect(message));
                 this.connection.setReadOnly();
                 Platform.getRunningServer().ifPresent(server -> server.executeBlocking(this.connection::handleDisconnection));
-                break;
-            case LOGIN_SERVERBOUND:
+            }
+            case LOGIN_SERVERBOUND -> {
                 this.connection.send(new ClientboundLoginDisconnectPacket(message), future -> this.connection.disconnect(message));
                 this.connection.setReadOnly();
                 Platform.getRunningServer().ifPresent(server -> server.executeBlocking(this.connection::handleDisconnection));
-                break;
-            case PLAY_CLIENTBOUND:
-            case LOGIN_CLIENTBOUND:
-                this.connection.disconnect(message);
-                break;
+            }
+            case PLAY_CLIENTBOUND, LOGIN_CLIENTBOUND -> this.connection.disconnect(message);
         }
     }
 
