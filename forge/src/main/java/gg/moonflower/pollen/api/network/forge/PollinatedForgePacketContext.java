@@ -3,9 +3,13 @@ package gg.moonflower.pollen.api.network.forge;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
+import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.core.extension.forge.FMLHandshakeHandlerExtensions;
 import io.netty.util.AttributeKey;
 import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundDisconnectPacket;
+import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -36,6 +40,27 @@ public class PollinatedForgePacketContext implements PollinatedPacketContext {
         Connection connection = this.getNetworkManager();
         if (connection.getPacketListener() instanceof FMLHandshakeHandlerExtensions) {
             ((FMLHandshakeHandlerExtensions) connection.channel().attr(AttributeKey.valueOf("fml:handshake")).get()).pollen_addWait(future);
+        }
+    }
+
+    @Override
+    public void disconnect(Component message) {
+        Connection connection = this.getNetworkManager();
+        switch (this.getDirection()) {
+            case PLAY_SERVERBOUND:
+                connection.send(new ClientboundDisconnectPacket(message), future -> connection.disconnect(message));
+                connection.setReadOnly();
+                Platform.getRunningServer().ifPresent(server -> server.executeBlocking(connection::handleDisconnection));
+                break;
+            case LOGIN_SERVERBOUND:
+                connection.send(new ClientboundLoginDisconnectPacket(message), future -> connection.disconnect(message));
+                connection.setReadOnly();
+                Platform.getRunningServer().ifPresent(server -> server.executeBlocking(connection::handleDisconnection));
+                break;
+            case PLAY_CLIENTBOUND:
+            case LOGIN_CLIENTBOUND:
+                connection.disconnect(message);
+                break;
         }
     }
 

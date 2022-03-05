@@ -5,6 +5,9 @@ import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import gg.moonflower.pollen.api.platform.Platform;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
 import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundDisconnectPacket;
+import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.CompletableFuture;
@@ -31,6 +34,26 @@ public abstract class PollinatedFabricPacketContext implements PollinatedPacketC
     @Override
     public void waitFor(Future<?> future) {
         this.synchronizer.waitFor(future);
+    }
+
+    @Override
+    public void disconnect(Component message) {
+        switch (this.direction) {
+            case PLAY_SERVERBOUND:
+                this.connection.send(new ClientboundDisconnectPacket(message), future -> this.connection.disconnect(message));
+                this.connection.setReadOnly();
+                Platform.getRunningServer().ifPresent(server -> server.executeBlocking(this.connection::handleDisconnection));
+                break;
+            case LOGIN_SERVERBOUND:
+                this.connection.send(new ClientboundLoginDisconnectPacket(message), future -> this.connection.disconnect(message));
+                this.connection.setReadOnly();
+                Platform.getRunningServer().ifPresent(server -> server.executeBlocking(this.connection::handleDisconnection));
+                break;
+            case PLAY_CLIENTBOUND:
+            case LOGIN_CLIENTBOUND:
+                this.connection.disconnect(message);
+                break;
+        }
     }
 
     @Override
