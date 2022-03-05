@@ -2,6 +2,7 @@ package gg.moonflower.pollen.api.network.packet;
 
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketListener;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +40,15 @@ public interface PollinatedPacketContext {
      * @param packet The packet to reply with
      */
     void reply(PollinatedPacket<?> packet);
+
+    /**
+     * Disconnects the connected client on the server side and disconnects from the server on the client side.
+     * <p>On servers, this also sends a packet to the client notifying them of the disconnect reason
+     *
+     * @param message The disconnect reason
+     * @since 1.2.0
+     */
+    void disconnect(Component message);
 
     /**
      * @return The direction the packet is going
