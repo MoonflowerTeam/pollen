@@ -8,6 +8,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundDisconnectPacket;
 import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
+import net.minecraft.util.thread.BlockableEventLoop;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.CompletableFuture;
@@ -27,8 +28,8 @@ public abstract class PollinatedFabricPacketContext implements PollinatedPacketC
     }
 
     @Override
-    public CompletableFuture<Void> enqueueWork(Runnable runnable) {
-        return Platform.getGameExecutor().submit(runnable);
+    public CompletableFuture<Void> enqueueWork(Runnable runnable) { // Try to get the server executor if server bound, otherwise try to find any executor
+        return (this.direction.isServerbound() ? Platform.getRunningServer().<BlockableEventLoop<?>>map(__ -> __).orElseGet(Platform::getGameExecutor) : Platform.getGameExecutor()).submit(runnable);
     }
 
     @Override
