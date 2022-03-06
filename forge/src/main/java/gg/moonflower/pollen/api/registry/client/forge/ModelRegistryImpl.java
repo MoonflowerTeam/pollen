@@ -24,7 +24,7 @@ public class ModelRegistryImpl {
     @SubscribeEvent
     public static void onEvent(ModelRegistryEvent event) {
         SPECIAL_MODELS.forEach(ModelLoader::addSpecialModel);
-        FACTORIES.forEach(factory -> factory.registerModels(Minecraft.getInstance().getResourceManager(), ModelRegistryImpl::registerSpecial));
+        FACTORIES.forEach(factory -> factory.registerModels(Minecraft.getInstance().getResourceManager(), ModelLoader::addSpecialModel));
     }
 
     public static void registerSpecial(ResourceLocation location) {
