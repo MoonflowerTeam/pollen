@@ -1,6 +1,8 @@
 package gg.moonflower.pollen.api.registry.client.forge;
 
+import gg.moonflower.pollen.api.registry.client.ModelRegistry;
 import gg.moonflower.pollen.core.Pollen;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -17,13 +19,19 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ModelRegistryImpl {
 
     private static final Set<ResourceLocation> SPECIAL_MODELS = ConcurrentHashMap.newKeySet();
+    private static final Set<ModelRegistry.ModelFactory> FACTORIES = ConcurrentHashMap.newKeySet();
 
     @SubscribeEvent
     public static void onEvent(ModelRegistryEvent event) {
         SPECIAL_MODELS.forEach(ForgeModelBakery::addSpecialModel);
+        FACTORIES.forEach(factory -> factory.registerModels(Minecraft.getInstance().getResourceManager(), ModelRegistryImpl::registerSpecial));
     }
 
     public static void registerSpecial(ResourceLocation location) {
         SPECIAL_MODELS.add(location);
+    }
+
+    public static void registerFactory(ModelRegistry.ModelFactory factory) {
+        FACTORIES.add(factory);
     }
 }

@@ -5,6 +5,7 @@ import gg.moonflower.pollen.api.registry.resource.ResourceRegistry;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.pinwheel.api.common.animation.AnimationData;
 import gg.moonflower.pollen.pinwheel.api.common.util.BackgroundLoader;
+import gg.moonflower.pollen.pinwheel.core.client.geometry.DeprecatedLocalGeometryModelLoader;
 import gg.moonflower.pollen.pinwheel.core.client.geometry.LocalGeometryModelLoader;
 import gg.moonflower.pollen.pinwheel.core.client.util.DynamicReloader;
 import net.minecraft.resources.ResourceLocation;
@@ -45,6 +46,7 @@ public final class GeometryModelManager {
     @ApiStatus.Internal
     public static void init() {
         ResourceRegistry.registerReloadListener(PackType.CLIENT_RESOURCES, RELOADER);
+        addLoader(new DeprecatedLocalGeometryModelLoader()); // TODO remove in 2.0.0
         addLoader(new LocalGeometryModelLoader());
     }
 

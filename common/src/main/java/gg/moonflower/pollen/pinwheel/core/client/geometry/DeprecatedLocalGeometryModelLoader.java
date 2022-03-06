@@ -14,23 +14,27 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 /**
  * @author Ocelot
  */
+@Deprecated
 @ApiStatus.Internal
-public final class LocalGeometryModelLoader implements BackgroundLoader<Map<ResourceLocation, GeometryModel>> {
+public final class DeprecatedLocalGeometryModelLoader implements BackgroundLoader<Map<ResourceLocation, GeometryModel>> {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    static final String FOLDER = "pinwheel/geometry/";
+    private static final String FOLDER = "models/geometry/";
 
     @Override
     public CompletableFuture<Map<ResourceLocation, GeometryModel>> reload(ResourceManager resourceManager, Executor backgroundExecutor, Executor gameExecutor) {
         return CompletableFuture.supplyAsync(() ->
         {
+            Set<ResourceLocation> deprecatedFiles = new HashSet<>();
             Map<ResourceLocation, GeometryModel> modelLocations = new HashMap<>();
             for (ResourceLocation modelLocation : resourceManager.listResources(FOLDER, name -> name.endsWith(".json"))) {
                 try (Resource resource = resourceManager.getResource(modelLocation)) {
@@ -40,11 +44,12 @@ public final class LocalGeometryModelLoader implements BackgroundLoader<Map<Reso
                         if (modelLocations.put(id, model.create()) != null)
                             LOGGER.warn("Duplicate geometry model with id '" + id + "'");
                     }
-                } catch (Exception e) {
-                    LOGGER.error("Failed to load geometry file '" + modelLocation.getNamespace() + ":" + modelLocation.getPath().substring(FOLDER.length(), modelLocation.getPath().length() - 5) + "'", e);
+                    deprecatedFiles.add(modelLocation);
+                } catch (Exception ignored) {
                 }
             }
 
+            deprecatedFiles.stream().map(ResourceLocation::getNamespace).forEach(namespace -> LOGGER.error("Mod: " + namespace + " is using deprecated Pollen models. Geometry models should be relocated to 'assets/" + namespace + "/" + LocalGeometryModelLoader.FOLDER.substring(0, LocalGeometryModelLoader.FOLDER.length() - 1) + "'"));
             LOGGER.info("Loaded " + modelLocations.size() + " geometry models.");
             return modelLocations;
         }, backgroundExecutor);
