@@ -40,7 +40,7 @@ public class ItemRendererMixin {
         this.capturedItem = itemStack.getItem();
     }
 
-    @ModifyVariable(method = "render", ordinal = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;", ordinal = 0, shift = At.Shift.BEFORE), argsOnly = true)
+    @ModifyVariable(method = "render", ordinal = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z", ordinal = 0, shift = At.Shift.BEFORE), argsOnly = true)
     public BakedModel render(BakedModel original) {
         if (ItemRendererRegistry.getHandModel(this.capturedItem) != null)
             return this.itemModelShaper.getItemModel(this.capturedItem);
