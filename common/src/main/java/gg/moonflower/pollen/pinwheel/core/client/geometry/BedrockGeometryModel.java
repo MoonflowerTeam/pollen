@@ -316,15 +316,11 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
 
             AnimationData.KeyFrame from = i == 0 ? null : frames[i - 1];
             float progress = (from == null ? animationTime / to.getTime() : Math.min(1.0F, (animationTime - from.getTime()) / (to.getTime() - from.getTime())));
-            switch (to.getLerpMode()) {
-                case LINEAR:
-                    lerp(progress, cache, environment, startValue, from, to, result);
-                    break;
-                case CATMULLROM:
-                    catmullRom(progress, cache, environment, startValue, i > 1 ? frames[i - 2] : null, from, to, i < frames.length - 1 ? frames[i + 1] : null, result);
-                    break;
+            if (to.getLerpMode() == AnimationData.LerpMode.CATMULLROM) {
+                catmullRom(progress, cache, environment, startValue, i > 1 ? frames[i - 2] : null, from, to, i < frames.length - 1 ? frames[i + 1] : null, result);
+            } else {
+                lerp(to.getLerpMode().apply(progress), cache, environment, startValue, from, to, result);
             }
-            break;
         }
     }
 
