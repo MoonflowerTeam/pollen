@@ -27,7 +27,7 @@ import java.util.concurrent.Executor;
 @ApiStatus.Internal
 public final class DeprecatedLocalGeometryModelLoader implements BackgroundLoader<Map<ResourceLocation, GeometryModel>> {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger("LocalGeometryModelLoader");
     private static final String FOLDER = "models/geometry/";
 
     @Override

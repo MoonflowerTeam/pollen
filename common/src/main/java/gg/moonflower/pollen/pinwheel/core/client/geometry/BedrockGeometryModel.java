@@ -321,6 +321,7 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
             } else {
                 lerp(to.getLerpMode().apply(progress), cache, environment, startValue, from, to, result);
             }
+            break;
         }
     }
 
