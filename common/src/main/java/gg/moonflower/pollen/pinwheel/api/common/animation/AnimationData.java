@@ -4,10 +4,12 @@ import com.google.gson.*;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.util.Mth;
 
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -123,13 +125,143 @@ public class AnimationData {
     }
 
     /**
-     * <p>Animation interpolation functions.</p>
+     * Animation interpolation functions.
      *
      * @author Ocelot
      * @since 1.0.0
      */
-    public enum LerpMode {
-        LINEAR, CATMULLROM
+    public enum LerpMode implements Function<Float, Float> {
+
+        // Standard functions
+        LINEAR(x -> x), CATMULLROM(x -> x),
+
+        // Extended functions according to https://easings.net/
+        EASE_IN_SINE(x -> 1 - Mth.cos(x * (float) Math.PI / 2.0F)),
+        EASE_OUT_SINE(x -> Mth.sin(x * (float) Math.PI / 2.0F)),
+        EASE_IN_OUT_SINE(x -> -(Mth.cos(x * (float) Math.PI) - 1.0F) / 2.0F),
+        EASE_IN_QUAD(x -> x * x),
+        EASE_OUT_QUAD(x -> {
+            float a = 1.0F - x;
+            return 1.0F - a * a;
+        }),
+        EASE_IN_OUT_QUAD(x -> {
+            if (x < 0.5)
+                return 2.0F * x * x;
+            float a = -2.0F * x + 2.0F;
+            return 1.0F - a * a / 2.0F;
+        }),
+        EASE_IN_CUBIC(x -> x * x * x),
+        EASE_OUT_CUBIC(x -> {
+            float a = 1.0F - x;
+            return 1.0F - a * a * a;
+        }),
+        EASE_IN_OUT_CUBIC(x -> {
+            if (x < 0.5)
+                return 4.0F * x * x * x;
+            float a = -2.0F * x + 2.0F;
+            return 1.0F - a * a * a / 2.0F;
+        }),
+        EASE_IN_QUART(x -> x * x * x * x),
+        EASE_OUT_QUART(x -> {
+            float a = 1.0F - x;
+            return 1.0F - a * a * a * a;
+        }),
+        EASE_IN_OUT_QUART(x -> {
+            if (x < 0.5)
+                return 8.0F * x * x * x * x;
+            float a = -2.0F * x + 2.0F;
+            return 1.0F - a * a * a * a / 2.0F;
+        }),
+        EASE_IN_QUINT(x -> x * x * x * x * x),
+        EASE_OUT_QUINT(x -> {
+            float a = 1.0F - x;
+            return 1.0F - a * a * a * a * a;
+        }),
+        EASE_IN_OUT_QUINT(x -> {
+            if (x < 0.5)
+                return 16.0F * x * x * x * x * x;
+            float a = -2.0F * x + 2.0F;
+            return 1.0F - a * a * a * a * a / 2.0F;
+        }),
+        EASE_IN_EXPO(x -> x == 0.0F ? 0.0F : (float) Math.pow(2.0, 10.0 * x - 10.0)),
+        EASE_OUT_EXPO(x -> x == 1.0F ? 1.0F : 1.0F - (float) Math.pow(2.0, -10.0 * x)),
+        EASE_IN_OUT_EXPO(x -> {
+            if (x == 0.0F)
+                return 0.0F;
+            if (x == 1.0F)
+                return 1.0F;
+            if (x < 0.5)
+                return (float) Math.pow(2.0, 20.0 * x - 10.0) / 2.0F;
+            return (2.0F - (float) Math.pow(2.0, -20.0 * x + 10.0)) / 2.0F;
+        }),
+        EASE_IN_CIRC(x -> 1.0F - Mth.sqrt(1.0F - x * x)),
+        EASE_OUT_CIRC(x -> {
+            float a = x - 1.0F;
+            return Mth.sqrt(1.0F - a * a);
+        }),
+        EASE_IN_OUT_CIRC(x -> {
+            if (x < 0.5)
+                return (1.0F - Mth.sqrt(1.0F - 4 * x * x)) / 2.0F;
+            float a = -2.0F * x + 2.0F;
+            return (Mth.sqrt(1.0F - a * a) + 1.0F) / 2.0F;
+        }),
+        EASE_IN_BACK(x -> 2.70158F * x * x * x - 1.70158F * x * x),
+        EASE_OUT_BACK(x -> {
+            float a = x - 1.0F;
+            return 1.0F + 2.70158F * a * a * a + 1.70158F * a * a;
+        }),
+        EASE_IN_OUT_BACK(x -> {
+            if (x < 0.5)
+                return (4.0F * x * x) * (3.5949095F * 2.0F * x - 2.5949095F) / 2.0F;
+            float a = x - 2.0F;
+            return ((4.0F * a * a) * (3.5949095F * (x * 2.0F - 2.0F) + 2.5949095F) + 2.0F) / 2.0F;
+        }),
+        EASE_IN_ELASTIC(x -> {
+            if (x == 0.0F)
+                return 0.0F;
+            if (x == 1.0F)
+                return 1.0F;
+            return (float) -Math.pow(2.0, 10.0 * x - 10.0) * Mth.sin((x * 10.0F - 10.75F) * (2.0F * (float) Math.PI) / 3.0F);
+        }),
+        EASE_OUT_ELASTIC(x -> {
+            if (x == 0.0F)
+                return 0.0F;
+            if (x == 1.0F)
+                return 1.0F;
+            return (float) Math.pow(2.0, -10.0 * x) * Mth.sin((x * 10.0F - 0.75F) * (2.0F * (float) Math.PI) / 3.0F) + 1.0F;
+        }),
+        EASE_IN_OUT_ELASTIC(x -> {
+            float c5 = (2.0F * (float) Math.PI) / 4.5F;
+            if (x == 0.0F)
+                return 0.0F;
+            if (x == 1.0F)
+                return 1.0F;
+            if (x < 0.5)
+                return -((float) Math.pow(2.0, 20.0 * x - 10.0) * Mth.sin((20.0F * x - 11.125F) * c5)) / 2.0F;
+            return ((float) Math.pow(2.0, -20.0 * x + 10.0) * Mth.sin((20.0F * x - 11.125F) * c5)) / 2.0F + 1.0F;
+        }),
+        EASE_OUT_BOUNCE(x -> {
+            if (x < 0.36363636363)
+                return 7.5625F * x * x;
+            if (x < 0.72727272727)
+                return 7.5625F * (x -= 0.54545454545F) * x + 0.75F;
+            if (x < 0.90909090909)
+                return 7.5625F * (x -= 0.81818181818F) * x + 0.9375F;
+            return 7.5625F * (x -= 0.95454545454F) * x + 0.984375F;
+        }),
+        EASE_IN_BOUNCE(x -> 1.0F - EASE_OUT_BOUNCE.function.apply(1.0F - x)),
+        EASE_IN_OUT_BOUNCE(x -> x < 0.5 ? (1.0F - EASE_OUT_BOUNCE.function.apply(1.0F - 2.0F * x)) / 2.0F : (1.0F + EASE_OUT_BOUNCE.function.apply(2.0F * x - 1.0F)) / 2.0F);
+
+        private final Function<Float, Float> function;
+
+        LerpMode(Function<Float, Float> function) {
+            this.function = function;
+        }
+
+        @Override
+        public Float apply(Float value) {
+            return this.function.apply(Mth.clamp(value, 0.0F, 1.0F));
+        }
     }
 
     /**

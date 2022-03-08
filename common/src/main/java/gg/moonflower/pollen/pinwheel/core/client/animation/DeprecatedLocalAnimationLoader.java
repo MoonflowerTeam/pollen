@@ -26,7 +26,7 @@ import java.util.concurrent.Executor;
 @ApiStatus.Internal
 public class DeprecatedLocalAnimationLoader implements BackgroundLoader<Map<ResourceLocation, AnimationData>> {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger("LocalAnimationLoader");
 
     private final String folder;
 
@@ -53,7 +53,7 @@ public class DeprecatedLocalAnimationLoader implements BackgroundLoader<Map<Reso
                 }
             }
 
-            deprecatedFiles.stream().map(ResourceLocation::getNamespace).forEach(namespace -> LOGGER.error("Mod: " + namespace + " is using deprecated Pollen animations. Animations should be relocated to 'assets/" + namespace + "'/pinwheel/animations"));
+            deprecatedFiles.stream().map(ResourceLocation::getNamespace).forEach(namespace -> LOGGER.error("Mod: " + namespace + " is using deprecated Pollen animations. Animations should be relocated to 'assets/" + namespace + "/pinwheel/animations'"));
             return animationData;
         }, backgroundExecutor);
     }
