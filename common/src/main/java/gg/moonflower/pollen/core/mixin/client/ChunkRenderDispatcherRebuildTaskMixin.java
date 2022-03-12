@@ -39,18 +39,15 @@ public class ChunkRenderDispatcherRebuildTaskMixin {
     @Inject(method = "compile", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;<init>()V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
     public void compile(float x, float y, float z, ChunkRenderDispatcher.CompiledChunk chunk, ChunkBufferBuilderPack pack, CallbackInfoReturnable<Set<BlockEntity>> cir, int i, BlockPos originPos) {
         if (this.captureRegion != null) {
-            try {
-                for (BlockPos pos : BlockPos.betweenClosed(originPos, originPos.offset(15, 15, 15))) {
-                    BlockState state = this.captureRegion.getBlockState(pos);
-                    if (state.isAir())
-                        continue;
-                    if (BlockRendererDispatcher.shouldRender(state))
-                        ((CompiledChunkExtension) chunk).pollen_getBlockRenderers().add(pos.immutable());
+            for (BlockPos pos : BlockPos.betweenClosed(originPos, originPos.offset(15, 15, 15))) {
+                BlockState state = this.captureRegion.getBlockState(pos);
+                if (state.isAir())
+                    continue;
+                if (BlockRendererDispatcher.shouldRender(state)) {
+                    ((CompiledChunkExtension) chunk).pollen_getBlockRenderPositions().add(pos.immutable());
                     if (BlockRendererRegistry.get(state.getBlock()).stream().anyMatch(r -> r instanceof TickableBlockRenderer))
                         ((CompiledChunkExtension) chunk).pollen_getTickingBlockRenderers().add(pos.immutable());
                 }
-            } catch (NullPointerException t) {
-                t.printStackTrace(); // just in case
             }
         }
     }
