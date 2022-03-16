@@ -4,6 +4,8 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import gg.moonflower.pollen.api.platform.Platform;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,6 +57,11 @@ public class WrapperPollinatedRegistry<T> extends PollinatedRegistry<T> {
     @Override
     public Optional<T> getOptional(@Nullable ResourceLocation name) {
         return this.parent.getOptional(name);
+    }
+
+    @Override
+    public ResourceKey<? extends Registry<T>> key() {
+        return this.parent.key();
     }
 
     @Override
