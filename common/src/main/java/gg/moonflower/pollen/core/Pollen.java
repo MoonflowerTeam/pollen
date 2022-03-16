@@ -7,8 +7,6 @@ import gg.moonflower.pollen.api.command.argument.TimeArgumentType;
 import gg.moonflower.pollen.api.crafting.PollenRecipeTypes;
 import gg.moonflower.pollen.api.event.events.client.render.InitRendererEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
-import gg.moonflower.pollen.api.event.events.registry.client.RegisterAtlasSpriteEvent;
-import gg.moonflower.pollen.api.fluid.PollinatedFluid;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.ResourceConditionRegistry;
 import gg.moonflower.pollen.api.resource.modifier.ResourceModifierManager;
@@ -26,10 +24,7 @@ import gg.moonflower.pollen.pinwheel.api.client.shader.ShaderLoader;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
-import net.minecraft.core.Registry;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -100,8 +95,6 @@ public class Pollen {
 
     private static void onDataInit(Platform.DataSetupContext context) {
         context.getGenerator().addProvider(new PollenLanguageProvider(context.getGenerator(), context.getMod()));
-        if (!Platform.isProduction())
-            PollenTest.onDataInit(context);
     }
 
     @Nullable
