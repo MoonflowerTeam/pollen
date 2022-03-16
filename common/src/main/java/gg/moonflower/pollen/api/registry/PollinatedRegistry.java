@@ -116,8 +116,9 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
      * @return An instance of FabricRegistryBuilder
      * @deprecated Use {@link #createSimple(ResourceLocation)} instead. TODO remove in 2.0.0
      */
+    @Deprecated
     public static <T> PollinatedRegistry<T> createSimple(Class<T> type, ResourceLocation registryId) {
-        return createVanilla(new MappedRegistry<>(ResourceKey.createRegistryKey(registryId), Lifecycle.stable()), registryId.getNamespace());
+        return createSimple(registryId);
     }
 
     /**
@@ -127,8 +128,9 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
      * @return An instance of FabricRegistryBuilder
      * @deprecated Use {@link #createDefaulted(ResourceLocation, ResourceLocation)} instead. TODO remove in 2.0.0
      */
+    @Deprecated
     public static <T> PollinatedRegistry<T> createDefaulted(Class<T> type, ResourceLocation registryId, ResourceLocation defaultId) {
-        return createVanilla(new DefaultedRegistry<>(defaultId.toString(), ResourceKey.createRegistryKey(registryId), Lifecycle.stable()), registryId.getNamespace());
+        return createDefaulted(registryId, defaultId);
     }
 
     /**
