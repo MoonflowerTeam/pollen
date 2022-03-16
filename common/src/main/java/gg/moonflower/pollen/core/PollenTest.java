@@ -26,21 +26,22 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Material;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal
 public class PollenTest {
 
-    private static final PollinatedRegistry<Item> ITEMS = PollinatedRegistry.create(Registry.ITEM, Pollen.MOD_ID);
-    private static final PollinatedBlockRegistry BLOCKS = PollinatedRegistry.createBlock(ITEMS);
-    private static final PollinatedFluidRegistry FLUIDS = PollinatedRegistry.createFluid(Pollen.MOD_ID);
+    private static final PollinatedRegistry<Item> ITEMS = create(() -> PollinatedRegistry.create(Registry.ITEM, Pollen.MOD_ID));
+    private static final PollinatedBlockRegistry BLOCKS = create(() -> PollinatedRegistry.createBlock(ITEMS));
+    private static final PollinatedFluidRegistry FLUIDS = create(() -> PollinatedRegistry.createFluid(Pollen.MOD_ID));
 
-    public static final Tag.Named<Fluid> TEST_TAG = TagRegistry.bindFluid(new ResourceLocation(Pollen.MOD_ID, "test"));
+    public static final Tag.Named<Fluid> TEST_TAG = create(() -> TagRegistry.bindFluid(new ResourceLocation(Pollen.MOD_ID, "test")));
 
-    public static final Supplier<FlowingFluid> TEST_FLUID = FLUIDS.register("test", TestFluid.Source::new);
-    public static final Supplier<FlowingFluid> FLOWING_TEST_FLUID = FLUIDS.register("flowing_test", TestFluid.Flowing::new);
-    public static final Supplier<Block> TEST = BLOCKS.register("test", () -> new PollinatedLiquidBlock(TEST_FLUID, BlockBehaviour.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops()));
-    public static final Supplier<Item> TEST_BUCKET = ITEMS.register("test", () -> new BucketItemBase(TEST_FLUID, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).tab(CreativeModeTab.TAB_MISC)));
+    public static final Supplier<FlowingFluid> TEST_FLUID = create(() -> Objects.requireNonNull(FLUIDS).register("test", TestFluid.Source::new));
+    public static final Supplier<FlowingFluid> FLOWING_TEST_FLUID = create(() -> Objects.requireNonNull(FLUIDS).register("flowing_test", TestFluid.Flowing::new));
+    public static final Supplier<Block> TEST = create(() -> Objects.requireNonNull(BLOCKS).register("test", () -> new PollinatedLiquidBlock(TEST_FLUID, BlockBehaviour.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops())));
+    public static final Supplier<Item> TEST_BUCKET = create(() -> Objects.requireNonNull(ITEMS).register("test", () -> new BucketItemBase(TEST_FLUID, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).tab(CreativeModeTab.TAB_MISC))));
 
     static void init() {
     }
@@ -50,9 +51,9 @@ public class PollenTest {
     }
 
     static void onCommon() {
-        ITEMS.register(Pollen.PLATFORM);
-        BLOCKS.register(Pollen.PLATFORM);
-        FLUIDS.register(Pollen.PLATFORM);
+        Objects.requireNonNull(ITEMS).register(Pollen.PLATFORM);
+        Objects.requireNonNull(BLOCKS).register(Pollen.PLATFORM);
+        Objects.requireNonNull(FLUIDS).register(Pollen.PLATFORM);
 
         FluidBehaviorRegistry.register(TEST_TAG, new TestPollenFluidBehavior());
     }
@@ -63,6 +64,7 @@ public class PollenTest {
     static void onCommonPost(Platform.ModSetupContext context) {
     }
 
-    static void onDataInit(Platform.DataSetupContext context) {
+    private static <T> T create(Supplier<T> factory) {
+        return Platform.isProduction() ? null : factory.get();
     }
 }
