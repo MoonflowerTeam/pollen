@@ -33,7 +33,7 @@ public class DynamicReloader {
         this.reloadListeners.add(listener);
     }
 
-    public CompletableFuture<Unit> reload(boolean showLoadingScreen) {
+    public CompletableFuture<?> reload(boolean showLoadingScreen) {
         if (asyncReloader != null)
             return asyncReloader.done();
         asyncReloader = SimpleReloadInstance.of(Minecraft.getInstance().getResourceManager(), this.reloadListeners, Util.backgroundExecutor(), Minecraft.getInstance(), CompletableFuture.completedFuture(Unit.INSTANCE));

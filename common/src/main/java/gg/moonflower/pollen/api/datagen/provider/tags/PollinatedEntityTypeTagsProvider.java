@@ -10,6 +10,7 @@ import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 
 import java.util.*;
@@ -37,8 +38,8 @@ public class PollinatedEntityTypeTagsProvider extends EntityTypeTagsProvider imp
      * @param tag       The tag to add conditions to
      * @param providers The conditions to add
      */
-    public void addConditions(Tag.Named<EntityType<?>> tag, PollinatedResourceConditionProvider... providers) {
-        this.addConditions(tag.getName(), providers);
+    public void addConditions(TagKey<EntityType<?>> tag, PollinatedResourceConditionProvider... providers) {
+        this.addConditions(tag.location(), providers);
     }
 
     @Override
@@ -55,12 +56,12 @@ public class PollinatedEntityTypeTagsProvider extends EntityTypeTagsProvider imp
     }
 
     @Override
-    protected PollinatedTagsProvider.PollinatedTagAppender<EntityType<?>> tag(Tag.Named<EntityType<?>> tag) {
+    protected PollinatedTagsProvider.PollinatedTagAppender<EntityType<?>> tag(TagKey<EntityType<?>> tag) {
         return new PollinatedTagsProvider.PollinatedTagAppender<>(this.getOrCreateRawBuilder(tag), this.registry, this.domain);
     }
 
     @Override
-    protected Tag.Builder getOrCreateRawBuilder(Tag.Named<EntityType<?>> tag) {
-        return ((TagsProviderAccessor) this).getBuilders().computeIfAbsent(tag.getName(), __ -> new Tag.Builder());
+    protected Tag.Builder getOrCreateRawBuilder(TagKey<EntityType<?>> tag) {
+        return ((TagsProviderAccessor) this).getBuilders().computeIfAbsent(tag.location(), __ -> new Tag.Builder());
     }
 }

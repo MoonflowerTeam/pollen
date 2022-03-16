@@ -13,6 +13,7 @@ import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 
 import java.util.*;
 
@@ -39,8 +40,8 @@ public abstract class PollinatedTagsProvider<T> extends TagsProvider<T> implemen
      * @param tag       The tag to add conditions to
      * @param providers The conditions to add
      */
-    public void addConditions(Tag.Named<T> tag, PollinatedResourceConditionProvider... providers) {
-        this.addConditions(tag.getName(), providers);
+    public void addConditions(TagKey<T> tag, PollinatedResourceConditionProvider... providers) {
+        this.addConditions(tag.location(), providers);
     }
 
     @Override
@@ -57,13 +58,13 @@ public abstract class PollinatedTagsProvider<T> extends TagsProvider<T> implemen
     }
 
     @Override
-    protected PollinatedTagsProvider.PollinatedTagAppender<T> tag(Tag.Named<T> tag) {
+    protected PollinatedTagsProvider.PollinatedTagAppender<T> tag(TagKey<T> tag) {
         return new PollinatedTagsProvider.PollinatedTagAppender<>(this.getOrCreateRawBuilder(tag), this.registry, this.domain);
     }
 
     @Override
-    protected Tag.Builder getOrCreateRawBuilder(Tag.Named<T> tag) {
-        return ((TagsProviderAccessor) this).getBuilders().computeIfAbsent(tag.getName(), __ -> new Tag.Builder());
+    protected Tag.Builder getOrCreateRawBuilder(TagKey<T> tag) {
+        return ((TagsProviderAccessor) this).getBuilders().computeIfAbsent(tag.location(), __ -> new Tag.Builder());
     }
 
     /**
@@ -92,7 +93,7 @@ public abstract class PollinatedTagsProvider<T> extends TagsProvider<T> implemen
         }
 
         @Override
-        public PollinatedTagAppender<T> addTag(Tag.Named<T> tag) {
+        public PollinatedTagAppender<T> addTag(TagKey<T> tag) {
             return (PollinatedTagAppender<T>) super.addTag(tag);
         }
 
@@ -103,16 +104,9 @@ public abstract class PollinatedTagsProvider<T> extends TagsProvider<T> implemen
         }
 
         @SafeVarargs
-        public final PollinatedTagAppender<T> addTag(Tag.Named<T>... values) {
-            for (Tag.Named<T> value : values)
+        public final PollinatedTagAppender<T> addTag(TagKey<T>... values) {
+            for (TagKey<T> value : values)
                 this.addTag(value);
-            return this;
-        }
-
-        @SafeVarargs
-        public final PollinatedTagAppender<T> add(ResourceKey<T>... keys) {
-            for (ResourceKey<T> key : keys)
-                this.builder.addElement(key.location(), this.source);
             return this;
         }
 
@@ -148,10 +142,10 @@ public abstract class PollinatedTagsProvider<T> extends TagsProvider<T> implemen
             return this;
         }
 
-        public PollinatedTagAppender<T> addConditionalTag(Tag.Named<T> tag, PollinatedResourceConditionProvider... conditions) {
+        public PollinatedTagAppender<T> addConditionalTag(TagKey<T> tag, PollinatedResourceConditionProvider... conditions) {
             if (conditions.length == 0)
                 return this.addTag(tag);
-            this.builder.add(new ConditionalTagEntry(new Tag.TagEntry(tag.getName()), createConditionJson(conditions)), this.source);
+            this.builder.add(new ConditionalTagEntry(new Tag.TagEntry(tag.location()), createConditionJson(conditions)), this.source);
             return this;
         }
 

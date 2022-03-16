@@ -35,9 +35,9 @@ public class ResourceConditionRegistryImpl {
         CONDITIONS.forEach(CraftingHelper::register);
         CraftingHelper.register(BlockExistsCondition.Serializer.INSTANCE);
         CraftingHelper.register(FluidExistsCondition.Serializer.INSTANCE);
-        CraftingHelper.register(ItemTagPopulatedCondition.Serializer.INSTANCE);
-        CraftingHelper.register(BlockTagPopulatedCondition.Serializer.INSTANCE);
-        CraftingHelper.register(FluidTagPopulatedCondition.Serializer.INSTANCE);
+        CraftingHelper.register(new TagPopulatedCondition.Serializer<>(ItemTagPopulatedCondition.NAME, ItemTagPopulatedCondition::new));
+        CraftingHelper.register(new TagPopulatedCondition.Serializer<>(BlockTagPopulatedCondition.NAME, BlockTagPopulatedCondition::new));
+        CraftingHelper.register(new TagPopulatedCondition.Serializer<>(FluidTagPopulatedCondition.NAME, FluidTagPopulatedCondition::new));
     }
 
     public static IConditionSerializer<?> get(PollinatedResourceCondition condition) {

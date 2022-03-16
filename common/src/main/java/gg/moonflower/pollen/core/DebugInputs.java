@@ -79,7 +79,7 @@ public class DebugInputs {
                 for (int i = 0; i < 1024; i++)
                     if (glIsTexture(i))
                         result.add(TextureDownloader.save(Integer.toString(i), outputFolder, i));
-                Util.sequence(result).thenRunAsync(() -> Util.getPlatform().openFile(outputFolder.toFile()), Minecraft.getInstance());
+                CompletableFuture.allOf(result.toArray(new CompletableFuture[0])).thenRunAsync(() -> Util.getPlatform().openFile(outputFolder.toFile()), Minecraft.getInstance());
             } catch (Exception e) {
                 e.printStackTrace();
             }

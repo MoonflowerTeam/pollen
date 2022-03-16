@@ -11,6 +11,7 @@ import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
 import java.util.*;
@@ -38,8 +39,8 @@ public class PollinatedItemTagsProvider extends ItemTagsProvider implements Cond
      * @param tag       The tag to add conditions to
      * @param providers The conditions to add
      */
-    public void addConditions(Tag.Named<Item> tag, PollinatedResourceConditionProvider... providers) {
-        this.addConditions(tag.getName(), providers);
+    public void addConditions(TagKey<Item> tag, PollinatedResourceConditionProvider... providers) {
+        this.addConditions(tag.location(), providers);
     }
 
     @Override
@@ -56,12 +57,12 @@ public class PollinatedItemTagsProvider extends ItemTagsProvider implements Cond
     }
 
     @Override
-    protected PollinatedTagsProvider.PollinatedTagAppender<Item> tag(Tag.Named<Item> tag) {
+    protected PollinatedTagsProvider.PollinatedTagAppender<Item> tag(TagKey<Item> tag) {
         return new PollinatedTagsProvider.PollinatedTagAppender<>(this.getOrCreateRawBuilder(tag), this.registry, this.domain);
     }
 
     @Override
-    protected Tag.Builder getOrCreateRawBuilder(Tag.Named<Item> tag) {
-        return ((TagsProviderAccessor) this).getBuilders().computeIfAbsent(tag.getName(), __ -> new Tag.Builder());
+    protected Tag.Builder getOrCreateRawBuilder(TagKey<Item> tag) {
+        return ((TagsProviderAccessor) this).getBuilders().computeIfAbsent(tag.location(), __ -> new Tag.Builder());
     }
 }

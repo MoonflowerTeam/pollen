@@ -27,14 +27,16 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
 
     private final DeferredRegister<T> registry;
     private final ForgeRegistryCodec<T> codec;
+    private final ResourceKey<? extends Registry<T>> key;
     private final Function<ResourceLocation, T> valueGetter;
     private final Function<T, ResourceLocation> keyGetter;
 
-    private PollinatedRegistryImpl(DeferredRegister<T> deferredRegister, ForgeRegistryCodec<T> codec, String modId) {
+    private PollinatedRegistryImpl(DeferredRegister<T> deferredRegister, ForgeRegistryCodec<T> codec, ResourceKey<? extends Registry<T>> key, String modId) {
         super(modId);
         this.registry = deferredRegister;
         this.codec = codec;
-        this.valueGetter = key -> this.registry.getEntries().stream().filter(object -> object.isPresent() && object.getId().equals(key)).map(RegistryObject::get).findFirst().orElse(null);
+        this.key = key;
+        this.valueGetter = location -> this.registry.getEntries().stream().filter(object -> object.isPresent() && object.getId().equals(location)).map(RegistryObject::get).findFirst().orElse(null);
         this.keyGetter = value -> this.registry.getEntries().stream().filter(object -> object.isPresent() && object.get().equals(value)).map(RegistryObject::getId).findFirst().orElse(null);
     }
 
@@ -42,6 +44,7 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
         super(modId);
         this.registry = DeferredRegister.create(registry, modId);
         this.codec = ForgeRegistryCodec.create(registry);
+        this.key = ResourceKey.createRegistryKey(registry.getRegistryName());
         this.valueGetter = registry::getValue;
         this.keyGetter = registry::getKey;
     }
@@ -57,7 +60,7 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
         if (registry instanceof PollinatedRegistry.VanillaImpl)
             return createVanilla(((PollinatedRegistry.VanillaImpl<T>) registry).getRegistry(), modId);
         PollinatedRegistryImpl<?> impl = (PollinatedRegistryImpl<?>) registry;
-        return new PollinatedRegistryImpl(impl.registry, impl.codec, modId);
+        return new PollinatedRegistryImpl(impl.registry, impl.codec, impl.key, modId);
     }
 
     @Override
@@ -75,6 +78,11 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
     @Override
     public T get(@Nullable ResourceLocation name) {
         return this.valueGetter.apply(name);
+    }
+
+    @Override
+    public ResourceKey<? extends Registry<T>> key() {
+        return null;
     }
 
     @Override

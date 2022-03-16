@@ -12,6 +12,7 @@ import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -81,11 +82,11 @@ public abstract class PollinatedRecipeProvider extends SimpleConditionalDataProv
         UpgradeRecipeBuilder.smithing(Ingredient.of(ingredientItem), Ingredient.of(Items.NETHERITE_INGOT), resultItem).unlocks("has_netherite_ingot", has(Items.NETHERITE_INGOT)).save(finishedRecipeConsumer, Registry.ITEM.getKey(resultItem.asItem()).getPath() + "_smithing");
     }
 
-    public static void planksFromLog(Consumer<FinishedRecipe> finishedRecipeConsumer, ItemLike planks, Tag<Item> log) {
+    public static void planksFromLog(Consumer<FinishedRecipe> finishedRecipeConsumer, ItemLike planks, TagKey<Item> log) {
         ShapelessRecipeBuilder.shapeless(planks, 4).requires(log).group("planks").unlockedBy("has_log", has(log)).save(finishedRecipeConsumer);
     }
 
-    public static void planksFromLogs(Consumer<FinishedRecipe> finishedRecipeConsumer, ItemLike planks, Tag<Item> logs) {
+    public static void planksFromLogs(Consumer<FinishedRecipe> finishedRecipeConsumer, ItemLike planks, TagKey<Item> logs) {
         ShapelessRecipeBuilder.shapeless(planks, 4).requires(logs).group("planks").unlockedBy("has_logs", has(logs)).save(finishedRecipeConsumer);
     }
 
@@ -215,7 +216,7 @@ public abstract class PollinatedRecipeProvider extends SimpleConditionalDataProv
     /**
      * Creates a new {@link InventoryChangeTrigger} that checks for a player having an item within the given tag.
      */
-    public static InventoryChangeTrigger.TriggerInstance has(Tag<Item> tag) {
+    public static InventoryChangeTrigger.TriggerInstance has(TagKey<Item> tag) {
         return inventoryTrigger(ItemPredicate.Builder.item().of(tag).build());
     }
 

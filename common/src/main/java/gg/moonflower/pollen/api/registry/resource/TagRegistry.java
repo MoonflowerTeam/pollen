@@ -1,9 +1,10 @@
 package gg.moonflower.pollen.api.registry.resource;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
-import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.api.registry.PollinatedRegistry;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -20,23 +21,31 @@ public final class TagRegistry {
     private TagRegistry() {
     }
 
-    @ExpectPlatform
-    public static Tag.Named<Item> bindItem(ResourceLocation name) {
-        return Platform.error();
+    public static <T> TagKey<T> bind(ResourceKey<? extends Registry<T>> registry, ResourceLocation name) {
+        return TagKey.create(registry, name);
     }
 
-    @ExpectPlatform
-    public static Tag.Named<Block> bindBlock(ResourceLocation name) {
-        return Platform.error();
+    public static <T> TagKey<T> bind(Registry<T> registry, ResourceLocation name) {
+        return TagKey.create(registry.key(), name);
     }
 
-    @ExpectPlatform
-    public static Tag.Named<EntityType<?>> bindEntityType(ResourceLocation name) {
-        return Platform.error();
+    public static <T> TagKey<T> bind(PollinatedRegistry<T> registry, ResourceLocation name) {
+        return TagKey.create(registry.key(), name);
     }
 
-    @ExpectPlatform
-    public static Tag.Named<Fluid> bindFluid(ResourceLocation name) {
-        return Platform.error();
+    public static TagKey<Item> bindItem(ResourceLocation name) {
+        return bind(Registry.ITEM_REGISTRY, name);
+    }
+
+    public static TagKey<Block> bindBlock(ResourceLocation name) {
+        return bind(Registry.BLOCK_REGISTRY, name);
+    }
+
+    public static TagKey<EntityType<?>> bindEntityType(ResourceLocation name) {
+        return bind(Registry.ENTITY_TYPE_REGISTRY, name);
+    }
+
+    public static TagKey<Fluid> bindFluid(ResourceLocation name) {
+        return bind(Registry.FLUID_REGISTRY, name);
     }
 }

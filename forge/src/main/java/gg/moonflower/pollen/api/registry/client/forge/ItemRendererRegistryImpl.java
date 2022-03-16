@@ -72,8 +72,9 @@ public class ItemRendererRegistryImpl {
             return this.parent.getFont(stack);
         }
 
+        @Nullable
         @Override
-        public <A extends HumanoidModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, A _default) {
+        public HumanoidModel<?> getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default) {
             return this.parent.getArmorModel(entityLiving, itemStack, armorSlot, _default);
         }
 

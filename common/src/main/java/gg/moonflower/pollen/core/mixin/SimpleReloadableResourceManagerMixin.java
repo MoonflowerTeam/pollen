@@ -5,8 +5,8 @@ import gg.moonflower.pollen.core.extensions.InjectableResourceManager;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ReloadInstance;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.Unit;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-@Mixin(value = SimpleReloadableResourceManager.class)
+@Mixin(value = ReloadableResourceManager.class)
 public class SimpleReloadableResourceManagerMixin implements InjectableResourceManager {
 
     @Shadow
@@ -31,7 +31,7 @@ public class SimpleReloadableResourceManagerMixin implements InjectableResourceM
         this.listeners.add(0, preparableReloadListener);
     }
 
-    @Inject(method = "createReload", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;isDebugEnabled()Z", remap = false, shift = At.Shift.AFTER))
+    @Inject(method = "createReload", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/resources/SimpleReloadInstance;create(Lnet/minecraft/server/packs/resources/ResourceManager;Ljava/util/List;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;Z)Lnet/minecraft/server/packs/resources/ReloadInstance;", shift = At.Shift.BEFORE))
     public void onReload(Executor backgroundExecutor, Executor gameExecutor, CompletableFuture<Unit> completableFuture, List<PackResources> list, CallbackInfoReturnable<ReloadInstance> cir) {
         this.listeners.forEach(listener -> {
             if (listener instanceof ReloadStartListener)

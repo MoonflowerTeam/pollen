@@ -2,6 +2,7 @@ package gg.moonflower.pollen.api.registry;
 
 import gg.moonflower.pollen.api.fluid.PollenFluidBehavior;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.material.Fluid;
@@ -11,29 +12,35 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public final class FluidBehaviorRegistry {
 
-    private static final Map<Tag<Fluid>, PollenFluidBehavior> FLUID_BEHAVIOR = new ConcurrentHashMap<>();
+    private static final Map<TagKey<Fluid>, PollenFluidBehavior> FLUID_BEHAVIOR = new ConcurrentHashMap<>();
 
     private FluidBehaviorRegistry() {
     }
 
-    public static void register(Tag<Fluid> tag, PollenFluidBehavior behavior) {
+    public static void register(TagKey<Fluid> tag, PollenFluidBehavior behavior) {
         FLUID_BEHAVIOR.put(tag, behavior);
     }
 
+    public static Stream<PollenFluidBehavior> get(Predicate<TagKey<Fluid>> filter) {
+        return FLUID_BEHAVIOR.entrySet().stream().filter(entry -> filter.test(entry.getKey())).map(Map.Entry::getValue);
+    }
+
     @Nullable
-    public static PollenFluidBehavior get(Tag<Fluid> tag) {
+    public static PollenFluidBehavior get(TagKey<Fluid> tag) {
         return FLUID_BEHAVIOR.get(tag);
     }
 
-    public static Set<Tag<Fluid>> getFluids() {
+    public static Set<TagKey<Fluid>> getFluids() {
         return FLUID_BEHAVIOR.keySet();
     }
 
     @ApiStatus.Internal
-    public static boolean doFluidPushing(Tag<Fluid> tag, Entity entity) {
+    public static boolean doFluidPushing(TagKey<Fluid> tag, Entity entity) {
         if (entity.getVehicle() instanceof Boat)
             return false;
 

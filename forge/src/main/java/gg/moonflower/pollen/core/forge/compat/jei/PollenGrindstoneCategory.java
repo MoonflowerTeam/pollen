@@ -1,18 +1,17 @@
 package gg.moonflower.pollen.core.forge.compat.jei;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.mojang.blaze3d.vertex.PoseStack;
 import gg.moonflower.pollen.api.crafting.grindstone.PollenGrindstoneRecipe;
 import gg.moonflower.pollen.core.Pollen;
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.ingredient.IGuiIngredient;
-import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -24,38 +23,38 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @ApiStatus.Internal
 public class PollenGrindstoneCategory implements IRecipeCategory<PollenGrindstoneRecipe> {
 
     private final IDrawable background;
     private final IDrawable icon;
-    private final LoadingCache<PollenGrindstoneRecipe, DisplayData> cachedDisplayData;
+    private final String topSlotName = "topSlot";
+    private final String bottomSlotName = "bottomSlot";
 
     public PollenGrindstoneCategory(IGuiHelper guiHelper) {
         this.background = guiHelper.drawableBuilder(new ResourceLocation("textures/gui/container/grindstone.png"), 30, 15, 116, 56).build();
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(Blocks.GRINDSTONE));
-        this.cachedDisplayData = CacheBuilder.newBuilder().maximumSize(25).build(new CacheLoader<PollenGrindstoneRecipe, DisplayData>() {
-            @Override
-            public DisplayData load(PollenGrindstoneRecipe key) {
-                return new DisplayData();
-            }
-        });
     }
 
+    @SuppressWarnings("removal")
     @Override
     public ResourceLocation getUid() {
-        return PollenJeiPlugin.GRINDSTONE_CATEGORY_ID;
+        return getRecipeType().getUid();
+    }
+
+    @SuppressWarnings("removal")
+    @Override
+    public Class<? extends PollenGrindstoneRecipe> getRecipeClass() {
+        return getRecipeType().getRecipeClass();
     }
 
     @Override
-    public Class<? extends PollenGrindstoneRecipe> getRecipeClass() {
-        return PollenGrindstoneRecipe.class;
+    public RecipeType<PollenGrindstoneRecipe> getRecipeType() {
+        return PollenJeiPlugin.GRINDSTONE_CATEGORY_ID;
     }
 
     @Override
@@ -74,22 +73,12 @@ public class PollenGrindstoneCategory implements IRecipeCategory<PollenGrindston
     }
 
     @Override
-    public void setIngredients(PollenGrindstoneRecipe recipe, IIngredients ingredients) {
-        ingredients.setInputLists(VanillaTypes.ITEM, recipe.getIngredients().stream().map(ingredient -> Arrays.asList(ingredient.getItems())).collect(Collectors.toList()));
-        ingredients.setOutput(VanillaTypes.ITEM, recipe.getResultItem());
-    }
+    public void setRecipe(IRecipeLayoutBuilder builder, PollenGrindstoneRecipe recipe, IFocusGroup focus) {
+        IRecipeSlotBuilder leftInputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 18, 3).addIngredients(recipe.getIngredients().get(0)).setSlotName(this.topSlotName);
+        IRecipeSlotBuilder rightInputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 18, 24).addIngredients(recipe.getIngredients().get(1)).setSlotName(this.bottomSlotName);
+        IRecipeSlotBuilder outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 98, 28).addItemStack(recipe.getResultItem());
 
-    @Override
-    public void setRecipe(IRecipeLayout recipeLayout, PollenGrindstoneRecipe recipe, IIngredients ingredients) {
-        IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
-
-        guiItemStacks.init(0, true, 18, 3);
-        guiItemStacks.init(1, true, 18, 24);
-        guiItemStacks.init(2, false, 98, 18);
-
-        guiItemStacks.set(ingredients);
-
-        this.cachedDisplayData.getUnchecked(recipe).currentIngredients = guiItemStacks.getGuiIngredients();
+        builder.createFocusLink(leftInputSlot, rightInputSlot, outputSlot);
     }
 
     private static int getExperienceFromItem(ItemStack stack) {
@@ -107,26 +96,18 @@ public class PollenGrindstoneCategory implements IRecipeCategory<PollenGrindston
     }
 
     @Override
-    public void draw(PollenGrindstoneRecipe recipe, PoseStack matrixStack, double mouseX, double mouseY) {
+    public void draw(PollenGrindstoneRecipe recipe, IRecipeSlotsView view, PoseStack matrixStack, double mouseX, double mouseY) {
         int experience = recipe.getResultExperience();
 
+
         if (experience == -1) {
-            DisplayData displayData = this.cachedDisplayData.getUnchecked(recipe);
-            if (displayData.currentIngredients == null)
+            Optional<ItemStack> topStack = view.findSlotByName(this.topSlotName).flatMap(slot1 -> slot1.getDisplayedIngredient(VanillaTypes.ITEM));
+            Optional<ItemStack> bottomStack = view.findSlotByName(this.bottomSlotName).flatMap(slot -> slot.getDisplayedIngredient(VanillaTypes.ITEM));
+
+            if (topStack.isEmpty() || bottomStack.isEmpty())
                 return;
 
-            ItemStack newTopStack = displayData.currentIngredients.get(0).getDisplayedIngredient();
-            ItemStack newBottomStack = displayData.currentIngredients.get(1).getDisplayedIngredient();
-            if(newBottomStack == null)
-                newBottomStack = ItemStack.EMPTY;
-            if (newTopStack == null)
-                return;
-
-            experience = displayData.lastExperience;
-            if (displayData.lastTopStack == null || displayData.lastBottomStack == null || !ItemStack.matches(displayData.lastBottomStack, newBottomStack) || !ItemStack.matches(displayData.lastTopStack, newTopStack)) {
-                experience = getExperienceFromItem(newTopStack) + getExperienceFromItem(newBottomStack);
-                displayData.setLast(newTopStack, newBottomStack, experience);
-            }
+            experience = getExperienceFromItem(topStack.get()) + getExperienceFromItem(bottomStack.get());
         }
 
         if (experience > 0) {
@@ -139,22 +120,5 @@ public class PollenGrindstoneCategory implements IRecipeCategory<PollenGrindston
     @Override
     public boolean isHandled(PollenGrindstoneRecipe recipe) {
         return !recipe.isSpecial();
-    }
-
-    private static class DisplayData {
-
-        @Nullable
-        private Map<Integer, ? extends IGuiIngredient<ItemStack>> currentIngredients;
-        @Nullable
-        private ItemStack lastTopStack;
-        @Nullable
-        private ItemStack lastBottomStack;
-        private int lastExperience;
-
-        public void setLast(ItemStack topStack, ItemStack bottomStack, int experience) {
-            this.lastTopStack = topStack;
-            this.lastBottomStack = bottomStack;
-            this.lastExperience = experience;
-        }
     }
 }

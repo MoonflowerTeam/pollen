@@ -9,6 +9,7 @@ import gg.moonflower.pollen.api.util.NumberCompareMode;
 import gg.moonflower.pollen.core.resource.condition.ConfigResourceCondition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
@@ -123,7 +124,7 @@ public interface PollinatedResourceCondition {
      * @return A condition checking if the item is registered
      */
     @ExpectPlatform
-    static PollinatedResourceConditionProvider itemTagPopulated(Tag.Named<Item> tag) {
+    static PollinatedResourceConditionProvider itemTagPopulated(TagKey<Item> tag) {
         return Platform.error();
     }
 
@@ -134,7 +135,7 @@ public interface PollinatedResourceCondition {
      * @return A condition checking if the block is registered
      */
     @ExpectPlatform
-    static PollinatedResourceConditionProvider blockTagPopulated(Tag.Named<Block> tag) {
+    static PollinatedResourceConditionProvider blockTagPopulated(TagKey<Block> tag) {
         return Platform.error();
     }
 
@@ -145,7 +146,7 @@ public interface PollinatedResourceCondition {
      * @return A condition checking if the fluid is registered
      */
     @ExpectPlatform
-    static PollinatedResourceConditionProvider fluidTagPopulated(Tag.Named<Fluid> tag) {
+    static PollinatedResourceConditionProvider fluidTagPopulated(TagKey<Fluid> tag) {
         return Platform.error();
     }
 

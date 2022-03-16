@@ -9,6 +9,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -58,8 +59,8 @@ public interface PollinatedFluid {
      * @return The color to apply for fog
      */
     @Environment(EnvType.CLIENT)
-    default int getFogColor(Camera camera, ClientLevel level, Biome biome, float partialTicks) {
-        return biome.getWaterFogColor();
+    default int getFogColor(Camera camera, ClientLevel level, Holder<Biome> biome, float partialTicks) {
+        return biome.value().getWaterFogColor();
     }
 
     /**
@@ -78,8 +79,8 @@ public interface PollinatedFluid {
         if (entity instanceof LocalPlayer) {
             LocalPlayer localPlayer = (LocalPlayer) entity;
             g *= Math.max(0.25F, localPlayer.getWaterVision());
-            Biome biome = localPlayer.level.getBiome(localPlayer.blockPosition());
-            if (biome.getBiomeCategory() == Biome.BiomeCategory.SWAMP) {
+            Holder<Biome> holder = localPlayer.level.getBiome(localPlayer.blockPosition());
+            if (Biome.getBiomeCategory(holder) == Biome.BiomeCategory.SWAMP) {
                 g *= 0.85F;
             }
         }

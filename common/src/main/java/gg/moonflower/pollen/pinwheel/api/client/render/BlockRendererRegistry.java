@@ -4,9 +4,7 @@ import gg.moonflower.pollen.api.event.events.client.resource.ClientTagUpdateEven
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
-import net.minecraft.tags.TagCollection;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +23,7 @@ public class BlockRendererRegistry {
 
     private static final RenderSet EMPTY = new RenderSet();
     private static final Map<Block, RenderSet> RENDERERS = new HashMap<>();
-    private static final Map<Tag<Block>, RenderSet> TAG_RENDERERS = new HashMap<>();
+    private static final Map<TagKey<Block>, RenderSet> TAG_RENDERERS = new HashMap<>();
     private static final Lock RENDERERS_LOCK = new ReentrantLock();
     private static final Lock TAG_RENDERERS_LOCK = new ReentrantLock();
     private static final Map<Block, RenderSet> RENDERERS_CACHE = new ConcurrentHashMap<>();
@@ -62,7 +60,7 @@ public class BlockRendererRegistry {
      * @param tag      The tag to get blocks from to bind a renderer to
      * @param renderer The renderer to use
      */
-    public static void register(Tag<Block> tag, BlockRenderer renderer) {
+    public static void register(TagKey<Block> tag, BlockRenderer renderer) {
         TAG_RENDERERS_LOCK.lock();
         RenderSet renderers = TAG_RENDERERS.computeIfAbsent(tag, __ -> new RenderSet());
         TAG_RENDERERS_LOCK.unlock();
@@ -86,7 +84,6 @@ public class BlockRendererRegistry {
             }
         }
 
-        TagCollection<Block> tags = connection.getTags().getOrEmpty(Registry.BLOCK_REGISTRY);
         if (RENDERERS_CACHE.containsKey(block))
             return RENDERERS_CACHE.get(block).values();
 
@@ -99,8 +96,8 @@ public class BlockRendererRegistry {
         RENDERERS_LOCK.unlock();
 
         TAG_RENDERERS_LOCK.lock();
-        for (ResourceLocation tagId : tags.getMatchingTags(block)) {
-            Tag<Block> tag = tags.getTagOrEmpty(tagId);
+        List<TagKey<Block>> tags = connection.registryAccess().registryOrThrow(Registry.BLOCK_REGISTRY).getTagNames().toList();
+        for (TagKey<Block> tag : tags) {
             if (TAG_RENDERERS.containsKey(tag)) {
                 if (set == null)
                     set = new RenderSet();

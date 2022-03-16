@@ -5,6 +5,7 @@ import gg.moonflower.pollen.api.fluid.PollenFluidBehavior;
 import gg.moonflower.pollen.api.registry.FluidBehaviorRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -27,7 +28,7 @@ import java.util.Set;
 public abstract class EntityMixin {
 
     @Unique
-    private final Set<Tag<Fluid>> wasInFluids = new HashSet<>();
+    private final Set<TagKey<Fluid>> wasInFluids = new HashSet<>();
 
     @Shadow
     public Level level;

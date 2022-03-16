@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
@@ -40,7 +41,7 @@ public abstract class LocalPlayerMixin extends Player {
     public abstract void setSprinting(boolean sprinting);
 
     @Unique
-    private final Set<Tag<Fluid>> wasInFluids = new HashSet<>();
+    private final Set<TagKey<Fluid>> wasInFluids = new HashSet<>();
 
     private LocalPlayerMixin(Level level, BlockPos blockPos, float f, GameProfile gameProfile) {
         super(level, blockPos, f, gameProfile);

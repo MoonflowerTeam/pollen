@@ -3,6 +3,7 @@ package gg.moonflower.pollen.api.resource.condition.forge;
 import gg.moonflower.pollen.api.resource.condition.PollinatedResourceConditionProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
@@ -49,16 +50,16 @@ public class PollinatedResourceConditionImpl {
         return wrap(new FluidExistsCondition(name));
     }
 
-    public static PollinatedResourceConditionProvider itemTagPopulated(Tag.Named<Item> tag) {
-        return wrap(new ItemTagPopulatedCondition(tag.getName()));
+    public static PollinatedResourceConditionProvider itemTagPopulated(TagKey<Item> tag) {
+        return wrap(new ItemTagPopulatedCondition(tag.location()));
     }
 
-    public static PollinatedResourceConditionProvider blockTagPopulated(Tag.Named<Block> tag) {
-        return wrap(new BlockTagPopulatedCondition(tag.getName()));
+    public static PollinatedResourceConditionProvider blockTagPopulated(TagKey<Block> tag) {
+        return wrap(new BlockTagPopulatedCondition(tag.location()));
     }
 
-    public static PollinatedResourceConditionProvider fluidTagPopulated(Tag.Named<Fluid> tag) {
-        return wrap(new FluidTagPopulatedCondition(tag.getName()));
+    public static PollinatedResourceConditionProvider fluidTagPopulated(TagKey<Fluid> tag) {
+        return wrap(new FluidTagPopulatedCondition(tag.location()));
     }
 
     public static PollinatedResourceConditionProvider allModsLoaded(String... modIds) {

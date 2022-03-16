@@ -7,10 +7,10 @@ import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tags.TagContainer;
 import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.world.item.crafting.RecipeManager;
 import org.jetbrains.annotations.ApiStatus;
@@ -30,9 +30,9 @@ import java.util.stream.Stream;
 public abstract class Platform {
 
     private static final boolean FORGE = ArchitecturyTarget.getCurrentTarget().equals(PlatformOnly.FORGE);
-    private static final Supplier<TagContainer> CLIENT_TAG_CONTAINER = () -> {
+    private static final Supplier<RegistryAccess> CLIENT_REGISTRY_ACCESS = () -> {
         ClientPacketListener listener = Minecraft.getInstance().getConnection();
-        return listener != null ? listener.getTags() : null;
+        return listener != null ? listener.registryAccess() : null;
     };
     private static final Supplier<RecipeManager> CLIENT_RECIPE_MANAGER = () -> {
         ClientPacketListener listener = Minecraft.getInstance().getConnection();
@@ -112,13 +112,13 @@ public abstract class Platform {
     }
 
     /**
-     * @return The tag container for the running server or client
+     * @return The access to registries for the running server or client
      */
-    public static Optional<TagContainer> getTags() {
+    public static Optional<RegistryAccess> getRegistryAccess() {
         MinecraftServer server = Pollen.getRunningServer();
         if (server != null)
-            return Optional.of(server.getTags());
-        return isClient() ? Optional.ofNullable(CLIENT_TAG_CONTAINER.get()) : Optional.empty();
+            return Optional.of(server.registryAccess());
+        return isClient() ? Optional.ofNullable(CLIENT_REGISTRY_ACCESS.get()) : Optional.empty();
     }
 
     /**

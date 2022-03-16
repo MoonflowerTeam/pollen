@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.entity.Entity;
@@ -18,6 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -40,7 +42,7 @@ public abstract class LivingEntityMixin extends Entity {
     public abstract boolean canBreatheUnderwater();
 
     @Shadow
-    protected abstract void jumpInLiquid(Tag<Fluid> fluidTag);
+    protected abstract void jumpInLiquid(TagKey<Fluid> fluidTag);
 
     @Shadow
     public abstract void calculateEntityAnimation(LivingEntity livingEntity, boolean bl);
@@ -49,7 +51,7 @@ public abstract class LivingEntityMixin extends Entity {
     protected abstract boolean isAffectedByFluids();
 
     @Shadow
-    public abstract boolean canStandOnFluid(Fluid fluid);
+    public abstract boolean canStandOnFluid(FluidState fluidState);
 
     @Unique
     private int captureAirSupply;
@@ -67,37 +69,35 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isInWaterRainOrBubble()Z", shift = At.Shift.BEFORE))
     public void tickFluidDrowning(CallbackInfo ci) {
         if (this.isAlive()) {
-            PollenFluidBehavior behavior = this.fluidOnEyes != null ? FluidBehaviorRegistry.get(this.fluidOnEyes) : null;
-            if (behavior == null) // No custom behavior
-                return;
+            FluidBehaviorRegistry.get(this::isEyeInFluid).forEach(behavior -> {
+                LivingEntity livingEntity = (LivingEntity) (Object) this;
+                if (!behavior.shouldEntityDrown(livingEntity))
+                    return;
 
-            LivingEntity livingEntity = (LivingEntity) (Object) this;
-            if (!behavior.shouldEntityDrown(livingEntity))
-                return;
+                if (!this.canBreatheUnderwater() && !MobEffectUtil.hasWaterBreathing(livingEntity) && !((Object) this instanceof Player && ((Player) livingEntity).getAbilities().invulnerable)) {
+                    this.setAirSupply(this.captureAirSupply);
+                    this.setAirSupply(this.decreaseAirSupply(this.getAirSupply()));
+                    if (this.getAirSupply() == -20) {
+                        this.setAirSupply(0);
+                        Vec3 vec3 = this.getDeltaMovement();
 
-            if (!this.canBreatheUnderwater() && !MobEffectUtil.hasWaterBreathing(livingEntity) && !((Object) this instanceof Player && ((Player) livingEntity).getAbilities().invulnerable)) {
-                this.setAirSupply(this.captureAirSupply);
-                this.setAirSupply(this.decreaseAirSupply(this.getAirSupply()));
-                if (this.getAirSupply() == -20) {
-                    this.setAirSupply(0);
-                    Vec3 vec3 = this.getDeltaMovement();
-
-                    ParticleOptions particle = behavior.getDrowningParticles(livingEntity);
-                    if (particle != null) {
-                        for (int i = 0; i < 8; ++i) {
-                            double f = this.random.nextDouble() - this.random.nextDouble();
-                            double g = this.random.nextDouble() - this.random.nextDouble();
-                            double h = this.random.nextDouble() - this.random.nextDouble();
-                            this.level.addParticle(particle, this.getX() + f, this.getY() + g, this.getZ() + h, vec3.x, vec3.y, vec3.z);
+                        ParticleOptions particle = behavior.getDrowningParticles(livingEntity);
+                        if (particle != null) {
+                            for (int i = 0; i < 8; ++i) {
+                                double f = this.random.nextDouble() - this.random.nextDouble();
+                                double g = this.random.nextDouble() - this.random.nextDouble();
+                                double h = this.random.nextDouble() - this.random.nextDouble();
+                                this.level.addParticle(particle, this.getX() + f, this.getY() + g, this.getZ() + h, vec3.x, vec3.y, vec3.z);
+                            }
                         }
+
+                        this.hurt(DamageSource.DROWN, behavior.getDrowningDamage(livingEntity));
                     }
-
-                    this.hurt(DamageSource.DROWN, behavior.getDrowningDamage(livingEntity));
                 }
-            }
 
-            if (!this.level.isClientSide() && this.isPassenger() && this.getVehicle() != null && !behavior.canVehicleTraverse(livingEntity, this.getVehicle()))
-                this.stopRiding();
+                if (!this.level.isClientSide() && this.isPassenger() && this.getVehicle() != null && !behavior.canVehicleTraverse(livingEntity, this.getVehicle()))
+                    this.stopRiding();
+            });
         }
     }
 
@@ -112,16 +112,16 @@ public abstract class LivingEntityMixin extends Entity {
     }
 
     @Inject(method = "jumpInLiquid", at = @At("HEAD"), cancellable = true)
-    public void jumpInLiquid(Tag<Fluid> fluidTag, CallbackInfo ci) {
+    public void jumpInLiquid(TagKey<Fluid> fluidTag, CallbackInfo ci) {
         if (!this.isInWater() && fluidTag == FluidTags.WATER) {
-            FluidBehaviorRegistry.getFluids().stream().filter(tag -> Objects.requireNonNull(FluidBehaviorRegistry.get(tag)).canAscend((LivingEntity)(Object)this) && this.getFluidHeight(tag) > 0.0).findFirst().ifPresent(this::jumpInLiquid);
+            FluidBehaviorRegistry.getFluids().stream().filter(tag -> Objects.requireNonNull(FluidBehaviorRegistry.get(tag)).canAscend((LivingEntity) (Object) this) && this.getFluidHeight(tag) > 0.0).findFirst().ifPresent(this::jumpInLiquid);
             ci.cancel();
         }
     }
 
     @Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getFluidState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/material/FluidState;"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
     public void travelInCustomFluid(Vec3 travelVector, CallbackInfo ci, double fallSpeed) {
-        if (this.isAffectedByFluids() && !this.canStandOnFluid(this.level.getFluidState(this.blockPosition()).getType())) {
+        if (this.isAffectedByFluids() && !this.canStandOnFluid(this.level.getFluidState(this.blockPosition()))) {
             FluidBehaviorRegistry.getFluids().stream().filter(tag -> this.getFluidHeight(tag) > 0.0).forEach(tag -> {
                 PollenFluidBehavior behavior = Objects.requireNonNull(FluidBehaviorRegistry.get(tag));
                 behavior.applyPhysics((LivingEntity) (Object) this, travelVector, fallSpeed, this.getDeltaMovement().y <= 0.0D);

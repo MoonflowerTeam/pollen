@@ -3,12 +3,14 @@ package gg.moonflower.pollen.core.forge.compat.jei;
 import com.google.common.collect.ImmutableSet;
 import gg.moonflower.pollen.api.crafting.PollenBrewingRecipe;
 import gg.moonflower.pollen.api.crafting.PollenRecipeTypes;
+import gg.moonflower.pollen.api.crafting.grindstone.PollenGrindstoneRecipe;
 import gg.moonflower.pollen.core.Pollen;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.constants.VanillaRecipeCategoryUid;
+import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.*;
 import net.minecraft.client.gui.screens.inventory.GrindstoneScreen;
 import net.minecraft.resources.ResourceLocation;
@@ -32,8 +34,7 @@ import java.util.stream.Collectors;
 public class PollenJeiPlugin implements IModPlugin {
 
     public static final ResourceLocation PLUGIN_ID = new ResourceLocation(Pollen.MOD_ID, "vanilla");
-    public static final ResourceLocation GRINDSTONE_CATEGORY_ID = new ResourceLocation(Pollen.MOD_ID, "grindstone");
-
+    public static final RecipeType<PollenGrindstoneRecipe> GRINDSTONE_CATEGORY_ID = RecipeType.create(Pollen.MOD_ID, "grindstone", PollenGrindstoneRecipe.class);
     @Nullable
     private PollenGrindstoneCategory grindstoneCategory;
 
@@ -52,16 +53,16 @@ public class PollenJeiPlugin implements IModPlugin {
         List<PollenBrewingRecipe> recipes = PollenRecipeMaker.getRecipes(null, PollenRecipeTypes.BREWING_TYPE.get());
         for (PollenBrewingRecipe recipe : recipes) {
             List<ItemStack> ingredients = Arrays.asList(recipe.getIngredient().getItems());
-            registration.addRecipes(potions.stream().map(item -> {
+            registration.addRecipes(RecipeTypes.BREWING, potions.stream().map(item -> {
                 ItemStack input = new ItemStack(item);
                 ItemStack result = new ItemStack(item);
                 PotionUtils.setPotion(input, recipe.getFrom());
                 PotionUtils.setPotion(result, recipe.getResult());
                 return registration.getVanillaRecipeFactory().createBrewingRecipe(ingredients, input, result);
-            }).collect(Collectors.toList()), VanillaRecipeCategoryUid.BREWING);
+            }).collect(Collectors.toList()));
         }
 
-        registration.addRecipes(PollenRecipeMaker.getGrindstoneRecipes(this.grindstoneCategory, registration.getIngredientManager()), GRINDSTONE_CATEGORY_ID);
+        registration.addRecipes(GRINDSTONE_CATEGORY_ID, PollenRecipeMaker.getGrindstoneRecipes(this.grindstoneCategory, registration.getIngredientManager()));
     }
 
     @Override

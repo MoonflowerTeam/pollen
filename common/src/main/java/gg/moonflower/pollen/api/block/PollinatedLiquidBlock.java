@@ -70,7 +70,7 @@ public class PollinatedLiquidBlock extends Block implements BucketPickup {
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return context.isAbove(STABLE_SHAPE, pos, true) && state.getValue(LEVEL) == 0 && context.canStandOnFluid(level.getFluidState(pos.above()), this.getFluid()) ? STABLE_SHAPE : Shapes.empty();
+        return context.isAbove(STABLE_SHAPE, pos, true) && state.getValue(LEVEL) == 0 && context.canStandOnFluid(level.getFluidState(pos.above()), state.getFluidState()) ? STABLE_SHAPE : Shapes.empty();
     }
 
     @Override

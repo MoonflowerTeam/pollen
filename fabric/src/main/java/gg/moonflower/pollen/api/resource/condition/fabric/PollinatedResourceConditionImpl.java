@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -88,17 +89,17 @@ public class PollinatedResourceConditionImpl {
     }
 
     @SuppressWarnings("unchecked")
-    public static PollinatedResourceConditionProvider itemTagPopulated(Tag.Named<Item> tag) {
+    public static PollinatedResourceConditionProvider itemTagPopulated(TagKey<Item> tag) {
         return wrap(DefaultResourceConditions.itemTagsPopulated(tag));
     }
 
     @SuppressWarnings("unchecked")
-    public static PollinatedResourceConditionProvider blockTagPopulated(Tag.Named<Block> tag) {
+    public static PollinatedResourceConditionProvider blockTagPopulated(TagKey<Block> tag) {
         return wrap(DefaultResourceConditions.blockTagsPopulated(tag));
     }
 
     @SuppressWarnings("unchecked")
-    public static PollinatedResourceConditionProvider fluidTagPopulated(Tag.Named<Fluid> tag) {
+    public static PollinatedResourceConditionProvider fluidTagPopulated(TagKey<Fluid> tag) {
         return wrap(DefaultResourceConditions.fluidTagsPopulated(tag));
     }
 

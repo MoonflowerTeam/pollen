@@ -9,8 +9,10 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
@@ -23,7 +25,7 @@ public class DebugPollenFlowerPotRenderer implements BlockRenderer {
     @Override
     public void render(Level level, BlockPos pos, DataContainer container, MultiBufferSource buffer, PoseStack matrixStack, float partialTicks, Camera camera, GameRenderer gameRenderer, LightTexture lightmap, Matrix4f projection, int packedLight, int packedOverlay) {
 //        RANDOM.setSeed(pos.asLong());
-        List<BlockState> possibleStates = Registry.BLOCK.getRandom(RANDOM).getStateDefinition().getPossibleStates();
+        List<BlockState> possibleStates = Registry.BLOCK.getRandom(RANDOM).map(Holder::value).orElse(Blocks.AIR).getStateDefinition().getPossibleStates();
         BlockState state = possibleStates.get(RANDOM.nextInt(possibleStates.size()));
         Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, packedOverlay);
     }

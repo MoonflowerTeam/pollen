@@ -22,7 +22,7 @@
     "LivingEntityMixin",
     "PackRepositoryAccessor",
     "PackRepositoryMixin",
-    "SimpleReloadableResourceManagerMixin",
+    "ReloadableResourceManagerMixin",
     "loot.ForgeHooksMixin",
     "loot.LootPoolAccessor",
     "loot.LootTableAccessor"

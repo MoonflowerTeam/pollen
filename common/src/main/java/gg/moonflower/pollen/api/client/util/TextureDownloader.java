@@ -72,7 +72,7 @@ public final class TextureDownloader {
             }, Util.ioPool());
             result.add(future);
         }
-        return Util.sequence(result);
+        return CompletableFuture.allOf(result.toArray(CompletableFuture[]::new));
     }
 
     /**

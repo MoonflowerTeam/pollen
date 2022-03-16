@@ -17,7 +17,7 @@ import gg.moonflower.pollen.api.resource.modifier.type.ModelOverrideModifier;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.ServerResources;
+import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -103,7 +103,7 @@ public final class ResourceModifierManager {
     }
 
     @ApiStatus.Internal
-    public static PreparableReloadListener createServerReloader(ServerResources serverResources) {
+    public static PreparableReloadListener createServerReloader(ReloadableServerResources serverResources) {
         return serverReloader = new SidedReloader("data", DATA_MODIFIERS, type -> (n, json, inject, priority) -> {
             if (!(type.getSerializer() instanceof DataModifierSerializer))
                 throw new JsonSyntaxException(REGISTRY.getKey(type) + " is not a data modifier");

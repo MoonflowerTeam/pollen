@@ -14,7 +14,7 @@ import gg.moonflower.pollen.core.mixin.data.AdvancementRewardsAccessor;
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.DeserializationContext;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.ServerResources;
+import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.util.GsonHelper;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -209,7 +209,7 @@ public class AdvancementModifier extends ResourceModifier<Advancement.Builder> {
          * @param priority        The priority of this injection over others
          * @return The deserialized builder
          */
-        public static Builder fromJson(ResourceLocation name, ServerResources serverResources, JsonObject json, ResourceLocation[] inject, int priority) {
+        public static Builder fromJson(ResourceLocation name, ReloadableServerResources serverResources, JsonObject json, ResourceLocation[] inject, int priority) {
             DeserializationContext context = new DeserializationContext(name, serverResources.getPredicateManager());
             AdvancementRewards addRewards = json.has("addRewards") ? AdvancementRewards.deserialize(GsonHelper.getAsJsonObject(json, "addRewards")) : AdvancementRewards.EMPTY;
 

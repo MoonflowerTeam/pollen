@@ -93,7 +93,7 @@ public final class GeometryTextureManager {
      * @param showLoadingScreen Whether to show the loading screen during the reload
      * @return A future for when the reload is complete
      */
-    public static CompletableFuture<Unit> reload(boolean showLoadingScreen) {
+    public static CompletableFuture<?> reload(boolean showLoadingScreen) {
         return DYNAMIC_RELOADER.reload(showLoadingScreen);
     }
 
