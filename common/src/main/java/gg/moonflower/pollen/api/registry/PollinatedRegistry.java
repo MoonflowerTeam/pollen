@@ -115,7 +115,7 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
      * @param <T>        The type stored in the Registry
      * @return An instance of FabricRegistryBuilder
      */
-    public static <T> PollinatedRegistry<T> createSimple(Class<T> type, ResourceLocation registryId) {
+    public static <T> PollinatedRegistry<T> createSimple(ResourceLocation registryId) {
         return createVanilla(new MappedRegistry<>(ResourceKey.createRegistryKey(registryId), Lifecycle.stable()), registryId.getNamespace());
     }
 
@@ -125,7 +125,7 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
      * @param <T>        The type stored in the Registry
      * @return An instance of FabricRegistryBuilder
      */
-    public static <T> PollinatedRegistry<T> createDefaulted(Class<T> type, ResourceLocation registryId, ResourceLocation defaultId) {
+    public static <T> PollinatedRegistry<T> createDefaulted(ResourceLocation registryId, ResourceLocation defaultId) {
         return createVanilla(new DefaultedRegistry<>(defaultId.toString(), ResourceKey.createRegistryKey(registryId), Lifecycle.stable()), registryId.getNamespace());
     }
 
@@ -187,6 +187,11 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
     public Optional<T> getOptional(@Nullable ResourceLocation name) {
         return Optional.ofNullable(this.get(name));
     }
+
+    /**
+     * @return The key of this registry
+     */
+    public abstract ResourceKey<? extends Registry<T>> key();
 
     /**
      * @return A set of all registered keys in the registry
@@ -257,6 +262,11 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
         @Override
         public T get(@Nullable ResourceLocation name) {
             return this.registry.get(name);
+        }
+
+        @Override
+        public ResourceKey<? extends Registry<T>> key() {
+            return this.registry.key();
         }
 
         @Override

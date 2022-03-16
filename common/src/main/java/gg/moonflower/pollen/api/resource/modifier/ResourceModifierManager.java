@@ -48,7 +48,7 @@ import java.util.stream.Stream;
  */
 public final class ResourceModifierManager {
 
-    public static final PollinatedRegistry<ResourceModifierType> REGISTRY = PollinatedRegistry.createSimple(ResourceModifierType.class, new ResourceLocation(Pollen.MOD_ID, "resource_modifier"));
+    public static final PollinatedRegistry<ResourceModifierType> REGISTRY = PollinatedRegistry.createSimple(new ResourceLocation(Pollen.MOD_ID, "resource_modifier"));
 
     public static final Supplier<ResourceModifierType> ADVANCEMENT = REGISTRY.register("advancement", () -> ResourceModifierType.create(AdvancementModifier.Builder::fromJson));
     public static final Supplier<ResourceModifierType> LOOT = REGISTRY.register("loot", () -> ResourceModifierType.create(LootModifier.Builder::fromJson));
