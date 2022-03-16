@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[39,)"
+loaderVersion = "[40,)"
 issueTrackerURL = "https://github.com/MoonflowerTeam/${repo}/issues"
 license = "GPLv3"
 
@@ -19,13 +19,13 @@ catalogueImageIcon="icon.png"
 [[dependencies.${id}]]
 modId = "forge"
 mandatory = true
-versionRange = "[39,)"
+versionRange = "[40,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.${id}]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.18,1.18.2)"
+versionRange = "[1.18.2,)"
 ordering = "NONE"
 side = "BOTH"
