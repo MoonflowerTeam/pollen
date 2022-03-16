@@ -114,6 +114,7 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
      * @param registryId The registry {@link ResourceLocation} used as the registry id
      * @param <T>        The type stored in the Registry
      * @return An instance of FabricRegistryBuilder
+     * @deprecated Use {@link #createSimple(ResourceLocation)} instead. TODO remove in 2.0.0
      */
     public static <T> PollinatedRegistry<T> createSimple(Class<T> type, ResourceLocation registryId) {
         return createVanilla(new MappedRegistry<>(ResourceKey.createRegistryKey(registryId), Lifecycle.stable()), registryId.getNamespace());
@@ -124,8 +125,30 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
      * @param defaultId  The default registry id
      * @param <T>        The type stored in the Registry
      * @return An instance of FabricRegistryBuilder
+     * @deprecated Use {@link #createDefaulted(ResourceLocation, ResourceLocation)} instead. TODO remove in 2.0.0
      */
     public static <T> PollinatedRegistry<T> createDefaulted(Class<T> type, ResourceLocation registryId, ResourceLocation defaultId) {
+        return createVanilla(new DefaultedRegistry<>(defaultId.toString(), ResourceKey.createRegistryKey(registryId), Lifecycle.stable()), registryId.getNamespace());
+    }
+
+    /**
+     * Creates a new simple registry
+     *
+     * @param registryId The registry {@link ResourceLocation} used as the registry id
+     * @param <T>        The type stored in the Registry
+     * @return An instance of FabricRegistryBuilder
+     */
+    public static <T> PollinatedRegistry<T> createSimple(ResourceLocation registryId) {
+        return createVanilla(new MappedRegistry<>(ResourceKey.createRegistryKey(registryId), Lifecycle.stable()), registryId.getNamespace());
+    }
+
+    /**
+     * @param registryId The registry {@link ResourceLocation} used as the registry id
+     * @param defaultId  The default registry id
+     * @param <T>        The type stored in the Registry
+     * @return An instance of FabricRegistryBuilder
+     */
+    public static <T> PollinatedRegistry<T> createDefaulted(ResourceLocation registryId, ResourceLocation defaultId) {
         return createVanilla(new DefaultedRegistry<>(defaultId.toString(), ResourceKey.createRegistryKey(registryId), Lifecycle.stable()), registryId.getNamespace());
     }
 
