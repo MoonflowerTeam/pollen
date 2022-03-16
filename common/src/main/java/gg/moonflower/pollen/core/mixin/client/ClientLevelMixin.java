@@ -1,9 +1,10 @@
 package gg.moonflower.pollen.core.mixin.client;
 
-import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererTicker;
+import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.extensions.LevelRendererExtension;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRenderer;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
+import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererTicker;
 import gg.moonflower.pollen.pinwheel.api.client.render.TickableBlockRenderer;
 import gg.moonflower.pollen.pinwheel.core.client.DataContainerImpl;
 import net.minecraft.client.Minecraft;
@@ -57,6 +58,7 @@ public abstract class ClientLevelMixin extends Level implements BlockRendererTic
         this.updates.putAll(this.pendingUpdates);
         this.pendingUpdates.clear();
 
+        this.getProfiler().push(Pollen.MOD_ID + "TickBlockRenderers");
         ((LevelRendererExtension) this.minecraft.levelRenderer).pollen_getTickingBlockRenderers().forEach(pos -> {
             BlockState state = this.getBlockState(pos);
             for (BlockRenderer renderer : BlockRendererRegistry.get(state.getBlock())) {
@@ -70,10 +72,12 @@ public abstract class ClientLevelMixin extends Level implements BlockRendererTic
             }
         });
 
+        this.getProfiler().popPush(Pollen.MOD_ID + "UpdateBlockRenderers");
         this.updates.forEach((pos, state) -> {
             List<BlockRenderer> renderers = BlockRendererRegistry.get(state.getBlock());
             for (BlockRenderer renderer : renderers)
                 renderer.receiveUpdate(this, pos, state, this.getBlockState(pos), this.dataContainer.get(pos));
         });
+        this.getProfiler().pop();
     }
 }
