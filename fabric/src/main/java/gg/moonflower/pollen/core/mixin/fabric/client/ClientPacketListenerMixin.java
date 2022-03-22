@@ -50,7 +50,8 @@ public abstract class ClientPacketListenerMixin {
     public void handleBlockEntityData(BlockEntity instance, CompoundTag compoundTag) {
         if (instance instanceof PollenBlockEntity blockEntity) {
             blockEntity.onDataPacket(this.connection, this.pollen$beDataPacket);
+        } else {
+            instance.load(compoundTag);
         }
-        instance.load(compoundTag);
     }
 }
