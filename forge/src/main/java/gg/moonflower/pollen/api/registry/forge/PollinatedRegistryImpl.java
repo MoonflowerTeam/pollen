@@ -10,7 +10,11 @@ import gg.moonflower.pollen.api.util.forge.ForgeRegistryCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.*;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.RegistryManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,16 +31,16 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
 
     private final DeferredRegister<T> registry;
     private final ForgeRegistryCodec<T> codec;
-    private final ResourceKey<? extends Registry<T>> key;
+    private final ResourceKey<? extends Registry<T>> resourceKey;
     private final Function<ResourceLocation, T> valueGetter;
     private final Function<T, ResourceLocation> keyGetter;
 
-    private PollinatedRegistryImpl(DeferredRegister<T> deferredRegister, ForgeRegistryCodec<T> codec, ResourceKey<? extends Registry<T>> key, String modId) {
+    private PollinatedRegistryImpl(DeferredRegister<T> deferredRegister, ForgeRegistryCodec<T> codec, ResourceKey<? extends Registry<T>> resourceKey, String modId) {
         super(modId);
         this.registry = deferredRegister;
         this.codec = codec;
-        this.key = key;
-        this.valueGetter = location -> this.registry.getEntries().stream().filter(object -> object.isPresent() && object.getId().equals(location)).map(RegistryObject::get).findFirst().orElse(null);
+        this.resourceKey = resourceKey;
+        this.valueGetter = key -> this.registry.getEntries().stream().filter(object -> object.isPresent() && object.getId().equals(key)).map(RegistryObject::get).findFirst().orElse(null);
         this.keyGetter = value -> this.registry.getEntries().stream().filter(object -> object.isPresent() && object.get().equals(value)).map(RegistryObject::getId).findFirst().orElse(null);
     }
 
@@ -44,7 +48,7 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
         super(modId);
         this.registry = DeferredRegister.create(registry, modId);
         this.codec = ForgeRegistryCodec.create(registry);
-        this.key = ResourceKey.createRegistryKey(registry.getRegistryName());
+        this.resourceKey = ResourceKey.createRegistryKey(registry.getRegistryName());
         this.valueGetter = registry::getValue;
         this.keyGetter = registry::getKey;
     }
@@ -60,7 +64,7 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
         if (registry instanceof PollinatedRegistry.VanillaImpl)
             return createVanilla(((PollinatedRegistry.VanillaImpl<T>) registry).getRegistry(), modId);
         PollinatedRegistryImpl<?> impl = (PollinatedRegistryImpl<?>) registry;
-        return new PollinatedRegistryImpl(impl.registry, impl.codec, impl.key, modId);
+        return new PollinatedRegistryImpl(impl.registry, impl.codec, impl.resourceKey, modId);
     }
 
     @Override
@@ -82,7 +86,7 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
 
     @Override
     public ResourceKey<? extends Registry<T>> key() {
-        return null;
+        return resourceKey;
     }
 
     @Override
