@@ -136,7 +136,7 @@ public abstract class LevelRendererMixin implements LevelRendererExtension {
     }
 
     @Inject(method = "renderSky", at = @At("HEAD"), cancellable = true)
-    public void renderSky(PoseStack poseStack, Matrix4f projectionMatrix, float partialTick, Runnable skyFogSetup, CallbackInfo ci) {
+    public void renderSky(PoseStack poseStack, Matrix4f projectionMatrix, float f, Camera camera, boolean bl, Runnable runnable, CallbackInfo ci) {
         DimensionSpecialEffects specialEffects = this.level.effects();
         if (specialEffects instanceof PollenDimensionSpecialEffects) {
             PollenDimensionSpecialEffects.Renderer renderer = ((PollenDimensionSpecialEffects) specialEffects).getSkyRenderer();

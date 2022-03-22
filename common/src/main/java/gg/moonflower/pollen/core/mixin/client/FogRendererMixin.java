@@ -39,7 +39,7 @@ public class FogRendererMixin {
     @Unique
     private static long customFluidBiomeChangeTime;
 
-    @Inject(method = "setupColor", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel$ClientLevelData;getClearColorScale()D", shift = At.Shift.BEFORE))
+    @Inject(method = "setupColor", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel$ClientLevelData;getClearColorScale()F", shift = At.Shift.BEFORE))
     private static void setupColor(Camera camera, float partialTicks, ClientLevel level, int renderDistanceChunks, float bossColorModifier, CallbackInfo ci) {
         capturePartialTicks = partialTicks;
 
