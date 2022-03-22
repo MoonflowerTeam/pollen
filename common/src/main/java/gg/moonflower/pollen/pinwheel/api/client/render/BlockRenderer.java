@@ -55,6 +55,7 @@ public interface BlockRenderer {
      * @param packedOverlay The overlay coordinates to use on the render
      * @deprecated Use {@link #render(LevelReader, BlockPos, DataContainer, MultiBufferSource, PoseStack, Camera, GameRenderer, LightTexture, int, int, float)} instead. TODO remove in 2.0.0
      */
+    @Deprecated
     void render(Level level, BlockPos pos, DataContainer container, MultiBufferSource buffer, PoseStack matrixStack, float partialTicks, Camera camera, GameRenderer gameRenderer, LightTexture lightmap, Matrix4f projection, int packedLight, int packedOverlay);
 
     /**
