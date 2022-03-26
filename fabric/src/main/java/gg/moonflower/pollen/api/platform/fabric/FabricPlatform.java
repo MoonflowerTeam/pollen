@@ -14,17 +14,21 @@ import java.util.function.Supplier;
 public class FabricPlatform extends Platform {
 
     private final Runnable commonInit;
-    private final Runnable clientInit;
+    private final Supplier<Runnable> clientInit;
+    private final Supplier<Runnable> serverInit;
     private final Consumer<Platform.ModSetupContext> commonPostInit;
-    private final Consumer<Platform.ModSetupContext> clientPostInit;
+    private final Supplier<Consumer<Platform.ModSetupContext>> clientPostInit;
+    private final Supplier<Consumer<Platform.ModSetupContext>> serverPostInit;
     private final Consumer<DataSetupContext> dataInit;
 
-    FabricPlatform(String modId, Runnable commonInit, Runnable clientInit, Consumer<Platform.ModSetupContext> commonPostInit, Consumer<ModSetupContext> clientPostInit, Consumer<DataSetupContext> dataInit) {
+    FabricPlatform(String modId, Runnable commonInit, Supplier<Runnable> clientInit, Supplier<Runnable> serverInit, Consumer<Platform.ModSetupContext> commonPostInit, Supplier<Consumer<Platform.ModSetupContext>> clientPostInit, Supplier<Consumer<Platform.ModSetupContext>> serverPostInit, Consumer<DataSetupContext> dataInit) {
         super(modId);
         this.commonInit = commonInit;
         this.clientInit = clientInit;
+        this.serverInit = serverInit;
         this.commonPostInit = commonPostInit;
         this.clientPostInit = clientPostInit;
+        this.serverPostInit = serverPostInit;
         this.dataInit = dataInit;
     }
 
@@ -36,8 +40,11 @@ public class FabricPlatform extends Platform {
         this.commonPostInit.accept(context);
 
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            this.clientInit.run();
-            this.clientPostInit.accept(context);
+            this.clientInit.get().run();
+            this.clientPostInit.get().accept(context);
+        } else if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
+            this.serverInit.get().run();
+            this.serverPostInit.get().accept(context);
         }
     }
 
