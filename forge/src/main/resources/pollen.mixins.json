@@ -18,7 +18,6 @@
     "EntityMixin",
     "FluidMixin",
     "FolderRepositorySourceAccessor",
-    "GrindstoneMenuResultSlotMixin",
     "HandshakeHandlerMixin",
     "LivingEntityMixin",
     "PackRepositoryAccessor",

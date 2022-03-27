@@ -36,7 +36,6 @@
     "DedicatedServerMixin",
     "EntityMixin",
     "ExplosionMixin",
-    "GrindstoneMenuResultSlotMixin",
     "LevelChunkMixin",
     "LevelMixin",
     "LevelResourceAccessor",

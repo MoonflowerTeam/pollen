@@ -27,6 +27,7 @@
     "EntityMixin",
     "GrindstoneMenuMixin",
     "GrindstoneMenuRepairSlotMixin",
+    "GrindstoneMenuResultSlotMixin",
     "LivingEntityMixin",
     "PotionBrewingMixin",
     "ServerAdvancementManagerMixin",
