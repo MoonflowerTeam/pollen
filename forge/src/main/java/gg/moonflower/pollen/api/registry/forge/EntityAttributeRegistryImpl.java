@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal
-@Mod.EventBusSubscriber(modid = Pollen.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = Pollen.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class EntityAttributeRegistryImpl {
 
     private static final Set<Consumer<EntityAttributeCreationEvent>> ATTRIBUTE_FACTORIES = ConcurrentHashMap.newKeySet();
