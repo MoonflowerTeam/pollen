@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.core.mixin;
+package gg.moonflower.pollen.core.mixin.forge;
 
 import gg.moonflower.pollen.core.extensions.GrindstoneMenuExtension;
 import net.minecraft.world.Container;
@@ -19,7 +19,7 @@ public abstract class GrindstoneMenuResultSlotMixin extends Slot {
 
     @Shadow
     @Final
-    GrindstoneMenu this$0;
+    GrindstoneMenu f_39618_;
 
     private GrindstoneMenuResultSlotMixin(Container container, int i, int j, int k) {
         super(container, i, j, k);
@@ -28,13 +28,13 @@ public abstract class GrindstoneMenuResultSlotMixin extends Slot {
     @Inject(method = "onTake(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Container;setItem(ILnet/minecraft/world/item/ItemStack;)V", shift = At.Shift.BEFORE, ordinal = 0), cancellable = true)
     public void onTake(Player player, ItemStack stack, CallbackInfo ci) {
         this.checkTakeAchievements(stack);
-        ((GrindstoneMenuExtension) this.this$0).pollen_craft(player);
+        ((GrindstoneMenuExtension) this.f_39618_).pollen_craft(player);
         ci.cancel();
     }
 
     @Inject(method = "getExperienceFromItem(Lnet/minecraft/world/item/ItemStack;)I", at = @At("HEAD"), cancellable = true)
     public void getExperienceFromItem(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
-        GrindstoneMenuExtension extension = (GrindstoneMenuExtension) this.this$0;
+        GrindstoneMenuExtension extension = (GrindstoneMenuExtension) this.f_39618_ ;
         if (extension.pollen_hasRecipeExperience())
             cir.setReturnValue(extension.pollen_getResultExperience());
     }

@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(LevelChunk.class)
 public class LevelChunkMixin {
 
-    @Redirect(method = "lambda$replaceWithPacketData$3(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntityType;Lnet/minecraft/nbt/CompoundTag;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;load(Lnet/minecraft/nbt/CompoundTag;)V"))
+    @Redirect(method = "method_31716", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;load(Lnet/minecraft/nbt/CompoundTag;)V"))
     public void replaceWithPacketData(BlockEntity instance, CompoundTag compoundTag) {
         if (instance instanceof PollenBlockEntity blockEntity) {
             blockEntity.handleUpdateTag(compoundTag);
