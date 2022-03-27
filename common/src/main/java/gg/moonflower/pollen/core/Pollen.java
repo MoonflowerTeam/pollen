@@ -34,9 +34,9 @@ public class Pollen {
 
     public static final Platform PLATFORM = Platform.builder(Pollen.MOD_ID)
             .commonInit(Pollen::onCommon)
-            .clientInit(Pollen::onClient)
+            .clientInit(() -> Pollen::onClient)
             .commonPostInit(Pollen::onCommonPost)
-            .clientPostInit(Pollen::onClientPost)
+            .clientPostInit(() -> Pollen::onClientPost)
             .dataInit(Pollen::onDataInit)
             .build();
 
