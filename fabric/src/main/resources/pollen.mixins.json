@@ -20,7 +20,6 @@
     "client.MouseHandlerMixin",
     "client.ParticleEngineMixin",
     "client.TextureAtlasMixin",
-    "iris.ShadowRendererMixin",
     "sodium.BlockRendererMixin",
     "sodium.ChunkRenderDataMixin",
     "sodium.ChunkRenderManagerMixin",
