@@ -214,11 +214,15 @@ public abstract class Platform {
 
         private Runnable commonInit = () -> {
         };
-        private Runnable clientInit = () -> {
+        private Supplier<Runnable> clientInit = () -> () -> {
+        };
+        private Supplier<Runnable> serverInit = () -> () -> {
         };
         private Consumer<ModSetupContext> commonPostInit = __ -> {
         };
-        private Consumer<ModSetupContext> clientPostInit = __ -> {
+        private Supplier<Consumer<ModSetupContext>> clientPostInit = () -> __ -> {
+        };
+        private Supplier<Consumer<ModSetupContext>> serverPostInit = () -> __ -> {
         };
         private Consumer<DataSetupContext> dataInit = __ -> {
         };
@@ -229,7 +233,7 @@ public abstract class Platform {
 
         @ApiStatus.Internal
         @ExpectPlatform
-        public static Platform buildImpl(String modId, Runnable commonInit, Runnable clientInit, Consumer<ModSetupContext> commonPostInit, Consumer<ModSetupContext> clientPostInit, Consumer<DataSetupContext> dataInit) {
+        public static Platform buildImpl(String modId, Runnable commonInit, Supplier<Runnable> clientInit, Supplier<Runnable> serverInit, Consumer<Platform.ModSetupContext> commonPostInit, Supplier<Consumer<Platform.ModSetupContext>> clientPostInit, Supplier<Consumer<Platform.ModSetupContext>> serverPostInit, Consumer<DataSetupContext> dataInit) {
             return Platform.error();
         }
 
@@ -238,8 +242,21 @@ public abstract class Platform {
             return this;
         }
 
+        /**
+         * @deprecated Use {@link Platform.Builder#clientInit(Supplier)} for safe initialization.
+         */
+        @Deprecated
         public Builder clientInit(Runnable onClientInit) {
+            return this.clientInit(() -> onClientInit);
+        }
+
+        public Builder clientInit(Supplier<Runnable> onClientInit) {
             this.clientInit = onClientInit;
+            return this;
+        }
+
+        public Builder serverInit(Supplier<Runnable> onServerInit) {
+            this.serverInit = onServerInit;
             return this;
         }
 
@@ -248,8 +265,20 @@ public abstract class Platform {
             return this;
         }
 
+        /**
+         * @deprecated Use {@link Platform.Builder#clientPostInit(Supplier)} for safe initialization. TODO remove in 2.0.0
+         */
         public Builder clientPostInit(Consumer<ModSetupContext> onClientPostInit) {
+            return this.clientPostInit(() -> onClientPostInit);
+        }
+
+        public Builder clientPostInit(Supplier<Consumer<ModSetupContext>> onClientPostInit) {
             this.clientPostInit = onClientPostInit;
+            return this;
+        }
+
+        public Builder serverPostInit(Supplier<Consumer<ModSetupContext>> onServerPostInit) {
+            this.serverPostInit = onServerPostInit;
             return this;
         }
 
@@ -259,7 +288,7 @@ public abstract class Platform {
         }
 
         public Platform build() {
-            return buildImpl(this.modId, this.commonInit, this.clientInit, this.commonPostInit, this.clientPostInit, this.dataInit);
+            return buildImpl(this.modId, this.commonInit, this.clientInit, this.serverInit, this.commonPostInit, this.clientPostInit, this.serverPostInit, this.dataInit);
         }
     }
 }

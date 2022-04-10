@@ -23,7 +23,6 @@
     "client.RenderSystemMixin",
     "client.ShaderInstanceMixin",
     "client.TextureAtlasMixin",
-    "iris.ShadowRendererMixin",
     "sodium.BlockRendererMixin",
     "sodium.ChunkRenderDataMixin",
     "sodium.ChunkRenderManagerMixin",

@@ -26,7 +26,7 @@ public class PollenCosmeticLayer<T extends LivingEntity> extends RenderLayer<T, 
 
     @Override
     public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-        if (GeometryTextureManager.isReloading() || GeometryModelManager.isReloading())
+        if (entity.isInvisible() || GeometryTextureManager.isReloading() || GeometryModelManager.isReloading())
             return;
 
         EntitlementManager.getEntitlements(entity.getUUID()).forEach(entitlement -> {

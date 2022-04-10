@@ -5,11 +5,12 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @ApiStatus.Internal
 public final class PlatformBuilderImpl {
 
-    public static Platform buildImpl(String modId, Runnable commonInit, Runnable clientInit, Consumer<Platform.ModSetupContext> commonPostInit, Consumer<Platform.ModSetupContext> clientPostInit, Consumer<Platform.DataSetupContext> dataInit) {
-        return new ForgePlatform(modId, FMLJavaModLoadingContext.get().getModEventBus(), commonInit, clientInit, commonPostInit, clientPostInit, dataInit);
+    public static Platform buildImpl(String modId, Runnable commonInit, Supplier<Runnable> clientInit, Supplier<Runnable> serverInit, Consumer<Platform.ModSetupContext> commonPostInit, Supplier<Consumer<Platform.ModSetupContext>> clientPostInit, Supplier<Consumer<Platform.ModSetupContext>> serverPostInit, Consumer<Platform.DataSetupContext> dataInit) {
+        return new ForgePlatform(modId, FMLJavaModLoadingContext.get().getModEventBus(), commonInit, clientInit, serverInit, commonPostInit, clientPostInit, serverPostInit, dataInit);
     }
 }

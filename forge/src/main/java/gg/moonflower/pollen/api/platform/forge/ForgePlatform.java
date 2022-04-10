@@ -9,6 +9,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import org.jetbrains.annotations.ApiStatus;
@@ -22,29 +23,35 @@ public final class ForgePlatform extends Platform {
 
     private final IEventBus eventBus;
     private final Runnable commonInit;
-    private final Runnable clientInit;
+    private final Supplier<Runnable> clientInit;
+    private final Supplier<Runnable> serverInit;
     private final Consumer<Platform.ModSetupContext> commonPostInit;
-    private final Consumer<Platform.ModSetupContext> clientPostInit;
-    private final Consumer<Platform.DataSetupContext> dataInit;
+    private final Supplier<Consumer<Platform.ModSetupContext>> clientPostInit;
+    private final Supplier<Consumer<Platform.ModSetupContext>> serverPostInit;
+    private final Consumer<DataSetupContext> dataInit;
 
-    ForgePlatform(String modId, IEventBus eventBus, Runnable commonInit, Runnable clientInit, Consumer<ModSetupContext> commonPostInit, Consumer<Platform.ModSetupContext> clientPostInit, Consumer<Platform.DataSetupContext> dataInit) {
+    ForgePlatform(String modId, IEventBus eventBus, Runnable commonInit, Supplier<Runnable> clientInit, Supplier<Runnable> serverInit, Consumer<Platform.ModSetupContext> commonPostInit, Supplier<Consumer<Platform.ModSetupContext>> clientPostInit, Supplier<Consumer<Platform.ModSetupContext>> serverPostInit, Consumer<DataSetupContext> dataInit) {
         super(modId);
         this.eventBus = eventBus;
         this.commonInit = commonInit;
         this.clientInit = clientInit;
+        this.serverInit = serverInit;
         this.commonPostInit = commonPostInit;
         this.clientPostInit = clientPostInit;
+        this.serverPostInit = serverPostInit;
         this.dataInit = dataInit;
     }
 
     @Override
     public void setup() {
         this.eventBus.<FMLCommonSetupEvent>addListener(e -> this.commonPostInit.accept(new ModSetupContextImpl(e)));
-        this.eventBus.<FMLClientSetupEvent>addListener(e -> this.clientPostInit.accept(new ModSetupContextImpl(e)));
+        this.eventBus.<FMLClientSetupEvent>addListener(e -> this.clientPostInit.get().accept(new ModSetupContextImpl(e)));
+        this.eventBus.<FMLDedicatedServerSetupEvent>addListener(e -> this.serverPostInit.get().accept(new ModSetupContextImpl(e)));
         this.eventBus.<GatherDataEvent>addListener(e -> this.dataInit.accept(new DataSetupContextImpl(e.getGenerator(), new PollinatedModContainerImpl(e.getModContainer()))));
 
         this.commonInit.run();
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> this.clientInit::run);
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> this.clientInit.get().run());
+        DistExecutor.unsafeRunWhenOn(Dist.DEDICATED_SERVER, () -> () -> this.serverInit.get().run());
     }
 
     public IEventBus getEventBus() {

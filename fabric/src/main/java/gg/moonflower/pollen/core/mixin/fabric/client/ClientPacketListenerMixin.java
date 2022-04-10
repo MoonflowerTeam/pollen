@@ -47,7 +47,7 @@ public abstract class ClientPacketListenerMixin {
         this.pollen$beDataPacket = pkt;
     }
 
-    @Redirect(method = "lambda$handleBlockEntityData$5(Lnet/minecraft/network/protocol/game/ClientboundBlockEntityDataPacket;Lnet/minecraft/world/level/block/entity/BlockEntity;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;load(Lnet/minecraft/nbt/CompoundTag;)V"))
+    @Redirect(method = "method_38542", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;load(Lnet/minecraft/nbt/CompoundTag;)V"))
     public void handleBlockEntityData(BlockEntity instance, CompoundTag compoundTag) {
         if (instance instanceof PollenBlockEntity blockEntity) {
             blockEntity.onDataPacket(this.connection, this.pollen$beDataPacket);
