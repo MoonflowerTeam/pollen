@@ -31,8 +31,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -50,6 +52,7 @@ public class ProfileConnection {
     private static final String USER_AGENT = "Pollen/" + PollinatedModContainer.get(Pollen.MOD_ID).orElseThrow(() -> new IllegalStateException("No Pollen? wtf")).getVersion() + "/" + SharedConstants.getCurrentVersion().getName();
     private static final int MAX_AUTH_ATTEMPTS = 2;
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final Random RANDOM = new SecureRandom();
     private static final Gson GSON = new Gson();
 
     private final String apiUrl;
@@ -143,7 +146,9 @@ public class ProfileConnection {
     private String getBearerToken() throws IOException {
         if (this.token == null) {
             String url = this.apiUrl + "/auth/minecraft";
-            String secret = DigestUtils.sha1Hex(url);
+            byte[] data = new byte[20];
+            RANDOM.nextBytes(data);
+            String secret = DigestUtils.sha256Hex(url + new String(data));
             User user = Minecraft.getInstance().getUser();
 
             try {
