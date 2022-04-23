@@ -97,6 +97,32 @@ public abstract class Platform {
     }
 
     /**
+     * Checks to see if the specified mods are loaded.
+     *
+     * @param forced Whether all mods in the list need to be loaded to return true
+     * @param modIds A list of mod ids to check
+     * @return Whether any (all if "forced" is set to true) of the specified mod ids are loaded
+     */
+    public static boolean areModsLoaded(boolean forced, String ...modIds) {
+        if (modIds == null) return true;
+        if (forced) {
+            for (String mod : modIds) {
+                if (isModLoaded(mod)) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            for (String mod : modIds) {
+                if (!isModLoaded(mod)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    /**
      * @return A stream of all loaded mods
      */
     @ExpectPlatform
