@@ -107,18 +107,18 @@ public abstract class Platform {
         if (modIds == null) return true;
         if (forced) {
             for (String mod : modIds) {
-                if (isModLoaded(mod)) {
-                    return true;
-                }
-            }
-            return false;
-        } else {
-            for (String mod : modIds) {
                 if (!isModLoaded(mod)) {
                     return false;
                 }
             }
             return true;
+        } else {
+            for (String mod : modIds) {
+                if (isModLoaded(mod)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
