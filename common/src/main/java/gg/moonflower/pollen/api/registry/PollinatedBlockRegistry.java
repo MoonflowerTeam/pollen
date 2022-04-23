@@ -3,6 +3,9 @@ package gg.moonflower.pollen.api.registry;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FlowerPotBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -48,5 +51,16 @@ public class PollinatedBlockRegistry extends WrapperPollinatedRegistry<Block> {
         Supplier<R> register = this.register(id, block);
         this.itemRegistry.register(id, () -> itemFactory.apply(register.get()));
         return register;
+    }
+
+    /**
+     * Registers a generated flower pot block.
+     *
+     * @param id    The id of the block
+     * @param block The block to be planted in the flower pot
+     * @return The registered flower pot block
+     */
+    public Supplier<FlowerPotBlock> registerFlowerPot(String id, Supplier<Block> block) {
+        return this.register(id, () -> new FlowerPotBlock(block.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_ALLIUM)));
     }
 }
