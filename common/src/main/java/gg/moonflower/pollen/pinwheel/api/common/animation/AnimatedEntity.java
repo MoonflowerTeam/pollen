@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 // TODO in 2.0.0 Redesign this to be more modular. Currently, in order to extend something else, you have to copy the base implementation of this into the entity which is pretty bad
+
 /**
  * <p>Defines an entity as having animations states for animating {@link AnimatedModel}.</p>
  * <p>Structure based on <a href="https://github.com/team-abnormals/blueprint/blob/1.18.x/src/main/java/com/teamabnormals/blueprint/core/endimator/Endimatable.java">Endimatable</a></p>
@@ -120,8 +121,10 @@ public interface AnimatedEntity extends AnimationEffectSource {
     @Environment(EnvType.CLIENT)
     @Override
     default void handleSoundEffect(AnimationData animation, AnimationData.SoundEffect soundEffect) {
-        if (!(this instanceof Entity entity))
+        if (!(this instanceof Entity))
             return;
+
+        Entity entity = (Entity) this;
         ResourceLocation sound = ResourceLocation.tryParse(soundEffect.getEffect());
         if (sound != null) {
             MolangRuntime runtime = MolangRuntime.runtime().create(1.0F); // 1.0 is the default pitch and volume
@@ -141,8 +144,7 @@ public interface AnimatedEntity extends AnimationEffectSource {
     @Environment(EnvType.CLIENT)
     @Override
     default void handleParticleEffect(AnimationData animation, AnimationData.ParticleEffect particleEffect, double xOffset, double yOffset, double zOffset) {
-        if (!(this instanceof Entity entity))
-            return;
+        // TODO implement
     }
 
     /**

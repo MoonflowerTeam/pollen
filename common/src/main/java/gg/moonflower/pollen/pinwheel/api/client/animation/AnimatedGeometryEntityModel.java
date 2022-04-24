@@ -154,7 +154,7 @@ public class AnimatedGeometryEntityModel<T extends Entity> extends EntityModel<T
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float animationTicks, float netHeadYaw, float headPitch) {
         GeometryModel model = this.getModel();
         model.resetTransformation();
-        if (model instanceof AnimatedModel animatedModel && this.animations.length > 0) {
+        if (model instanceof AnimatedModel && this.animations.length > 0) {
             AnimationData[] animationData = this.getAnimations();
             if (animationData.length == 0)
                 return;
@@ -167,7 +167,7 @@ public class AnimatedGeometryEntityModel<T extends Entity> extends EntityModel<T
             if (this.variableProvider != null)
                 builder.setVariables(this.variableProvider);
             profiler.popPush("applyMolangAnimation");
-            animatedModel.applyAnimations(animationTicks / 20F, builder, this.animationWeights, animationData);
+            ((AnimatedModel) model).applyAnimations(animationTicks / 20F, builder, this.animationWeights, animationData);
             profiler.pop();
         }
     }
