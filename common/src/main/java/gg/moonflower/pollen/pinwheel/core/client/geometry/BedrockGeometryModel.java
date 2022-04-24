@@ -216,7 +216,7 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
     }
 
     @Override
-    public void applyAnimations(float animationTime, MolangRuntime.Builder runtime, AnimationData... animations) {
+    public void applyAnimations(float animationTime, MolangRuntime.Builder runtime, float[] weights, AnimationData... animations) {
         if (animations.length == 0)
             return;
 
@@ -254,15 +254,15 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
 
         this.transformations.values().forEach(AnimatedModelPart.AnimationPose::reset);
         MolangCache cache = MOLANG_CACHE.get();
-        for (AnimationData animation : animations) {
-            float localAnimationTime = animationTime;
-            if (localAnimationTime > animation.getAnimationLength()) {
-                localAnimationTime = animation.getAnimationLength();
-            }
-
+        for (int i = 0; i < animations.length; i++) {
+            AnimationData animation = animations[i];
             float blendWeight = cache.resolve(runtime, 1, animation.getBlendWeight());
+            if (i < weights.length)
+                blendWeight *= weights[i];
             if (Math.abs(blendWeight) <= 1E-6) // No need to add if weight is 0
                 continue;
+
+            float localAnimationTime = Math.min(animationTime, animation.getAnimationLength());
             for (AnimationData.BoneAnimation boneAnimation : animation.getBoneAnimations()) {
                 if (!this.modelParts.containsKey(boneAnimation.getName()))
                     continue;
