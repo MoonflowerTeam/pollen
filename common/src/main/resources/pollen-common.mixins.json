@@ -5,8 +5,8 @@
   "minVersion": "0.8",
   "client": [
     "client.AgeableListModelAccessor",
-    "client.BlockStateMixin",
     "client.BlockModelShaperMixin",
+    "client.BlockStateMixin",
     "client.ChunkRenderDispatcherRebuildTaskMixin",
     "client.ClientLevelMixin",
     "client.ClientPacketListenerMixin",
@@ -26,6 +26,7 @@
     "client.WolfAccessor"
   ],
   "mixins": [
+    "BlockEntityTypeMixin",
     "BucketItemAccessor",
     "EntityMixin",
     "GrindstoneMenuMixin",
