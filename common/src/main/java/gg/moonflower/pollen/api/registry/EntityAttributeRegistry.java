@@ -8,6 +8,10 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 
 import java.util.function.Supplier;
 
+/**
+ * @author Jackson
+ * @since 1.0.0
+ */
 public class EntityAttributeRegistry {
 
     @ExpectPlatform

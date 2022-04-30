@@ -13,9 +13,6 @@ public interface ReloadStartListener {
 
     /**
      * Called just before the listener reloads.
-     * @param resourceManager
-     * @param backgroundExecutor
-     * @param gameExecutor
      */
     void onReloadStart(ResourceManager resourceManager, Executor backgroundExecutor, Executor gameExecutor);
 }

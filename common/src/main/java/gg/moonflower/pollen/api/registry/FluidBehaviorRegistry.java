@@ -12,6 +12,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Registers behavior for fluid tags.
+ *
+ * @author Ocelot
+ * @since 1.0.0
+ */
 public final class FluidBehaviorRegistry {
 
     private static final Map<Tag<Fluid>, PollenFluidBehavior> FLUID_BEHAVIOR = new ConcurrentHashMap<>();
@@ -19,15 +25,30 @@ public final class FluidBehaviorRegistry {
     private FluidBehaviorRegistry() {
     }
 
+    /**
+     * Registers behavior for the specified tag.
+     *
+     * @param tag      The tag to bind behavior to
+     * @param behavior The behavior instance
+     */
     public static void register(Tag<Fluid> tag, PollenFluidBehavior behavior) {
         FLUID_BEHAVIOR.put(tag, behavior);
     }
 
+    /**
+     * Retrieves behavior for the specified tag.
+     *
+     * @param tag The fluid tag to get behavior for
+     * @return The behavior for that fluid tag or <code>null</code>
+     */
     @Nullable
     public static PollenFluidBehavior get(Tag<Fluid> tag) {
         return FLUID_BEHAVIOR.get(tag);
     }
 
+    /**
+     * @return All fluid tags with behavior
+     */
     public static Set<Tag<Fluid>> getFluids() {
         return FLUID_BEHAVIOR.keySet();
     }
