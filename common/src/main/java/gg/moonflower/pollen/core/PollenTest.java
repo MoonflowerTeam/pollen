@@ -4,9 +4,7 @@ import gg.moonflower.pollen.api.block.PollinatedLiquidBlock;
 import gg.moonflower.pollen.api.item.BucketItemBase;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.*;
-import gg.moonflower.pollen.api.registry.resource.ResourceRegistry;
 import gg.moonflower.pollen.api.registry.resource.TagRegistry;
-import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import gg.moonflower.pollen.core.client.render.DebugPollenFlowerPotRenderer;
 import gg.moonflower.pollen.core.test.TestFluid;
 import gg.moonflower.pollen.core.test.TestPollenFluidBehavior;
@@ -62,6 +60,7 @@ public class PollenTest {
 
     static void onCommonPost(Platform.ModSetupContext context) {
         FlammabilityRegistry.register(Blocks.DIAMOND_BLOCK, 200, 50);
+        CompostablesRegistry.register(Blocks.SAND, 1);
     }
 
     private static <T> T create(Supplier<T> factory) {
