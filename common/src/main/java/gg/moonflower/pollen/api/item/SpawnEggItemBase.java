@@ -3,6 +3,7 @@ package gg.moonflower.pollen.api.item;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.injectables.annotations.PlatformOnly;
 import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.api.util.NbtConstants;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
@@ -27,6 +28,14 @@ public class SpawnEggItemBase<T extends EntityType<? extends Mob>> extends Spawn
     private final boolean addToMisc;
     private final Supplier<T> type;
 
+    public SpawnEggItemBase(Supplier<T> type, int backgroundColor, int spotColor, Properties builder) {
+        this(type, backgroundColor, spotColor, false, builder);
+    }
+
+    // TODO remove in 2.0.0
+    /**
+     * @deprecated Use the other constructor and set creative tab to {@link CreativeModeTab#TAB_MISC} instead
+     */
     @SuppressWarnings("UnsafePlatformOnlyCall")
     public SpawnEggItemBase(Supplier<T> type, int backgroundColor, int spotColor, boolean addToMisc, Properties builder) {
         super(Platform.isForge() ? null : type.get(), backgroundColor, spotColor, builder);
@@ -46,20 +55,21 @@ public class SpawnEggItemBase<T extends EntityType<? extends Mob>> extends Spawn
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
         if (this.allowdedIn(group) || (this.addToMisc && group == CreativeModeTab.TAB_MISC)) {
-            if (items.stream().anyMatch(stack -> stack.getItem() instanceof SpawnEggItem)) {
-                String itemName = Registry.ITEM.getKey(this).getPath();
-                Optional<ItemStack> optional = items.stream().filter(stack -> stack.getItem() instanceof SpawnEggItem).max((a, b) ->
-                {
-                    int valA = itemName.compareToIgnoreCase(Registry.ITEM.getKey(a.getItem()).getPath());
-                    int valB = Registry.ITEM.getKey(b.getItem()).getPath().compareToIgnoreCase(itemName);
-                    return valB - valA;
-                });
-                if (optional.isPresent()) {
-                    items.add(items.indexOf(optional.get()) + 1, new ItemStack(this));
-                    return;
-                }
-            }
-            items.add(new ItemStack(this));
+//            if (items.stream().anyMatch(stack -> stack.getItem() instanceof SpawnEggItem)) {
+//                String itemName = Registry.ITEM.getKey(this).getPath();
+//                Optional<ItemStack> optional = items.stream().filter(stack -> stack.getItem() instanceof SpawnEggItem).max((a, b) ->
+//                {
+//                    int valA = itemName.compareToIgnoreCase(Registry.ITEM.getKey(a.getItem()).getPath());
+//                    int valB = Registry.ITEM.getKey(b.getItem()).getPath().compareToIgnoreCase(itemName);
+//                    return valB - valA;
+//                });
+//                if (optional.isPresent()) {
+//                    items.add(items.indexOf(optional.get()) + 1, new ItemStack(this));
+//                    return;
+//                }
+//            }
+//            items.add(new ItemStack(this));
+            TabFiller.insertNamed(new ItemStack(this), false, items, stack -> stack.getItem() instanceof SpawnEggItem);
         }
     }
 
@@ -68,9 +78,9 @@ public class SpawnEggItemBase<T extends EntityType<? extends Mob>> extends Spawn
         if (!Platform.isForge())
             return super.getType(nbt);
 
-        if (nbt != null && nbt.contains("EntityTag", 10)) {
+        if (nbt != null && nbt.contains("EntityTag", NbtConstants.COMPOUND)) {
             CompoundTag compoundnbt = nbt.getCompound("EntityTag");
-            if (compoundnbt.contains("id", 8)) {
+            if (compoundnbt.contains("id", NbtConstants.STRING)) {
                 return EntityType.byString(compoundnbt.getString("id")).orElseGet(this.type);
             }
         }

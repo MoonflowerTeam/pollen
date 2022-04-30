@@ -2,6 +2,7 @@ package gg.moonflower.pollen.core;
 
 import gg.moonflower.pollen.api.block.PollinatedLiquidBlock;
 import gg.moonflower.pollen.api.item.BucketItemBase;
+import gg.moonflower.pollen.api.item.SpawnEggItemBase;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.*;
 import gg.moonflower.pollen.api.registry.resource.TagRegistry;
@@ -12,6 +13,8 @@ import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -39,6 +42,7 @@ public class PollenTest {
     public static final Supplier<FlowingFluid> FLOWING_TEST_FLUID = create(() -> Objects.requireNonNull(FLUIDS).register("flowing_test", TestFluid.Flowing::new));
     public static final Supplier<Block> TEST = create(() -> Objects.requireNonNull(BLOCKS).register("test", () -> new PollinatedLiquidBlock(TEST_FLUID, BlockBehaviour.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops())));
     public static final Supplier<Item> TEST_BUCKET = create(() -> Objects.requireNonNull(ITEMS).register("test", () -> new BucketItemBase(TEST_FLUID, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).tab(CreativeModeTab.TAB_MISC))));
+    public static final Supplier<Item> TEST_SPAWN_EGG = create(() -> Objects.requireNonNull(ITEMS).register("test_spawn_egg", () -> new SpawnEggItemBase<>(() -> EntityType.IRON_GOLEM, 0, 0, true, new Item.Properties().tab(CreativeModeTab.TAB_MISC))));
 
     static void init() {
     }
