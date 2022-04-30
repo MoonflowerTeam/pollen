@@ -40,9 +40,9 @@ public abstract class LivingEntityMixin extends Entity {
     }
 
     @Inject(method = "jumpInLiquid", at = @At("HEAD"), cancellable = true)
-    public void jumpInLiquid(Tag<Fluid> fluidTag, CallbackInfo ci) {
+    public void jumpInLiquid(TagKey<Fluid> fluidTag, CallbackInfo ci) {
         if (!this.isInWater() && fluidTag == FluidTags.WATER) {
-            FluidBehaviorRegistry.getFluids().stream().filter(tag -> Objects.requireNonNull(FluidBehaviorRegistry.get(tag)).canAscend((LivingEntity)(Object)this) && this.getFluidHeight(tag) > 0.0).findFirst().ifPresent(this::jumpInLiquid);
+            FluidBehaviorRegistry.getFluids().stream().filter(tag -> Objects.requireNonNull(FluidBehaviorRegistry.get(tag)).canAscend((LivingEntity) (Object) this) && this.getFluidHeight(tag) > 0.0).findFirst().ifPresent(this::jumpInLiquid);
             ci.cancel();
         }
     }
