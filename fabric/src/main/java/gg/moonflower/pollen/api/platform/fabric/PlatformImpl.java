@@ -40,4 +40,8 @@ public class PlatformImpl {
     public static boolean isOptifineLoaded() {
         return isModLoaded("optifabric");
     }
+
+    public static String[] getLaunchArguments() {
+        return FabricLoader.getInstance().getLaunchArguments(true);
+    }
 }

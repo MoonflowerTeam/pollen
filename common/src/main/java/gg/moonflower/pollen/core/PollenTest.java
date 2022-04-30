@@ -65,6 +65,6 @@ public class PollenTest {
     }
 
     private static <T> T create(Supplier<T> factory) {
-        return Platform.isProduction() ? null : factory.get();
+        return !Pollen.TESTS_ENABLED ? null : factory.get();
     }
 }

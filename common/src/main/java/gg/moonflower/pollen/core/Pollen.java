@@ -25,6 +25,7 @@ import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.server.MinecraftServer;
+import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,12 +40,27 @@ public class Pollen {
             .clientPostInit(() -> Pollen::onClientPost)
             .dataInit(Pollen::onDataInit)
             .build();
+    public static final boolean TESTS_ENABLED;
 
     private static MinecraftServer server;
 
+    static {
+        boolean enableTests = false;
+        for (String argument : Platform.getLaunchArguments()) {
+            if ("--pollenEnableTests".equals(argument)) {
+                enableTests = true;
+                break;
+            }
+        }
+
+        if (enableTests)
+            LogManager.getLogger().info("Pollen tests enabled");
+        TESTS_ENABLED = enableTests;
+    }
+
     public static void init() {
         PollenSuggestionProviders.init();
-        if (!Platform.isProduction())
+        if (TESTS_ENABLED)
             PollenTest.init();
     }
 
@@ -60,7 +76,7 @@ public class Pollen {
         DebugInputs.init();
         EntitlementManager.init();
         InitRendererEvent.EVENT.register(ShaderConst::init);
-        if (!Platform.isProduction())
+        if (TESTS_ENABLED)
             PollenTest.onClient();
     }
 
@@ -70,12 +86,12 @@ public class Pollen {
         ResourceConditionRegistry.register(ConfigResourceCondition.NAME, new ConfigResourceCondition());
         PollenRecipeTypes.RECIPE_SERIALIZERS.register(PLATFORM);
         PollenRecipeTypes.RECIPES.register(PLATFORM);
-        if (!Platform.isProduction())
+        if (TESTS_ENABLED)
             PollenTest.onCommon();
     }
 
     private static void onClientPost(Platform.ModSetupContext context) {
-        if (!Platform.isProduction())
+        if (TESTS_ENABLED)
             PollenTest.onClientPost(context);
     }
 
@@ -89,11 +105,13 @@ public class Pollen {
         });
         ServerLifecycleEvents.STOPPED.register(server -> Pollen.server = null);
         PollenMessages.init();
-        if (!Platform.isProduction())
+        if (TESTS_ENABLED)
             PollenTest.onCommonPost(context);
     }
 
     private static void onDataInit(Platform.DataSetupContext context) {
+        if (!TESTS_ENABLED)
+            return;
         context.getGenerator().addProvider(new PollenLanguageProvider(context.getGenerator(), context.getMod()));
     }
 

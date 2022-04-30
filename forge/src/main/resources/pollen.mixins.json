@@ -10,10 +10,15 @@
     "client.LevelRendererMixin",
     "client.LevelRendererVanillaMixin",
     "client.OptionsMixin",
-    "client.RecipeManagerAccessor"
+    "client.RecipeManagerAccessor",
+    "platform.ClientMainMixin"
+  ],
+  "server": [
+    "platform.ServerMainMixin"
   ],
   "mixins": [
     "AxeItemMixin",
+    "FireBlockAccessor",
     "FluidMixin",
     "FMLHandshakeHandlerMixin",
     "FolderRepositorySourceAccessor",
@@ -24,7 +29,8 @@
     "SimpleReloadableResourceManagerMixin",
     "loot.ForgeHooksMixin",
     "loot.LootPoolAccessor",
-    "loot.LootTableAccessor"
+    "loot.LootTableAccessor",
+    "platform.DataMainMixin"
   ],
   "injectors": {
     "defaultRequire": 1
