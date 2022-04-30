@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+// TODO Rename in 2.0.0 to PollinatedBucketItem
 /**
  * A bucket that uses a supplied fluid.
  *

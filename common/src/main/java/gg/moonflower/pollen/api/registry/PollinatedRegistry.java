@@ -195,6 +195,14 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
     public abstract ResourceLocation getKey(T value);
 
     /**
+     * Retrieves the id for the specified value.
+     *
+     * @param value The value to get the id for
+     * @return An id for that value or <code>null</code> if this registry doesn't contain that id
+     */
+    public abstract int getId(@Nullable T value);
+
+    /**
      * Retrieves the value for the specified key.
      *
      * @param name The key to get the value for
@@ -204,6 +212,15 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
     public abstract T get(@Nullable ResourceLocation name);
 
     /**
+     * Retrieves the value for the specified id.
+     *
+     * @param id The id to get the value for
+     * @return A value for that id or <code>null</code> if this registry doesn't contain a value with that id
+     */
+    @Nullable
+    public abstract T byId(int id);
+
+    /**
      * Retrieves the value for the specified key.
      *
      * @param name The key to get the value for
@@ -211,6 +228,16 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
      */
     public Optional<T> getOptional(@Nullable ResourceLocation name) {
         return Optional.ofNullable(this.get(name));
+    }
+
+    /**
+     * Retrieves the value for the specified id.
+     *
+     * @param id The id to get the value for
+     * @return A value for that id
+     */
+    public Optional<T> byIdOptional(int id) {
+        return Optional.ofNullable(this.byId(id));
     }
 
     /**
@@ -276,10 +303,21 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
             return this.registry.getKey(value);
         }
 
+        @Override
+        public int getId(@Nullable T value) {
+            return this.registry.getId(value);
+        }
+
         @Nullable
         @Override
         public T get(@Nullable ResourceLocation name) {
             return this.registry.get(name);
+        }
+
+        @Nullable
+        @Override
+        public T byId(int id) {
+            return this.registry.byId(id);
         }
 
         @Override

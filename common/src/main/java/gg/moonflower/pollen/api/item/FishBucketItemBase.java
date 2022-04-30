@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+// TODO Rename in 2.0.0 to PollinatedFishBucketItem
 /**
  * A fish bucket that allows all entity types.
  *
