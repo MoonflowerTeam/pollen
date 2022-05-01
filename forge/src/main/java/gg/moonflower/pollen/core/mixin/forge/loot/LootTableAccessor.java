@@ -10,6 +10,6 @@ import java.util.List;
 @Mixin(LootTable.class)
 public interface LootTableAccessor {
 
-    @Accessor
+    @Accessor(value = "field_186466_c", remap = false)
     List<LootPool> getPools();
 }

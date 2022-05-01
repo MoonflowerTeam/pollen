@@ -21,9 +21,9 @@ public interface LootPoolAccessor {
         return Platform.error();
     }
 
-    @Accessor
+    @Accessor(value = "field_186453_a", remap = false)
     List<LootPoolEntryContainer> getEntries();
 
-    @Accessor
+    @Accessor(value = "field_186454_b", remap = false)
     List<LootItemCondition> getConditions();
 }
