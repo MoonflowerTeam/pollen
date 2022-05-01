@@ -19,19 +19,9 @@ import java.util.function.Supplier;
 public class PollinatedBoatType {
 
     private final ResourceLocation texture;
-    private final Supplier<ItemLike> item;
 
     public PollinatedBoatType(ResourceLocation texture) {
-        this(texture, () -> null);
-    }
-
-    public PollinatedBoatType(ResourceLocation texture, ItemLike item) {
-        this(texture, () -> item);
-    }
-
-    public PollinatedBoatType(ResourceLocation texture, Supplier<ItemLike> item) {
         this.texture = texture;
-        this.item = item;
     }
 
     /**
@@ -39,12 +29,5 @@ public class PollinatedBoatType {
      */
     public ResourceLocation getTexture() {
         return texture;
-    }
-
-    /**
-     * @return The item to give the player when picking or when the boat is broken
-     */
-    public Item getItem() {
-        return this.item.get().asItem();
     }
 }

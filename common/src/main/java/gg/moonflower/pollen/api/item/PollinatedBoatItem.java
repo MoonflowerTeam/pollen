@@ -15,8 +15,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -29,11 +33,14 @@ import java.util.function.Supplier;
 public class PollinatedBoatItem extends Item {
 
     private static final Predicate<Entity> ENTITY_PREDICATE = EntitySelector.NO_SPECTATORS.and(Entity::isPickable);
+    private static final Map<PollinatedBoatType, Item> BOAT_ITEMS = new ConcurrentHashMap<>();
+
     private final Supplier<PollinatedBoatType> type;
 
     public PollinatedBoatItem(Supplier<PollinatedBoatType> type, Item.Properties properties) {
         super(properties);
         this.type = type;
+        BOAT_ITEMS.put(type.get(), this);
     }
 
     @Override
@@ -73,5 +80,10 @@ public class PollinatedBoatItem extends Item {
         }
 
         return InteractionResultHolder.pass(itemStack);
+    }
+
+    @Nullable
+    public static Item getBoatItem(PollinatedBoatType type) {
+        return BOAT_ITEMS.get(type);
     }
 }

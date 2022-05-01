@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.api.entity;
 
 import gg.moonflower.pollen.api.PollenRegistries;
+import gg.moonflower.pollen.api.item.PollinatedBoatItem;
 import gg.moonflower.pollen.api.registry.PollinatedEntityRegistry;
 import gg.moonflower.pollen.api.util.NbtConstants;
 import net.minecraft.nbt.CompoundTag;
@@ -71,7 +72,7 @@ public class PollinatedBoat extends Boat {
     @Override
     public Item getDropItem() {
         PollinatedBoatType type = this.getBoatPollenType();
-        return type != null ? type.getItem() : null;
+        return type != null ? PollinatedBoatItem.getBoatItem(type) : null;
     }
 
     @Override
