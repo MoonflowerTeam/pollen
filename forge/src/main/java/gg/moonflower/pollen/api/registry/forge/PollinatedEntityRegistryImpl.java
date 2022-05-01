@@ -2,7 +2,6 @@ package gg.moonflower.pollen.api.registry.forge;
 
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.ApiStatus;
 

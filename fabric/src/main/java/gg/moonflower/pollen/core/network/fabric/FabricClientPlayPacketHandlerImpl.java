@@ -4,13 +4,9 @@ import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
 import gg.moonflower.pollen.core.network.PollenClientPlayPacketHandlerImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.Registry;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.Optional;
 
 @ApiStatus.Internal
 public class FabricClientPlayPacketHandlerImpl extends PollenClientPlayPacketHandlerImpl implements FabricClientPlayPacketHandler {
