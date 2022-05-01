@@ -61,7 +61,7 @@ public class PollinatedBoat extends Boat {
             for (Entity passenger : this.getPassengers())
                 passenger.startRiding(boat, true);
 
-            this.remove();
+            this.remove(RemovalReason.KILLED);
         }
     }
 
@@ -97,11 +97,6 @@ public class PollinatedBoat extends Boat {
     @Override
     public Boat.Type getBoatType() {
         return Type.OAK;
-    }
-
-    @Override
-    public Packet<?> getAddEntityPacket() {
-        return PollinatedEntityRegistry.createSpawnEntityPacket(this);
     }
 
     public void setPollenType(@Nullable PollinatedBoatType boatType) {

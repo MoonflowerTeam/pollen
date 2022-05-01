@@ -63,8 +63,8 @@ public class BucketItemBase extends BucketItem {
             BucketItem bucket = (BucketItem) stack.getItem();
             BlockPos pos = source.getPos().relative(source.getBlockState().getValue(DispenserBlock.FACING));
             Level level = source.getLevel();
-            if (bucket.emptyBucket(null, level, pos, null)) {
-                bucket.checkExtraContent(level, stack, pos);
+            if (bucket.emptyContents(null, level, pos, null)) {
+                bucket.checkExtraContent(null, level, stack, pos);
                 return new ItemStack(Items.BUCKET);
             } else {
                 return this.defaultDispenseItemBehavior.dispense(source, stack);

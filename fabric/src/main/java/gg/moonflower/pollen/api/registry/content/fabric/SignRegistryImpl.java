@@ -2,6 +2,7 @@ package gg.moonflower.pollen.api.registry.content.fabric;
 
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.core.mixin.fabric.WoodTypeAccessor;
+import gg.moonflower.pollen.core.mixin.fabric.client.SheetsAccessor;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.properties.WoodType;
@@ -13,7 +14,7 @@ public class SignRegistryImpl {
     public static WoodType register(ResourceLocation id) {
         WoodType type = WoodTypeAccessor.invokeRegister(new WoodTypeImpl(id));
         if (Platform.isClient()) {
-            Sheets.SIGN_MATERIALS.put(type, Sheets.signTexture(type));
+            Sheets.SIGN_MATERIALS.put(type, SheetsAccessor.invokeCreateSignMaterial(type));
         }
         return type;
     }

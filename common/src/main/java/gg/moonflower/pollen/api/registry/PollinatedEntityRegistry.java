@@ -40,17 +40,6 @@ public class PollinatedEntityRegistry extends WrapperPollinatedRegistry<EntityTy
         this.activityRegistry = create(Registry.ACTIVITY, entityRegistry.getModId());
     }
 
-    /**
-     * Creates a new packet for spawning a generic entity.
-     *
-     * @param entity The entity to spawn
-     * @return A vanilla Minecraft packet to send
-     */
-    @ExpectPlatform
-    public static Packet<?> createSpawnEntityPacket(Entity entity) {
-        return Platform.error();
-    }
-
     @Override
     protected void onRegister(Platform mod) {
         super.onRegister(mod);

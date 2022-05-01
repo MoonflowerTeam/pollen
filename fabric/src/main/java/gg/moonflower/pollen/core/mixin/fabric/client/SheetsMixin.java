@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Sheets.class)
 public class SheetsMixin {
 
-    @Inject(method = "signTexture", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "createSignMaterial", at = @At("HEAD"), cancellable = true)
     private static void signTexture(WoodType woodType, CallbackInfoReturnable<Material> cir) {
         if (woodType instanceof SignRegistryImpl.WoodTypeImpl) {
             ResourceLocation location = ((SignRegistryImpl.WoodTypeImpl) woodType).getId();

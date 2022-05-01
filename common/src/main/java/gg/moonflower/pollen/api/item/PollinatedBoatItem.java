@@ -66,7 +66,7 @@ public class PollinatedBoatItem extends Item {
 
             PollinatedBoat boat = new PollinatedBoat(level, x, y + offset, z);
             boat.setPollenType(((PollinatedBoatItem) stack.getItem()).getType().get());
-            boat.yRot = direction.toYRot();
+            boat.setYRot(direction.toYRot());
             level.addFreshEntity(boat);
             stack.shrink(1);
             return stack;
@@ -108,7 +108,7 @@ public class PollinatedBoatItem extends Item {
             if (hitResult.getType() == HitResult.Type.BLOCK) {
                 PollinatedBoat boat = new PollinatedBoat(level, hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z);
                 boat.setPollenType(this.type.get());
-                boat.yRot = player.yRot;
+                boat.setYRot(player.getYRot());
                 if (!level.noCollision(boat, boat.getBoundingBox().inflate(-0.1)))
                     return InteractionResultHolder.fail(itemStack);
 

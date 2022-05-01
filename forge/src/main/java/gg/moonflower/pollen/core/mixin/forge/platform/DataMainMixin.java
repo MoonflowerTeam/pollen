@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = Main.class, priority = 10000)
 public class DataMainMixin {
 
-    @Inject(method = "main", at = @At("HEAD"))
+    @Inject(method = "main", at = @At("HEAD"), remap = false)
     private static void main(String[] args, CallbackInfo ci) {
         PlatformImpl.setArguments(args);
     }

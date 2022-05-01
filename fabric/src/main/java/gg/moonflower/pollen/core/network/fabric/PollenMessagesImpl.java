@@ -13,12 +13,6 @@ public class PollenMessagesImpl {
 
     public static void registerPlatformPackets() {
         PollenMessages.LOGIN.registerLogin(ClientboundSyncConfigDataPacket.class, ClientboundSyncConfigDataPacket::new, ConfigTracker.INSTANCE::syncConfigs);
-
-        PollenMessages.PLAY.register(ClientboundSpawnEntityPacket.class, ClientboundSpawnEntityPacket::new, PollinatedPacketDirection.PLAY_CLIENTBOUND);
-    }
-
-    public static PollenClientPlayPacketHandler createClientPlayHandler() {
-        return new FabricClientPlayPacketHandlerImpl();
     }
 
     public static PollenClientLoginPacketHandler createClientLoginHandler() {
