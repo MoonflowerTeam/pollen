@@ -4,6 +4,7 @@ import gg.moonflower.pollen.api.PollenRegistries;
 import gg.moonflower.pollen.api.block.PollinatedLiquidBlock;
 import gg.moonflower.pollen.api.entity.PollinatedBoatType;
 import gg.moonflower.pollen.api.item.BucketItemBase;
+import gg.moonflower.pollen.api.item.PollinatedBoatItem;
 import gg.moonflower.pollen.api.item.SpawnEggItemBase;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.*;
@@ -39,6 +40,7 @@ public class PollenTest {
     private static final PollinatedFluidRegistry FLUIDS = create(() -> PollinatedRegistry.createFluid(Pollen.MOD_ID));
     private static final PollinatedRegistry<PollinatedBoatType> BOATS = create(() -> PollinatedRegistry.create(PollenRegistries.BOAT_TYPE_REGISTRY, Pollen.MOD_ID));
 
+    public static final Supplier<PollinatedBoatType> TEST_BOAT = create(() -> Objects.requireNonNull(BOATS).register("test_boat", () -> new PollinatedBoatType(new ResourceLocation("textures/entity/ghast/ghast.png"))));
     public static final Tag.Named<Fluid> TEST_TAG = create(() -> TagRegistry.bindFluid(new ResourceLocation(Pollen.MOD_ID, "test")));
 
     public static final Supplier<FlowingFluid> TEST_FLUID = create(() -> Objects.requireNonNull(FLUIDS).register("test", TestFluid.Source::new));
@@ -46,7 +48,8 @@ public class PollenTest {
     public static final Supplier<Block> TEST = create(() -> Objects.requireNonNull(BLOCKS).register("test", () -> new PollinatedLiquidBlock(TEST_FLUID, BlockBehaviour.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops())));
     public static final Supplier<Item> TEST_BUCKET = create(() -> Objects.requireNonNull(ITEMS).register("test", () -> new BucketItemBase(TEST_FLUID, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).tab(CreativeModeTab.TAB_MISC))));
     public static final Supplier<Item> TEST_SPAWN_EGG = create(() -> Objects.requireNonNull(ITEMS).register("test_spawn_egg", () -> new SpawnEggItemBase<>(() -> EntityType.IRON_GOLEM, 0, 0, new Item.Properties().tab(CreativeModeTab.TAB_MISC))));
-    public static final Supplier<PollinatedBoatType> TEST_BOAT = create(() -> Objects.requireNonNull(BOATS).register("test_boat", () -> new PollinatedBoatType(new ResourceLocation("textures/entity/ghast/ghast.png"))));
+
+    public static final Supplier<Item> TEST_BOAT_ITEM = create(() -> Objects.requireNonNull(ITEMS).register("test_boat", () -> new PollinatedBoatItem(Objects.requireNonNull(TEST_BOAT), new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_TRANSPORTATION))));
 
     static void init() {
     }
@@ -70,6 +73,7 @@ public class PollenTest {
     static void onCommonPost(Platform.ModSetupContext context) {
         FlammabilityRegistry.register(Blocks.DIAMOND_BLOCK, 200, 50);
         CompostablesRegistry.register(Blocks.SAND, 1);
+        FurnaceFuelRegistry.register(Items.BUCKET, 100);
     }
 
     private static <T> T create(Supplier<T> factory) {

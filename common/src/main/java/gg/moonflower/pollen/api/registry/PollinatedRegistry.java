@@ -195,7 +195,7 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
     public abstract ResourceLocation getKey(T value);
 
     /**
-     * Retrieves the id for the specified value.
+     * Retrieves the id for the specified value. This can only be used for a custom registry.
      *
      * @param value The value to get the id for
      * @return An id for that value or <code>null</code> if this registry doesn't contain that id
@@ -212,7 +212,7 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
     public abstract T get(@Nullable ResourceLocation name);
 
     /**
-     * Retrieves the value for the specified id.
+     * Retrieves the value for the specified id. This can only be used for a custom registry.
      *
      * @param id The id to get the value for
      * @return A value for that id or <code>null</code> if this registry doesn't contain a value with that id

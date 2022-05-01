@@ -1,8 +1,11 @@
 package gg.moonflower.pollen.api.entity;
 
 import gg.moonflower.pollen.api.PollenRegistries;
+import gg.moonflower.pollen.api.item.PollinatedBoatItem;
+import gg.moonflower.pollen.api.registry.PollinatedEntityRegistry;
 import gg.moonflower.pollen.api.util.NbtConstants;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -10,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -26,9 +30,8 @@ public class PollinatedBoat extends Boat {
         super(entityType, level);
     }
 
-    public PollinatedBoat(Level level, PollinatedBoatType type, double d, double e, double f) {
+    public PollinatedBoat(Level level, double d, double e, double f) {
         this(PollenEntityTypes.BOAT.get(), level);
-        this.setPollenType(type);
         this.setPos(d, e, f);
         this.setDeltaMovement(Vec3.ZERO);
         this.xo = d;
@@ -63,6 +66,12 @@ public class PollinatedBoat extends Boat {
     }
 
     @Override
+    public Item getDropItem() {
+        PollinatedBoatType type = this.getBoatPollenType();
+        return type != null ? PollinatedBoatItem.getBoatItem(type) : null;
+    }
+
+    @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_ID_TYPE, -1);
@@ -88,6 +97,11 @@ public class PollinatedBoat extends Boat {
     @Override
     public Boat.Type getBoatType() {
         return Type.OAK;
+    }
+
+    @Override
+    public Packet<?> getAddEntityPacket() {
+        return PollinatedEntityRegistry.createSpawnEntityPacket(this);
     }
 
     public void setPollenType(@Nullable PollinatedBoatType boatType) {

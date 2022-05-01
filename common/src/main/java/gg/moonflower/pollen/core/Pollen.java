@@ -48,17 +48,9 @@ public class Pollen {
     private static MinecraftServer server;
 
     static {
-        boolean enableTests = false;
-        for (String argument : Platform.getLaunchArguments()) {
-            if ("--pollenEnableTests".equals(argument)) {
-                enableTests = true;
-                break;
-            }
-        }
-
-        if (enableTests)
+        TESTS_ENABLED = "true".equalsIgnoreCase(System.getenv("pollen.enableTests"));
+        if (TESTS_ENABLED)
             LogManager.getLogger().info("Pollen tests enabled");
-        TESTS_ENABLED = enableTests;
     }
 
     public static void init() {
@@ -96,6 +88,7 @@ public class Pollen {
     }
 
     private static void onClientPost(Platform.ModSetupContext context) {
+        EntityRendererRegistry.register(PollenEntityTypes.BOAT.get(), PollinatedBoatRenderer::new);
         if (TESTS_ENABLED)
             PollenTest.onClientPost(context);
     }

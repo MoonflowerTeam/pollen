@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.core.datagen;
 
 import gg.moonflower.pollen.api.datagen.provider.PollinatedLanguageProvider;
+import gg.moonflower.pollen.api.entity.PollenEntityTypes;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import net.minecraft.data.DataGenerator;
 import org.jetbrains.annotations.ApiStatus;
@@ -33,5 +34,6 @@ public class PollenLanguageProvider extends PollinatedLanguageProvider {
         this.add("screen." + this.domain + ".linkPatreon.waiting", "Waiting for response from server...");
         this.add("screen." + this.domain + ".linkPatreon.error", "Failed to link Patreon");
         this.add("gui.jei.category." + this.domain + ".grindstone.experience", "XP: %s - %s");
+        this.addEntityType(PollenEntityTypes.BOAT, "Boat");
     }
 }

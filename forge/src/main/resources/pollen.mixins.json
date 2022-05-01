@@ -23,6 +23,7 @@
     "FMLHandshakeHandlerMixin",
     "FolderRepositorySourceAccessor",
     "ForgeInternalHandlerMixin",
+    "ItemMixin",
     "LivingEntityMixin",
     "PackRepositoryAccessor",
     "PackRepositoryMixin",
