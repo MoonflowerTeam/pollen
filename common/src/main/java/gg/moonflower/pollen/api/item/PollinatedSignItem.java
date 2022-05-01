@@ -7,6 +7,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SignItem;
 import net.minecraft.world.level.block.Block;
 
+/**
+ * A sign item for modded signs which get sorted in the creative tab.
+ *
+ * @author Jackson
+ * @since 1.4.0
+ */
 public class PollinatedSignItem extends SignItem {
 
     public PollinatedSignItem(Item.Properties properties, Block standingBlock, Block wallBlock) {
@@ -15,6 +21,7 @@ public class PollinatedSignItem extends SignItem {
 
     @Override
     public void fillItemCategory(CreativeModeTab category, NonNullList<ItemStack> items) {
-        TabFiller.insert(new ItemStack(this), false, items, stack -> stack.getItem() instanceof SignItem);
+        if (this.allowdedIn(category))
+            TabFiller.insert(new ItemStack(this), false, items, stack -> stack.getItem() instanceof SignItem);
     }
 }
