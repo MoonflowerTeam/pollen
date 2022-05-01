@@ -1,6 +1,10 @@
 package gg.moonflower.pollen.api.resource.modifier.type;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import gg.moonflower.pollen.api.resource.modifier.ResourceModifier;
 import gg.moonflower.pollen.api.resource.modifier.ResourceModifierManager;
 import gg.moonflower.pollen.api.resource.modifier.ResourceModifierType;
@@ -9,7 +13,11 @@ import net.minecraft.client.renderer.block.model.ItemOverride;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Modifies existing models to add extra overrides.

@@ -9,10 +9,6 @@ import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
 import java.util.stream.Stream;
 
 @ApiStatus.Internal

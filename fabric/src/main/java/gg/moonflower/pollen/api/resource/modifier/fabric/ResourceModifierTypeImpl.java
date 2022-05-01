@@ -1,9 +1,9 @@
 package gg.moonflower.pollen.api.resource.modifier.fabric;
 
+import gg.moonflower.pollen.api.resource.modifier.ResourceModifierType;
 import gg.moonflower.pollen.api.resource.modifier.serializer.DataModifierSerializer;
 import gg.moonflower.pollen.api.resource.modifier.serializer.ModifierSerializer;
 import gg.moonflower.pollen.api.resource.modifier.serializer.ResourceModifierSerializer;
-import gg.moonflower.pollen.api.resource.modifier.ResourceModifierType;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal

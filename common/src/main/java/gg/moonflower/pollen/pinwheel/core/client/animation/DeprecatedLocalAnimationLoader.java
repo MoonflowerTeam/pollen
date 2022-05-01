@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.pinwheel.core.client.animation;
 
-import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.pinwheel.api.common.animation.AnimationData;
 import gg.moonflower.pollen.pinwheel.api.common.animation.AnimationParser;
 import gg.moonflower.pollen.pinwheel.api.common.util.BackgroundLoader;

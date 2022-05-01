@@ -1,9 +1,13 @@
 package gg.moonflower.pollen.pinwheel.core.common.geometry;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import com.mojang.math.Vector3f;
-import gg.moonflower.pollen.pinwheel.api.common.geometry.GeometryModelData;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
+import gg.moonflower.pollen.pinwheel.api.common.geometry.GeometryModelData;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
 

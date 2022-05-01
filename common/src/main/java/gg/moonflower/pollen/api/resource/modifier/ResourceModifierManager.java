@@ -1,7 +1,11 @@
 package gg.moonflower.pollen.api.resource.modifier;
 
 import com.google.common.base.Suppliers;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import gg.moonflower.pollen.api.event.events.AdvancementConstructingEvent;
 import gg.moonflower.pollen.api.event.events.LootTableConstructingEvent;
 import gg.moonflower.pollen.api.event.events.client.resource.ModelEvents;

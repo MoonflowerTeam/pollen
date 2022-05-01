@@ -2,26 +2,14 @@ package gg.moonflower.pollen.core.client.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import gg.moonflower.pollen.core.Pollen;
-import gg.moonflower.pollen.core.client.entitlement.EntitlementManager;
-import gg.moonflower.pollen.core.client.profile.ProfileConnection;
-import gg.moonflower.pollen.core.client.profile.ProfileData;
-import gg.moonflower.pollen.core.client.profile.ProfileManager;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
-import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.util.HttpUtil;
-
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 
 public class MoonflowerServerDownScreen extends Screen {
 

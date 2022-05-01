@@ -1,7 +1,6 @@
 package gg.moonflower.pollen.api.registry;
 
 import com.mojang.datafixers.util.Pair;
-import gg.moonflower.pollen.api.block.PollinatedSign;
 import gg.moonflower.pollen.api.block.PollinatedStandingSignBlock;
 import gg.moonflower.pollen.api.block.PollinatedWallSignBlock;
 import gg.moonflower.pollen.api.item.PollinatedSignItem;
@@ -10,7 +9,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.SignItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
