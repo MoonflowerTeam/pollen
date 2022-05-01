@@ -1,7 +1,6 @@
 package gg.moonflower.pollen.core.mixin;
 
 import gg.moonflower.pollen.api.block.PollinatedSign;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
