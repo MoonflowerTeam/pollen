@@ -22,14 +22,6 @@ public final class EntityRendererRegistry {
     }
 
     /**
-     * @deprecated Use {@link #register(EntityType, EntityRendererFactory)} instead.
-     */
-    @Deprecated
-    public static <T extends Entity> void register(Supplier<EntityType<T>> type, EntityRendererFactory<T> factory) {
-        register(type.get(), factory);
-    }
-
-    /**
      * Registers a renderer for the specified entity type.
      *
      * @param type    The type of entity to register for
@@ -37,7 +29,7 @@ public final class EntityRendererRegistry {
      * @param <T>     The type of entity to make a renderer for
      */
     @ExpectPlatform
-    public static <T extends Entity> void register(EntityType<T> type, EntityRendererFactory<T> factory) {
+    public static <T extends Entity> void register(Supplier<EntityType<T>> type, EntityRendererFactory<T> factory) {
         Platform.error();
     }
 

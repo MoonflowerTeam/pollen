@@ -19,9 +19,9 @@ import java.util.function.Supplier;
 @ApiStatus.Internal
 @Mod.EventBusSubscriber(modid = Pollen.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class EntityRendererRegistryImpl {
-    public static <T extends Entity> void register(EntityType<T> type, EntityRendererRegistry.EntityRendererFactory<T> factory) {
+    public static <T extends Entity> void register(Supplier<EntityType<T>> type, EntityRendererRegistry.EntityRendererFactory<T> factory) {
         Minecraft minecraft = Minecraft.getInstance();
-        RenderingRegistry.registerEntityRenderingHandler(type, renderDispatcher -> factory.create(new EntityRendererRegistry.EntityRendererFactory.Context() {
+        RenderingRegistry.registerEntityRenderingHandler(type.get(), renderDispatcher -> factory.create(new EntityRendererRegistry.EntityRendererFactory.Context() {
             @Override
             public EntityRenderDispatcher getEntityRenderDispatcher() {
                 return renderDispatcher;

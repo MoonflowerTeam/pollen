@@ -70,7 +70,6 @@ public class Pollen {
         ShaderLoader.init();
         DebugInputs.init();
         EntitlementManager.init();
-        EntityRendererRegistry.register(PollenEntityTypes.BOAT, PollinatedBoatRenderer::new);
         InitRendererEvent.EVENT.register(ShaderConst::init);
         if (TESTS_ENABLED)
             PollenTest.onClient();
@@ -88,7 +87,7 @@ public class Pollen {
     }
 
     private static void onClientPost(Platform.ModSetupContext context) {
-        EntityRendererRegistry.register(PollenEntityTypes.BOAT.get(), PollinatedBoatRenderer::new);
+        EntityRendererRegistry.register(PollenEntityTypes.BOAT, PollinatedBoatRenderer::new);
         if (TESTS_ENABLED)
             PollenTest.onClientPost(context);
     }
