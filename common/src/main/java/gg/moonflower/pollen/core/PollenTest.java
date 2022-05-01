@@ -1,7 +1,10 @@
 package gg.moonflower.pollen.core;
 
+import com.mojang.datafixers.util.Pair;
 import gg.moonflower.pollen.api.PollenRegistries;
 import gg.moonflower.pollen.api.block.PollinatedLiquidBlock;
+import gg.moonflower.pollen.api.block.PollinatedStandingSignBlock;
+import gg.moonflower.pollen.api.block.PollinatedWallSignBlock;
 import gg.moonflower.pollen.api.entity.PollinatedBoatType;
 import gg.moonflower.pollen.api.item.BucketItemBase;
 import gg.moonflower.pollen.api.item.PollinatedBoatItem;
@@ -27,6 +30,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Objects;
@@ -50,6 +54,8 @@ public class PollenTest {
     public static final Supplier<Item> TEST_SPAWN_EGG = create(() -> Objects.requireNonNull(ITEMS).register("test_spawn_egg", () -> new SpawnEggItemBase<>(() -> EntityType.IRON_GOLEM, 0, 0, new Item.Properties().tab(CreativeModeTab.TAB_MISC))));
 
     public static final Supplier<Item> TEST_BOAT_ITEM = create(() -> Objects.requireNonNull(ITEMS).register("test_boat", () -> new PollinatedBoatItem(Objects.requireNonNull(TEST_BOAT), new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_TRANSPORTATION))));
+
+    public static final Pair<Supplier<PollinatedStandingSignBlock>, Supplier<PollinatedWallSignBlock>> TEST_SIGN = create(() -> Objects.requireNonNull(BLOCKS).registerSign("test", Material.WOOD, MaterialColor.COLOR_BLUE));
 
     static void init() {
     }
