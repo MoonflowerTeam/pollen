@@ -72,6 +72,7 @@ public class PollenTest {
     static void onCommonPost(Platform.ModSetupContext context) {
         FlammabilityRegistry.register(Blocks.DIAMOND_BLOCK, 200, 50);
         CompostablesRegistry.register(Blocks.SAND, 1);
+        FurnaceFuelRegistry.register(Items.BUCKET, 100);
     }
 
     private static <T> T create(Supplier<T> factory) {
