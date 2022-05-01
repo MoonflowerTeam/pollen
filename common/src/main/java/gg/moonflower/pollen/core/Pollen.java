@@ -48,7 +48,7 @@ public class Pollen {
     private static MinecraftServer server;
 
     static {
-        TESTS_ENABLED = "true".equalsIgnoreCase(System.getenv("pollen.enableTests"));
+        TESTS_ENABLED = "true".equalsIgnoreCase(System.getProperty("pollen.enableTests"));
         if (TESTS_ENABLED)
             LogManager.getLogger().info("Pollen tests enabled");
     }

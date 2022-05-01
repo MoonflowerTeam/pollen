@@ -1,9 +1,6 @@
-package gg.moonflower.pollen.api.registry.forge;
+package gg.moonflower.pollen.api.registry.content.forge;
 
-import net.minecraft.tags.Tag;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ComposterBlock;
 import org.jetbrains.annotations.ApiStatus;
 

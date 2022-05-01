@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.core.mixin.forge;
 
-import gg.moonflower.pollen.api.registry.forge.FurnaceFuelRegistryImpl;
+import gg.moonflower.pollen.api.registry.content.forge.FurnaceFuelRegistryImpl;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;

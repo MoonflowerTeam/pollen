@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.registry.forge;
+package gg.moonflower.pollen.api.registry.content.forge;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;

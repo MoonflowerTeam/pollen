@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.registry.fabric;
+package gg.moonflower.pollen.api.registry.content.fabric;
 
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.minecraft.world.level.ItemLike;

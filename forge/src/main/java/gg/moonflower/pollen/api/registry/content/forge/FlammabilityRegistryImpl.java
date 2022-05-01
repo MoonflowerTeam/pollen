@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.registry.forge;
+package gg.moonflower.pollen.api.registry.content.forge;
 
 import gg.moonflower.pollen.core.mixin.forge.FireBlockAccessor;
 import net.minecraft.world.level.block.Block;
