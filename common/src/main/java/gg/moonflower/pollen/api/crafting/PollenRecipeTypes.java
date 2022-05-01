@@ -25,7 +25,7 @@ import java.util.function.Supplier;
  * @author Ocelot
  * @since 1.0.0
  */
-public class PollenRecipeTypes {
+public final class PollenRecipeTypes {
 
     @ApiStatus.Internal
     public static final PollinatedRegistry<RecipeSerializer<?>> RECIPE_SERIALIZERS = PollinatedRegistry.create(Registry.RECIPE_SERIALIZER, Pollen.MOD_ID);
@@ -37,6 +37,9 @@ public class PollenRecipeTypes {
 
     public static final Supplier<RecipeType<PollenGrindstoneRecipe>> GRINDSTONE_TYPE = register("grindstone");
     public static final Supplier<RecipeSerializer<PollenShapelessGrindstoneRecipe>> GRINDSTONE = RECIPE_SERIALIZERS.register("grindstone", () -> createSerializer(PollenShapelessGrindstoneRecipe::fromJson, PollenShapelessGrindstoneRecipe::fromNetwork, PollenShapelessGrindstoneRecipe::toNetwork));
+
+    private PollenRecipeTypes() {
+    }
 
     /**
      * Creates a multiplatform recipe serializer.

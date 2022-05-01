@@ -16,10 +16,13 @@ import java.util.function.Supplier;
  * @author Ocelot
  * @since 1.4.0
  */
-public class PollenEntityTypes {
+public final class PollenEntityTypes {
 
     @ApiStatus.Internal
     public static final PollinatedEntityRegistry ENTITY_TYPES = PollinatedRegistry.createEntity(Pollen.MOD_ID);
 
     public static final Supplier<EntityType<Boat>> BOAT = ENTITY_TYPES.register("boat", () -> EntityType.Builder.<Boat>of(PollinatedBoat::new, MobCategory.MISC).sized(1.375F, 0.5625F).clientTrackingRange(10).build("pollen:boat"));
+
+    private PollenEntityTypes() {
+    }
 }

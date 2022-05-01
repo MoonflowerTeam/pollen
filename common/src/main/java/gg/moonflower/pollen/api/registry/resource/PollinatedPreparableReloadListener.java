@@ -6,6 +6,8 @@ import net.minecraft.server.packs.resources.PreparableReloadListener;
 import java.util.Collection;
 import java.util.Collections;
 
+// TODO Move package in 2.0.0
+
 /**
  * @author Ocelot
  * @since 1.0.0
