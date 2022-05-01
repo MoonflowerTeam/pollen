@@ -11,8 +11,7 @@
     "client.LiquidBlockRendererMixin",
     "client.OptionsMixin",
     "client.RecipeManagerAccessor",
-    "client.RenderSystemMixin",
-    "client.RecipeManagerAccessor"
+    "client.RenderSystemMixin"
   ],
   "mixins": [
     "AxeItemMixin",
@@ -29,8 +28,6 @@
     "SimpleReloadableResourceManagerMixin",
     "loot.ForgeHooksMixin",
     "loot.LootPoolAccessor",
-    "loot.LootTableAccessor",
-    "platform.ClientMainMixin",
     "loot.LootTableAccessor"
   ],
   "injectors": {
