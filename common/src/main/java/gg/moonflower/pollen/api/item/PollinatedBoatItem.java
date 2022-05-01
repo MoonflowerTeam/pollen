@@ -2,12 +2,15 @@ package gg.moonflower.pollen.api.item;
 
 import gg.moonflower.pollen.api.entity.PollinatedBoat;
 import gg.moonflower.pollen.api.entity.PollinatedBoatType;
+import net.minecraft.core.NonNullList;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BoatItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -85,5 +88,11 @@ public class PollinatedBoatItem extends Item {
     @Nullable
     public static Item getBoatItem(PollinatedBoatType type) {
         return BOAT_ITEMS.get(type);
+    }
+
+    @Override
+    public void fillItemCategory(CreativeModeTab category, NonNullList<ItemStack> items) {
+        if (this.allowdedIn(category))
+            TabFiller.insert(new ItemStack(this), false, items, stack -> stack.getItem() instanceof BoatItem || stack.getItem() instanceof PollinatedBoatItem);
     }
 }
