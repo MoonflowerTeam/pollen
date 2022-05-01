@@ -10,8 +10,12 @@ import gg.moonflower.pollen.api.item.BucketItemBase;
 import gg.moonflower.pollen.api.item.PollinatedBoatItem;
 import gg.moonflower.pollen.api.item.SpawnEggItemBase;
 import gg.moonflower.pollen.api.platform.Platform;
-import gg.moonflower.pollen.api.registry.*;
+import gg.moonflower.pollen.api.registry.FluidBehaviorRegistry;
+import gg.moonflower.pollen.api.registry.PollinatedBlockRegistry;
+import gg.moonflower.pollen.api.registry.PollinatedFluidRegistry;
+import gg.moonflower.pollen.api.registry.PollinatedRegistry;
 import gg.moonflower.pollen.api.registry.content.CompostablesRegistry;
+import gg.moonflower.pollen.api.registry.content.DispenseItemBehaviorRegistry;
 import gg.moonflower.pollen.api.registry.content.FlammabilityRegistry;
 import gg.moonflower.pollen.api.registry.content.FurnaceFuelRegistry;
 import gg.moonflower.pollen.api.registry.resource.TagRegistry;
@@ -19,15 +23,20 @@ import gg.moonflower.pollen.core.client.render.DebugPollenFlowerPotRenderer;
 import gg.moonflower.pollen.core.test.TestFluid;
 import gg.moonflower.pollen.core.test.TestPollenFluidBehavior;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockSource;
 import net.minecraft.core.Registry;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
@@ -71,6 +80,24 @@ public class PollenTest {
         Objects.requireNonNull(BLOCKS).register(Pollen.PLATFORM);
         Objects.requireNonNull(FLUIDS).register(Pollen.PLATFORM);
         Objects.requireNonNull(BOATS).register(Pollen.PLATFORM);
+
+        DispenseItemBehaviorRegistry.register(Blocks.DIAMOND_BLOCK, (source, stack) -> source.getLevel().getBlockState(new BlockPos(DispenserBlock.getDispensePosition(source))).getBlock() == Blocks.GOLD_BLOCK, new DefaultDispenseItemBehavior() {
+            @Override
+            protected ItemStack execute(BlockSource source, ItemStack stack) {
+                source.getLevel().setBlock(new BlockPos(DispenserBlock.getDispensePosition(source)), Blocks.DIAMOND_BLOCK.defaultBlockState(), 2);
+                stack.shrink(1);
+                return stack;
+            }
+        });
+
+        DispenseItemBehaviorRegistry.register(Blocks.DIAMOND_BLOCK, (source, stack) -> source.getLevel().getBlockState(new BlockPos(DispenserBlock.getDispensePosition(source))).getBlock() == Blocks.EMERALD_BLOCK, new DefaultDispenseItemBehavior() {
+            @Override
+            protected ItemStack execute(BlockSource source, ItemStack stack) {
+                source.getLevel().setBlock(new BlockPos(DispenserBlock.getDispensePosition(source)), Blocks.GOLD_BLOCK.defaultBlockState(), 2);
+                stack.shrink(1);
+                return stack;
+            }
+        });
 
         FluidBehaviorRegistry.register(TEST_TAG, new TestPollenFluidBehavior());
     }
