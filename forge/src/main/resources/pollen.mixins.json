@@ -16,16 +16,24 @@
   "mixins": [
     "AxeItemMixin",
     "EntityMixin",
+    "FireBlockAccessor",
     "FluidMixin",
     "FolderRepositorySourceAccessor",
+    "ForgeInternalHandlerMixin",
     "HandshakeHandlerMixin",
+    "ItemMixin",
     "LivingEntityMixin",
     "PackRepositoryAccessor",
     "PackRepositoryMixin",
     "SimpleReloadableResourceManagerMixin",
     "loot.ForgeHooksMixin",
     "loot.LootPoolAccessor",
-    "loot.LootTableAccessor"
+    "loot.LootTableAccessor",
+    "platform.ClientMainMixin",
+    "platform.DataMainMixin"
+  ],
+  "server": [
+    "platform.ServerMainMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -6,6 +6,7 @@ import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.resource.condition.PollinatedResourceCondition;
 import net.minecraft.resources.ResourceLocation;
 
+// TODO Move to `gg.moonflower.pollen.api.registry.resource` in 2.0.0
 /**
  * Registers custom {@link PollinatedResourceCondition} that are wrapped for each platform.
  *

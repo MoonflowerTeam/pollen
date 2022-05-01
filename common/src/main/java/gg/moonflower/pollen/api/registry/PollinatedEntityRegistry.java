@@ -1,8 +1,11 @@
 package gg.moonflower.pollen.api.registry;
 
 import com.mojang.serialization.Codec;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.platform.Platform;
 import net.minecraft.core.Registry;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
@@ -35,6 +38,17 @@ public class PollinatedEntityRegistry extends WrapperPollinatedRegistry<EntityTy
         this.sensorTypeRegistry = create(Registry.SENSOR_TYPE, entityRegistry.getModId());
         this.scheduleRegistry = create(Registry.SCHEDULE, entityRegistry.getModId());
         this.activityRegistry = create(Registry.ACTIVITY, entityRegistry.getModId());
+    }
+
+    /**
+     * Creates a new packet for spawning a generic entity.
+     *
+     * @param entity The entity to spawn
+     * @return A vanilla Minecraft packet to send
+     */
+    @ExpectPlatform
+    public static Packet<?> createSpawnEntityPacket(Entity entity) {
+        return Platform.error();
     }
 
     @Override

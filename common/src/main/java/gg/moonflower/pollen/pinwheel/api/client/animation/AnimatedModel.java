@@ -39,9 +39,21 @@ public interface AnimatedModel {
      *
      * @param animationTime The time of the animation in seconds
      * @param runtime       The runtime to execute MoLang instructions in. This is generally going to be {@link MolangRuntime.Builder}
+     * @param weights       Defined weights for each animation. This is multiplied after the animation is resolved
      * @param animations    The animations to play
      */
-    void applyAnimations(float animationTime, MolangRuntime.Builder runtime, AnimationData... animations);
+    void applyAnimations(float animationTime, MolangRuntime.Builder runtime, float[] weights, AnimationData... animations);
+
+    /**
+     * Applies the specified animation transformations at the specified time.
+     *
+     * @param animationTime The time of the animation in seconds
+     * @param runtime       The runtime to execute MoLang instructions in. This is generally going to be {@link MolangRuntime.Builder}
+     * @param animations    The animations to play
+     */
+    default void applyAnimations(float animationTime, MolangRuntime.Builder runtime, AnimationData... animations) {
+        this.applyAnimations(animationTime, runtime, new float[0], animations);
+    }
 
     /**
      * Fetches all locators for the specified part.

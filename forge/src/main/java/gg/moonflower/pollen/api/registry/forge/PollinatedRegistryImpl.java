@@ -29,7 +29,9 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
     private final ForgeRegistryCodec<T> codec;
     private final ResourceKey<? extends Registry<T>> resourceKey;
     private final Function<ResourceLocation, T> valueGetter;
+    private final Function<Integer, T> valueIdGetter;
     private final Function<T, ResourceLocation> keyGetter;
+    private final Function<T, Integer> keyIdGetter;
 
     private PollinatedRegistryImpl(DeferredRegister<T> deferredRegister, ForgeRegistryCodec<T> codec, ResourceKey<? extends Registry<T>> resourceKey, String modId) {
         super(modId);
@@ -37,7 +39,13 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
         this.codec = codec;
         this.resourceKey = resourceKey;
         this.valueGetter = key -> this.registry.getEntries().stream().filter(object -> object.isPresent() && object.getId().equals(key)).map(RegistryObject::get).findFirst().orElse(null);
+        this.valueIdGetter = key -> {
+            throw new IllegalStateException("Use Vanilla registries to fetch IDs");
+        };
         this.keyGetter = value -> this.registry.getEntries().stream().filter(object -> object.isPresent() && object.get().equals(value)).map(RegistryObject::getId).findFirst().orElse(null);
+        this.keyIdGetter = value -> {
+            throw new IllegalStateException("Use Vanilla registries to fetch IDs");
+        };
     }
 
     private PollinatedRegistryImpl(IForgeRegistry<T> registry, String modId) {
@@ -46,7 +54,13 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
         this.codec = ForgeRegistryCodec.create(registry);
         this.resourceKey = ResourceKey.createRegistryKey(registry.getRegistryName());
         this.valueGetter = registry::getValue;
+        this.valueIdGetter = registry instanceof ForgeRegistry ? id -> ((ForgeRegistry<T>) registry).getValue(id) : id -> {
+            throw new IllegalStateException("Registry " + registry + " cannot use IDs");
+        };
         this.keyGetter = registry::getKey;
+        this.keyIdGetter = registry instanceof ForgeRegistry ? value -> ((ForgeRegistry<T>) registry).getID(value) : value -> {
+            throw new IllegalStateException("Registry " + registry + " cannot use IDs");
+        };
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -74,10 +88,21 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
         return this.keyGetter.apply(value);
     }
 
+    @Override
+    public int getId(@Nullable T value) {
+        return this.keyIdGetter.apply(value);
+    }
+
     @Nullable
     @Override
     public T get(@Nullable ResourceLocation name) {
         return this.valueGetter.apply(name);
+    }
+
+    @Nullable
+    @Override
+    public T byId(int id) {
+        return this.valueIdGetter.apply(id);
     }
 
     @Override

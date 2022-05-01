@@ -14,8 +14,8 @@ import java.util.function.Supplier;
 @ApiStatus.Internal
 public class EntityRendererRegistryImpl {
 
-    public static <T extends Entity> void register(Supplier<EntityType<T>> type, EntityRendererProvider<T> factory) {
-        EntityRendererRegistry.register(type.get(), factory);
+    public static <T extends Entity> void register(EntityType<T> type, EntityRendererProvider<T> factory) {
+        EntityRendererRegistry.register(type, factory);
     }
 
     public static void registerLayerDefinition(ModelLayerLocation layerLocation, Supplier<LayerDefinition> supplier) {

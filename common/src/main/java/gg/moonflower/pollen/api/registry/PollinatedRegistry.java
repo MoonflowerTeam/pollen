@@ -1,7 +1,11 @@
 package gg.moonflower.pollen.api.registry;
 
 import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.*;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.Keyable;
+import com.mojang.serialization.Lifecycle;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.platform.Platform;
 import net.minecraft.core.DefaultedRegistry;
@@ -195,6 +199,14 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
     public abstract ResourceLocation getKey(T value);
 
     /**
+     * Retrieves the id for the specified value. This can only be used for a custom registry.
+     *
+     * @param value The value to get the id for
+     * @return An id for that value or <code>null</code> if this registry doesn't contain that id
+     */
+    public abstract int getId(@Nullable T value);
+
+    /**
      * Retrieves the value for the specified key.
      *
      * @param name The key to get the value for
@@ -202,6 +214,15 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
      */
     @Nullable
     public abstract T get(@Nullable ResourceLocation name);
+
+    /**
+     * Retrieves the value for the specified id. This can only be used for a custom registry.
+     *
+     * @param id The id to get the value for
+     * @return A value for that id or <code>null</code> if this registry doesn't contain a value with that id
+     */
+    @Nullable
+    public abstract T byId(int id);
 
     /**
      * Retrieves the value for the specified key.
@@ -217,6 +238,16 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
      * @return The key of this registry
      */
     public abstract ResourceKey<? extends Registry<T>> key();
+
+    /**
+     * Retrieves the value for the specified id.
+     *
+     * @param id The id to get the value for
+     * @return A value for that id
+     */
+    public Optional<T> byIdOptional(int id) {
+        return Optional.ofNullable(this.byId(id));
+    }
 
     /**
      * @return A set of all registered keys in the registry
@@ -283,10 +314,21 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
             return this.registry.getKey(value);
         }
 
+        @Override
+        public int getId(@Nullable T value) {
+            return this.registry.getId(value);
+        }
+
         @Nullable
         @Override
         public T get(@Nullable ResourceLocation name) {
             return this.registry.get(name);
+        }
+
+        @Nullable
+        @Override
+        public T byId(int id) {
+            return this.registry.byId(id);
         }
 
         @Override

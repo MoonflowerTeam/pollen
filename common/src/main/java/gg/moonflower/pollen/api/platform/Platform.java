@@ -54,6 +54,16 @@ public abstract class Platform {
     }
 
     /**
+     * Retrieves all launch arguments besides sensitive info. However, this should still never be printed to console or logged in any way.
+     *
+     * @return All arguments used to launch the game
+     */
+    @ExpectPlatform
+    public static String[] getLaunchArguments() {
+        return Platform.error();
+    }
+
+    /**
      * @return Whether this mod is running in a production environment
      */
     @ExpectPlatform

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Supplier;
 
 /**
- * <p>Manages the registering of network channels between the client and server.</p>
+ * Manages the registering of network channels between the client and server.
  *
  * @author Ocelot
  * @since 1.0.0

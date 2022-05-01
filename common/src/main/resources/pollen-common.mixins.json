@@ -23,7 +23,9 @@
     "client.WolfAccessor"
   ],
   "mixins": [
+    "BlockEntityTypeMixin",
     "BucketItemAccessor",
+    "DispenserBlockAccessor",
     "EntityMixin",
     "GrindstoneMenuMixin",
     "GrindstoneMenuRepairSlotMixin",

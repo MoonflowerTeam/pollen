@@ -22,6 +22,7 @@
     "client.ParticleEngineMixin",
     "client.RenderSystemMixin",
     "client.ShaderInstanceMixin",
+    "client.SheetsMixin",
     "client.TextureAtlasMixin",
     "sodium.BlockRendererMixin",
     "sodium.ChunkRenderDataMixin",
@@ -46,6 +47,7 @@
     "ServerLevelEntityCallbacksMixin",
     "ServerLevelMixin",
     "ServerPlayerMixin",
+    "WoodTypeAccessor",
     "data.TagsProviderMixin",
     "loot.LootTableAccessor"
   ],

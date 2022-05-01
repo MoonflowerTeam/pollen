@@ -10,13 +10,32 @@ import net.minecraft.world.entity.EntityType;
 
 import java.util.function.Supplier;
 
+/**
+ * @author Jackson
+ * @since 1.0.0
+ */
 public final class EntityRendererRegistry {
 
     private EntityRendererRegistry() {
     }
 
-    @ExpectPlatform
+    /**
+     * @deprecated Use {@link #register(EntityType, EntityRendererProvider)} instead.
+     */
+    @Deprecated
     public static <T extends Entity> void register(Supplier<EntityType<T>> type, EntityRendererProvider<T> factory) {
+        register(type.get(), factory);
+    }
+
+    /**
+     * Registers a renderer for the specified entity type.
+     *
+     * @param type    The type of entity to register for
+     * @param factory The factory for creating a new renderer
+     * @param <T>     The type of entity to make a renderer for
+     */
+    @ExpectPlatform
+    public static <T extends Entity> void register(EntityType<T> type, EntityRendererProvider<T> factory) {
         Platform.error();
     }
 
