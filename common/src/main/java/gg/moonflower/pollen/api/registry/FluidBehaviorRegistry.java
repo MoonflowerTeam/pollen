@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+// TODO Move to `gg.moonflower.pollen.api.registry.content` in 2.0.0
 /**
  * Registers behavior for fluid tags.
  *

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+// TODO Move to `gg.moonflower.pollen.api.registry.content` in 2.0.0
 /**
  * @author Ocelot
  * @since 1.0.0

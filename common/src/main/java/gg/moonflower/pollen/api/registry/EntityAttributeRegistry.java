@@ -8,6 +8,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 
 import java.util.function.Supplier;
 
+// TODO Move to `gg.moonflower.pollen.api.registry.content` in 2.0.0
 /**
  * @author Jackson
  * @since 1.0.0
