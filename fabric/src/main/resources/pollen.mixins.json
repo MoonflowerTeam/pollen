@@ -18,6 +18,7 @@
     "client.LevelRendererVanillaMixin",
     "client.LivingEntityRendererMixin",
     "client.MinecraftMixin",
+    "client.ModelLayersMixin",
     "client.MouseHandlerMixin",
     "client.ParticleEngineMixin",
     "client.RenderSystemMixin",
