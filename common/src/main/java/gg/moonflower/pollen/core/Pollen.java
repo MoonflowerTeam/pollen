@@ -5,15 +5,18 @@ import gg.moonflower.pollen.api.command.argument.ColorArgumentType;
 import gg.moonflower.pollen.api.command.argument.EnumArgument;
 import gg.moonflower.pollen.api.command.argument.TimeArgumentType;
 import gg.moonflower.pollen.api.crafting.PollenRecipeTypes;
+import gg.moonflower.pollen.api.entity.PollenEntityTypes;
 import gg.moonflower.pollen.api.event.events.client.render.InitRendererEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.ResourceConditionRegistry;
+import gg.moonflower.pollen.api.registry.client.EntityRendererRegistry;
 import gg.moonflower.pollen.api.resource.modifier.ResourceModifierManager;
 import gg.moonflower.pollen.api.sync.SyncedDataManager;
 import gg.moonflower.pollen.core.client.entitlement.EntitlementManager;
 import gg.moonflower.pollen.core.client.loader.CosmeticModelLoader;
 import gg.moonflower.pollen.core.client.loader.CosmeticTextureLoader;
+import gg.moonflower.pollen.core.client.render.entity.PollinatedBoatRenderer;
 import gg.moonflower.pollen.core.datagen.PollenLanguageProvider;
 import gg.moonflower.pollen.core.network.PollenMessages;
 import gg.moonflower.pollen.core.resource.condition.ConfigResourceCondition;
@@ -75,6 +78,7 @@ public class Pollen {
         ShaderLoader.init();
         DebugInputs.init();
         EntitlementManager.init();
+        EntityRendererRegistry.register(PollenEntityTypes.BOAT, PollinatedBoatRenderer::new);
         InitRendererEvent.EVENT.register(ShaderConst::init);
         if (TESTS_ENABLED)
             PollenTest.onClient();
@@ -86,6 +90,7 @@ public class Pollen {
         ResourceConditionRegistry.register(ConfigResourceCondition.NAME, new ConfigResourceCondition());
         PollenRecipeTypes.RECIPE_SERIALIZERS.register(PLATFORM);
         PollenRecipeTypes.RECIPES.register(PLATFORM);
+        PollenEntityTypes.ENTITY_TYPES.register(PLATFORM);
         if (TESTS_ENABLED)
             PollenTest.onCommon();
     }

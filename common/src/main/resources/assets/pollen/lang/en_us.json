@@ -6,6 +6,7 @@
   "argument.pollen.time.unknown_unit": "Invalid Time Unit",
   "commands.pollen.config.fail": "Config for %s of type %s not found",
   "commands.pollen.config.success": "Config for %s of type %s found at %s",
+  "entity.pollen.boat": "Boat",
   "gui.jei.category.pollen.grindstone.experience": "XP: %s - %s",
   "options.pollen.entitlementList": "Moonflower Cosmetics...",
   "options.pollen.entitlementList.none": "You have no cosmetics",
