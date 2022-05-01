@@ -2,8 +2,14 @@ package gg.moonflower.pollen.api.item;
 
 import gg.moonflower.pollen.api.entity.PollinatedBoat;
 import gg.moonflower.pollen.api.entity.PollinatedBoatType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockSource;
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -15,12 +21,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,6 +43,35 @@ public class PollinatedBoatItem extends Item {
 
     private static final Predicate<Entity> ENTITY_PREDICATE = EntitySelector.NO_SPECTATORS.and(Entity::isPickable);
     private static final Map<PollinatedBoatType, Item> BOAT_ITEMS = new ConcurrentHashMap<>();
+    private static final DispenseItemBehavior DISPENSE_BEHAVIOR = new DefaultDispenseItemBehavior() {
+        private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
+
+        @Override
+        public ItemStack execute(BlockSource source, ItemStack stack) {
+            Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
+            Level level = source.getLevel();
+            double x = source.x() + direction.getStepX() * 1.125F;
+            double y = source.y() + direction.getStepY() * 1.125F;
+            double z = source.z() + direction.getStepZ() * 1.125F;
+            BlockPos blockPos = source.getPos().relative(direction);
+            double offset;
+            if (level.getFluidState(blockPos).is(FluidTags.WATER)) {
+                offset = 1.0;
+            } else {
+                if (!level.getBlockState(blockPos).isAir() || !level.getFluidState(blockPos.below()).is(FluidTags.WATER)) {
+                    return this.defaultDispenseItemBehavior.dispense(source, stack);
+                }
+                offset = 0.0;
+            }
+
+            PollinatedBoat boat = new PollinatedBoat(level, x, y + offset, z);
+            boat.setPollenType(((PollinatedBoatItem) stack.getItem()).getType().get());
+            boat.yRot = direction.toYRot();
+            level.addFreshEntity(boat);
+            stack.shrink(1);
+            return stack;
+        }
+    };
 
     private final Supplier<PollinatedBoatType> type;
 
@@ -44,6 +79,12 @@ public class PollinatedBoatItem extends Item {
         super(properties);
         this.type = type;
         BOAT_ITEMS.put(type.get(), this);
+        DispenserBlock.registerBehavior(this, DISPENSE_BEHAVIOR);
+    }
+
+    @Nullable
+    public static Item getBoatItem(PollinatedBoatType type) {
+        return BOAT_ITEMS.get(type);
     }
 
     @Override
@@ -85,14 +126,13 @@ public class PollinatedBoatItem extends Item {
         return InteractionResultHolder.pass(itemStack);
     }
 
-    @Nullable
-    public static Item getBoatItem(PollinatedBoatType type) {
-        return BOAT_ITEMS.get(type);
-    }
-
     @Override
     public void fillItemCategory(CreativeModeTab category, NonNullList<ItemStack> items) {
         if (this.allowdedIn(category))
             TabFiller.insert(new ItemStack(this), false, items, stack -> stack.getItem() instanceof BoatItem || stack.getItem() instanceof PollinatedBoatItem);
+    }
+
+    public Supplier<PollinatedBoatType> getType() {
+        return type;
     }
 }

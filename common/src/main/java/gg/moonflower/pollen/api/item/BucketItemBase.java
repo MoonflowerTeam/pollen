@@ -1,12 +1,16 @@
 package gg.moonflower.pollen.api.item;
 
 import gg.moonflower.pollen.api.fluid.PollinatedFluid;
+import gg.moonflower.pollen.api.registry.content.DispenseItemBehaviorRegistry;
 import gg.moonflower.pollen.core.mixin.BucketItemAccessor;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -17,12 +21,17 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BucketPickup;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FlowingFluid;
@@ -33,10 +42,10 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 // TODO Rename in 2.0.0 to PollinatedBucketItem
+
 /**
  * A bucket that uses a supplied fluid.
  *
@@ -45,11 +54,29 @@ import java.util.function.Supplier;
  */
 public class BucketItemBase extends BucketItem {
 
+    private static final DispenseItemBehavior DISPENSE_BEHAVIOR = new DefaultDispenseItemBehavior() {
+        private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
+
+        @Override
+        public ItemStack execute(BlockSource source, ItemStack stack) {
+            BucketItem bucket = (BucketItem) stack.getItem();
+            BlockPos pos = source.getPos().relative(source.getBlockState().getValue(DispenserBlock.FACING));
+            Level level = source.getLevel();
+            if (bucket.emptyBucket(null, level, pos, null)) {
+                bucket.checkExtraContent(level, stack, pos);
+                return new ItemStack(Items.BUCKET);
+            } else {
+                return this.defaultDispenseItemBehavior.dispense(source, stack);
+            }
+        }
+    };
+
     protected final Supplier<? extends Fluid> fluid;
 
     public BucketItemBase(Supplier<? extends Fluid> fluid, Properties builder) {
         super(Fluids.EMPTY, builder);
         this.fluid = fluid;
+        DispenseItemBehaviorRegistry.register(this, DISPENSE_BEHAVIOR);
     }
 
     public BucketItemBase(Fluid fluid, Properties builder) {

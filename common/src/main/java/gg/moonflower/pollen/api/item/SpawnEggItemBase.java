@@ -3,21 +3,28 @@ package gg.moonflower.pollen.api.item;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.injectables.annotations.PlatformOnly;
 import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.api.registry.content.DispenseItemBehaviorRegistry;
 import gg.moonflower.pollen.api.util.NbtConstants;
+import net.minecraft.core.BlockSource;
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.Registry;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.level.block.DispenserBlock;
+import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 // TODO Rename in 2.0.0 to PollinatedSpawnEggItem
+
 /**
  * A spawn egg that allows for deferred entity types.
  *
@@ -25,6 +32,24 @@ import java.util.function.Supplier;
  * @since 1.0.0
  */
 public class SpawnEggItemBase<T extends EntityType<? extends Mob>> extends SpawnEggItem {
+
+    private static final DispenseItemBehavior DISPENSE_BEHAVIOR = new DefaultDispenseItemBehavior() {
+        @Override
+        public ItemStack execute(BlockSource source, ItemStack stack) {
+            Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
+            EntityType<?> type = ((SpawnEggItem) stack.getItem()).getType(stack.getTag());
+
+            try {
+                type.spawn(source.getLevel(), stack, null, source.getPos().relative(direction), MobSpawnType.DISPENSER, direction != Direction.UP, false);
+            } catch (Exception var6) {
+                LogManager.getLogger().error("Error while dispensing spawn egg from dispenser at {}", source.getPos(), var6);
+                return ItemStack.EMPTY;
+            }
+
+            stack.shrink(1);
+            return stack;
+        }
+    };
 
     private final boolean addToMisc;
     private final Supplier<T> type;
@@ -34,6 +59,7 @@ public class SpawnEggItemBase<T extends EntityType<? extends Mob>> extends Spawn
     }
 
     // TODO remove in 2.0.0
+
     /**
      * @deprecated Use the other constructor and set creative tab to {@link CreativeModeTab#TAB_MISC} instead
      */
@@ -44,6 +70,8 @@ public class SpawnEggItemBase<T extends EntityType<? extends Mob>> extends Spawn
         this.addToMisc = addToMisc;
         if (Platform.isForge())
             registerSpawnEgg(this, type);
+
+        DispenseItemBehaviorRegistry.register(this, DISPENSE_BEHAVIOR);
     }
 
     @SuppressWarnings("UnimplementedExpectPlatform")
