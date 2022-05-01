@@ -11,7 +11,8 @@
     "client.LiquidBlockRendererMixin",
     "client.OptionsMixin",
     "client.RecipeManagerAccessor",
-    "client.RenderSystemMixin"
+    "client.RenderSystemMixin",
+    "client.RecipeManagerAccessor"
   ],
   "mixins": [
     "AxeItemMixin",
@@ -30,10 +31,7 @@
     "loot.LootPoolAccessor",
     "loot.LootTableAccessor",
     "platform.ClientMainMixin",
-    "platform.DataMainMixin"
-  ],
-  "server": [
-    "platform.ServerMainMixin"
+    "loot.LootTableAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
