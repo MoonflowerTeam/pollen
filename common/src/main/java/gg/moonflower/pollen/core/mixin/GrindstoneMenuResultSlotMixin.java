@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(targets = "net.minecraft.world.inventory.GrindstoneMenu$4")
 public abstract class GrindstoneMenuResultSlotMixin extends Slot {
 
-    @Shadow
+    @Shadow(aliases = "this$0")
     @Final
     GrindstoneMenu field_16780;
 
