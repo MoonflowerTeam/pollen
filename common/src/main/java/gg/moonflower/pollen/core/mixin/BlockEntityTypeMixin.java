@@ -14,7 +14,7 @@ public class BlockEntityTypeMixin {
     @SuppressWarnings("EqualsBetweenInconvertibleTypes")
     @Inject(method = "isValid", at = @At("HEAD"), cancellable = true)
     public void isValid(Block block, CallbackInfoReturnable<Boolean> cir) {
-        if (BlockEntityType.SIGN.equals(this) && this instanceof PollinatedSign)
+        if (BlockEntityType.SIGN.equals(this) && block instanceof PollinatedSign)
             cir.setReturnValue(true);
     }
 }

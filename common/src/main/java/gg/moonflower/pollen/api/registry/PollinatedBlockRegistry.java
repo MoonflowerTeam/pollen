@@ -5,6 +5,7 @@ import gg.moonflower.pollen.api.block.PollinatedSign;
 import gg.moonflower.pollen.api.block.PollinatedStandingSignBlock;
 import gg.moonflower.pollen.api.block.PollinatedWallSignBlock;
 import gg.moonflower.pollen.api.item.PollinatedSignItem;
+import gg.moonflower.pollen.api.registry.content.SignRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -71,7 +72,7 @@ public class PollinatedBlockRegistry extends WrapperPollinatedRegistry<Block> {
      * @param color    The material color of the sign blocks
      * @return A pair of a wall and standing sign block supplier
      */
-    public Pair<Supplier<PollinatedWallSignBlock>, Supplier<PollinatedStandingSignBlock>> registerSign(String id, Material material, MaterialColor color) {
+    public Pair<Supplier<PollinatedStandingSignBlock>, Supplier<PollinatedWallSignBlock>> registerSign(String id, Material material, MaterialColor color) {
         return this.registerSign(id, BlockBehaviour.Properties.of(material, color).noCollission().strength(1.0F).sound(SoundType.WOOD), new Item.Properties().stacksTo(16).tab(CreativeModeTab.TAB_DECORATIONS));
     }
 
@@ -83,14 +84,14 @@ public class PollinatedBlockRegistry extends WrapperPollinatedRegistry<Block> {
      * @param itemProperties  The properties of the sign item
      * @return A pair of a wall and standing sign block supplier
      */
-    public Pair<Supplier<PollinatedWallSignBlock>, Supplier<PollinatedStandingSignBlock>> registerSign(String id, BlockBehaviour.Properties blockProperties, Item.Properties itemProperties) {
-        WoodType type = null; // TODO: add sign registry
+    public Pair<Supplier<PollinatedStandingSignBlock>, Supplier<PollinatedWallSignBlock>> registerSign(String id, BlockBehaviour.Properties blockProperties, Item.Properties itemProperties) {
+        WoodType type = SignRegistry.register(new ResourceLocation(this.modId, id));
 
         Supplier<PollinatedStandingSignBlock> standing = this.register(id + "_sign", () -> new PollinatedStandingSignBlock(blockProperties, type));
         Supplier<PollinatedWallSignBlock> wall = this.register(id + "_wall_sign", () -> new PollinatedWallSignBlock(blockProperties.dropsLike(standing.get()), type));
 
         this.itemRegistry.register(id + "_sign", () -> new PollinatedSignItem(itemProperties, standing.get(), wall.get()));
 
-        return Pair.of(wall, standing);
+        return Pair.of(standing, wall);
     }
 }

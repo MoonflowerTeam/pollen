@@ -19,6 +19,7 @@
     "client.MinecraftMixin",
     "client.MouseHandlerMixin",
     "client.ParticleEngineMixin",
+    "client.SheetsMixin",
     "client.TextureAtlasMixin",
     "sodium.BlockRendererMixin",
     "sodium.ChunkRenderDataMixin",
@@ -42,6 +43,7 @@
     "PlayerListMixin",
     "ServerLevelMixin",
     "ServerPlayerMixin",
+    "WoodTypeAccessor",
     "data.TagsProviderMixin",
     "loot.LootPoolAccessor",
     "loot.LootTableAccessor"
