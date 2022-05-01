@@ -68,7 +68,7 @@ public class Pollen {
         GeometryTextureManager.addProvider(new CosmeticTextureLoader());
         DebugInputs.init();
         EntitlementManager.init();
-        EntityRendererRegistry.register(PollenEntityTypes.BOAT.get(), PollinatedBoatRenderer::new);
+        EntityRendererRegistry.register(PollenEntityTypes.BOAT, PollinatedBoatRenderer::new);
 
         if (TESTS_ENABLED)
             PollenTest.onClient();
@@ -86,7 +86,6 @@ public class Pollen {
     }
 
     private static void onClientPost(Platform.ModSetupContext context) {
-        EntityRendererRegistry.register(PollenEntityTypes.BOAT.get(), PollinatedBoatRenderer::new);
         if (TESTS_ENABLED)
             PollenTest.onClientPost(context);
     }

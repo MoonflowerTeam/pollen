@@ -34,8 +34,8 @@ public class EntityRendererRegistryImpl {
         LAYER_DEFINITION_FACTORIES.forEach(consumer -> consumer.accept(event));
     }
 
-    public static <T extends Entity> void register(EntityType<T> type, EntityRendererProvider<T> factory) {
-        ENTITY_FACTORIES.add(event -> event.registerEntityRenderer(type, factory));
+    public static <T extends Entity> void register(Supplier<EntityType<T>> type, EntityRendererProvider<T> factory) {
+        ENTITY_FACTORIES.add(event -> event.registerEntityRenderer(type.get(), factory));
     }
 
     public static void registerLayerDefinition(ModelLayerLocation layerLocation, Supplier<LayerDefinition> supplier) {
