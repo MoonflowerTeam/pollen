@@ -12,5 +12,6 @@ import java.util.concurrent.Executor;
  * @deprecated This is not necessary. Extending {@link SimplePreparableReloadListener} and implementing {@link PollinatedPreparableReloadListener} is enough.
  * @param <T> The type of object to pass between threads
  */
+@Deprecated
 public abstract class SimplePollinatedPreparableReloadListener<T> extends SimplePreparableReloadListener<T> implements PollinatedPreparableReloadListener {
 }

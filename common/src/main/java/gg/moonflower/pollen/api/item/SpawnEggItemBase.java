@@ -63,6 +63,7 @@ public class SpawnEggItemBase<T extends EntityType<? extends Mob>> extends Spawn
     /**
      * @deprecated Use the other constructor and set creative tab to {@link CreativeModeTab#TAB_MISC} instead
      */
+    @Deprecated
     @SuppressWarnings("UnsafePlatformOnlyCall")
     public SpawnEggItemBase(Supplier<T> type, int backgroundColor, int spotColor, boolean addToMisc, Properties builder) {
         super(Platform.isForge() ? null : type.get(), backgroundColor, spotColor, builder);

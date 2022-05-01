@@ -268,6 +268,7 @@ public abstract class Platform {
         /**
          * @deprecated Use {@link Platform.Builder#clientPostInit(Supplier)} for safe initialization. TODO remove in 2.0.0
          */
+        @Deprecated
         public Builder clientPostInit(Consumer<ModSetupContext> onClientPostInit) {
             return this.clientPostInit(() -> onClientPostInit);
         }
