@@ -9,7 +9,10 @@ import net.minecraft.world.level.block.Blocks;
  * @author Ocelot
  * @since 1.4.0
  */
-public class FlammabilityRegistry {
+public final class FlammabilityRegistry {
+
+    private FlammabilityRegistry() {
+    }
 
     /**
      * Registers flammability for the specified block.

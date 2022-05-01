@@ -10,13 +10,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 // TODO Move to `gg.moonflower.pollen.api.registry.content` in 2.0.0
+
 /**
  * @author Ocelot
  * @since 1.0.0
  */
-public class StrippingRegistry {
+public final class StrippingRegistry {
 
     private static final Map<Block, Block> REGISTRY = new ConcurrentHashMap<>();
+
+    private StrippingRegistry() {
+    }
 
     /**
      * Registers a stripping recipe.

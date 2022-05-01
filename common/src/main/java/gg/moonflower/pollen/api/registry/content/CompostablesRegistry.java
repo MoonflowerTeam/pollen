@@ -8,7 +8,10 @@ import net.minecraft.world.level.ItemLike;
  * @author Ocelot
  * @since 1.4.0
  */
-public class CompostablesRegistry {
+public final class CompostablesRegistry {
+
+    private CompostablesRegistry() {
+    }
 
     /**
      * Registers a composting probability for the specified item.

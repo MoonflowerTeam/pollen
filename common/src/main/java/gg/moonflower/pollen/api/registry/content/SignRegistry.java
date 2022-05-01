@@ -9,7 +9,10 @@ import net.minecraft.world.level.block.state.properties.WoodType;
  * @author Jackson
  * @since 1.4.0
  */
-public class SignRegistry {
+public final class SignRegistry {
+
+    private SignRegistry() {
+    }
 
     /**
      * Registers a sign type into {@link WoodType} and adds it to the atlas.

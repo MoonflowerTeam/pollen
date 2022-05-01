@@ -13,7 +13,10 @@ import java.util.function.BiPredicate;
  * @author Jackson
  * @since 1.4.0
  */
-public class DispenseItemBehaviorRegistry {
+public final class DispenseItemBehaviorRegistry {
+
+    private DispenseItemBehaviorRegistry() {
+    }
 
     /**
      * Registers a dispenser behavior and overrides any currently existing ones.
