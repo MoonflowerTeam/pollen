@@ -66,15 +66,15 @@ repositories {
 
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-    modApi "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+    modImplementation "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
 
     // Common Dependencies
-    implementation "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
+    api "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
     shadowCommon "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
-    implementation "com.electronwill.night-config:core:${project.night_config_version}"
+    api "com.electronwill.night-config:core:${project.night_config_version}"
     shadowCommon "com.electronwill.night-config:core:${project.night_config_version}"
-    implementation "com.electronwill.night-config:toml:${project.night_config_version}"
+    api "com.electronwill.night-config:toml:${project.night_config_version}"
     shadowCommon "com.electronwill.night-config:toml:${project.night_config_version}"
 
     // Fabric-only Dependencies
@@ -125,7 +125,7 @@ shadowJar {
 }
 
 remapJar {
-    input.set shadowJar.archiveFile
+    inputFile.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier null
 }

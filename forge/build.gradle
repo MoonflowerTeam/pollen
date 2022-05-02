@@ -61,7 +61,7 @@ repositories {
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
 
-    implementation "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
+    api "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
     shadowCommon "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
 
     modRuntimeOnly "curse.maven:configured-457570:3559398"
