@@ -19,9 +19,9 @@
     "FireBlockAccessor",
     "FluidMixin",
     "FolderRepositorySourceAccessor",
+    "ForgeHooksMixin",
     "ForgeInternalHandlerMixin",
     "HandshakeHandlerMixin",
-    "ItemMixin",
     "LivingEntityMixin",
     "PackRepositoryAccessor",
     "PackRepositoryMixin",
@@ -29,7 +29,7 @@
     "data.AdvancementBuilderMixin",
     "loot.ForgeHooksMixin",
     "loot.LootPoolAccessor",
-    "loot.LootTableAccessor"
+    "loot.LootTableMixin"
   ],
   "injectors": {
     "defaultRequire": 1
