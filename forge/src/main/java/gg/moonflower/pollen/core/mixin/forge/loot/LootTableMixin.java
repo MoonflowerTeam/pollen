@@ -14,10 +14,10 @@ public class LootTableMixin implements LootTableExtensions {
 
     @Shadow
     @Final
-    private List<LootPool> field_186466_c;
+    private List<LootPool> f_79109_;
 
     @Override
     public List<LootPool> pollen_getPools() {
-        return this.field_186466_c;
+        return this.f_79109_;
     }
 }
