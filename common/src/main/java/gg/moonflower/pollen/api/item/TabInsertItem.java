@@ -7,6 +7,8 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Predicate;
 
+// TODO Rename class to a better name in 2.0.0
+
 /**
  * An item which inserts into the creative tab based on a filter.
  *

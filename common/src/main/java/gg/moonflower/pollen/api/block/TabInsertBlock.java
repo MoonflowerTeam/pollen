@@ -9,6 +9,8 @@ import net.minecraft.world.level.block.Block;
 
 import java.util.function.Predicate;
 
+// TODO Rename class to a better name in 2.0.0
+
 /**
  * A block which inserts into the creative tab based on a filter.
  *
