@@ -6,8 +6,6 @@ import gg.moonflower.pollen.api.fluid.PollenFluidBehavior;
 import gg.moonflower.pollen.api.registry.FluidBehaviorRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.entity.Entity;
@@ -38,9 +36,6 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Shadow
     public abstract boolean canBreatheUnderwater();
-
-    @Shadow
-    protected abstract void jumpInLiquid(Tag<Fluid> fluidTag);
 
     @Shadow
     public abstract void calculateEntityAnimation(LivingEntity livingEntity, boolean bl);
@@ -109,14 +104,6 @@ public abstract class LivingEntityMixin extends Entity {
     @ModifyVariable(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getFluidJumpThreshold()D", shift = At.Shift.BEFORE), ordinal = 0)
     public boolean modifyInWater(boolean value) {
         return value || FluidBehaviorRegistry.getFluids().stream().anyMatch(tag -> this.getFluidHeight(tag) > 0.0);
-    }
-
-    @Inject(method = "jumpInLiquid", at = @At("HEAD"), cancellable = true)
-    public void jumpInLiquid(Tag<Fluid> fluidTag, CallbackInfo ci) {
-        if (!this.isInWater() && fluidTag == FluidTags.WATER) {
-            FluidBehaviorRegistry.getFluids().stream().filter(tag -> Objects.requireNonNull(FluidBehaviorRegistry.get(tag)).canAscend((LivingEntity)(Object)this) && this.getFluidHeight(tag) > 0.0).findFirst().ifPresent(this::jumpInLiquid);
-            ci.cancel();
-        }
     }
 
     @Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getFluidState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/material/FluidState;"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
