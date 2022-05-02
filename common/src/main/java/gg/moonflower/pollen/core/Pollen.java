@@ -35,13 +35,14 @@ import org.jetbrains.annotations.Nullable;
 public class Pollen {
 
     public static final String MOD_ID = "pollen";
-    public static final boolean TESTS_ENABLED;    public static final Platform PLATFORM = Platform.builder(Pollen.MOD_ID)
-        .commonInit(Pollen::onCommon)
-        .clientInit(() -> Pollen::onClient)
-        .commonPostInit(Pollen::onCommonPost)
-        .clientPostInit(() -> Pollen::onClientPost)
-        .dataInit(Pollen::onDataInit)
-        .build();
+    public static final boolean TESTS_ENABLED;
+    public static final Platform PLATFORM = Platform.builder(Pollen.MOD_ID)
+            .commonInit(Pollen::onCommon)
+            .clientInit(() -> Pollen::onClient)
+            .commonPostInit(Pollen::onCommonPost)
+            .clientPostInit(() -> Pollen::onClientPost)
+            .dataInit(Pollen::onDataInit)
+            .build();
     private static MinecraftServer server;
 
     static {
