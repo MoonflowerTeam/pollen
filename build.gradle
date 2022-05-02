@@ -43,6 +43,7 @@ allprojects {
                 includeGroup "curse.maven"
             }
         }
+        maven { url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1" }
     }
 
     tasks.withType(JavaCompile) {
