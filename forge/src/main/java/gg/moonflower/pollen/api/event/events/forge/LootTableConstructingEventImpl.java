@@ -1,7 +1,8 @@
 package gg.moonflower.pollen.api.event.events.forge;
 
+import gg.moonflower.pollen.core.extension.forge.LootTableExtensions;
 import gg.moonflower.pollen.core.mixin.forge.loot.LootPoolAccessor;
-import gg.moonflower.pollen.core.mixin.forge.loot.LootTableAccessor;
+import gg.moonflower.pollen.core.mixin.loot.LootTableAccessor;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
@@ -20,6 +21,6 @@ public class LootTableConstructingEventImpl {
     }
 
     public static List<LootPool> getPools(LootTable lootTable) {
-        return ((LootTableAccessor) lootTable).getPools();
+        return ((LootTableExtensions) lootTable).pollen_getPools();
     }
 }

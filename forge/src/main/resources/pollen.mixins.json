@@ -26,7 +26,7 @@
     "SimpleReloadableResourceManagerMixin",
     "loot.ForgeHooksMixin",
     "loot.LootPoolAccessor",
-    "loot.LootTableAccessor"
+    "loot.LootTableMixin"
   ],
   "injectors": {
     "defaultRequire": 1
