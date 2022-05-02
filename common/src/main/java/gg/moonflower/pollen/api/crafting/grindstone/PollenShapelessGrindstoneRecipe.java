@@ -33,7 +33,9 @@ public class PollenShapelessGrindstoneRecipe implements PollenGrindstoneRecipe {
         this.id = id;
         this.group = group;
         this.result = result;
-        this.ingredients = ingredients;
+        this.ingredients = NonNullList.withSize(2, Ingredient.EMPTY);
+        for (int i = 0; i < Math.min(this.ingredients.size(), ingredients.size()); i++)
+            this.ingredients.set(i, ingredients.get(i));
         this.experience = experience;
     }
 
