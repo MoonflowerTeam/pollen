@@ -20,7 +20,6 @@
     "FolderRepositorySourceAccessor",
     "ForgeHooksMixin",
     "ForgeInternalHandlerMixin",
-    "HandshakeHandlerMixin",
     "LivingEntityMixin",
     "PackRepositoryAccessor",
     "PackRepositoryMixin",
