@@ -57,7 +57,6 @@ public class PollenFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        Pollen.init();
         PollinatedResourceConditionImpl.init();
 
         ConfigTracker.INSTANCE.loadConfigs(PollinatedConfigType.COMMON, FabricLoader.getInstance().getConfigDir());

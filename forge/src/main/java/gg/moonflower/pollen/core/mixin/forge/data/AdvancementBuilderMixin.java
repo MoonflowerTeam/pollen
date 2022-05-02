@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.core.mixin.data;
+package gg.moonflower.pollen.core.mixin.forge.data;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -9,6 +9,7 @@ import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.advancements.critereon.DeserializationContext;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.crafting.conditions.ICondition;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
@@ -27,8 +28,8 @@ public class AdvancementBuilderMixin {
         throw new AssertionError();
     }
 
-    @Inject(method = "fromJson", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
-    private static void modifyBuilder(JsonObject json, DeserializationContext context, CallbackInfoReturnable<Advancement.Builder> info, ResourceLocation resourcelocation, DisplayInfo displayinfo, AdvancementRewards rewards, Map<String, Criterion> map, JsonArray jsonarray, String[][] astring) {
+    @Inject(method = "fromJson(Lcom/google/gson/JsonObject;Lnet/minecraft/advancements/critereon/DeserializationContext;Lnet/minecraftforge/common/crafting/conditions/ICondition$IContext;)Lnet/minecraft/advancements/Advancement$Builder;", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true, remap = false)
+    private static void modifyBuilder(JsonObject json, DeserializationContext context, ICondition.IContext forgeContext, CallbackInfoReturnable<Advancement.Builder> info, ResourceLocation resourcelocation, DisplayInfo displayinfo, AdvancementRewards rewards, Map<String, Criterion> map, JsonArray jsonarray, String[][] astring) {
         Advancement.Builder builder = invokeInit(resourcelocation, displayinfo, rewards, map, astring);
         AdvancementConstructingEvent.EVENT.invoker().modifyAdvancement(builder, context);
         info.setReturnValue(builder);

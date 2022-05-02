@@ -1,8 +1,10 @@
 package gg.moonflower.pollen.api.registry.forge;
 
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.Keyable;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.platform.forge.ForgePlatform;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
@@ -28,20 +30,22 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @ApiStatus.Internal
-public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> extends PollinatedRegistry<T> {
+public final class PollinatedRegistryImpl<T> extends PollinatedRegistry<T> {
 
     private final DeferredRegister<T> registry;
-    private final ForgeRegistryCodec<T> codec;
+    private final Codec<T> codec;
+    private final Keyable keyable;
     private final ResourceKey<? extends Registry<T>> resourceKey;
     private final Function<ResourceLocation, T> valueGetter;
     private final Function<Integer, T> valueIdGetter;
     private final Function<T, ResourceLocation> keyGetter;
     private final Function<T, Integer> keyIdGetter;
 
-    private PollinatedRegistryImpl(DeferredRegister<T> deferredRegister, ForgeRegistryCodec<T> codec, ResourceKey<? extends Registry<T>> resourceKey, String modId) {
+    private PollinatedRegistryImpl(DeferredRegister<T> deferredRegister, Codec<T> codec, Keyable keyable, ResourceKey<? extends Registry<T>> resourceKey, String modId) {
         super(modId);
         this.registry = deferredRegister;
         this.codec = codec;
+        this.keyable = keyable;
         this.resourceKey = resourceKey;
         this.valueGetter = key -> this.registry.getEntries().stream().filter(object -> object.isPresent() && object.getId().equals(key)).map(RegistryObject::get).findFirst().orElse(null);
         this.valueIdGetter = key -> {
@@ -53,25 +57,20 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
         };
     }
 
-    private PollinatedRegistryImpl(IForgeRegistry<T> registry, String modId) {
+    private PollinatedRegistryImpl(Registry<T> registry, String modId) {
         super(modId);
-        this.registry = DeferredRegister.create(registry, modId);
-        this.codec = ForgeRegistryCodec.create(registry);
-        this.resourceKey = ResourceKey.createRegistryKey(registry.getRegistryName());
-        this.valueGetter = registry::getValue;
-        this.valueIdGetter = registry instanceof ForgeRegistry ? id -> ((ForgeRegistry<T>) registry).getValue(id) : id -> {
-            throw new IllegalStateException("Registry " + registry + " cannot use IDs");
-        };
+        this.registry = DeferredRegister.create(registry.key(), modId);
+        this.codec = registry.byNameCodec();
+        this.keyable = registry;
+        this.resourceKey = registry.key();
+        this.valueGetter = registry::get;
+        this.valueIdGetter = registry::byId;
         this.keyGetter = registry::getKey;
-        this.keyIdGetter = registry instanceof ForgeRegistry ? value -> ((ForgeRegistry<T>) registry).getID(value) : value -> {
-            throw new IllegalStateException("Registry " + registry + " cannot use IDs");
-        };
+        this.keyIdGetter = registry::getId;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> PollinatedRegistry<T> create(Registry<T> registry, String modId) {
-        IForgeRegistry forgeRegistry = RegistryManager.ACTIVE.getRegistry((ResourceKey) registry.key());
-        return forgeRegistry != null ? new PollinatedRegistryImpl(forgeRegistry, modId) : createVanilla(registry, modId);
+        return new PollinatedRegistryImpl<>(registry, modId);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -79,7 +78,7 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
         if (registry instanceof PollinatedRegistry.VanillaImpl)
             return createVanilla(((PollinatedRegistry.VanillaImpl<T>) registry).getRegistry(), modId);
         PollinatedRegistryImpl<?> impl = (PollinatedRegistryImpl<?>) registry;
-        return new PollinatedRegistryImpl(impl.registry, impl.codec, impl.resourceKey, modId);
+        return new PollinatedRegistryImpl(impl.registry, impl.codec, impl.keyable, impl.resourceKey, modId);
     }
 
     @Override
@@ -142,7 +141,7 @@ public final class PollinatedRegistryImpl<T extends IForgeRegistryEntry<T>> exte
 
     @Override
     public <T1> Stream<T1> keys(DynamicOps<T1> ops) {
-        return this.codec.keys(ops);
+        return this.keyable.keys(ops);
     }
 
     @NotNull

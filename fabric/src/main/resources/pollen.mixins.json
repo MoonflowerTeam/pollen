@@ -49,6 +49,7 @@
     "ServerLevelMixin",
     "ServerPlayerMixin",
     "WoodTypeAccessor",
+    "data.AdvancementBuilderMixin",
     "data.TagsProviderMixin",
     "loot.LootTableAccessor"
   ],

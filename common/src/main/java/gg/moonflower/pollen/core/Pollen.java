@@ -50,12 +50,6 @@ public class Pollen {
             LogManager.getLogger().info("Pollen tests enabled");
     }
 
-    public static void init() {
-        PollenSuggestionProviders.init();
-        if (TESTS_ENABLED)
-            PollenTest.init();
-    }
-
     private static void onClient() {
         VanillaModelMapping.load(); // Loads the class to prevent lag spikes in-game
         SyncedDataManager.initClient();
@@ -75,6 +69,7 @@ public class Pollen {
     }
 
     private static void onCommon() {
+        PollenSuggestionProviders.init();
         SyncedDataManager.init();
         ResourceModifierManager.init();
         ResourceConditionRegistry.register(ConfigResourceCondition.NAME, new ConfigResourceCondition());

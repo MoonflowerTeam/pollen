@@ -39,7 +39,6 @@
     "ServerResourcesMixin",
     "SimpleReloadableResourceManagerMixin",
     "data.AdvancementBuilderAccessor",
-    "data.AdvancementBuilderMixin",
     "data.AdvancementRewardsAccessor",
     "data.TagBuilderMixin",
     "data.TagsProviderAccessor",
