@@ -13,7 +13,10 @@ import java.util.function.Function;
  * @author Ocelot
  * @since 1.0.0
  */
-public class ConfigManager {
+public final class ConfigManager {
+
+    private ConfigManager() {
+    }
 
     /**
      * Registers a new config for the specified mod for the specified type and uses the default <code>modid-type.toml</code> filename.

@@ -16,9 +16,12 @@
   "mixins": [
     "AxeItemMixin",
     "EntityMixin",
+    "FireBlockAccessor",
     "FluidMixin",
     "FolderRepositorySourceAccessor",
+    "ForgeInternalHandlerMixin",
     "HandshakeHandlerMixin",
+    "ItemMixin",
     "LivingEntityMixin",
     "PackRepositoryAccessor",
     "PackRepositoryMixin",

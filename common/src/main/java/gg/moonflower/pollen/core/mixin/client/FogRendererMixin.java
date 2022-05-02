@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.core.mixin.client;
 
-import gg.moonflower.pollen.api.event.events.client.render.FogEvents;
 import gg.moonflower.pollen.api.fluid.PollinatedFluid;
 import net.minecraft.Util;
 import net.minecraft.client.Camera;

@@ -1,18 +1,12 @@
 package gg.moonflower.pollen.api.registry.resource;
 
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-
-public abstract class SimplePollinatedPreparableReloadListener<T> implements PollinatedPreparableReloadListener {
-
-    public final CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager, ProfilerFiller profilerFiller, ProfilerFiller profilerFiller2, Executor executor, Executor executor2) {
-        return CompletableFuture.supplyAsync(() -> this.prepare(resourceManager, profilerFiller), executor).thenCompose(preparationBarrier::wait).thenAcceptAsync((object) -> this.apply(object, resourceManager, profilerFiller2), executor2);
-    }
-
-    protected abstract T prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller);
-
-    protected abstract void apply(T object, ResourceManager resourceManager, ProfilerFiller profilerFiller);
+// TODO remove in 2.0.0
+/**
+ * @deprecated This is not necessary. Extending {@link SimplePreparableReloadListener} and implementing {@link PollinatedPreparableReloadListener} is enough.
+ * @param <T> The type of object to pass between threads
+ */
+@Deprecated
+public abstract class SimplePollinatedPreparableReloadListener<T> extends SimplePreparableReloadListener<T> implements PollinatedPreparableReloadListener {
 }

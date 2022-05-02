@@ -13,9 +13,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
+// TODO in 2.0.0 Redesign this to be more modular. Currently, in order to extend something else, you have to copy the base implementation of this into the entity which is pretty bad
+
 /**
  * <p>Defines an entity as having animations states for animating {@link AnimatedModel}.</p>
- * <p>Structure based on <a href=https://github.com/team-abnormals/abnormals-core/blob/main/src/main/java/com/minecraftabnormals/abnormals_core/core/endimator/entity/IEndimatedEntity.java>IEndimatedEntity</a></p>
+ * <p>Structure based on <a href="https://github.com/team-abnormals/blueprint/blob/1.18.x/src/main/java/com/teamabnormals/blueprint/core/endimator/Endimatable.java">Endimatable</a></p>
  *
  * @author Ocelot
  * @since 1.0.0
@@ -30,20 +32,32 @@ public interface AnimatedEntity extends AnimationEffectSource {
      * @param <T>            The type of entity to set the animation state for
      */
     static <T extends Entity & AnimatedEntity> void setAnimation(T entity, AnimationState animationState) {
+        setAnimation(entity, animationState, 0);
+    }
+
+    /**
+     * Sets the animation for the specified entity on the server side, and syncs with clients.
+     *
+     * @param entity         The entity to sync the animation of
+     * @param animationState The new animation state
+     * @param duration       The amount of time to transition to the next animation
+     * @param <T>            The type of entity to set the animation state for
+     */
+    static <T extends Entity & AnimatedEntity> void setAnimation(T entity, AnimationState animationState, int duration) {
         Level level = entity.level;
         if (level.isClientSide())
             return;
         AnimationState before = entity.getAnimationState();
-        entity.setAnimationState(animationState);
+        entity.setAnimationState(animationState, duration);
         if (before != animationState)
-            PollenMessages.PLAY.sendToTracking(entity, new ClientboundSyncAnimationPacket(entity));
+            PollenMessages.PLAY.sendToTracking(entity, new ClientboundSyncAnimationPacket(entity, duration));
     }
 
     /**
      * Increments the animation tick and automatically handles starting and stopping animations.
      */
     default void animationTick() {
-        if (this.isNoAnimationPlaying())
+        if (!this.isAnimationTransitioning() && this.isNoAnimationPlaying())
             return;
 
         AnimationState animationState = this.getAnimationState();
@@ -52,8 +66,13 @@ public interface AnimatedEntity extends AnimationEffectSource {
             this.onAnimationStart(animationState);
 
         this.setAnimationTick(animationTick + 1);
-        if (animationTick >= animationState.getTickDuration() - 1) {
-            this.onAnimationStop(animationState);
+        int animationTransitionTick = this.getAnimationTransitionTick();
+        if (this.isAnimationTransitioning()) {
+            this.setAnimationTransitionTick(animationTransitionTick + 1);
+            if (!this.isAnimationTransitioning()) {
+                this.setAnimationState(this.getTransitionAnimationState(), 0);
+            }
+        } else if (animationTick >= animationState.getTickDuration() - 1) { // only stop animation if not transitioning
             this.resetAnimationState();
         }
     }
@@ -81,7 +100,16 @@ public interface AnimatedEntity extends AnimationEffectSource {
      * Called to reset the animation state back to the default. By default, this will set the state to {@link AnimationState#EMPTY}.
      */
     default void resetAnimationState() {
-        this.setAnimationState(AnimationState.EMPTY);
+        this.resetAnimationState(0);
+    }
+
+    /**
+     * Called to reset the animation state back to the default. By default, this will set the state to {@link AnimationState#EMPTY}.
+     *
+     * @param duration The amount of time to transition to the new state over
+     */
+    default void resetAnimationState(int duration) {
+        this.setAnimationState(AnimationState.EMPTY, duration);
     }
 
     /**
@@ -95,6 +123,7 @@ public interface AnimatedEntity extends AnimationEffectSource {
     default void handleSoundEffect(AnimationData animation, AnimationData.SoundEffect soundEffect) {
         if (!(this instanceof Entity))
             return;
+
         Entity entity = (Entity) this;
         ResourceLocation sound = ResourceLocation.tryParse(soundEffect.getEffect());
         if (sound != null) {
@@ -115,9 +144,7 @@ public interface AnimatedEntity extends AnimationEffectSource {
     @Environment(EnvType.CLIENT)
     @Override
     default void handleParticleEffect(AnimationData animation, AnimationData.ParticleEffect particleEffect, double xOffset, double yOffset, double zOffset) {
-        if (!(this instanceof Entity))
-            return;
-        Entity entity = (Entity) this;
+        // TODO implement
     }
 
     /**
@@ -137,6 +164,16 @@ public interface AnimatedEntity extends AnimationEffectSource {
     int getAnimationTick();
 
     /**
+     * @return The current tick of animation transition
+     */
+    int getAnimationTransitionTick();
+
+    /**
+     * @return The length of animation transition
+     */
+    int getAnimationTransitionLength();
+
+    /**
      * Calculates the current animation tick time.
      *
      * @param partialTicks The percentage from last tick to this tick
@@ -147,6 +184,16 @@ public interface AnimatedEntity extends AnimationEffectSource {
     }
 
     /**
+     * Calculates the current animation transition tick time.
+     *
+     * @param partialTicks The percentage from last tick to this tick
+     * @return The interpolated tick
+     */
+    default float getRenderAnimationTransitionTick(float partialTicks) {
+        return this.getAnimationTransitionTick() + partialTicks;
+    }
+
+    /**
      * Sets the current tick of animation.
      *
      * @param tick The new animation tick
@@ -154,9 +201,28 @@ public interface AnimatedEntity extends AnimationEffectSource {
     void setAnimationTick(int tick);
 
     /**
+     * Sets the current tick of animation transition.
+     *
+     * @param transitionTick The new animation transition tick
+     */
+    void setAnimationTransitionTick(int transitionTick);
+
+    /**
+     * Sets the max tick of animation transition.
+     *
+     * @param transitionLength The new animation transition length to tick to
+     */
+    void setAnimationTransitionLength(int transitionLength);
+
+    /**
      * @return The current state of animation
      */
     AnimationState getAnimationState();
+
+    /**
+     * @return The next state of animation
+     */
+    AnimationState getTransitionAnimationState();
 
     /**
      * @return The animations to use when no other animations are playing
@@ -173,6 +239,29 @@ public interface AnimatedEntity extends AnimationEffectSource {
     void setAnimationState(AnimationState state);
 
     /**
+     * Sets the state of animation and resets the animation ticks.
+     *
+     * @param state The new animation state
+     */
+    void setTransitionAnimationState(AnimationState state);
+
+    /**
+     * Sets the state of animation and resets the animation ticks.
+     *
+     * @param state    The new animation state
+     * @param duration The amount of ticks to transition to the new state
+     */
+    default void setAnimationState(AnimationState state, int duration) {
+        this.setTransitionAnimationState(state);
+        if (duration <= 0) {
+            this.setAnimationState(state);
+        } else {
+            this.setAnimationTransitionLength(duration);
+        }
+        this.setAnimationTransitionTick(0);
+    }
+
+    /**
      * @return The handler for animation effects on this entity or <code>null</code> to ignore effects
      */
     @Nullable
@@ -183,6 +272,13 @@ public interface AnimatedEntity extends AnimationEffectSource {
      */
     default boolean isNoAnimationPlaying() {
         return this.getAnimationState() == AnimationState.EMPTY;
+    }
+
+    /**
+     * @return Whether the current animation is transitioning to a new animation
+     */
+    default boolean isAnimationTransitioning() {
+        return this.getAnimationTransitionTick() < this.getAnimationTransitionLength();
     }
 
     /**

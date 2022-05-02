@@ -7,7 +7,14 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.crafting.conditions.*;
+import net.minecraftforge.common.crafting.conditions.AndCondition;
+import net.minecraftforge.common.crafting.conditions.FalseCondition;
+import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraftforge.common.crafting.conditions.ItemExistsCondition;
+import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
+import net.minecraftforge.common.crafting.conditions.NotCondition;
+import net.minecraftforge.common.crafting.conditions.OrCondition;
+import net.minecraftforge.common.crafting.conditions.TrueCondition;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Arrays;

@@ -13,12 +13,16 @@ import net.minecraft.world.level.Level;
 public abstract class AnimatedPathfinder extends PathfinderMob implements AnimatedEntity {
     private final AnimationEffectHandler effectHandler;
     private AnimationState animationState;
+    private AnimationState transitionAnimationState;
     private int animationTick;
+    private int animationTransitionTick;
+    private int animationTransitionLength;
 
     protected AnimatedPathfinder(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
         this.effectHandler = new AnimationEffectHandler(this);
         this.animationState = AnimationState.EMPTY;
+        this.transitionAnimationState = AnimationState.EMPTY;
     }
 
     @Override
@@ -32,8 +36,33 @@ public abstract class AnimatedPathfinder extends PathfinderMob implements Animat
     }
 
     @Override
+    public int getAnimationTransitionTick() {
+        return animationTransitionTick;
+    }
+
+    @Override
+    public void setAnimationTransitionTick(int animationTransitionTick) {
+        this.animationTransitionTick = animationTransitionTick;
+    }
+
+    @Override
+    public int getAnimationTransitionLength() {
+        return animationTransitionLength;
+    }
+
+    @Override
+    public void setAnimationTransitionLength(int animationTransitionLength) {
+        this.animationTransitionLength = animationTransitionLength;
+    }
+
+    @Override
     public AnimationState getAnimationState() {
         return animationState;
+    }
+
+    @Override
+    public AnimationState getTransitionAnimationState() {
+        return transitionAnimationState;
     }
 
     @Override
@@ -41,6 +70,12 @@ public abstract class AnimatedPathfinder extends PathfinderMob implements Animat
         this.onAnimationStop(this.animationState);
         this.animationState = state;
         this.setAnimationTick(0);
+        this.setAnimationTransitionLength(0);
+    }
+
+    @Override
+    public void setTransitionAnimationState(AnimationState state) {
+        this.transitionAnimationState = state;
     }
 
     @Override

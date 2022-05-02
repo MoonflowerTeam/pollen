@@ -1,7 +1,7 @@
 modLoader = "javafml"
 loaderVersion = "[40,)"
 issueTrackerURL = "https://github.com/MoonflowerTeam/${repo}/issues"
-license = "GPLv3"
+license = "LGPLv3"
 
 [[mods]]
 modId = "${id}"

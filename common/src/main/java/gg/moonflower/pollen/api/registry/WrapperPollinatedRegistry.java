@@ -48,10 +48,21 @@ public class WrapperPollinatedRegistry<T> extends PollinatedRegistry<T> {
         return this.parent.getKey(value);
     }
 
+    @Override
+    public int getId(@Nullable T value) {
+        return this.parent.getId(value);
+    }
+
     @Nullable
     @Override
     public T get(@Nullable ResourceLocation name) {
         return this.parent.get(name);
+    }
+
+    @Nullable
+    @Override
+    public T byId(int id) {
+        return this.parent.byId(id);
     }
 
     @Override

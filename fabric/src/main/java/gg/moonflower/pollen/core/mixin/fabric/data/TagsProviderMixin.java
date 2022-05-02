@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
-import java.util.function.Function;
 
 @Mixin(TagsProvider.class)
 public class TagsProviderMixin {

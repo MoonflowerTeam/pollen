@@ -36,12 +36,14 @@ public class AnimatedGeometryEntityModel<T extends Entity> extends EntityModel<T
     private final ResourceLocation model;
     private ResourceLocation texture;
     private ResourceLocation[] animations;
+    private float[] animationWeights;
     private MolangVariableProvider variableProvider;
 
     public AnimatedGeometryEntityModel(ResourceLocation model) {
         this.model = model;
         this.texture = null;
         this.animations = new ResourceLocation[0];
+        this.animationWeights = new float[0];
         this.variableProvider = null;
     }
 
@@ -153,6 +155,10 @@ public class AnimatedGeometryEntityModel<T extends Entity> extends EntityModel<T
         GeometryModel model = this.getModel();
         model.resetTransformation();
         if (model instanceof AnimatedModel && this.animations.length > 0) {
+            AnimationData[] animationData = this.getAnimations();
+            if (animationData.length == 0)
+                return;
+
             ProfilerFiller profiler = Minecraft.getInstance().getProfiler();
             profiler.push("createMolangRuntime");
             MolangRuntime.Builder builder = this.createRuntime(entity, limbSwing, limbSwingAmount, netHeadYaw, headPitch);
@@ -161,7 +167,7 @@ public class AnimatedGeometryEntityModel<T extends Entity> extends EntityModel<T
             if (this.variableProvider != null)
                 builder.setVariables(this.variableProvider);
             profiler.popPush("applyMolangAnimation");
-            ((AnimatedModel) model).applyAnimations(animationTicks / 20F, builder, this.getAnimations());
+            ((AnimatedModel) model).applyAnimations(animationTicks / 20F, builder, this.animationWeights, animationData);
             profiler.pop();
         }
     }
@@ -223,6 +229,15 @@ public class AnimatedGeometryEntityModel<T extends Entity> extends EntityModel<T
      */
     public void setAnimations(ResourceLocation... animations) {
         this.animations = animations;
+    }
+
+    /**
+     * Sets the weights to use for animation.
+     *
+     * @param animationWeights The new weights
+     */
+    public void setAnimationWeights(float[] animationWeights) {
+        this.animationWeights = animationWeights;
     }
 
     /**

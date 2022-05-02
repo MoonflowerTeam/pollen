@@ -13,7 +13,11 @@ import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Wraps {@link TagsProvider} to enable optional tags while still extending {@link FluidTagsProvider}.

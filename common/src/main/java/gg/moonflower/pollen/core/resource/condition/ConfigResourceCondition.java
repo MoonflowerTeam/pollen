@@ -1,6 +1,10 @@
 package gg.moonflower.pollen.core.resource.condition;
 
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSyntaxException;
 import gg.moonflower.pollen.api.config.ConfigManager;
 import gg.moonflower.pollen.api.config.PollinatedConfigBuilder;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;

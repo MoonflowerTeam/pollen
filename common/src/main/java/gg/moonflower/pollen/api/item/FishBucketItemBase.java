@@ -27,8 +27,9 @@ import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
+
+// TODO Rename in 2.0.0 to PollinatedFishBucketItem
 
 /**
  * A fish bucket that allows all entity types.
@@ -52,16 +53,8 @@ public class FishBucketItemBase extends BucketItemBase {
 
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
-        if (this.allowdedIn(group)) {
-            if (items.stream().anyMatch(stack -> stack.getItem() instanceof BucketItem)) {
-                Optional<ItemStack> optional = items.stream().filter(stack -> stack.getItem() instanceof BucketItem && "minecraft".equals(Registry.ITEM.getKey(stack.getItem()).getNamespace())).reduce((a, b) -> b);
-                if (optional.isPresent() && items.contains(optional.get())) {
-                    items.add(items.indexOf(optional.get()) + 1, new ItemStack(this));
-                    return;
-                }
-            }
-            items.add(new ItemStack(this));
-        }
+        if (this.allowdedIn(group))
+            TabFiller.insert(new ItemStack(this), false, items, stack -> stack.getItem() instanceof BucketItem && "minecraft".equals(Registry.ITEM.getKey(stack.getItem()).getNamespace()));
     }
 
     @Override

@@ -16,7 +16,15 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
-import static org.lwjgl.opengl.GL11C.*;
+import static org.lwjgl.opengl.GL11C.GL_RGBA;
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_HEIGHT;
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_WIDTH;
+import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11C.glBindTexture;
+import static org.lwjgl.opengl.GL11C.glGetTexImage;
+import static org.lwjgl.opengl.GL11C.glGetTexLevelParameteri;
+import static org.lwjgl.opengl.GL11C.glGetTexParameteri;
 import static org.lwjgl.opengl.GL12C.GL_TEXTURE_BASE_LEVEL;
 import static org.lwjgl.opengl.GL12C.GL_TEXTURE_MAX_LEVEL;
 import static org.lwjgl.stb.STBImageWrite.stbi_write_png;

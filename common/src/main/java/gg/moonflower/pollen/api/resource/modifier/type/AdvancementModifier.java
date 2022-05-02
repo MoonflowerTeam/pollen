@@ -11,14 +11,26 @@ import gg.moonflower.pollen.api.resource.modifier.ResourceModifierType;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.core.mixin.data.AdvancementBuilderAccessor;
 import gg.moonflower.pollen.core.mixin.data.AdvancementRewardsAccessor;
-import net.minecraft.advancements.*;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.advancements.RequirementsStrategy;
 import net.minecraft.advancements.critereon.DeserializationContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.util.GsonHelper;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**

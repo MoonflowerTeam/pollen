@@ -1,7 +1,6 @@
 package gg.moonflower.pollen.core.test;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import gg.moonflower.pollen.api.event.events.client.render.FogEvents;
 import gg.moonflower.pollen.api.fluid.PollinatedFluid;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.core.PollenTest;
@@ -32,7 +31,6 @@ import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL11;
 
 import java.util.Optional;
 import java.util.Random;
