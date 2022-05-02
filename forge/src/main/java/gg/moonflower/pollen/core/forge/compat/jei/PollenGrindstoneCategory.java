@@ -15,10 +15,12 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.Blocks;
@@ -74,11 +76,10 @@ public class PollenGrindstoneCategory implements IRecipeCategory<PollenGrindston
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, PollenGrindstoneRecipe recipe, IFocusGroup focus) {
-        IRecipeSlotBuilder leftInputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 18, 3).addIngredients(recipe.getIngredients().get(0)).setSlotName(this.topSlotName);
-        IRecipeSlotBuilder rightInputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 18, 24).addIngredients(recipe.getIngredients().get(1)).setSlotName(this.bottomSlotName);
-        IRecipeSlotBuilder outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 98, 28).addItemStack(recipe.getResultItem());
-
-        builder.createFocusLink(leftInputSlot, rightInputSlot, outputSlot);
+        NonNullList<Ingredient> ingredients = recipe.getIngredients();
+        builder.addSlot(RecipeIngredientRole.INPUT, 18, 3).addIngredients(ingredients.get(0)).setSlotName(this.topSlotName);
+        builder.addSlot(RecipeIngredientRole.INPUT, 18, 24).addIngredients(ingredients.get(1)).setSlotName(this.bottomSlotName);
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 98, 28).addItemStack(recipe.getResultItem());
     }
 
     private static int getExperienceFromItem(ItemStack stack) {
