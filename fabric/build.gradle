@@ -66,6 +66,8 @@ dependencies {
     modCompileOnly "curse.maven:sodium-394468:3488820"
     modCompileOnly "curse.maven:irisshaders-455508:3596178"
 
+    modRuntimeOnly "me.djtheredstoner:DevAuth-fabric:${rootProject.devauth_version}"
+
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }

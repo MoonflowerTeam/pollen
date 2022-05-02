@@ -64,7 +64,8 @@ dependencies {
     api "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
     shadowCommon "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
 
-    modRuntimeOnly "curse.maven:configured-457570:3546348"
+    modRuntimeOnly "me.djtheredstoner:DevAuth-forge-latest:${rootProject.devauth_version}"
+    modRuntimeOnly "curse.maven:catalogue-459701:3529457"
     modRuntimeOnly "curse.maven:catalogue-459701:3529457"
 
     modCompileOnly "mezz.jei:jei-${rootProject.minecraft_version}:${rootProject.jei_version}:api"
