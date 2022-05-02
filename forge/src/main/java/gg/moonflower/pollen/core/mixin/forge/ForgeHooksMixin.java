@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 @Mixin(ForgeHooks.class)
 public class ForgeHooksMixin {
 
-    @Inject(method = "getBurnTime(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/crafting/RecipeType;)I", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true, remap = false)
+    @Inject(method = "getBurnTime(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/crafting/RecipeType;)I", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
     private static void modifyBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType, CallbackInfoReturnable<Integer> cir, Item item, int ret) {
         if (ret == -1 && FurnaceFuelRegistryImpl.hasBurnTime(item))
             cir.setReturnValue(FurnaceFuelRegistryImpl.getBurnTime(item));
