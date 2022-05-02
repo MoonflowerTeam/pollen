@@ -17,7 +17,7 @@
     "sources": "https://github.com/MoonflowerTeam/${repo}/"
   },
   "icon": "icon.png",
-  "license": "GPLv3",
+  "license": "LGPLv3",
   "environment": "*",
   "mixins": [
     "${id}-common.mixins.json",
