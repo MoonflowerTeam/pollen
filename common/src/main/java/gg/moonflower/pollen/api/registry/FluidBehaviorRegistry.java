@@ -1,7 +1,6 @@
 package gg.moonflower.pollen.api.registry;
 
 import gg.moonflower.pollen.api.fluid.PollenFluidBehavior;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.vehicle.Boat;
