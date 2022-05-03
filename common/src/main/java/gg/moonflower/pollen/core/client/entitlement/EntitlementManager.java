@@ -5,8 +5,10 @@ import com.google.gson.JsonObject;
 import com.ibm.icu.impl.Pair;
 import com.mojang.authlib.yggdrasil.ProfileNotFoundException;
 import gg.moonflower.pollen.api.event.events.client.render.AddRenderLayersEvent;
+import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
 import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvents;
+import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.resource.PollinatedPreparableReloadListener;
 import gg.moonflower.pollen.api.registry.resource.ResourceRegistry;
 import gg.moonflower.pollen.core.Pollen;
@@ -58,8 +60,8 @@ public final class EntitlementManager {
     private static boolean loaded;
 
     static {
-        ServerPlayerTrackingEvents.STOP_TRACKING_ENTITY.register((player, entity) -> {
-            if (entity instanceof Player)
+        EntityEvents.LEAVE.register((entity, level) -> {
+            if (level.isClientSide() && entity instanceof Player && Minecraft.getInstance().player != entity)
                 PLAYER_ENTITLEMENTS.remove(entity.getUUID());
         });
         ClientNetworkEvents.LOGOUT.register((controller, player, connection) -> PLAYER_ENTITLEMENTS.keySet().removeIf(id -> player != null && !player.getUUID().equals(id))); // Clear other player entitlements
