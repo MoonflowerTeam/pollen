@@ -26,7 +26,9 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction.*;
+import static com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction.ADD;
+import static com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction.REMOVE;
+import static com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction.REPLACE;
 
 public class FabricConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfig> {
 
