@@ -22,12 +22,12 @@ public class LootPoolMixin implements LootPoolExtensions {
     private List<LootItemCondition> field_186454_b;
 
     @Override
-    public List<LootPoolEntryContainer> getEntries() {
+    public List<LootPoolEntryContainer> pollen_getEntries() {
         return this.field_186453_a;
     }
 
     @Override
-    public List<LootItemCondition> getConditions() {
+    public List<LootItemCondition> pollen_getConditions() {
         return this.field_186454_b;
     }
 }
