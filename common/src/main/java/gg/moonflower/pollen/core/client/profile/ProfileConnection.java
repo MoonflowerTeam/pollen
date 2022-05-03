@@ -158,7 +158,7 @@ public class ProfileConnection {
             String url = this.apiUrl + "/auth/minecraft";
             byte[] data = new byte[20];
             RANDOM.nextBytes(data);
-            String secret = DigestUtils.sha256Hex(url + new String(data));
+            String secret = DigestUtils.sha1Hex(this.apiUrl + new String(data));
             User user = Minecraft.getInstance().getUser();
 
             try {
