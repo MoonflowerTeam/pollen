@@ -12,11 +12,11 @@ import java.util.List;
 public class LootTableConstructingEventImpl {
 
     public static List<LootPoolEntryContainer> getEntries(LootPool lootPool) {
-        return ((LootPoolExtensions) lootPool).getEntries();
+        return ((LootPoolExtensions) lootPool).pollen_getEntries();
     }
 
     public static List<LootItemCondition> getConditions(LootPool lootPool) {
-        return ((LootPoolExtensions) lootPool).getConditions();
+        return ((LootPoolExtensions) lootPool).pollen_getConditions();
     }
 
     public static List<LootPool> getPools(LootTable lootTable) {
