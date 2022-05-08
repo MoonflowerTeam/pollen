@@ -3,6 +3,7 @@ package gg.moonflower.pollen.pinwheel.core.client.animation;
 import gg.moonflower.pollen.pinwheel.api.common.animation.AnimationData;
 import gg.moonflower.pollen.pinwheel.api.common.animation.AnimationParser;
 import gg.moonflower.pollen.pinwheel.api.common.util.BackgroundLoader;
+import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -35,17 +36,21 @@ public class LocalAnimationLoader implements BackgroundLoader<Map<ResourceLocati
         return CompletableFuture.supplyAsync(() ->
         {
             Map<ResourceLocation, AnimationData> animationData = new HashMap<>();
-            for (ResourceLocation animationLocation : resourceManager.listResources(this.folder, name -> name.endsWith(".json"))) {
-                try (Resource resource = resourceManager.getResource(animationLocation)) {
-                    AnimationData[] animations = AnimationParser.parse(new InputStreamReader(resource.getInputStream()));
-                    for (AnimationData animation : animations) {
-                        ResourceLocation id = new ResourceLocation(animationLocation.getNamespace(), animation.getName());
-                        if (animationData.put(id, animation) != null)
-                            LOGGER.warn("Duplicate animation: " + id);
+            try {
+                for (ResourceLocation animationLocation : resourceManager.listResources(this.folder, name -> name.endsWith(".json"))) {
+                    try (Resource resource = resourceManager.getResource(animationLocation)) {
+                        AnimationData[] animations = AnimationParser.parse(new InputStreamReader(resource.getInputStream()));
+                        for (AnimationData animation : animations) {
+                            ResourceLocation id = new ResourceLocation(animationLocation.getNamespace(), animation.getName());
+                            if (animationData.put(id, animation) != null)
+                                LOGGER.warn("Duplicate animation: " + id);
+                        }
+                    } catch (Exception e) {
+                        LOGGER.error("Failed to load animation: " + animationLocation.getNamespace() + ":" + animationLocation.getPath().substring(this.folder.length(), animationLocation.getPath().length() - 5), e);
                     }
-                } catch (Exception e) {
-                    LOGGER.error("Failed to load animation: " + animationLocation.getNamespace() + ":" + animationLocation.getPath().substring(this.folder.length(), animationLocation.getPath().length() - 5), e);
                 }
+            } catch (ResourceLocationException e) {
+                LOGGER.error("Failed to load animations from: " + this.folder, e);
             }
             return animationData;
         }, backgroundExecutor);
