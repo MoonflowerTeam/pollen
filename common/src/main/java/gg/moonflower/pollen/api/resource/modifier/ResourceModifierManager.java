@@ -118,7 +118,7 @@ public final class ResourceModifierManager {
     @Nullable
     @ApiStatus.Internal
     public static CompletableFuture<Void> getServerCompleteFuture() {
-        return serverReloader.getCompleteFuture();
+        return serverReloader != null ? serverReloader.getCompleteFuture() : null;
     }
 
     @ApiStatus.Internal
