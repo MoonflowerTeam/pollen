@@ -173,7 +173,7 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
      * @param <R>    The registry type.
      * @return The registered object in a {@link Supplier}.
      */
-    public abstract <R extends T> Supplier<R> register(String id, Supplier<R> object);
+    public abstract <R extends T> RegistryHolder<R> register(String id, Supplier<R> object);
 
     /**
      * Registers an object or a dummy object based on a condition.
@@ -185,9 +185,14 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
      * @param <R>      The registry type.
      * @return The registered object in a {@link Supplier}
      */
-    public <R extends T> Supplier<R> registerConditional(String id, Supplier<R> dummy, Supplier<R> object, boolean register) {
+    public <R extends T> RegistryHolder<R> registerConditional(String id, Supplier<R> dummy, Supplier<R> object, boolean register) {
         return this.register(id, register ? object : dummy);
     }
+
+    /**
+     * @return The key for the underlying registry
+     */
+    public abstract ResourceKey<? extends Registry<T>> key();
 
     /**
      * Retrieves the key for the specified value.
@@ -296,9 +301,14 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
         }
 
         @Override
-        public <R extends T> Supplier<R> register(String id, Supplier<R> object) {
-            R registered = Registry.register(this.registry, new ResourceLocation(this.modId, id), object.get());
-            return () -> registered;
+        public <R extends T> RegistryHolder<R> register(String id, Supplier<R> object) {
+            ResourceLocation name = new ResourceLocation(this.modId, id);
+            return RegistryHolder.create(this, name, Registry.register(this.registry, name, object.get()));
+        }
+
+        @Override
+        public ResourceKey<? extends Registry<T>> key() {
+            return this.registry.key();
         }
 
         @Nullable

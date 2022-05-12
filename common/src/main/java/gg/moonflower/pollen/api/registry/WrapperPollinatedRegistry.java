@@ -4,6 +4,8 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import gg.moonflower.pollen.api.platform.Platform;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,12 +33,17 @@ public class WrapperPollinatedRegistry<T> extends PollinatedRegistry<T> {
     }
 
     @Override
-    public <R extends T> Supplier<R> register(String id, Supplier<R> object) {
+    public <R extends T> RegistryHolder<R> register(String id, Supplier<R> object) {
         return this.parent.register(id, object);
     }
 
     @Override
-    public <R extends T> Supplier<R> registerConditional(String id, Supplier<R> dummy, Supplier<R> object, boolean register) {
+    public ResourceKey<? extends Registry<T>> key() {
+        return this.parent.key();
+    }
+
+    @Override
+    public <R extends T> RegistryHolder<R> registerConditional(String id, Supplier<R> dummy, Supplier<R> object, boolean register) {
         return this.parent.registerConditional(id, dummy, object, register);
     }
 
