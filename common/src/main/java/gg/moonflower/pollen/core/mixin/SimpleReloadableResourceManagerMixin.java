@@ -1,23 +1,13 @@
 package gg.moonflower.pollen.core.mixin;
 
-import gg.moonflower.pollen.api.registry.resource.ReloadStartListener;
 import gg.moonflower.pollen.core.extensions.InjectableResourceManager;
-import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.server.packs.resources.ReloadInstance;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.Unit;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 
 @Mixin(value = ReloadableResourceManager.class)
 public class SimpleReloadableResourceManagerMixin implements InjectableResourceManager {
@@ -29,13 +19,5 @@ public class SimpleReloadableResourceManagerMixin implements InjectableResourceM
     @Override
     public void pollen_registerReloadListenerFirst(PreparableReloadListener preparableReloadListener) {
         this.listeners.add(0, preparableReloadListener);
-    }
-
-    @Inject(method = "createReload", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/resources/SimpleReloadInstance;create(Lnet/minecraft/server/packs/resources/ResourceManager;Ljava/util/List;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;Z)Lnet/minecraft/server/packs/resources/ReloadInstance;", shift = At.Shift.BEFORE))
-    public void onReload(Executor backgroundExecutor, Executor gameExecutor, CompletableFuture<Unit> completableFuture, List<PackResources> list, CallbackInfoReturnable<ReloadInstance> cir) {
-        this.listeners.forEach(listener -> {
-            if (listener instanceof ReloadStartListener)
-                ((ReloadStartListener) listener).onReloadStart((ResourceManager) this, backgroundExecutor, gameExecutor);
-        });
     }
 }
