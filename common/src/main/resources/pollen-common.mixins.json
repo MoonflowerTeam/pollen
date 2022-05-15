@@ -38,6 +38,7 @@
     "ServerPlayerMixin",
     "ServerResourcesMixin",
     "SimpleReloadableResourceManagerMixin",
+    "SimpleReloadInstanceMixin",
     "data.AdvancementBuilderAccessor",
     "data.AdvancementBuilderMixin",
     "data.AdvancementRewardsAccessor",
