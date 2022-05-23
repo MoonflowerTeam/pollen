@@ -41,6 +41,7 @@
     "MinecraftServerMixin",
     "MobMixin",
     "PlayerListMixin",
+    "SaplingBlockMixin",
     "ServerLevelMixin",
     "ServerPlayerMixin",
     "WoodTypeAccessor",

@@ -12,6 +12,7 @@ import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
 import gg.moonflower.pollen.api.event.events.world.ExplosionEvents;
+import gg.moonflower.pollen.api.event.events.world.TreeGrowingEvent;
 import gg.moonflower.pollen.core.Pollen;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -180,6 +181,11 @@ public class PollenCommonForgeEvents {
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.EntityLeaveWorldEvent event) {
         EntityEvents.LEAVE.invoker().onLeave(event.getEntity(), event.getWorld());
+    }
+
+    @SubscribeEvent
+    public static void onEvent(net.minecraftforge.event.world.SaplingGrowTreeEvent event) {
+        TreeGrowingEvent.EVENT.invoker().onTreeGrowing(event.getPos(), event.getRand(), event.getWorld());
     }
 
     @SubscribeEvent
