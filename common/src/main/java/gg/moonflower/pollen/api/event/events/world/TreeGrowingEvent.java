@@ -3,9 +3,7 @@ package gg.moonflower.pollen.api.event.events.world;
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.SaplingBlock;
 
 import java.util.Random;
@@ -25,5 +23,5 @@ public interface TreeGrowingEvent {
      * @param rand  An instance of {@link Random}
      * @param level An instance of {@link LevelAccessor} for the current level
      */
-    void onTreeGrowing(BlockPos pos, Random rand, LevelAccessor level);
+    void treeGrowing(BlockPos pos, Random rand, LevelAccessor level);
 }

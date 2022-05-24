@@ -21,6 +21,6 @@ public class SaplingBlockMixin {
 
     @Inject(method = "advanceTree", at = @At("TAIL"))
     public void advanceTree(ServerLevel level, BlockPos pos, BlockState state, Random rand, CallbackInfo ci) {
-        TreeGrowingEvent.EVENT.invoker().onTreeGrowing(pos, rand, (LevelAccessor) level);
+        TreeGrowingEvent.EVENT.invoker().treeGrowing(pos, rand, level);
     }
 }

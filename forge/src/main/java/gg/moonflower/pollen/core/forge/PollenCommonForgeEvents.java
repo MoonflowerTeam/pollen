@@ -5,6 +5,7 @@ import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.ModifyTradesEvents;
 import gg.moonflower.pollen.api.event.events.entity.SetTargetEvent;
 import gg.moonflower.pollen.api.event.events.entity.player.ContainerEvents;
+import gg.moonflower.pollen.api.event.events.entity.player.PlayerEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractionEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
@@ -23,6 +24,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.AdvancementEvent;
+import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -185,7 +188,7 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.world.SaplingGrowTreeEvent event) {
-        TreeGrowingEvent.EVENT.invoker().onTreeGrowing(event.getPos(), event.getRand(), event.getWorld());
+        TreeGrowingEvent.EVENT.invoker().treeGrowing(event.getPos(), event.getRand(), event.getWorld());
     }
 
     @SubscribeEvent
@@ -248,6 +251,15 @@ public class PollenCommonForgeEvents {
     @SubscribeEvent
     public static void onEvent(PlayerContainerEvent.Close event) {
         ContainerEvents.CLOSE.invoker().close(event.getPlayer(), event.getContainer());
+    }
+
+    @SubscribeEvent
+    public static void onEvent(AdvancementEvent event) {
+        PlayerEvents.ADVANCEMENT_EVENT.invoker().playerAdvancement(event.getPlayer(), event.getAdvancement());
+    }
+
+    @SubscribeEvent
+    public static void onEvent(AnvilRepairEvent event) {
     }
 
     @SubscribeEvent
