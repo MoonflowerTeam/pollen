@@ -102,25 +102,33 @@ public final class PlayerEvents {
         boolean expPickup(Player player, ExperienceOrb orb);
     }
 
+    /**
+     * Fired when a player is given experience points.
+     *
+     * @author ebo2022
+     * @since 2.0.0
+     */
     @FunctionalInterface
     public interface ExpChange {
 
-        boolean expChange(Player player, int amount, Context context);
+        /**
+         * Called when a player is about to gain experience.
+         *
+         * @param player  The player gaining experience
+         * @param context The context to fetch and set amounts <i>(see below)</i>
+         * @return <code>true</code> to continue the process, or <code>false</code> to cancel it
+         */
+        boolean expChange(Player player, Context context);
 
         interface Context {
 
             /**
-             * @return
+             * @return The amount of experience being added
              */
             int getAmount();
 
             /**
-             * @return The player having a change in EXP
-             */
-            Player getPlayer();
-
-            /**
-             * Sets a new amount of experience.
+             * Sets the amount of experience being gained.
              *
              * @param amount The new amount of EXP to set
              */
