@@ -13,7 +13,6 @@ import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
 import gg.moonflower.pollen.api.event.events.world.ExplosionEvents;
-import gg.moonflower.pollen.api.event.events.world.TreeGrowingEvent;
 import gg.moonflower.pollen.core.Pollen;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -25,8 +24,8 @@ import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
-import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
+import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
@@ -187,11 +186,6 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
-    public static void onEvent(net.minecraftforge.event.world.SaplingGrowTreeEvent event) {
-        TreeGrowingEvent.EVENT.invoker().treeGrowing(event.getPos(), event.getRand(), event.getWorld());
-    }
-
-    @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.village.VillagerTradesEvent event) {
         Int2ObjectMap<ModifyTradesEvents.TradeRegistry> newTrades = new Int2ObjectOpenHashMap<>();
         int minTier = event.getTrades().keySet().stream().mapToInt(Integer::intValue).min().orElse(1);
@@ -259,7 +253,9 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
-    public static void onEvent(AnvilRepairEvent event) {
+    public static void onEvent(PlayerXpEvent.PickupXp event) {
+        if (!PlayerEvents.EXP_PICKUP.invoker().expPickup(event.getPlayer(), event.getOrb()))
+            event.setCanceled(true);
     }
 
     @SubscribeEvent
