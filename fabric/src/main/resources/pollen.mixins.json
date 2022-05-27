@@ -42,6 +42,7 @@
     "MobMixin",
     "PlayerListMixin",
     "ServerLevelMixin",
+    "ServerLoginPacketListenerImplMixin",
     "ServerPlayerMixin",
     "WoodTypeAccessor",
     "data.TagsProviderMixin",
