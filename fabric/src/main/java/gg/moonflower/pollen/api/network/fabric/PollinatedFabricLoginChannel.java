@@ -8,23 +8,25 @@ import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import gg.moonflower.pollen.api.network.packet.login.PollinatedLoginPacket;
 import gg.moonflower.pollen.api.registry.NetworkRegistry;
+import gg.moonflower.pollen.core.extensions.fabric.ServerLoginPacketListenerImplExtension;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientHandshakePacketListenerImpl;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
 import net.minecraft.network.protocol.login.ServerboundCustomQueryPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -44,13 +46,24 @@ public class PollinatedFabricLoginChannel extends PollinatedNetworkChannelImpl i
     public PollinatedFabricLoginChannel(ResourceLocation channelId, Supplier<Object> clientFactory, Supplier<Object> serverFactory) {
         super(channelId, clientFactory, serverFactory);
         this.loginPackets = new ArrayList<>();
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
             ClientLoginNetworking.registerGlobalReceiver(this.channelId, this::processClient);
+            ClientPlayNetworking.registerGlobalReceiver(this.channelId, (client, handler, buf, responseSender) -> this.processClient(client, handler, buf, null));
+        }
         ServerLoginNetworking.registerGlobalReceiver(this.channelId, this::processServer);
-        ServerLoginConnectionEvents.QUERY_START.register((handler, server, sender, synchronizer) -> this.loginPackets.stream().flatMap(function -> function.apply(handler.getConnection().isMemoryConnection()).stream()).forEach(pair -> sender.sendPacket(sender.createPacket(this.channelId, this.serialize((PollinatedPacket<?>) pair.getValue(), PollinatedPacketDirection.LOGIN_CLIENTBOUND)))));
+        ServerPlayNetworking.registerGlobalReceiver(this.channelId, (server, player, handler, buf, responseSender) -> this.processServer(server, handler, true, buf, future -> {
+            // Don't wait because the player is already being placed into the level
+        }, responseSender));
+
+        ServerLoginConnectionEvents.QUERY_START.register((handler, server, sender, synchronizer) -> this.loginPackets.stream().flatMap(function -> function.apply(handler.getConnection().isMemoryConnection()).stream()).forEach(pair -> {
+            Packet<?> packet = sender.createPacket(this.channelId, this.serialize((PollinatedPacket<?>) pair.getValue(), PollinatedPacketDirection.LOGIN_CLIENTBOUND));
+            if (packet instanceof ClientboundCustomQueryPacket)
+                ((ServerLoginPacketListenerImplExtension) handler).pollen_trackPacket((ClientboundCustomQueryPacket) packet);
+            sender.sendPacket(packet);
+        }));
     }
 
-    private CompletableFuture<@Nullable FriendlyByteBuf> processClient(Minecraft client, ClientHandshakePacketListenerImpl listener, FriendlyByteBuf data, Consumer<GenericFutureListener<? extends Future<? super Void>>> listenerAdder) {
+    private CompletableFuture<@Nullable FriendlyByteBuf> processClient(Minecraft client, PacketListener listener, FriendlyByteBuf data, Consumer<GenericFutureListener<? extends Future<? super Void>>> listenerAdder) {
         CompletableFuture<FriendlyByteBuf> future = new CompletableFuture<>();
         NetworkRegistry.processMessage(this.deserialize(data, PollinatedPacketDirection.LOGIN_CLIENTBOUND), new PollinatedFabricLoginPacketContext(pkt -> {
             try {
@@ -64,9 +77,16 @@ public class PollinatedFabricLoginChannel extends PollinatedNetworkChannelImpl i
         return future;
     }
 
-    private void processServer(MinecraftServer server, ServerLoginPacketListenerImpl listener, boolean understood, FriendlyByteBuf data, ServerLoginNetworking.LoginSynchronizer synchronizer, PacketSender responseSender) {
-        if (!understood)
-            throw new IllegalStateException("Client failed to process server message");
+    private void processServer(MinecraftServer server, PacketListener listener, boolean understood, FriendlyByteBuf data, ServerLoginNetworking.LoginSynchronizer synchronizer, PacketSender responseSender) {
+        if (!understood) {
+            if (!(listener instanceof ServerLoginPacketListenerImplExtension)) // If already being sent over the play channel
+                throw new IllegalStateException("Client failed to process server message");
+
+            // Re-send over the play channel instead
+            ((ServerLoginPacketListenerImplExtension) listener).pollen_delayPacket();
+            return;
+        }
+
         NetworkRegistry.processMessage(this.deserialize(data, PollinatedPacketDirection.LOGIN_SERVERBOUND), new PollinatedFabricPacketContext(listener.getConnection(), synchronizer, PollinatedPacketDirection.LOGIN_SERVERBOUND) {
             @Override
             public void reply(PollinatedPacket<?> packet) {

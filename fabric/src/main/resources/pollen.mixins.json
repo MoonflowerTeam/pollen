@@ -48,6 +48,7 @@
     "PlayerListMixin",
     "ServerLevelEntityCallbacksMixin",
     "ServerLevelMixin",
+    "ServerLoginPacketListenerImplMixin",
     "ServerPlayerMixin",
     "WoodTypeAccessor",
     "data.TagsProviderMixin",
