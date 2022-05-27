@@ -29,7 +29,6 @@ public final class PlayerEvents {
     public static final PollinatedEvent<StartSleeping> START_SLEEPING = EventRegistry.create(StartSleeping.class, events -> (player, pos) -> {
         for (StartSleeping event : events) {
             Player.BedSleepingProblem result = event.startSleeping(player, pos);
-
             if (result != null)
                 return result;
         }
