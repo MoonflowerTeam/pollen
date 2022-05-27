@@ -21,7 +21,6 @@ import gg.moonflower.pollen.core.client.render.entity.PollinatedBoatRenderer;
 import gg.moonflower.pollen.core.datagen.PollenLanguageProvider;
 import gg.moonflower.pollen.core.network.PollenMessages;
 import gg.moonflower.pollen.core.resource.condition.ConfigResourceCondition;
-import gg.moonflower.pollen.core.test.PollenTestEvent;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
 import gg.moonflower.pollen.pinwheel.api.client.shader.ShaderConst;

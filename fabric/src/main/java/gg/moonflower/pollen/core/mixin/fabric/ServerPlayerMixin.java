@@ -1,9 +1,12 @@
 package gg.moonflower.pollen.core.mixin.fabric;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.datafixers.util.Either;
 import gg.moonflower.pollen.api.event.events.entity.player.ContainerEvents;
+import gg.moonflower.pollen.api.event.events.entity.player.PlayerEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Unit;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
@@ -35,7 +38,14 @@ public abstract class ServerPlayerMixin extends Player {
     }
 
     @Inject(method = "doCloseContainer", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/AbstractContainerMenu;removed(Lnet/minecraft/world/entity/player/Player;)V", shift = At.Shift.AFTER))
-    public void openHorseInventory(CallbackInfo ci) {
+    public void doCloseContainer(CallbackInfo ci) {
         ContainerEvents.OPEN.invoker().open(this, this.containerMenu);
+    }
+
+    @Inject(method = "startSleepInBed", at = @At("HEAD"), cancellable = true)
+    public void startSleepInBed(BlockPos bedPos, CallbackInfoReturnable<Either<BedSleepingProblem, Unit>> cir) {
+        BedSleepingProblem result = PlayerEvents.START_SLEEPING.invoker().startSleeping((Player) (Object) this, bedPos);
+        if (result != null)
+            cir.setReturnValue(Either.left(result));
     }
 }

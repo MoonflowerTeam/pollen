@@ -7,6 +7,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -25,6 +26,16 @@ public final class PlayerEvents {
                 return false;
         return true;
     });
+    public static final PollinatedEvent<StartSleeping> START_SLEEPING = EventRegistry.create(StartSleeping.class, events -> (player, pos) -> {
+        for (StartSleeping event : events) {
+            Player.BedSleepingProblem result = event.startSleeping(player, pos);
+
+            if (result != null)
+                return result;
+        }
+        return null;
+    });
+    public static final PollinatedEvent<StopSleeping> STOP_SLEEPING = EventRegistry.createLoop(StopSleeping.class);
 
 
     private PlayerEvents() {
@@ -103,54 +114,40 @@ public final class PlayerEvents {
     }
 
     /**
-     * Fired when a player is given experience points.
+     * Fired when a player starts sleeping.
      *
      * @author ebo2022
      * @since 2.0.0
      */
     @FunctionalInterface
-    public interface ExpChange {
+    public interface StartSleeping {
 
         /**
-         * Called when a player is about to gain experience.
+         * Called when the specified player starts sleeping at the given {@link BlockPos}.
          *
-         * @param player  The player gaining experience
-         * @param context The context to fetch and set amounts <i>(see below)</i>
-         * @return <code>true</code> to continue the process, or <code>false</code> to cancel it
+         * @param player The player falling asleep
+         * @param pos    The sleeping position of the player
+         * @return A {@link Player.BedSleepingProblem} result for this interaction
          */
-        boolean expChange(Player player, Context context);
-
-        interface Context {
-
-            /**
-             * @return The amount of experience being added
-             */
-            int getAmount();
-
-            /**
-             * Sets the amount of experience being gained.
-             *
-             * @param amount The new amount of EXP to set
-             */
-            void setAmount(int amount);
-        }
+        Player.BedSleepingProblem startSleeping(Player player, BlockPos pos);
     }
 
+    /**
+     * Fired when a player stops sleeping and wakes up.
+     *
+     * @author ebo2022
+     * @since 2.0.0
+     */
     @FunctionalInterface
-    public interface ExpLevelChange {
+    public interface StopSleeping {
 
-        boolean expLevelChange(Player player, int levels, Context context);
-
-        interface Context {
-
-            /**
-             * Sets a new amount of experience levels.
-             *
-             * @param levels The new EXP level to set
-             */
-            void setLevels(int levels);
-        }
+        /**
+         * Called when the specified player wakes up.
+         *
+         * @param player The player waking up
+         * @param wakeImmediately Whether the player is waking up immediately
+         * @param updateLevel Whether the list of sleeping players is being updated
+         */
+        void stopSleeping(Player player, boolean wakeImmediately, boolean updateLevel);
     }
-
-
 }

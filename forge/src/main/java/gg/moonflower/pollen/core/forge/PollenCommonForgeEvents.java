@@ -13,19 +13,23 @@ import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
 import gg.moonflower.pollen.api.event.events.world.ExplosionEvents;
+import gg.moonflower.pollen.api.event.events.world.TreeGrowingEvent;
 import gg.moonflower.pollen.core.Pollen;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
@@ -175,6 +179,19 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
+    public static void onEvent(net.minecraftforge.event.world.SaplingGrowTreeEvent event) {
+        InteractionResult result = TreeGrowingEvent.EVENT.invoker().interaction(event.getWorld(), event.getRand(), event.getPos());
+        switch (result) {
+            case SUCCESS:
+                event.setResult(Event.Result.ALLOW);
+            case CONSUME:
+                event.setResult(Event.Result.ALLOW);
+            case FAIL:
+                event.setResult(Event.Result.DENY);
+        }
+    }
+
+    @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.EntityJoinWorldEvent event) {
         if (!EntityEvents.JOIN.invoker().onJoin(event.getEntity(), event.getWorld()))
             event.setCanceled(true);
@@ -256,6 +273,18 @@ public class PollenCommonForgeEvents {
     public static void onEvent(PlayerXpEvent.PickupXp event) {
         if (!PlayerEvents.EXP_PICKUP.invoker().expPickup(event.getPlayer(), event.getOrb()))
             event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void onEvent(net.minecraftforge.event.entity.player.PlayerSleepInBedEvent event) {
+        Player.BedSleepingProblem result = PlayerEvents.START_SLEEPING.invoker().startSleeping(event.getPlayer(), event.getPos());
+        if (result != null)
+            event.setResult(result);
+    }
+
+    @SubscribeEvent
+    public static void onEvent(net.minecraftforge.event.entity.player.PlayerWakeUpEvent event) {
+        PlayerEvents.STOP_SLEEPING.invoker().stopSleeping(event.getPlayer(), event.wakeImmediately(), event.updateWorld());
     }
 
     @SubscribeEvent

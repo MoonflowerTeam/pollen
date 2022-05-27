@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ExperienceOrb.class)
 public class ExperienceOrbMixin {
 
-    @Inject(method = "playerTouch", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;take(Lnet/minecraft/world/entity/Entity;I)V", shift = At.Shift.BEFORE), cancellable = true)
+    @Inject(method = "playerTouch", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Player;takeXpDelay:I", ordinal = 1, shift = At.Shift.BEFORE), cancellable = true)
     public void playerTouch(Player player, CallbackInfo ci) {
         if (!PlayerEvents.EXP_PICKUP.invoker().expPickup(player, (ExperienceOrb) (Object) this))
             ci.cancel();
