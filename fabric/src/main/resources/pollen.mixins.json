@@ -46,6 +46,7 @@
     "PlayerMixin",
     "SaplingBlockMixin",
     "ServerLevelMixin",
+    "ServerLoginPacketListenerImplMixin",
     "ServerPlayerMixin",
     "WoodTypeAccessor",
     "data.TagsProviderMixin",
