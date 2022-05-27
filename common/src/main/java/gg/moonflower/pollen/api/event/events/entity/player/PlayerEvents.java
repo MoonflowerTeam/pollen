@@ -37,7 +37,6 @@ public final class PlayerEvents {
     });
     public static final PollinatedEvent<StopSleeping> STOP_SLEEPING = EventRegistry.createLoop(StopSleeping.class);
 
-
     private PlayerEvents() {
     }
 
