@@ -183,11 +183,12 @@ public class PollenCommonForgeEvents {
         InteractionResult result = TreeGrowingEvent.EVENT.invoker().interaction(event.getWorld(), event.getRand(), event.getPos());
         switch (result) {
             case SUCCESS:
-                event.setResult(Event.Result.ALLOW);
             case CONSUME:
                 event.setResult(Event.Result.ALLOW);
+                break;
             case FAIL:
                 event.setResult(Event.Result.DENY);
+                break;
         }
     }
 
