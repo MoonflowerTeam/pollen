@@ -47,6 +47,7 @@
     "PlayerListMixin",
     "ServerLevelEntityCallbacksMixin",
     "ServerLevelMixin",
+    "ServerLoginPacketListenerImplMixin",
     "ServerPlayerMixin",
     "WoodTypeAccessor",
     "data.AdvancementBuilderMixin",

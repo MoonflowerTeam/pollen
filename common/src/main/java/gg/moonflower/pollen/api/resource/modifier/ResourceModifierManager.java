@@ -111,10 +111,13 @@ public final class ResourceModifierManager {
         });
     }
 
-    @Nullable
     @ApiStatus.Internal
     public static CompletableFuture<Void> getServerCompleteFuture() {
-        return serverReloader != null ? serverReloader.getCompleteFuture() : null;
+        if (serverReloader == null)
+            throw new NullPointerException("Expected to wait for resource modifiers, but serverReloader was null");
+        if (serverReloader.getCompleteFuture() == null)
+            throw new NullPointerException("Expected to wait for resource modifiers, but serverReloader#getCompleteFuture() returned null");
+        return serverReloader.getCompleteFuture();
     }
 
     @ApiStatus.Internal
