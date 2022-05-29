@@ -66,6 +66,16 @@ public final class ScissorHelper {
             if (y + height > parent.getHeight())
                 height = parent.getHeight() - y;
 
+            if (x < 0) {
+                x = 0;
+                width += x;
+            }
+
+            if (y < 0) {
+                y = 0;
+                height += y;
+            }
+
             x += parent.getX();
             y += parent.getY();
         }
