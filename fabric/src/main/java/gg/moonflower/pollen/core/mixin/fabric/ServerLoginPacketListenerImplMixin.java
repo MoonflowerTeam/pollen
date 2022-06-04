@@ -1,8 +1,9 @@
 package gg.moonflower.pollen.core.mixin.fabric;
 
 import gg.moonflower.pollen.core.extensions.fabric.ServerLoginPacketListenerImplExtension;
+import gg.moonflower.pollen.core.mixin.client.ClientboundCustomQueryPacketAccessor;
+import gg.moonflower.pollen.core.mixin.ServerboundCustomQueryPacketAccessor;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-import net.fabricmc.fabric.mixin.networking.accessor.LoginQueryResponseC2SPacketAccessor;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
 import net.minecraft.network.protocol.login.ServerboundCustomQueryPacket;
@@ -30,7 +31,7 @@ public abstract class ServerLoginPacketListenerImplMixin implements ServerLoginP
 
     @Inject(method = "handleCustomQueryPacket", at = @At("HEAD"))
     public void handleCustomQueryPacket(ServerboundCustomQueryPacket packet, CallbackInfo ci) {
-        this.queryId = ((LoginQueryResponseC2SPacketAccessor) packet).getQueryId();
+        this.queryId = ((ServerboundCustomQueryPacketAccessor) packet).getTransactionId();
     }
 
     @Override
