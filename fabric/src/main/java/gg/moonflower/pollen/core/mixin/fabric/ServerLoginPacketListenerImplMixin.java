@@ -1,11 +1,10 @@
 package gg.moonflower.pollen.core.mixin.fabric;
 
 import gg.moonflower.pollen.core.extensions.fabric.ServerLoginPacketListenerImplExtension;
+import gg.moonflower.pollen.core.mixin.client.ClientboundCustomQueryPacketAccessor;
+import gg.moonflower.pollen.core.mixin.ServerboundCustomQueryPacketAccessor;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-import net.fabricmc.fabric.mixin.networking.accessor.LoginQueryRequestS2CPacketAccessor;
-import net.fabricmc.fabric.mixin.networking.accessor.LoginQueryResponseC2SPacketAccessor;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
-import net.minecraft.network.protocol.game.ServerGamePacketListener;
 import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
 import net.minecraft.network.protocol.login.ServerboundCustomQueryPacket;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -30,12 +29,12 @@ public abstract class ServerLoginPacketListenerImplMixin implements ServerLoginP
 
     @Inject(method = "handleCustomQueryPacket", at = @At("HEAD"))
     public void handleCustomQueryPacket(ServerboundCustomQueryPacket packet, CallbackInfo ci) {
-        this.queryId = ((LoginQueryResponseC2SPacketAccessor) packet).getQueryId();
+        this.queryId = ((ServerboundCustomQueryPacketAccessor) packet).getTransactionId();
     }
 
     @Override
     public void pollen_trackPacket(ClientboundCustomQueryPacket packet) {
-        this.trackedPackets.put(((LoginQueryRequestS2CPacketAccessor) packet).getServerQueryId(), packet);
+        this.trackedPackets.put(((ClientboundCustomQueryPacketAccessor) packet).getTransactionId(), packet);
     }
 
     @Override
@@ -50,8 +49,8 @@ public abstract class ServerLoginPacketListenerImplMixin implements ServerLoginP
             if (loginPacket == null)
                 return;
 
-            LoginQueryRequestS2CPacketAccessor accessor = (LoginQueryRequestS2CPacketAccessor) loginPacket;
-            ClientboundCustomPayloadPacket packet = new ClientboundCustomPayloadPacket(accessor.getChannel(), accessor.getPayload());
+            ClientboundCustomQueryPacketAccessor accessor = (ClientboundCustomQueryPacketAccessor) loginPacket;
+            ClientboundCustomPayloadPacket packet = new ClientboundCustomPayloadPacket(accessor.getIdentifier(), accessor.getData());
             listener.send(packet);
         });
         this.trackedPackets.clear();

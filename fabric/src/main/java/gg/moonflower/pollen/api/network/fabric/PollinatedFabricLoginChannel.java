@@ -9,6 +9,7 @@ import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import gg.moonflower.pollen.api.network.packet.login.PollinatedLoginPacket;
 import gg.moonflower.pollen.api.registry.NetworkRegistry;
 import gg.moonflower.pollen.core.extensions.fabric.ServerLoginPacketListenerImplExtension;
+import gg.moonflower.pollen.core.mixin.client.ClientboundCustomQueryPacketAccessor;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import net.fabricmc.api.EnvType;
@@ -18,10 +19,8 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.fabric.mixin.networking.accessor.LoginQueryRequestS2CPacketAccessor;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientHandshakePacketListenerImpl;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
@@ -29,10 +28,7 @@ import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
 import net.minecraft.network.protocol.login.ServerboundCustomQueryPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -118,10 +114,10 @@ public class PollinatedFabricLoginChannel extends PollinatedNetworkChannelImpl i
                 return new ServerboundCustomQueryPacket(transactionId, this.serialize(packet, direction));
             case LOGIN_CLIENTBOUND:
                 ClientboundCustomQueryPacket value = new ClientboundCustomQueryPacket();
-                LoginQueryRequestS2CPacketAccessor access = (LoginQueryRequestS2CPacketAccessor) value;
-                access.setQueryId(transactionId);
-                access.setChannel(this.channelId);
-                access.setPayload(this.serialize(packet, direction));
+                ClientboundCustomQueryPacketAccessor access = (ClientboundCustomQueryPacketAccessor) value;
+                access.setTransactionId(transactionId);
+                access.setIdentifier(this.channelId);
+                access.setData(this.serialize(packet, direction));
                 return value;
             default:
                 throw new IllegalStateException("Unsupported packet direction: " + direction);
