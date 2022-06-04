@@ -71,6 +71,10 @@ dependencies {
     modCompileOnly "mezz.jei:jei-${rootProject.minecraft_version}:${rootProject.jei_version}:api"
     modRuntimeOnly "mezz.jei:jei-${rootProject.minecraft_version}:${rootProject.jei_version}"
 
+    forgeRuntimeLibrary "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
+    annotationProcessor "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
+    shadowCommon "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
+
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 }
@@ -96,11 +100,13 @@ processResources {
 }
 
 shadowJar {
+    mergeServiceFiles()
     exclude "fabric.mod.json"
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
     relocate "io.github.ocelot.molangcompiler", "gg.moonflower.pollen.molangcompiler"
+    relocate "com.llamalad7.mixinextras", "gg.moonflower.pollen.mixinextras"
     classifier "dev-shadow"
 }
 
