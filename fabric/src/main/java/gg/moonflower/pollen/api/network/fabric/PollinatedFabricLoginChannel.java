@@ -9,7 +9,6 @@ import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import gg.moonflower.pollen.api.network.packet.login.PollinatedLoginPacket;
 import gg.moonflower.pollen.api.registry.NetworkRegistry;
 import gg.moonflower.pollen.core.extensions.fabric.ServerLoginPacketListenerImplExtension;
-import gg.moonflower.pollen.core.mixin.client.ClientboundCustomQueryPacketAccessor;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import net.fabricmc.api.EnvType;
