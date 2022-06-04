@@ -8,6 +8,7 @@ dependencies {
     api "com.electronwill.night-config:toml:${rootProject.night_config_version}"
 
     implementation "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
+    annotationProcessor "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
 }
 
 architectury {
