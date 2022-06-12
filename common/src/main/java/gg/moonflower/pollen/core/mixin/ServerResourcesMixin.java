@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mixin(ReloadableServerResources.class)
+@Mixin(value = ReloadableServerResources.class, priority = 900)
 public class ServerResourcesMixin {
 
     @ModifyReturnValue(method = "listeners", at = @At("RETURN"))
