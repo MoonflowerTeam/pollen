@@ -4,6 +4,7 @@ import gg.moonflower.pollen.api.event.events.LootTableConstructingEvent;
 import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.ModifyTradesEvents;
 import gg.moonflower.pollen.api.event.events.entity.SetTargetEvent;
+import gg.moonflower.pollen.api.event.events.entity.living.LivingEntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.ContainerEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractionEvents;
@@ -25,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
@@ -293,5 +295,21 @@ public class PollenCommonForgeEvents {
         LootTableConstructingEvent.Context context = new LootTableConstructingEvent.Context(event.getName(), event.getTable());
         LootTableConstructingEvent.EVENT.invoker().modifyLootTable(context);
         event.setTable(context.apply());
+    }
+
+    @SubscribeEvent
+    public static void onEvent(LivingDamageEvent event) {
+        if (!LivingEntityEvents.DAMAGE.invoker().livingDamage(event.getEntityLiving(), event.getSource(), new LivingEntityEvents.LivingDamageEvent.Context() {
+            @Override
+            public float getDamageAmount() {
+                return event.getAmount();
+            }
+
+            @Override
+            public void setDamageAmount(float amount) {
+                event.setAmount(amount);
+            }
+        }))
+            event.setCanceled(true);
     }
 }
