@@ -31,7 +31,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Shadow
     protected abstract void jumpInLiquid(Tag<Fluid> fluidTag);
-
+    
     @Unique
     private static DamageSource captureDamageSource;
 
