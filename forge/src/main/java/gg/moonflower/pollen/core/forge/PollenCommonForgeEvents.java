@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.core.forge;
 
+import gg.moonflower.pollen.api.event.EventResult;
 import gg.moonflower.pollen.api.event.events.LootTableConstructingEvent;
 import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.ModifyTradesEvents;
@@ -181,16 +182,8 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.world.SaplingGrowTreeEvent event) {
-        InteractionResult result = TreeGrowingEvent.EVENT.invoker().interaction(event.getWorld(), event.getRand(), event.getPos());
-        switch (result) {
-            case SUCCESS:
-            case CONSUME:
-                event.setResult(Event.Result.ALLOW);
-                break;
-            case FAIL:
-                event.setResult(Event.Result.DENY);
-                break;
-        }
+        EventResult result = TreeGrowingEvent.EVENT.invoker().interaction(event.getWorld(), event.getRand(), event.getPos());
+        event.setResult(forgifyResult(result));
     }
 
     @SubscribeEvent
@@ -342,5 +335,16 @@ public class PollenCommonForgeEvents {
     @SubscribeEvent
     public static void onEvent(PotionEvent.PotionExpiryEvent event) {
         PotionEvents.EXPIRE.invoker().expire(event.getEntityLiving(), event.getPotionEffect());
+    }
+
+    public static Event.Result forgifyResult(EventResult pollenResult) {
+        switch (pollenResult) {
+            case DENY:
+                return Event.Result.DENY;
+            case ALLOW:
+                return Event.Result.ALLOW;
+            default:
+                return Event.Result.DEFAULT;
+        }
     }
 }

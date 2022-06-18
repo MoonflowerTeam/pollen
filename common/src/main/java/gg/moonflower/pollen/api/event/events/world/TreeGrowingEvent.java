@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.api.event.events.world;
 
+import gg.moonflower.pollen.api.event.EventResult;
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.core.BlockPos;
@@ -18,7 +19,7 @@ import java.util.Random;
 @FunctionalInterface
 public interface TreeGrowingEvent {
 
-    PollinatedEvent<TreeGrowingEvent> EVENT = EventRegistry.createResult(TreeGrowingEvent.class);
+    PollinatedEvent<TreeGrowingEvent> EVENT = EventRegistry.createEventResult(TreeGrowingEvent.class);
 
     /**
      * Called when a {@link SaplingBlock} is successfully grown.
@@ -28,5 +29,5 @@ public interface TreeGrowingEvent {
      * @param pos   The origin position of the sapling
      * @return The result for this interaction. {@link InteractionResult#PASS} will continue onto the next iteration, while any others will override vanilla behavior
      */
-    InteractionResult interaction(LevelAccessor level, Random rand, BlockPos pos);
+    EventResult interaction(LevelAccessor level, Random rand, BlockPos pos);
 }
