@@ -24,6 +24,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -95,6 +96,12 @@ public abstract class LivingEntityMixin extends Entity {
         MobEffect effect = (MobEffect)iterator.next();
         MobEffectInstance effectinstance = (MobEffectInstance)this.activeEffects.get(effect);
         PotionEvents.EXPIRE.invoker().expire((LivingEntity) (Object) this, effectinstance);
+    }
+
+    @Inject(method = "addEffect", at = @At(value = "INVOKE", target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", shift = At.Shift.BEFORE))
+    public void addEffect(MobEffectInstance effectInstance, CallbackInfoReturnable<Boolean> cir) {
+        MobEffectInstance effectinstance = (MobEffectInstance)this.activeEffects.get(effectInstance.getEffect());
+        PotionEvents.ADD.invoker().add((LivingEntity) (Object) this, effectInstance, effectinstance);
     }
 
     @ModifyVariable(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getFluidJumpThreshold()D", shift = At.Shift.BEFORE), ordinal = 6)

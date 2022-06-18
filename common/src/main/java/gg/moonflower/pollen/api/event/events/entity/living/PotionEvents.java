@@ -5,10 +5,10 @@ import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 
-import javax.annotation.Nullable;
 
 public final class PotionEvents {
 
+    public static final PollinatedEvent<Add> ADD = EventRegistry.createLoop(Add.class);
     public static final PollinatedEvent<Expire> EXPIRE = EventRegistry.createLoop(Expire.class);
 
     private PotionEvents() {
@@ -18,11 +18,24 @@ public final class PotionEvents {
 
     }
 
+    /**
+     * Fired when a new effect is added to an entity.
+     *
+     * @author ebo2022
+     * @since 2.0.0
+     */
     @FunctionalInterface
     public interface Add {
 
 
-        void add(LivingEntity entity, MobEffectInstance oldEffectInstance, MobEffectInstance newEffectDistance);
+        /**
+         * Called when the specified effect is about to be applied to the given entity.
+         *
+         * @param entity            The entity receiving the effect
+         * @param oldEffectInstance The old instance of the effect. This may be <code>null</code> if there was no effect of the added type beforehand
+         * @param newEffectInstance The effect being added
+         */
+        void add(LivingEntity entity, MobEffectInstance oldEffectInstance, MobEffectInstance newEffectInstance);
     }
 
     public interface Remove {
@@ -31,6 +44,9 @@ public final class PotionEvents {
 
     /**
      * Fired when an effect expires on an entity.
+     *
+     * @author ebo2022
+     * @since 2.0.0
      */
     @FunctionalInterface
     public interface Expire {
