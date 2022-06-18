@@ -5,7 +5,6 @@ import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.ModifyTradesEvents;
 import gg.moonflower.pollen.api.event.events.entity.SetTargetEvent;
 import gg.moonflower.pollen.api.event.events.entity.living.LivingEntityEvents;
-import gg.moonflower.pollen.api.event.events.entity.living.PotionEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.ContainerEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractionEvents;
@@ -27,8 +26,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent;
@@ -300,7 +299,7 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(LivingDamageEvent event) {
-        if (!LivingEntityEvents.DAMAGE.invoker().livingDamage(event.getEntityLiving(), event.getSource(), new LivingEntityEvents.LivingDamageEvent.Context() {
+        if (!LivingEntityEvents.DAMAGE.invoker().livingDamage(event.getEntityLiving(), event.getSource(), new LivingEntityEvents.Damage.Context() {
             @Override
             public float getDamageAmount() {
                 return event.getAmount();
@@ -315,19 +314,8 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
-    public static void onEvent(PotionEvent.PotionApplicableEvent event) {
-        InteractionResult result = PotionEvents.APPLICABLE.invoker().applicable(event.getEntityLiving(), event.getPotionEffect());
-        switch (result) {
-            case SUCCESS:
-            case CONSUME:
-                event.setResult(Event.Result.ALLOW);
-                break;
-            case FAIL:
-                event.setResult(Event.Result.DENY);
-                break;
-            default:
-                event.setResult(Event.Result.DEFAULT);
-                break;
-        }
+    public static void onEvent(LivingDeathEvent event) {
+        if (!LivingEntityEvents.DEATH.invoker().death(event.getEntityLiving(), event.getSource()))
+            event.setCanceled(true);
     }
 }

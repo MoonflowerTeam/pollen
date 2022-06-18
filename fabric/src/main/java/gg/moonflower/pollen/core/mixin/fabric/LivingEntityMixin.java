@@ -52,9 +52,15 @@ public abstract class LivingEntityMixin extends Entity {
 
     @ModifyVariable(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getHealth()F", shift = At.Shift.BEFORE), ordinal = 0, argsOnly = true)
     public float modifyDamageAmount(float value) {
-        LivingEntityEvents.LivingDamageEvent.Context context = new LivingDamageContextImpl(captureDamageAmount);
+        LivingEntityEvents.Damage.Context context = new LivingDamageContextImpl(captureDamageAmount);
         boolean event = LivingEntityEvents.DAMAGE.invoker().livingDamage((LivingEntity) (Object) this, captureDamageSource, context);
         return event ? context.getDamageAmount() : 0.0F;
+    }
+
+    @Inject(method = "die", at = @At("HEAD"), cancellable = true)
+    public void die(DamageSource damageSource, CallbackInfo ci) {
+        if (!LivingEntityEvents.DEATH.invoker().death((LivingEntity) (Object) this, damageSource))
+            ci.cancel();
     }
 
     @ModifyVariable(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getFluidJumpThreshold()D", shift = At.Shift.BEFORE), ordinal = 6)

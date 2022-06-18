@@ -4,7 +4,7 @@ import gg.moonflower.pollen.api.event.events.entity.living.LivingEntityEvents;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-public class LivingDamageContextImpl implements LivingEntityEvents.LivingDamageEvent.Context {
+public class LivingDamageContextImpl implements LivingEntityEvents.Damage.Context {
     private float damageAmount;
 
     public LivingDamageContextImpl(float damageAmount) {

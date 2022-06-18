@@ -7,12 +7,8 @@ import net.minecraft.world.entity.LivingEntity;
 
 public final class LivingEntityEvents {
 
-    public static final PollinatedEvent<LivingDamageEvent> DAMAGE = EventRegistry.create(LivingDamageEvent.class, events -> (entity, damageSource, context) -> {
-        for (LivingDamageEvent event : events)
-            if (!event.livingDamage(entity, damageSource, context))
-                return false;
-        return true;
-    });
+    public static final PollinatedEvent<Damage> DAMAGE = EventRegistry.createCancellable(Damage.class);
+    public static final PollinatedEvent<Death> DEATH = EventRegistry.createCancellable(Death.class);
 
     private LivingEntityEvents() {
     }
@@ -24,7 +20,7 @@ public final class LivingEntityEvents {
      * @since 2.0.0
      */
     @FunctionalInterface
-    public interface LivingDamageEvent {
+    public interface Damage {
 
         /**
          * Called before an entity receives damage.
@@ -57,5 +53,22 @@ public final class LivingEntityEvents {
         }
     }
 
-    
+    /**
+     * Fired when an entity dies.
+     *
+     * @author ebo2022
+     * @since 2.0.0
+     */
+    @FunctionalInterface
+    public interface Death {
+
+        /**
+         * Called when the specified entity is about to die.
+         *
+         * @param entity       The entity that is dying
+         * @param damageSource The cause of death
+         * @return <code>true</code> to continue, or <code>false</code> to prevent the entity from dying
+         */
+        boolean death(LivingEntity entity, DamageSource damageSource);
+    }
 }

@@ -35,8 +35,14 @@ public class PlayerMixin {
 
     @ModifyVariable(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setAbsorptionAmount(F)V", shift = At.Shift.AFTER), ordinal = 0, argsOnly = true)
     public float modifyDamageAmount(float value) {
-        LivingEntityEvents.LivingDamageEvent.Context context = new LivingDamageContextImpl(captureDamageAmount);
+        LivingEntityEvents.Damage.Context context = new LivingDamageContextImpl(captureDamageAmount);
         boolean event = LivingEntityEvents.DAMAGE.invoker().livingDamage((LivingEntity) (Object) this, captureDamageSource, context);
         return event ? context.getDamageAmount() : 0.0F;
+    }
+
+    @Inject(method = "die", at = @At("HEAD"), cancellable = true)
+    public void die(DamageSource damageSource, CallbackInfo ci) {
+        if (!LivingEntityEvents.DEATH.invoker().death((LivingEntity) (Object) this, damageSource))
+            ci.cancel();
     }
 }
