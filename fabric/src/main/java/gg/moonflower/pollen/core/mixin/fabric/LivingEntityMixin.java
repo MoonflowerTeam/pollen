@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.core.mixin.fabric;
 
 import gg.moonflower.pollen.api.event.events.entity.living.LivingEntityEvents;
+import gg.moonflower.pollen.api.event.events.entity.living.PotionEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.registry.FluidBehaviorRegistry;
 import gg.moonflower.pollen.common.events.context.HealContextImpl;
@@ -8,11 +9,14 @@ import gg.moonflower.pollen.common.events.context.LivingDamageContextImpl;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -21,6 +25,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 
 @Mixin(LivingEntity.class)
@@ -32,6 +38,10 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Shadow
     protected abstract void jumpInLiquid(Tag<Fluid> fluidTag);
+
+    @Shadow
+    @Final
+    private Map<MobEffect, MobEffectInstance> activeEffects;
 
     @Unique
     private static DamageSource captureDamageSource;
@@ -77,6 +87,14 @@ public abstract class LivingEntityMixin extends Entity {
         LivingEntityEvents.Heal.HealContext context = new HealContextImpl(captureHealAmount);
         boolean event = LivingEntityEvents.HEAL.invoker().heal((LivingEntity) (Object) this, context);
         return event ? context.getAmount() : 0.0F;
+    }
+
+    @Inject(method = "tickEffects", at = @At(value = "INVOKE", target = "Ljava/util/Iterator;remove()V", shift = At.Shift.BEFORE))
+    public void tickEffects(CallbackInfo ci) {
+        Iterator<MobEffect> iterator = this.activeEffects.keySet().iterator();
+        MobEffect effect = (MobEffect)iterator.next();
+        MobEffectInstance effectinstance = (MobEffectInstance)this.activeEffects.get(effect);
+        PotionEvents.EXPIRE.invoker().expire((LivingEntity) (Object) this, effectinstance);
     }
 
     @ModifyVariable(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getFluidJumpThreshold()D", shift = At.Shift.BEFORE), ordinal = 6)
