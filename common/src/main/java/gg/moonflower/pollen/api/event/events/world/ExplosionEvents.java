@@ -10,12 +10,7 @@ import java.util.List;
 
 public final class ExplosionEvents {
 
-    public static final PollinatedEvent<Start> START = EventRegistry.create(Start.class, events -> (level, explosion) -> {
-        for (Start event : events)
-            if (!event.start(level, explosion))
-                return false;
-        return true;
-    });
+    public static final PollinatedEvent<Start> START = EventRegistry.createCancellable(Start.class);
     public static final PollinatedEvent<Detonate> DETONATE = EventRegistry.createLoop(Detonate.class);
 
     private ExplosionEvents() {

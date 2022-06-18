@@ -20,12 +20,7 @@ public final class PlayerEvents {
     public static final PollinatedEvent<PlayerLoggedInEvent> LOGGED_IN_EVENT = EventRegistry.createLoop(PlayerLoggedInEvent.class);
     public static final PollinatedEvent<PlayerLoggedOutEvent> LOGGED_OUT_EVENT = EventRegistry.createLoop(PlayerLoggedOutEvent.class);
     public static final PollinatedEvent<PlayerAdvancementEvent> ADVANCEMENT_EVENT = EventRegistry.createLoop(PlayerAdvancementEvent.class);
-    public static final PollinatedEvent<ExpPickup> EXP_PICKUP = EventRegistry.create(ExpPickup.class, events -> (player, orb) -> {
-        for (ExpPickup event : events)
-            if (!event.expPickup(player, orb))
-                return false;
-        return true;
-    });
+    public static final PollinatedEvent<ExpPickup> EXP_PICKUP = EventRegistry.createCancellable(ExpPickup.class);
     public static final PollinatedEvent<StartSleeping> START_SLEEPING = EventRegistry.create(StartSleeping.class, events -> (player, pos) -> {
         for (StartSleeping event : events) {
             Player.BedSleepingProblem result = event.startSleeping(player, pos);

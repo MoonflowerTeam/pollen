@@ -5,6 +5,7 @@ import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.ModifyTradesEvents;
 import gg.moonflower.pollen.api.event.events.entity.SetTargetEvent;
 import gg.moonflower.pollen.api.event.events.entity.living.LivingEntityEvents;
+import gg.moonflower.pollen.api.event.events.entity.living.PotionEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.ContainerEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractionEvents;
@@ -27,6 +28,7 @@ import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent;
@@ -310,5 +312,22 @@ public class PollenCommonForgeEvents {
             }
         }))
             event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void onEvent(PotionEvent.PotionApplicableEvent event) {
+        InteractionResult result = PotionEvents.APPLICABLE.invoker().applicable(event.getEntityLiving(), event.getPotionEffect());
+        switch (result) {
+            case SUCCESS:
+            case CONSUME:
+                event.setResult(Event.Result.ALLOW);
+                break;
+            case FAIL:
+                event.setResult(Event.Result.DENY);
+                break;
+            default:
+                event.setResult(Event.Result.DEFAULT);
+                break;
+        }
     }
 }

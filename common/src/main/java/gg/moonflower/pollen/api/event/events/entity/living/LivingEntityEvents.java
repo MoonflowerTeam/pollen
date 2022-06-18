@@ -31,7 +31,7 @@ public final class LivingEntityEvents {
          *
          * @param entity  The entity being hurt
          * @param source  The {@link DamageSource} the damage originated from
-         * @param context Context to modify the final damage amount in this event
+         * @param context Context to modify the final damage amount
          * @return <code>true</code> to allow damage, or <code>false</code> to prevent it from being dealt
          */
         boolean livingDamage(LivingEntity entity, DamageSource source, Context context);
@@ -56,4 +56,6 @@ public final class LivingEntityEvents {
             void setDamageAmount(float amount);
         }
     }
+
+    
 }
