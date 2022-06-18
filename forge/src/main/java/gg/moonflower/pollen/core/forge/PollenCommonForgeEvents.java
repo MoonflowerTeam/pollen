@@ -28,6 +28,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent;
@@ -316,6 +317,22 @@ public class PollenCommonForgeEvents {
     @SubscribeEvent
     public static void onEvent(LivingDeathEvent event) {
         if (!LivingEntityEvents.DEATH.invoker().death(event.getEntityLiving(), event.getSource()))
+            event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void onEvent(LivingHealEvent event) {
+        if (!LivingEntityEvents.HEAL.invoker().heal(event.getEntityLiving(), new LivingEntityEvents.Heal.HealContext() {
+            @Override
+            public float getAmount() {
+                return event.getAmount();
+            }
+
+            @Override
+            public void setAmount(float amount) {
+                event.setAmount(amount);
+            }
+        }))
             event.setCanceled(true);
     }
 }

@@ -3,6 +3,7 @@ package gg.moonflower.pollen.core.mixin.fabric;
 import gg.moonflower.pollen.api.event.events.entity.living.LivingEntityEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.registry.FluidBehaviorRegistry;
+import gg.moonflower.pollen.common.events.context.HealContextImpl;
 import gg.moonflower.pollen.common.events.context.LivingDamageContextImpl;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.Tag;
@@ -31,12 +32,15 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Shadow
     protected abstract void jumpInLiquid(Tag<Fluid> fluidTag);
-    
+
     @Unique
     private static DamageSource captureDamageSource;
 
     @Unique
     private static float captureDamageAmount;
+
+    @Unique
+    private static float captureHealAmount;
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     public void tick(CallbackInfo ci) {
@@ -61,6 +65,18 @@ public abstract class LivingEntityMixin extends Entity {
     public void die(DamageSource damageSource, CallbackInfo ci) {
         if (!LivingEntityEvents.DEATH.invoker().death((LivingEntity) (Object) this, damageSource))
             ci.cancel();
+    }
+
+    @Inject(method = "heal", at = @At("HEAD"))
+    public void heal(float healAmount, CallbackInfo ci) {
+        captureHealAmount = healAmount;
+    }
+
+    @ModifyVariable(method = "heal", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+    public float modifyHealAmount(float value) {
+        LivingEntityEvents.Heal.HealContext context = new HealContextImpl(captureHealAmount);
+        boolean event = LivingEntityEvents.HEAL.invoker().heal((LivingEntity) (Object) this, context);
+        return event ? context.getAmount() : 0.0F;
     }
 
     @ModifyVariable(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getFluidJumpThreshold()D", shift = At.Shift.BEFORE), ordinal = 6)

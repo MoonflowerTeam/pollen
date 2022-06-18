@@ -9,6 +9,7 @@ public final class LivingEntityEvents {
 
     public static final PollinatedEvent<Damage> DAMAGE = EventRegistry.createCancellable(Damage.class);
     public static final PollinatedEvent<Death> DEATH = EventRegistry.createCancellable(Death.class);
+    public static final PollinatedEvent<Heal> HEAL = EventRegistry.createCancellable(Heal.class);
 
     private LivingEntityEvents() {
     }
@@ -70,5 +71,31 @@ public final class LivingEntityEvents {
          * @return <code>true</code> to continue, or <code>false</code> to prevent the entity from dying
          */
         boolean death(LivingEntity entity, DamageSource damageSource);
+    }
+
+    /**
+     * Fired when an entity heals themselves.
+     *
+     * @author ebo2022
+     * @since 2.0.0
+     */
+    @FunctionalInterface
+    public interface Heal {
+
+        /**
+         * Called when the specified entity is about to heal.
+         *
+         * @param entity  The entity being healed
+         * @param context The context to change the amount to heal the entity
+         * @return <code>true</code> to continue healing the entity, or <code>false</code> to cancel it
+         */
+        boolean heal(LivingEntity entity, HealContext context);
+
+        interface HealContext {
+
+            float getAmount();
+
+            void setAmount(float amount);
+        }
     }
 }
