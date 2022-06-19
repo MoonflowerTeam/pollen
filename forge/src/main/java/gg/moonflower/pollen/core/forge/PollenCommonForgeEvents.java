@@ -328,6 +328,12 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
+    public static void onEvent(PotionEvent.PotionApplicableEvent event) {
+        EventResult result = PotionEvents.APPLICABLE.invoker().applicable(event.getEntityLiving(), event.getPotionEffect());
+        event.setResult(forgifyResult(result));
+    }
+
+    @SubscribeEvent
     public static void onEvent(PotionEvent.PotionAddedEvent event) {
         PotionEvents.ADD.invoker().add(event.getEntityLiving(), event.getOldPotionEffect(), event.getPotionEffect());
     }

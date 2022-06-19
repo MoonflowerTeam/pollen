@@ -27,7 +27,7 @@ public interface TreeGrowingEvent {
      * @param level The level the sapling is in
      * @param rand  An instance of {@link Random} for use in code
      * @param pos   The origin position of the sapling
-     * @return The result for this interaction. {@link InteractionResult#PASS} will continue onto the next iteration, while any others will override vanilla behavior
+     * @return The result for this event that determines whether the sapling will grow
      */
     EventResult interaction(LevelAccessor level, Random rand, BlockPos pos);
 }

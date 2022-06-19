@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.core.mixin.fabric;
 
+import gg.moonflower.pollen.api.event.EventResult;
 import gg.moonflower.pollen.api.event.events.entity.living.LivingEntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.living.PotionEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
@@ -102,6 +103,13 @@ public abstract class LivingEntityMixin extends Entity {
     public void addEffect(MobEffectInstance effectInstance, CallbackInfoReturnable<Boolean> cir) {
         MobEffectInstance effectinstance = (MobEffectInstance)this.activeEffects.get(effectInstance.getEffect());
         PotionEvents.ADD.invoker().add((LivingEntity) (Object) this, effectInstance, effectinstance);
+    }
+
+    @Inject(method = "canBeAffected", at = @At("HEAD"), cancellable = true)
+    public void canBeAffected(MobEffectInstance effectInstance, CallbackInfoReturnable<Boolean> cir) {
+        EventResult result = PotionEvents.APPLICABLE.invoker().applicable((LivingEntity) (Object) this, effectInstance);
+        if (result != EventResult.DEFAULT)
+            cir.setReturnValue(result == EventResult.ALLOW);
     }
 
     @ModifyVariable(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getFluidJumpThreshold()D", shift = At.Shift.BEFORE), ordinal = 6)
