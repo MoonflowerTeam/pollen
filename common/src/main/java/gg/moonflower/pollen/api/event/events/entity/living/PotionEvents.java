@@ -3,6 +3,7 @@ package gg.moonflower.pollen.api.event.events.entity.living;
 import gg.moonflower.pollen.api.event.EventResult;
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.api.registry.EventRegistry;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -11,6 +12,7 @@ public final class PotionEvents {
 
     public static final PollinatedEvent<Applicable> APPLICABLE = EventRegistry.createEventResult(Applicable.class);
     public static final PollinatedEvent<Add> ADD = EventRegistry.createLoop(Add.class);
+    public static final PollinatedEvent<Remove> REMOVE = EventRegistry.createCancellable(Remove.class);
     public static final PollinatedEvent<Expire> EXPIRE = EventRegistry.createLoop(Expire.class);
 
     private PotionEvents() {
@@ -55,8 +57,23 @@ public final class PotionEvents {
         void add(LivingEntity entity, MobEffectInstance oldEffectInstance, MobEffectInstance newEffectInstance);
     }
 
+    /**
+     * Fired when an effect is about to be removed from an entity.
+     *
+     * @author ebo2022
+     * @since 2.0.0
+     */
+    @FunctionalInterface
     public interface Remove {
 
+        /**
+         * Called before the specified effect is about to be removed from the given entity.
+         *
+         * @param entity The entity that the effect is being removed from
+         * @param effect The effect being removed
+         * @return <code>true</code> to continue processing, or <code>false</code> to prevent the effect from being removed
+         */
+        boolean remove(LivingEntity entity, MobEffect effect);
     }
 
     /**

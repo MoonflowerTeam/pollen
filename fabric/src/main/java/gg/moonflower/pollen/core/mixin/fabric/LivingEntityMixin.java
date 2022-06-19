@@ -112,6 +112,19 @@ public abstract class LivingEntityMixin extends Entity {
             cir.setReturnValue(result == EventResult.ALLOW);
     }
 
+    @Inject(method = "removeEffect", at = @At("HEAD"), cancellable = true)
+    public void removeEffect(MobEffect effect, CallbackInfoReturnable<Boolean> cir) {
+        if (!PotionEvents.REMOVE.invoker().remove((LivingEntity) (Object) this, effect))
+            cir.setReturnValue(false);
+    }
+
+    @Inject(method = "removeAllEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;onEffectRemoved(Lnet/minecraft/world/effect/MobEffectInstance;)V", shift = At.Shift.BEFORE), cancellable = true)
+    public void removeAllEffects(CallbackInfoReturnable<Boolean> cir) {
+        Iterator<MobEffectInstance> iterator = this.activeEffects.values().iterator();
+        if (!PotionEvents.REMOVE.invoker().remove((LivingEntity) (Object) this, (MobEffect) iterator.next().getEffect()))
+            cir.cancel();
+    }
+
     @ModifyVariable(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getFluidJumpThreshold()D", shift = At.Shift.BEFORE), ordinal = 6)
     public double modifyFluidHeight(double value) {
         return value == 0 ? FluidBehaviorRegistry.getFluids().stream().mapToDouble(this::getFluidHeight).filter(tag -> tag > 0.0).findFirst().orElse(0.0) : value;

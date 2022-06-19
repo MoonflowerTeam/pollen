@@ -339,6 +339,12 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
+    public static void onEvent(PotionEvent.PotionRemoveEvent event) {
+        if (!PotionEvents.REMOVE.invoker().remove(event.getEntityLiving(), event.getPotion()))
+            event.setCanceled(true);
+    }
+
+    @SubscribeEvent
     public static void onEvent(PotionEvent.PotionExpiryEvent event) {
         PotionEvents.EXPIRE.invoker().expire(event.getEntityLiving(), event.getPotionEffect());
     }
