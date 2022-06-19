@@ -1,19 +1,13 @@
 package gg.moonflower.pollen.api.event.events.entity.player;
 
 import gg.moonflower.pollen.api.event.PollinatedEvent;
-import gg.moonflower.pollen.api.event.events.world.ExplosionEvents;
 import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 
-import javax.annotation.Nonnull;
 
 public final class PlayerEvents {
 
