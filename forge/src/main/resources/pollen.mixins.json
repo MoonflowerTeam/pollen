@@ -25,7 +25,6 @@
     "LivingEntityMixin",
     "PackRepositoryAccessor",
     "PackRepositoryMixin",
-    "ReloadableResourceManagerMixin",
     "data.AdvancementBuilderMixin",
     "loot.ForgeHooksMixin",
     "loot.LootPoolAccessor",
