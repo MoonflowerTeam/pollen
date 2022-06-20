@@ -37,6 +37,7 @@ public final class DeprecatedLocalGeometryModelLoader implements BackgroundLoade
             Set<ResourceLocation> deprecatedFiles = new HashSet<>();
             Map<ResourceLocation, GeometryModel> modelLocations = new HashMap<>();
             for (ResourceLocation modelLocation : resourceManager.listResources(FOLDER, name -> name.endsWith(".json"))) {
+                if ("geckolib3".equals(modelLocation.getNamespace())) continue; // Explicitly ignore geckolib3
                 try (Resource resource = resourceManager.getResource(modelLocation)) {
                     GeometryModelData[] models = GeometryModelParser.parseModel(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
                     for (GeometryModelData model : models) {
