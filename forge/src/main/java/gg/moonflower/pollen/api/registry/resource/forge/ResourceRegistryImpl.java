@@ -4,27 +4,29 @@ import com.mojang.datafixers.util.Pair;
 import gg.moonflower.pollen.api.registry.resource.PollinatedPreparableReloadListener;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import gg.moonflower.pollen.api.util.forge.ForgeModResourcePack;
+import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
+import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 @ApiStatus.Internal
+@Mod.EventBusSubscriber(modid = Pollen.MOD_ID)
 public class ResourceRegistryImpl {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -36,7 +38,12 @@ public class ResourceRegistryImpl {
             throw new RuntimeException("Attempted to add listener twice: " + listener.getName() + "");
     }
 
-    public static void inject(PackType type, List<PreparableReloadListener> listeners) {
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onEvent(AddReloadListenerEvent event) {
+        ResourceRegistryImpl.inject(PackType.SERVER_DATA, event.getListeners());
+    }
+
+    private static void inject(PackType type, List<PreparableReloadListener> listeners) {
         Set<PollinatedPreparableReloadListener> addedListeners = LISTENERS.get(type);
         if (addedListeners == null)
             return;
@@ -102,5 +109,18 @@ public class ResourceRegistryImpl {
         }));
 
         return true;
+    }
+
+    @Mod.EventBusSubscriber(modid = Pollen.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class ModBusImpl {
+
+        @SubscribeEvent(priority = EventPriority.LOWEST)
+        public static void onEvent(RegisterClientReloadListenersEvent event) {
+            List<PreparableReloadListener> listeners = new ArrayList<>();
+            ResourceRegistryImpl.inject(PackType.CLIENT_RESOURCES, listeners);
+            for (PreparableReloadListener listener : listeners) {
+                event.registerReloadListener(listener);
+            }
+        }
     }
 }
