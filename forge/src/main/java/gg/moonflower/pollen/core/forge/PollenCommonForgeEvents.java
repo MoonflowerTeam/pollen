@@ -17,8 +17,7 @@ import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
 import gg.moonflower.pollen.api.event.events.world.ExplosionEvents;
-import gg.moonflower.pollen.api.event.events.world.TreeGrowingEvent;
-import gg.moonflower.pollen.api.event.events.world.BonemealEvent;
+import gg.moonflower.pollen.api.event.events.world.WorldEvents;
 import gg.moonflower.pollen.core.Pollen;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -184,13 +183,13 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.world.SaplingGrowTreeEvent event) {
-        EventResult result = TreeGrowingEvent.EVENT.invoker().interaction(event.getWorld(), event.getRand(), event.getPos());
+        EventResult result = WorldEvents.TREE_GROWING.invoker().interaction(event.getWorld(), event.getRand(), event.getPos());
         event.setResult(forgifyResult(result));
     }
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.player.BonemealEvent event) {
-        boolean result = BonemealEvent.EVENT.invoker().bonemeal(event.getWorld(), event.getPos(), event.getBlock(), event.getStack(), new ResultContext() {
+        boolean result = WorldEvents.BONEMEAL.invoker().bonemeal(event.getWorld(), event.getPos(), event.getBlock(), event.getStack(), new ResultContext() {
             @Override
             public EventResult getResult() {
                 return pollinateResult(event.getResult());

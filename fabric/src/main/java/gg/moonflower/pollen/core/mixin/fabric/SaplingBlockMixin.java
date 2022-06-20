@@ -1,10 +1,9 @@
 package gg.moonflower.pollen.core.mixin.fabric;
 
 import gg.moonflower.pollen.api.event.EventResult;
-import gg.moonflower.pollen.api.event.events.world.TreeGrowingEvent;
+import gg.moonflower.pollen.api.event.events.world.WorldEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,7 +19,7 @@ public class SaplingBlockMixin {
 
     @Inject(method = "advanceTree", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/grower/AbstractTreeGrower;growTree(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/level/chunk/ChunkGenerator;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Ljava/util/Random;)Z", shift = At.Shift.BEFORE), cancellable = true)
     public void advanceTree(ServerLevel level, BlockPos pos, BlockState state, Random rand, CallbackInfo ci) {
-        EventResult result = TreeGrowingEvent.EVENT.invoker().interaction((LevelAccessor) level, rand, pos);
+        EventResult result = WorldEvents.TREE_GROWING.invoker().interaction((LevelAccessor) level, rand, pos);
         if (result == EventResult.DENY)
             ci.cancel();
     }

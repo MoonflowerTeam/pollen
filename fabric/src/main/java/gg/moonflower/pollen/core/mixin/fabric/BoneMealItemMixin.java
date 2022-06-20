@@ -2,7 +2,7 @@ package gg.moonflower.pollen.core.mixin.fabric;
 
 import gg.moonflower.pollen.api.event.EventResult;
 import gg.moonflower.pollen.api.event.ResultContext;
-import gg.moonflower.pollen.api.event.events.world.BonemealEvent;
+import gg.moonflower.pollen.api.event.events.world.WorldEvents;
 import gg.moonflower.pollen.common.events.context.ResultContextImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.BoneMealItem;
@@ -26,7 +26,7 @@ public class BoneMealItemMixin {
 
     private static int processBonemeal(Level level, BlockPos pos, BlockState state, ItemStack stack) {
         ResultContext resultContext = new ResultContextImpl();
-        boolean event = BonemealEvent.EVENT.invoker().bonemeal(level, pos, state, stack, resultContext);
+        boolean event = WorldEvents.BONEMEAL.invoker().bonemeal(level, pos, state, stack, resultContext);
         if (!event) {
             return -1;
         } else if (resultContext.getResult() == EventResult.ALLOW) {
