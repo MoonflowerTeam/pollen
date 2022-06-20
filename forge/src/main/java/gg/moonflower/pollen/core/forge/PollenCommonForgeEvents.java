@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.core.forge;
 
 import gg.moonflower.pollen.api.event.EventResult;
+import gg.moonflower.pollen.api.event.ResultContext;
 import gg.moonflower.pollen.api.event.events.LootTableConstructingEvent;
 import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.ModifyTradesEvents;
@@ -17,6 +18,7 @@ import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
 import gg.moonflower.pollen.api.event.events.world.ExplosionEvents;
 import gg.moonflower.pollen.api.event.events.world.TreeGrowingEvent;
+import gg.moonflower.pollen.api.event.events.world.BonemealEvent;
 import gg.moonflower.pollen.core.Pollen;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -184,6 +186,23 @@ public class PollenCommonForgeEvents {
     public static void onEvent(net.minecraftforge.event.world.SaplingGrowTreeEvent event) {
         EventResult result = TreeGrowingEvent.EVENT.invoker().interaction(event.getWorld(), event.getRand(), event.getPos());
         event.setResult(forgifyResult(result));
+    }
+
+    @SubscribeEvent
+    public static void onEvent(net.minecraftforge.event.entity.player.BonemealEvent event) {
+        boolean result = BonemealEvent.EVENT.invoker().bonemeal(event.getWorld(), event.getPos(), event.getBlock(), event.getStack(), new ResultContext() {
+            @Override
+            public EventResult getResult() {
+                return pollinateResult(event.getResult());
+            }
+
+            @Override
+            public void setResult(EventResult result) {
+                event.setResult(forgifyResult(result));
+            }
+        });
+        if (!result)
+            event.setCanceled(true);
     }
 
     @SubscribeEvent
@@ -357,6 +376,17 @@ public class PollenCommonForgeEvents {
                 return Event.Result.ALLOW;
             default:
                 return Event.Result.DEFAULT;
+        }
+    }
+
+    public static EventResult pollinateResult(Event.Result forgeResult) {
+        switch (forgeResult) {
+            case DENY:
+                return EventResult.DENY;
+            case ALLOW:
+                return EventResult.ALLOW;
+            default:
+                return EventResult.DEFAULT;
         }
     }
 }
