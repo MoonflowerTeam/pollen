@@ -8,6 +8,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 
+import javax.annotation.Nullable;
+
 
 public final class PlayerEvents {
 
@@ -114,8 +116,10 @@ public final class PlayerEvents {
          *
          * @param player The player falling asleep
          * @param pos    The sleeping position of the player
-         * @return A {@link Player.BedSleepingProblem} result for this interaction
+         * @return <code>null</code> to allow the player to sleep, or a {@link Player.BedSleepingProblem} if they cannot sleep
          */
+
+        @Nullable
         Player.BedSleepingProblem startSleeping(Player player, BlockPos pos);
     }
 

@@ -45,13 +45,6 @@ public abstract class ServerPlayerMixin extends Player {
         ContainerEvents.OPEN.invoker().open(this, this.containerMenu);
     }
 
-    @Inject(method = "startSleepInBed", at = @At("HEAD"), cancellable = true)
-    public void startSleepInBed(BlockPos bedPos, CallbackInfoReturnable<Either<BedSleepingProblem, Unit>> cir) {
-        BedSleepingProblem result = PlayerEvents.START_SLEEPING.invoker().startSleeping((Player) (Object) this, bedPos);
-        if (result != null)
-            cir.setReturnValue(Either.left(result));
-    }
-
     @Inject(method = "die", at = @At("HEAD"), cancellable = true)
     public void die(DamageSource damageSource, CallbackInfo ci) {
         if (!LivingEntityEvents.DEATH.invoker().death((LivingEntity) (Object) this, damageSource))
