@@ -184,7 +184,7 @@ public class PollenCommonForgeEvents {
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.world.SaplingGrowTreeEvent event) {
         EventResult result = WorldEvents.TREE_GROWING.invoker().interaction(event.getWorld(), event.getRand(), event.getPos());
-        event.setResult(forgifyResult(result));
+        event.setResult(convertResult(result));
     }
 
     @SubscribeEvent
@@ -192,12 +192,12 @@ public class PollenCommonForgeEvents {
         boolean result = WorldEvents.BONEMEAL.invoker().bonemeal(event.getWorld(), event.getPos(), event.getBlock(), event.getStack(), new ResultContext() {
             @Override
             public EventResult getResult() {
-                return pollinateResult(event.getResult());
+                return convertResult(event.getResult());
             }
 
             @Override
             public void setResult(EventResult result) {
-                event.setResult(forgifyResult(result));
+                event.setResult(convertResult(result));
             }
         });
         if (!result)
@@ -348,7 +348,7 @@ public class PollenCommonForgeEvents {
     @SubscribeEvent
     public static void onEvent(PotionEvent.PotionApplicableEvent event) {
         EventResult result = PotionEvents.APPLICABLE.invoker().applicable(event.getEntityLiving(), event.getPotionEffect());
-        event.setResult(forgifyResult(result));
+        event.setResult(convertResult(result));
     }
 
     @SubscribeEvent
@@ -367,25 +367,29 @@ public class PollenCommonForgeEvents {
         PotionEvents.EXPIRE.invoker().expire(event.getEntityLiving(), event.getPotionEffect());
     }
 
-    public static Event.Result forgifyResult(EventResult pollenResult) {
-        switch (pollenResult) {
-            case DENY:
-                return Event.Result.DENY;
-            case ALLOW:
-                return Event.Result.ALLOW;
-            default:
-                return Event.Result.DEFAULT;
-        }
-    }
-
-    public static EventResult pollinateResult(Event.Result forgeResult) {
-        switch (forgeResult) {
+    public static EventResult convertResult(Event.Result result) {
+        switch (result) {
             case DENY:
                 return EventResult.DENY;
             case ALLOW:
                 return EventResult.ALLOW;
-            default:
+            case DEFAULT:
                 return EventResult.DEFAULT;
+            default:
+                throw new UnsupportedOperationException("Unknown event result type: " + result);
+        }
+    }
+
+    public static Event.Result convertResult(EventResult result) {
+        switch (result) {
+            case DENY:
+                return Event.Result.DENY;
+            case ALLOW:
+                return Event.Result.ALLOW;
+            case DEFAULT:
+                return Event.Result.DEFAULT;
+            default:
+                throw new UnsupportedOperationException("Unknown event result type: " + result);
         }
     }
 }
