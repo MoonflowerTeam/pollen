@@ -88,7 +88,8 @@ public final class EntitlementManager {
 
             @Override
             public CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager, ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor, Executor gameExecutor) {
-                return EntitlementManager.reload(false, stage, gameExecutor);
+                ProfileManager.getProfile(Minecraft.getInstance().getUser().getGameProfile().getId()); // Don't wait for the profile to download
+                return stage.wait(null);
             }
         });
     }
