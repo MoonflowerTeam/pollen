@@ -41,7 +41,7 @@ public abstract class ShadowRendererMixin {
     }
 
     @Inject(method = "renderBlockEntities", at = @At("TAIL"), remap = false)
-    public void renderBlockRenderers(PoseStack matrixStack, float partialTicks, double cameraX, double cameraY, double cameraZ, MultiBufferSource.BufferSource buffer, CallbackInfoReturnable<Integer> ci) {
+    public void renderBlockRenderers(MultiBufferSource.BufferSource buffer, PoseStack matrixStack, double cameraX, double cameraY, double cameraZ, float partialTicks, boolean hasEntityFrustum, CallbackInfoReturnable<Integer> ci) {
         Minecraft minecraft = Minecraft.getInstance();
         LevelRendererExtension extension = (LevelRendererExtension) minecraft.levelRenderer;
         ClientLevel level = getLevel();
