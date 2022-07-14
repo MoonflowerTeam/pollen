@@ -99,6 +99,7 @@ shadowJar {
 
     configurations = [project.configurations.shadowCommon]
     relocate "io.github.ocelot.molangcompiler", "gg.moonflower.pollen.molangcompiler"
+    relocate "com.electronwill.nightconfig", "gg.moonflower.pollen.nightconfig"
     classifier "dev-shadow"
 }
 
