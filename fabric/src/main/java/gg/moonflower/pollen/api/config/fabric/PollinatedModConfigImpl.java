@@ -2,6 +2,7 @@ package gg.moonflower.pollen.api.config.fabric;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.file.FileConfig;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.config.PollinatedModConfig;
 import net.fabricmc.loader.api.ModContainer;
@@ -63,11 +64,12 @@ public class PollinatedModConfigImpl implements PollinatedModConfig {
 
     @Override
     public void save() {
-        ((CommentedFileConfig) this.configData).save();
+        if (this.configData instanceof FileConfig) // Server configs without a file will be in memory instead, so no file to save to
+            ((FileConfig) this.configData).save();
     }
 
     @Override
     public Path getFullPath() {
-        return ((CommentedFileConfig) this.configData).getNioPath();
+        return this.configData instanceof FileConfig ? ((FileConfig) this.configData).getNioPath() : null; // Same here. There is no path to a memory config.
     }
 }
