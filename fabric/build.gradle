@@ -37,29 +37,25 @@ configurations {
 
 repositories {
     maven { url "https://maven.terraformersmc.com/" }
-    maven {
-        name = 'Ladysnake Mods'
-        url = 'https://ladysnake.jfrog.io/artifactory/mods'
-    }
-    mavenCentral()
 }
 
 dependencies {
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-    modImplementation "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
+    modApi "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+
+    modImplementation "com.terraformersmc:modmenu:${rootProject.mod_menu_version}" // TODO: modApi when config gui is implemented
 
     // Common Dependencies
-    api "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
+    implementation "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
     shadowCommon "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
-    api "com.electronwill.night-config:core:${project.night_config_version}"
+    implementation "com.electronwill.night-config:core:${project.night_config_version}"
     shadowCommon "com.electronwill.night-config:core:${project.night_config_version}"
-    api "com.electronwill.night-config:toml:${project.night_config_version}"
+    implementation "com.electronwill.night-config:toml:${project.night_config_version}"
     shadowCommon "com.electronwill.night-config:toml:${project.night_config_version}"
 
     // Fabric-only Dependencies
     modApi "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cardinal_components_version}"
-    modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cardinal_components_version}"
+    modApi "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cardinal_components_version}"
     include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cardinal_components_version}"
     include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cardinal_components_version}"
     // Needed for making sure render changes apply
@@ -99,10 +95,12 @@ processResources {
 }
 
 shadowJar {
+    mergeServiceFiles()
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
     relocate "io.github.ocelot.molangcompiler", "gg.moonflower.pollen.molangcompiler"
+    relocate "com.llamalad7.mixinextras", "gg.moonflower.pollen.mixinextras"
     classifier "dev-shadow"
 }
 
@@ -123,17 +121,29 @@ sourcesJar {
     duplicatesStrategy(DuplicatesStrategy.INCLUDE)
 }
 
-components.java {
-    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
-        skip()
-    }
-}
-
 publishing {
     publications {
         mavenFabric(MavenPublication) {
             artifactId = project.archivesBaseName
-            from components.java
+
+            artifact remapJar
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+
+            pom.withXml {
+                def depsNode = asNode().appendNode('dependencies')
+                [this.configurations.modApi, this.configurations.api].each {
+                    it.allDependencies.each {
+                        def depNode = depsNode.appendNode('dependency')
+                        depNode.appendNode('groupId', it.group)
+                        depNode.appendNode('artifactId', it.name)
+                        depNode.appendNode('version', it.version)
+                    }
+                }
+            }
         }
     }
 }
+
+loom.disableDeprecatedPomGeneration(publishing.publications.mavenFabric)

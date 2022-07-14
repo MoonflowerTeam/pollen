@@ -61,7 +61,7 @@ repositories {
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
 
-    forgeRuntimeLibrary api("com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}")
+    forgeRuntimeLibrary implementation("com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}")
     shadowCommon "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
 
     modRuntimeOnly "me.djtheredstoner:DevAuth-forge-latest:${rootProject.devauth_version}"
@@ -130,7 +130,13 @@ publishing {
     publications {
         mavenForge(MavenPublication) {
             artifactId = project.archivesBaseName
-            from components.java
+
+            artifact remapJar
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
         }
     }
 }
+
+loom.disableDeprecatedPomGeneration(publishing.publications.mavenForge)
