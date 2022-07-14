@@ -86,7 +86,7 @@ dependencies {
 
     implementation "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
     annotationProcessor "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
-    include "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
+    shadowCommon "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
