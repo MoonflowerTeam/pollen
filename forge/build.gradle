@@ -124,16 +124,19 @@ components.java {
     withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
         skip()
     }
-    withVariantsFromConfiguration(project.configurations.runtimeElements) {
-        skip()
-    }
 }
 
 publishing {
     publications {
         mavenForge(MavenPublication) {
             artifactId = project.archivesBaseName
-            from components.java
+
+            artifact remapJar
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
         }
     }
 }
+
+loom.disableDeprecatedPomGeneration(publishing.publications.mavenForge)
