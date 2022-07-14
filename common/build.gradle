@@ -16,16 +16,17 @@ loom {
     accessWidenerPath.set(file("src/main/resources/${project.mod_id}.accesswidener"))
 }
 
+components.java {
+    withVariantsFromConfiguration(project.configurations.runtimeElements) {
+        skip()
+    }
+}
+
 publishing {
     publications {
         mavenCommon(MavenPublication) {
             artifactId = project.archivesBaseName
-            artifact remapJar
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
+            from components.java
         }
     }
 }
-
-loom.disableDeprecatedPomGeneration(publishing.publications.mavenCommon)

@@ -121,29 +121,20 @@ sourcesJar {
     duplicatesStrategy(DuplicatesStrategy.INCLUDE)
 }
 
+components.java {
+    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+        skip()
+    }
+    withVariantsFromConfiguration(project.configurations.runtimeElements) {
+        skip()
+    }
+}
+
 publishing {
     publications {
         mavenFabric(MavenPublication) {
             artifactId = project.archivesBaseName
-
-            artifact remapJar
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
-
-            pom.withXml {
-                def depsNode = asNode().appendNode('dependencies')
-                [this.configurations.modApi, this.configurations.api].each {
-                    it.allDependencies.each {
-                        def depNode = depsNode.appendNode('dependency')
-                        depNode.appendNode('groupId', it.group)
-                        depNode.appendNode('artifactId', it.name)
-                        depNode.appendNode('version', it.version)
-                    }
-                }
-            }
+            from components.java
         }
     }
 }
-
-loom.disableDeprecatedPomGeneration(publishing.publications.mavenFabric)
