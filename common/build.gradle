@@ -3,9 +3,9 @@ dependencies {
     // Do NOT use other classes from fabric loader
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 
-    api "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
-    api "com.electronwill.night-config:core:${project.night_config_version}"
-    api "com.electronwill.night-config:toml:${project.night_config_version}"
+    implementation "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
+    implementation "com.electronwill.night-config:core:${project.night_config_version}"
+    implementation "com.electronwill.night-config:toml:${project.night_config_version}"
 }
 
 architectury {
@@ -14,6 +14,12 @@ architectury {
 
 loom {
     accessWidenerPath.set(file("src/main/resources/${project.mod_id}.accesswidener"))
+}
+
+components.java {
+    withVariantsFromConfiguration(project.configurations.runtimeElements) {
+        skip()
+    }
 }
 
 publishing {
