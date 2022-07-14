@@ -35,15 +35,17 @@ allprojects {
     group = rootProject.maven_group
 
     repositories {
-        maven { url "https://jitpack.io" }
+        mavenCentral()
+        maven { url "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1" }
+        maven { url "https://repo.moonflower.gg/releases"}
         maven { url "https://maven.parchmentmc.org"}
+        maven { url "https://jitpack.io" }
         maven {
             url "https://www.cursemaven.com"
             content {
                 includeGroup "curse.maven"
             }
         }
-        maven { url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1" }
     }
 
     tasks.withType(JavaCompile) {
@@ -55,14 +57,16 @@ allprojects {
         withSourcesJar()
     }
 
+
+    def ENV = System.getenv()
     publishing {
-        repositories {
-            if (project.hasProperty("moonflowerUsername") && project.hasProperty("moonflowerToken")) {
-                maven {
-                    url "https://repo.moonflower.gg/releases"
+        if (ENV.MAVEN_URL) {
+            repositories.maven {
+                url ENV.MAVEN_URL
+                if (ENV.MAVEN_USERNAME) {
                     credentials {
-                        username = project.properties.moonflowerUsername
-                        password = project.properties.moonflowerToken
+                        username ENV.MAVEN_USERNAME
+                        password ENV.MAVEN_PASSWORD
                     }
                 }
             }
