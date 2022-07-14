@@ -3,6 +3,7 @@ package gg.moonflower.pollen.api.config;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.electronwill.nightconfig.core.utils.UnmodifiableConfigWrapper;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 
@@ -40,12 +41,13 @@ public interface PollinatedModConfig {
     CommentedConfig getConfigData();
 
     /**
-     * Writes the config to disc.
+     * Writes the config to disc if possible.
      */
     void save();
 
     /**
-     * @return The complete path of the config file
+     * @return The complete path of the config file or <code>null</code> if the config is in memory
      */
+    @Nullable
     Path getFullPath();
 }
