@@ -59,14 +59,16 @@ allprojects {
         withSourcesJar()
     }
 
+
+    def ENV = System.getenv()
     publishing {
-        repositories {
-            if (project.hasProperty("moonflowerUsername") && project.hasProperty("moonflowerToken")) {
-                maven {
-                    url "https://repo.moonflower.gg/releases"
+        if (ENV.MAVEN_URL) {
+            repositories.maven {
+                url ENV.MAVEN_URL
+                if (ENV.MAVEN_USERNAME) {
                     credentials {
-                        username = project.properties.moonflowerUsername
-                        password = project.properties.moonflowerToken
+                        username ENV.MAVEN_USERNAME
+                        password ENV.MAVEN_PASSWORD
                     }
                 }
             }
