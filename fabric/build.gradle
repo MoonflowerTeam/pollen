@@ -119,10 +119,12 @@ processResources {
 }
 
 shadowJar {
+    mergeServiceFiles()
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
     relocate "io.github.ocelot.molangcompiler", "gg.moonflower.pollen.molangcompiler"
+    relocate "com.llamalad7.mixinextras", "gg.moonflower.pollen.mixinextras"
     classifier "dev-shadow"
 }
 
