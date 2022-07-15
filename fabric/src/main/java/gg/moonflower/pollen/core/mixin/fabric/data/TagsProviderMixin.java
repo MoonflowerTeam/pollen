@@ -22,12 +22,6 @@ public class TagsProviderMixin<T> {
     @Unique
     private ResourceLocation captureId;
 
-    @ModifyVariable(method = "method_27046", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", shift = At.Shift.BEFORE), ordinal = 0)
-    public List<Tag.BuilderEntry> modifyList(List<Tag.BuilderEntry> list) {
-        list.clear();
-        return list;
-    }
-
     @Inject(method = "method_27046", at = @At("HEAD"))
     public void captureId(Function<ResourceLocation, Tag<T>> function, Function<ResourceLocation, T> function2, HashCache hashCache, ResourceLocation id, Tag.Builder builder, CallbackInfo ci) {
         this.captureId = id;

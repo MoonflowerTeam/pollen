@@ -2,6 +2,7 @@ package gg.moonflower.pollen.core.mixin.forge.data;
 
 import com.google.gson.JsonObject;
 import gg.moonflower.pollen.api.datagen.provider.ConditionalDataProvider;
+import gg.moonflower.pollen.api.datagen.provider.tags.PollinatedTagsProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -22,9 +23,11 @@ public class TagsProviderMixin<T> {
     @Unique
     private ResourceLocation captureId;
 
+    @SuppressWarnings("ConstantConditions")
     @ModifyVariable(method = "func_240524_a_", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", shift = At.Shift.BEFORE), ordinal = 0)
     public List<Tag.BuilderEntry> modifyList(List<Tag.BuilderEntry> list) {
-        list.clear();
+        if (((Object) this) instanceof PollinatedTagsProvider<?>)
+            list.clear();
         return list;
     }
 
