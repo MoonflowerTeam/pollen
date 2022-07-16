@@ -24,9 +24,9 @@ public final class PlayerInteractionEvents {
         return InteractionResultHolder.pass(ItemStack.EMPTY);
     });
 
-    public static final PollinatedEvent<RightClickEntity> RIGHT_CLICK_ENTITY = EventRegistry.createResult(RightClickEntity.class);
-    public static final PollinatedEvent<RightClickBlock> RIGHT_CLICK_BLOCK = EventRegistry.createResult(RightClickBlock.class);
-    public static final PollinatedEvent<LeftClickBlock> LEFT_CLICK_BLOCK = EventRegistry.createResult(LeftClickBlock.class);
+    public static final PollinatedEvent<RightClickEntity> RIGHT_CLICK_ENTITY = EventRegistry.createInteractionResult(RightClickEntity.class);
+    public static final PollinatedEvent<RightClickBlock> RIGHT_CLICK_BLOCK = EventRegistry.createInteractionResult(RightClickBlock.class);
+    public static final PollinatedEvent<LeftClickBlock> LEFT_CLICK_BLOCK = EventRegistry.createInteractionResult(LeftClickBlock.class);
 
     private PlayerInteractionEvents() {
     }

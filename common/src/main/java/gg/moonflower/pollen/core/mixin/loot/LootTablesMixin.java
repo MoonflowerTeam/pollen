@@ -19,10 +19,6 @@ import java.util.concurrent.CompletableFuture;
 @Mixin(LootTables.class)
 public abstract class LootTablesMixin extends SimpleJsonResourceReloadListener {
 
-    @Shadow
-    @Final
-    private static Logger LOGGER;
-
     private LootTablesMixin(Gson gson, String string) {
         super(gson, string);
     }
@@ -30,13 +26,7 @@ public abstract class LootTablesMixin extends SimpleJsonResourceReloadListener {
     @Override
     protected Map<ResourceLocation, JsonElement> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
         Map<ResourceLocation, JsonElement> object = super.prepare(resourceManager, profiler);
-        CompletableFuture<Void> completeFuture = ResourceModifierManager.getServerCompleteFuture();
-        if (completeFuture != null) {
-            completeFuture.join(); // Wait for server modifiers before completing
-        } else {
-            LOGGER.warn("Expected to wait for resource modifiers, but there was no pending future.");
-        }
-
+        ResourceModifierManager.getServerCompleteFuture().join(); // Wait for server modifiers before completing
         return object;
     }
 }

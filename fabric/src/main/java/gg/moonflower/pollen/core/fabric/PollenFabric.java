@@ -3,6 +3,7 @@ package gg.moonflower.pollen.core.fabric;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.config.fabric.ConfigTracker;
 import gg.moonflower.pollen.api.event.events.LootTableConstructingEvent;
+import gg.moonflower.pollen.api.event.events.entity.player.PlayerEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractionEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
@@ -18,6 +19,7 @@ import gg.moonflower.pollen.core.mixin.fabric.LevelResourceAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
@@ -79,6 +81,8 @@ public class PollenFabric implements ModInitializer {
         UseBlockCallback.EVENT.register((player, level, hand, result) -> PlayerInteractionEvents.RIGHT_CLICK_BLOCK.invoker().interaction(player, level, hand, result));
         AttackBlockCallback.EVENT.register((player, level, hand, pos, direction) -> PlayerInteractionEvents.LEFT_CLICK_BLOCK.invoker().interaction(player, level, hand, pos, direction));
         UseEntityCallback.EVENT.register((player, world, hand, entity, entityHitResult) -> PlayerInteractionEvents.RIGHT_CLICK_ENTITY.invoker().interaction(player, world, hand, entity));
+
+        EntitySleepEvents.ALLOW_SLEEPING.register(((player, sleepingPos) -> PlayerEvents.START_SLEEPING.invoker().startSleeping(player, sleepingPos)));
 
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> CommandRegistryEvent.EVENT.invoker().registerCommands(dispatcher, dedicated ? Commands.CommandSelection.DEDICATED : Platform.getRunningServer().isPresent() ? Commands.CommandSelection.INTEGRATED : Commands.CommandSelection.ALL));
 

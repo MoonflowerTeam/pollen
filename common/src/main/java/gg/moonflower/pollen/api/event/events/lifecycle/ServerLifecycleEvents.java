@@ -6,18 +6,8 @@ import net.minecraft.server.MinecraftServer;
 
 public final class ServerLifecycleEvents {
 
-    public static final PollinatedEvent<PreStart> PRE_STARTING = EventRegistry.create(PreStart.class, listeners -> server -> {
-        for (PreStart listener : listeners)
-            if (!listener.preStarting(server))
-                return false;
-        return true;
-    });
-    public static final PollinatedEvent<Starting> STARTING = EventRegistry.create(Starting.class, listeners -> server -> {
-        for (Starting listener : listeners)
-            if (!listener.starting(server))
-                return false;
-        return true;
-    });
+    public static final PollinatedEvent<PreStart> PRE_STARTING = EventRegistry.createCancellable(PreStart.class);
+    public static final PollinatedEvent<Starting> STARTING = EventRegistry.createCancellable(Starting.class);
     public static final PollinatedEvent<Started> STARTED = EventRegistry.createLoop(Started.class);
     public static final PollinatedEvent<Stopping> STOPPING = EventRegistry.createLoop(Stopping.class);
     public static final PollinatedEvent<Stopped> STOPPED = EventRegistry.createLoop(Stopped.class);

@@ -7,12 +7,7 @@ import net.minecraft.world.level.Level;
 
 public final class EntityEvents {
 
-    public static final PollinatedEvent<Join> JOIN = EventRegistry.create(Join.class, events -> (entity, level) -> {
-        for (Join event : events)
-            if (!event.onJoin(entity, level))
-                return false;
-        return true;
-    });
+    public static final PollinatedEvent<Join> JOIN = EventRegistry.createCancellable(Join.class);
     public static final PollinatedEvent<Leave> LEAVE = EventRegistry.createLoop(Leave.class);
 
     private EntityEvents() {

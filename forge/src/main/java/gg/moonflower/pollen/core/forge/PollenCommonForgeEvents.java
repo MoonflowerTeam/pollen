@@ -1,10 +1,15 @@
 package gg.moonflower.pollen.core.forge;
 
+import gg.moonflower.pollen.api.event.EventResult;
+import gg.moonflower.pollen.api.event.ResultContext;
 import gg.moonflower.pollen.api.event.events.LootTableConstructingEvent;
 import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.ModifyTradesEvents;
 import gg.moonflower.pollen.api.event.events.entity.SetTargetEvent;
+import gg.moonflower.pollen.api.event.events.entity.living.LivingEntityEvents;
+import gg.moonflower.pollen.api.event.events.entity.living.PotionEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.ContainerEvents;
+import gg.moonflower.pollen.api.event.events.entity.player.PlayerEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractionEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
@@ -12,17 +17,22 @@ import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
 import gg.moonflower.pollen.api.event.events.world.ExplosionEvents;
+import gg.moonflower.pollen.api.event.events.world.WorldEvents;
 import gg.moonflower.pollen.core.Pollen;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
+import net.minecraftforge.event.entity.player.PlayerXpEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
@@ -172,6 +182,29 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
+    public static void onEvent(net.minecraftforge.event.world.SaplingGrowTreeEvent event) {
+        EventResult result = WorldEvents.TREE_GROWING.invoker().interaction(event.getWorld(), event.getRand(), event.getPos());
+        event.setResult(convertResult(result));
+    }
+
+    @SubscribeEvent
+    public static void onEvent(net.minecraftforge.event.entity.player.BonemealEvent event) {
+        boolean result = WorldEvents.BONEMEAL.invoker().bonemeal(event.getWorld(), event.getPos(), event.getBlock(), event.getStack(), new ResultContext() {
+            @Override
+            public EventResult getResult() {
+                return convertResult(event.getResult());
+            }
+
+            @Override
+            public void setResult(EventResult result) {
+                event.setResult(convertResult(result));
+            }
+        });
+        if (!result)
+            event.setCanceled(true);
+    }
+
+    @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.EntityJoinWorldEvent event) {
         if (!EntityEvents.JOIN.invoker().onJoin(event.getEntity(), event.getWorld()))
             event.setCanceled(true);
@@ -245,9 +278,118 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
+    public static void onEvent(AdvancementEvent event) {
+        PlayerEvents.ADVANCEMENT_EVENT.invoker().playerAdvancement(event.getPlayer(), event.getAdvancement());
+    }
+
+    @SubscribeEvent
+    public static void onEvent(PlayerXpEvent.PickupXp event) {
+        if (!PlayerEvents.EXP_PICKUP.invoker().expPickup(event.getPlayer(), event.getOrb()))
+            event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void onEvent(net.minecraftforge.event.entity.player.PlayerSleepInBedEvent event) {
+        Player.BedSleepingProblem result = PlayerEvents.START_SLEEPING.invoker().startSleeping(event.getPlayer(), event.getPos());
+        if (result != null)
+            event.setResult(result);
+    }
+
+    @SubscribeEvent
+    public static void onEvent(net.minecraftforge.event.entity.player.PlayerWakeUpEvent event) {
+        PlayerEvents.STOP_SLEEPING.invoker().stopSleeping(event.getPlayer(), event.wakeImmediately(), event.updateWorld());
+    }
+
+    @SubscribeEvent
     public static void onEvent(LootTableLoadEvent event) {
         LootTableConstructingEvent.Context context = new LootTableConstructingEvent.Context(event.getName(), event.getTable());
         LootTableConstructingEvent.EVENT.invoker().modifyLootTable(context);
         event.setTable(context.apply());
+    }
+
+    @SubscribeEvent
+    public static void onEvent(LivingDamageEvent event) {
+        if (!LivingEntityEvents.DAMAGE.invoker().livingDamage(event.getEntityLiving(), event.getSource(), new LivingEntityEvents.Damage.Context() {
+            @Override
+            public float getDamageAmount() {
+                return event.getAmount();
+            }
+
+            @Override
+            public void setDamageAmount(float amount) {
+                event.setAmount(amount);
+            }
+        }))
+            event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void onEvent(LivingDeathEvent event) {
+        if (!LivingEntityEvents.DEATH.invoker().death(event.getEntityLiving(), event.getSource()))
+            event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void onEvent(LivingHealEvent event) {
+        if (!LivingEntityEvents.HEAL.invoker().heal(event.getEntityLiving(), new LivingEntityEvents.Heal.HealContext() {
+            @Override
+            public float getAmount() {
+                return event.getAmount();
+            }
+
+            @Override
+            public void setAmount(float amount) {
+                event.setAmount(amount);
+            }
+        }))
+            event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void onEvent(PotionEvent.PotionApplicableEvent event) {
+        EventResult result = PotionEvents.APPLICABLE.invoker().applicable(event.getEntityLiving(), event.getPotionEffect());
+        event.setResult(convertResult(result));
+    }
+
+    @SubscribeEvent
+    public static void onEvent(PotionEvent.PotionAddedEvent event) {
+        PotionEvents.ADD.invoker().add(event.getEntityLiving(), event.getOldPotionEffect(), event.getPotionEffect());
+    }
+
+    @SubscribeEvent
+    public static void onEvent(PotionEvent.PotionRemoveEvent event) {
+        if (!PotionEvents.REMOVE.invoker().remove(event.getEntityLiving(), event.getPotion()))
+            event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void onEvent(PotionEvent.PotionExpiryEvent event) {
+        PotionEvents.EXPIRE.invoker().expire(event.getEntityLiving(), event.getPotionEffect());
+    }
+
+    public static EventResult convertResult(Event.Result result) {
+        switch (result) {
+            case DENY:
+                return EventResult.DENY;
+            case ALLOW:
+                return EventResult.ALLOW;
+            case DEFAULT:
+                return EventResult.DEFAULT;
+            default:
+                throw new UnsupportedOperationException("Unknown event result type: " + result);
+        }
+    }
+
+    public static Event.Result convertResult(EventResult result) {
+        switch (result) {
+            case DENY:
+                return Event.Result.DENY;
+            case ALLOW:
+                return Event.Result.ALLOW;
+            case DEFAULT:
+                return Event.Result.DEFAULT;
+            default:
+                throw new UnsupportedOperationException("Unknown event result type: " + result);
+        }
     }
 }

@@ -1,11 +1,7 @@
 package gg.moonflower.pollen.api.resource.modifier;
 
 import com.google.common.base.Suppliers;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 import gg.moonflower.pollen.api.event.events.AdvancementConstructingEvent;
 import gg.moonflower.pollen.api.event.events.LootTableConstructingEvent;
 import gg.moonflower.pollen.api.event.events.client.resource.ModelEvents;
@@ -62,7 +58,7 @@ public final class ResourceModifierManager {
     private static final Map<ResourceLocation, ResourceModifier<?>> DATA_MODIFIERS = new HashMap<>();
     private static final Map<ResourceLocation, ResourceModifier<?>> RESOURCE_MODIFIERS = new HashMap<>();
 
-    private static SidedReloader serverReloader = null;
+    private static volatile SidedReloader serverReloader = null;
     private static final Supplier<SidedReloader> CLIENT_RELOADER = Suppliers.memoize(() -> new SidedReloader("resource", RESOURCE_MODIFIERS, type -> (n, json, inject, priority) -> {
         if (!(type.getSerializer() instanceof ResourceModifierSerializer))
             throw new JsonSyntaxException(REGISTRY.getKey(type) + " is not a resource modifier");
@@ -115,10 +111,13 @@ public final class ResourceModifierManager {
         });
     }
 
-    @Nullable
     @ApiStatus.Internal
     public static CompletableFuture<Void> getServerCompleteFuture() {
-        return serverReloader != null ? serverReloader.getCompleteFuture() : null;
+        if (serverReloader == null)
+            throw new NullPointerException("Expected to wait for resource modifiers, but serverReloader was null");
+        if (serverReloader.getCompleteFuture() == null)
+            throw new NullPointerException("Expected to wait for resource modifiers, but serverReloader#getCompleteFuture() returned null");
+        return serverReloader.getCompleteFuture();
     }
 
     @ApiStatus.Internal
