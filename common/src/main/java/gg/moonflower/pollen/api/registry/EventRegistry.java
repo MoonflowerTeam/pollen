@@ -62,11 +62,11 @@ public final class EventRegistry {
         return create(type, events -> (T) Proxy.newProxyInstance(EventRegistry.class.getClassLoader(), new Class[]{type}, (proxy, method, args) -> {
             for (Object event : events) {
                 EventResult result = invokeFast(event, method, args);
-                if (result != EventResult.PASS) {
+                if (result != EventResult.DEFAULT) {
                     return result;
                 }
             }
-            return EventResult.PASS;
+            return EventResult.DEFAULT;
         }));
     }
 

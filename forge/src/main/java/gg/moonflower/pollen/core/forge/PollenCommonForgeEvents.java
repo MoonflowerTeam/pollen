@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.core.forge;
 
 import gg.moonflower.pollen.api.event.EventResult;
+import gg.moonflower.pollen.api.event.ResultContext;
 import gg.moonflower.pollen.api.event.events.LootTableConstructingEvent;
 import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.ModifyTradesEvents;
@@ -188,9 +189,19 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.player.BonemealEvent event) {
-        EventResult result = WorldEvents.BONEMEAL.invoker().bonemeal(event.getWorld(), event.getPos(), event.getBlock(), event.getStack());
-        if (result.isFalse()) event.setCanceled(true);
-        if (result == EventResult.ALLOW) event.setResult(Event.Result.ALLOW);
+        boolean result = WorldEvents.BONEMEAL.invoker().bonemeal(event.getWorld(), event.getPos(), event.getBlock(), event.getStack(), new ResultContext() {
+            @Override
+            public EventResult getResult() {
+                return convertResult(event.getResult());
+            }
+
+            @Override
+            public void setResult(EventResult result) {
+                event.setResult(convertResult(result));
+            }
+        });
+        if (!result)
+            event.setCanceled(true);
     }
 
     @SubscribeEvent
@@ -356,8 +367,29 @@ public class PollenCommonForgeEvents {
         PotionEvents.EXPIRE.invoker().expire(event.getEntityLiving(), event.getPotionEffect());
     }
 
+    public static EventResult convertResult(Event.Result result) {
+        switch (result) {
+            case DENY:
+                return EventResult.DENY;
+            case ALLOW:
+                return EventResult.ALLOW;
+            case DEFAULT:
+                return EventResult.DEFAULT;
+            default:
+                throw new UnsupportedOperationException("Unknown event result type: " + result);
+        }
+    }
+
     public static Event.Result convertResult(EventResult result) {
-        if (result.hasValue()) return result.getValue() ? Event.Result.ALLOW : Event.Result.DENY;
-        return Event.Result.DEFAULT;
+        switch (result) {
+            case DENY:
+                return Event.Result.DENY;
+            case ALLOW:
+                return Event.Result.ALLOW;
+            case DEFAULT:
+                return Event.Result.DEFAULT;
+            default:
+                throw new UnsupportedOperationException("Unknown event result type: " + result);
+        }
     }
 }
