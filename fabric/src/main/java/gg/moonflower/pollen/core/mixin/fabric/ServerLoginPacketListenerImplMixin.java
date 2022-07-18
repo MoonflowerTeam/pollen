@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.core.mixin.fabric;
 
 import gg.moonflower.pollen.core.extensions.fabric.ServerLoginPacketListenerImplExtension;
-import gg.moonflower.pollen.core.mixin.client.ClientboundCustomQueryPacketAccessor;
+import gg.moonflower.pollen.core.mixin.ClientboundCustomQueryPacketAccessor;
 import gg.moonflower.pollen.core.mixin.ServerboundCustomQueryPacketAccessor;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;

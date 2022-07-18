@@ -8,7 +8,6 @@
     "client.BlockModelShaperMixin",
     "client.BlockStateMixin",
     "client.ChunkRenderDispatcherRebuildTaskMixin",
-    "client.ClientboundCustomQueryPacketAccessor",
     "client.ClientLevelMixin",
     "client.ClientPacketListenerMixin",
     "client.CompiledChunkMixin",
@@ -29,6 +28,7 @@
   "mixins": [
     "BlockEntityTypeMixin",
     "BucketItemAccessor",
+    "ClientboundCustomQueryPacketAccessor",
     "DispenserBlockAccessor",
     "EntityMixin",
     "GrindstoneMenuMixin",

@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.core.mixin.client;
+package gg.moonflower.pollen.core.mixin;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
