@@ -27,6 +27,7 @@
   "mixins": [
     "BlockEntityTypeMixin",
     "BucketItemAccessor",
+    "ClientboundCustomQueryPacketAccessor",
     "DispenserBlockAccessor",
     "EntityMixin",
     "GrindstoneMenuMixin",
