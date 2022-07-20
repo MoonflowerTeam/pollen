@@ -46,7 +46,7 @@ public class CosmeticModelLoader implements BackgroundLoader<Map<ResourceLocatio
                     return null;
                 }
                 try (InputStreamReader reader = new InputStreamReader(new FileInputStream(path.toFile()))) {
-                    return new JsonParser().parse(reader).getAsJsonObject();
+                    return JsonParser.parseReader(reader).getAsJsonObject();
                 }
             } catch (Exception e) {
                 LOGGER.error("Failed to load cosmetic model from '" + modelUrl + "'", e);
