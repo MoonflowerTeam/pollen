@@ -55,7 +55,6 @@ public final class EntitlementManager {
     private static final Map<String, Entitlement> ENTITLEMENTS = new HashMap<>();
     private static final Map<UUID, EntitlementData> PLAYER_ENTITLEMENTS = new HashMap<>();
     private static final Logger LOGGER = LogManager.getLogger();
-    private static boolean loaded;
 
     static {
         EntityEvents.LEAVE.register((entity, level) -> {
@@ -94,8 +93,8 @@ public final class EntitlementManager {
         });
     }
 
-    public static CompletableFuture<Void> reload(boolean force, PreparableReloadListener.PreparationBarrier stage, Executor gameExecutor) {
-        return (loaded && !force) ? stage.wait(null) : ProfileManager.getProfile(Minecraft.getInstance().getUser().getGameProfile().getId()).thenCompose(stage::wait).thenRunAsync(() -> loaded = true, gameExecutor); // Preload player profile
+    public static CompletableFuture<Void> reload(boolean force, PreparableReloadListener.PreparationBarrier stage) {
+        return force ? ProfileManager.getProfile(Minecraft.getInstance().getUser().getGameProfile().getId()).thenCompose(__ -> stage.wait(null)) : stage.wait(null); // Preload player profile
     }
 
     /**
@@ -152,7 +151,9 @@ public final class EntitlementManager {
      */
     @SuppressWarnings("unchecked")
     public static <T extends Entitlement> void updateEntitlementSettings(UUID id, String entitlementId, Consumer<T> action) {
-        getData(id).getFuture().thenApplyAsync(map -> {
+        if (Pollen.CLIENT_CONFIG.disableMoonflowerProfiles.get()) // Don't try to update settings
+            return;
+        getEntitlementsFuture(id).thenApplyAsync(map -> {
             if (!map.containsKey(entitlementId))
                 return null;
 
@@ -198,6 +199,8 @@ public final class EntitlementManager {
         }
 
         public synchronized CompletableFuture<Map<String, Entitlement>> getFuture() {
+            if (Pollen.CLIENT_CONFIG.disableMoonflowerProfiles.get()) // Don't even request entitlements if disabled
+                return CompletableFuture.completedFuture(Collections.emptyMap());
             if (this.future != null && (!this.future.isDone() || System.currentTimeMillis() < this.expireTime))
                 return this.future;
             return this.future = CompletableFuture.supplyAsync(() -> {
@@ -227,7 +230,8 @@ public final class EntitlementManager {
                 }));
 
                 this.expireTime = System.currentTimeMillis() + CACHE_TIME;
-                Minecraft.getInstance().execute(() -> {
+                // Defer to the next loop
+                Minecraft.getInstance().tell(() -> {
                     if (entitlementMap.values().stream().anyMatch(entitlement -> entitlement instanceof ModelEntitlement))
                         GeometryModelManager.reload(false);
                     if (entitlementMap.values().stream().anyMatch(entitlement -> entitlement instanceof TexturedEntitlement))

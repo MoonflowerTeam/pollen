@@ -4,6 +4,8 @@ import gg.moonflower.pollen.api.command.PollenSuggestionProviders;
 import gg.moonflower.pollen.api.command.argument.ColorArgumentType;
 import gg.moonflower.pollen.api.command.argument.EnumArgument;
 import gg.moonflower.pollen.api.command.argument.TimeArgumentType;
+import gg.moonflower.pollen.api.config.ConfigManager;
+import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.crafting.PollenRecipeTypes;
 import gg.moonflower.pollen.api.entity.PollenEntityTypes;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
@@ -43,6 +45,8 @@ public class Pollen {
             .clientPostInit(() -> Pollen::onClientPost)
             .dataInit(Pollen::onDataInit)
             .build();
+    public static final PollenClientConfig CLIENT_CONFIG = ConfigManager.register(MOD_ID, PollinatedConfigType.CLIENT, PollenClientConfig::new);
+
     private static MinecraftServer server;
 
     static {
