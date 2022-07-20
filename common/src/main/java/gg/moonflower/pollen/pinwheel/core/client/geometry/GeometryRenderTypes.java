@@ -73,8 +73,7 @@ public final class GeometryRenderTypes extends RenderType {
         return wrap(create("geometry_translucent_cull", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true, rendertype$state.createCompositeState(true)));
     }
 
-    @ExpectPlatform
     public static RenderType wrap(RenderType renderType) {
-        return Platform.error();
+        return renderType;
     }
 }
