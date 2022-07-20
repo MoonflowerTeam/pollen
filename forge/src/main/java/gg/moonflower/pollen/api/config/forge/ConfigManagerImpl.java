@@ -18,13 +18,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 @ApiStatus.Internal
 public class ConfigManagerImpl {
 
-    private static final Map<String, Map<PollinatedConfigType, PollinatedModConfig>> CONFIGS = new HashMap<>();
-    private static final Set<String> registeredEvents = new HashSet<>();
+    private static final Map<String, Map<PollinatedConfigType, PollinatedModConfig>> CONFIGS = new ConcurrentHashMap<>();
+    private static final Set<String> registeredEvents = ConcurrentHashMap.newKeySet();
 
     public static <T> T register(String modId, PollinatedConfigType type, String fileName, Function<PollinatedConfigBuilder, T> consumer) {
         ModLoadingContext context = ModLoadingContext.get();
