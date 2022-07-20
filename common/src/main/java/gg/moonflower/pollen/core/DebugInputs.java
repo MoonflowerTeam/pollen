@@ -56,7 +56,7 @@ public class DebugInputs {
                 UUID id = Minecraft.getInstance().getUser().getGameProfile().getId();
                 ProfileManager.clearCache(id);
                 EntitlementManager.clearCache();
-                CompletableFuture.allOf(GeometryModelManager.reload(false), GeometryTextureManager.reload(false), AnimationManager.reload(false), EntitlementManager.reload(true, CompletableFuture::completedFuture, Minecraft.getInstance()).thenCompose(__ -> EntitlementManager.getEntitlementsFuture(id))).handle((u, t) -> {
+                CompletableFuture.allOf(GeometryModelManager.reload(false), GeometryTextureManager.reload(false), AnimationManager.reload(false), EntitlementManager.reload(true, CompletableFuture::completedFuture).thenCompose(__ -> EntitlementManager.getEntitlementsFuture(id))).handle((u, t) -> {
                     timer.stop();
                     Minecraft.getInstance().gui.getChat().addMessage(new TextComponent("").append(new TranslatableComponent("debug.prefix").withStyle(ChatFormatting.YELLOW, ChatFormatting.BOLD)).append(" Took " + timer + " to reload entitlements"));
                     return u;

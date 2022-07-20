@@ -73,7 +73,7 @@ public class ProfileConnection {
     public ProfileConnection(String apiUrl, String linkUrl) {
         this.apiUrl = apiUrl;
         this.linkUrl = linkUrl;
-        this.serverDown = CompletableFuture.runAsync(() -> {
+        this.serverDown = Pollen.CLIENT_CONFIG.disableMoonflowerProfiles.get() ? CompletableFuture.completedFuture(false) : CompletableFuture.runAsync(() -> {
             try {
                 HttpHead head = new HttpHead(apiUrl);
                 try (CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build()) {
@@ -192,6 +192,8 @@ public class ProfileConnection {
     }
 
     private void checkConnection() throws IOException {
+        if (Pollen.CLIENT_CONFIG.disableMoonflowerProfiles.get())
+            throw new IllegalStateException("Moonflower profiles disabled");
         try {
             this.serverDown.join(); // Will throw a CompletionException if completed exceptionally
         } catch (Exception e) {
