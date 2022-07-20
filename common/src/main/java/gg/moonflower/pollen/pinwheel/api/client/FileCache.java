@@ -6,8 +6,6 @@ import gg.moonflower.pollen.pinwheel.core.client.util.TimedTextureCache;
 import net.minecraft.ReportedException;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.util.Mth;
-import org.apache.http.conn.EofSensorInputStream;
-import org.apache.http.conn.EofSensorWatcher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -49,24 +47,52 @@ public interface FileCache {
                 stream.close();
                 throw new IOException("Failed to connect to '" + url + "'. " + response.statusCode());
             }
-            return new EofSensorInputStream(response.body(), new EofSensorWatcher() {
+
+            return new InputStream() {
                 @Override
-                public boolean eofDetected(InputStream wrapped) {
-                    return true;
+                public int read() throws IOException {
+                    try {
+                        int value = stream.read();
+                        if (value == -1)
+                            this.close();
+                        return value;
+                    } catch (IOException e) {
+                        try {
+                            this.close();
+                        } catch (Exception e1) {
+                            e.addSuppressed(e1);
+                        }
+                        throw e;
+                    }
                 }
 
                 @Override
-                public boolean streamClosed(InputStream wrapped) throws IOException {
-                    stream.close();
-                    return true;
+                public int read(byte[] b, int off, int len) throws IOException {
+                    try {
+                        int length = stream.read(b, off, len);
+                        if (length == -1)
+                            this.close();
+                        return length;
+                    } catch (IOException e) {
+                        try {
+                            this.close();
+                        } catch (Exception e1) {
+                            e.addSuppressed(e1);
+                        }
+                        throw e;
+                    }
                 }
 
                 @Override
-                public boolean streamAbort(InputStream wrapped) throws IOException {
-                    stream.close();
-                    return true;
+                public int available() throws IOException {
+                    return stream.available();
                 }
-            });
+
+                @Override
+                public void close() throws IOException {
+                    stream.close();
+                }
+            };
         } catch (InterruptedException e) {
             throw new IOException(e);
         }
