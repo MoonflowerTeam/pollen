@@ -48,51 +48,7 @@ public interface FileCache {
                 throw new IOException("Failed to connect to '" + url + "'. " + response.statusCode());
             }
 
-            return new InputStream() {
-                @Override
-                public int read() throws IOException {
-                    try {
-                        int value = stream.read();
-                        if (value == -1)
-                            this.close();
-                        return value;
-                    } catch (IOException e) {
-                        try {
-                            this.close();
-                        } catch (Exception e1) {
-                            e.addSuppressed(e1);
-                        }
-                        throw e;
-                    }
-                }
-
-                @Override
-                public int read(byte[] b, int off, int len) throws IOException {
-                    try {
-                        int length = stream.read(b, off, len);
-                        if (length == -1)
-                            this.close();
-                        return length;
-                    } catch (IOException e) {
-                        try {
-                            this.close();
-                        } catch (Exception e1) {
-                            e.addSuppressed(e1);
-                        }
-                        throw e;
-                    }
-                }
-
-                @Override
-                public int available() throws IOException {
-                    return stream.available();
-                }
-
-                @Override
-                public void close() throws IOException {
-                    stream.close();
-                }
-            };
+            return new EofInputStream(stream);
         } catch (InterruptedException e) {
             throw new IOException(e);
         }
@@ -182,4 +138,70 @@ public interface FileCache {
      * @return A future for the location of the resource locally
      */
     CompletableFuture<Path> requestResource(String url, boolean ignoreMissing);
+
+    class EofInputStream extends InputStream {
+
+        private InputStream stream;
+
+        EofInputStream(InputStream stream) {
+            this.stream = stream;
+        }
+
+        @Override
+        public int read() throws IOException {
+            if (stream == null)
+                return -1;
+
+            try {
+                int value = stream.read();
+                if (value == -1)
+                    this.close();
+                return value;
+            } catch (IOException e) {
+                try {
+                    this.close();
+                } catch (Exception e1) {
+                    e.addSuppressed(e1);
+                }
+                throw e;
+            }
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            if (stream == null)
+                return 0;
+
+            try {
+                int length = stream.read(b, off, len);
+                if (length == -1)
+                    this.close();
+                return length;
+            } catch (IOException e) {
+                try {
+                    this.close();
+                } catch (Exception e1) {
+                    e.addSuppressed(e1);
+                }
+                throw e;
+            }
+        }
+
+        @Override
+        public int available() throws IOException {
+            if (stream == null)
+                return 0;
+
+            return stream.available();
+        }
+
+        @Override
+        public void close() throws IOException {
+            if (stream == null)
+                return;
+
+            stream.close();
+            stream = null;
+        }
+    }
 }
