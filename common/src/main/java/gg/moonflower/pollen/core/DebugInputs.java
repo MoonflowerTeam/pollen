@@ -13,12 +13,12 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ChatScreen;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.glfw.GLFW;
 
+import java.awt.*;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -58,7 +58,7 @@ public class DebugInputs {
                 EntitlementManager.clearCache();
                 CompletableFuture.allOf(GeometryModelManager.reload(false), GeometryTextureManager.reload(false), AnimationManager.reload(false), EntitlementManager.reload(true, CompletableFuture::completedFuture).thenCompose(__ -> EntitlementManager.getEntitlementsFuture(id))).handle((u, t) -> {
                     timer.stop();
-                    Minecraft.getInstance().gui.getChat().addMessage(new TextComponent("").append(new TranslatableComponent("debug.prefix").withStyle(ChatFormatting.YELLOW, ChatFormatting.BOLD)).append(" Took " + timer + " to reload entitlements"));
+                    Minecraft.getInstance().gui.getChat().addMessage(Component.empty().append(Component.translatable("debug.prefix").withStyle(ChatFormatting.YELLOW, ChatFormatting.BOLD)).append(" Took " + timer + " to reload entitlements"));
                     return u;
                 });
 

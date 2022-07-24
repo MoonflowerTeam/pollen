@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import gg.moonflower.pollen.api.datagen.SoundDefinitionBuilder;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
@@ -42,7 +43,7 @@ public abstract class PollinatedSoundProvider implements DataProvider {
     protected abstract void registerSounds(Consumer<SoundDefinitionBuilder> registry);
 
     @Override
-    public void run(HashCache cache) {
+    public void run(CachedOutput output) {
         Path path = this.generator.getOutputFolder().resolve("assets/" + this.domain + "/sounds.json");
         Set<SoundDefinitionBuilder> sounds = new HashSet<>();
         Consumer<SoundDefinitionBuilder> registry = sound ->
@@ -57,7 +58,7 @@ public abstract class PollinatedSoundProvider implements DataProvider {
         sounds.stream().sorted(Comparator.comparing(SoundDefinitionBuilder::getSoundId)).forEachOrdered(definition -> json.add(definition.getSoundId(), definition.toJson()));
 
         try {
-            DataProvider.save(GSON, cache, json, path);
+            DataProvider.saveStable(output, json, path);
         } catch (IOException e) {
             LOGGER.error("Couldn't save {}", path, e);
         }

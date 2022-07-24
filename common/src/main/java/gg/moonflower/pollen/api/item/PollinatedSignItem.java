@@ -21,7 +21,7 @@ public class PollinatedSignItem extends SignItem {
 
     @Override
     public void fillItemCategory(CreativeModeTab category, NonNullList<ItemStack> items) {
-        if (this.allowdedIn(category))
+        if (this.allowedIn(category))
             TabFiller.insert(new ItemStack(this), false, items, stack -> stack.getItem() instanceof SignItem);
     }
 }

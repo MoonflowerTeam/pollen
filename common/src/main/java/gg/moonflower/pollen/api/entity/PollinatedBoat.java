@@ -66,7 +66,7 @@ public class PollinatedBoat extends Boat {
     @Override
     public Item getDropItem() {
         PollinatedBoatType type = this.getBoatPollenType();
-        return type != null ? PollinatedBoatItem.getBoatItem(type) : null;
+        return type != null ? PollinatedBoatItem.getBoatItem(type, false) : null;
     }
 
     @Override

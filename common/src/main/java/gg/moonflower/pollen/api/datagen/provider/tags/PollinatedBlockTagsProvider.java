@@ -9,7 +9,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagBuilder;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 
@@ -65,7 +65,7 @@ public class PollinatedBlockTagsProvider extends BlockTagsProvider implements Co
     }
 
     @Override
-    protected Tag.Builder getOrCreateRawBuilder(TagKey<Block> tag) {
-        return ((TagsProviderAccessor) this).getBuilders().computeIfAbsent(tag.location(), __ -> new Tag.Builder());
+    protected TagBuilder getOrCreateRawBuilder(TagKey<Block> tag) {
+        return ((TagsProviderAccessor) this).getBuilders().computeIfAbsent(tag.location(), __ -> new TagBuilder());
     }
 }

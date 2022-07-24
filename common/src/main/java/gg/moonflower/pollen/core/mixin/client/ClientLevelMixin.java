@@ -44,8 +44,8 @@ public abstract class ClientLevelMixin extends Level implements BlockRendererTic
     @Unique
     private final DataContainerImpl dataContainer = new DataContainerImpl((ClientLevel) (Object) this);
 
-    private ClientLevelMixin(WritableLevelData writableLevelData, ResourceKey<Level> resourceKey, Holder<DimensionType> dimensionType, Supplier<ProfilerFiller> supplier, boolean bl, boolean bl2, long l) {
-        super(writableLevelData, resourceKey, dimensionType, supplier, bl, bl2, l);
+    protected ClientLevelMixin(WritableLevelData writableLevelData, ResourceKey<Level> resourceKey, Holder<DimensionType> holder, Supplier<ProfilerFiller> supplier, boolean bl, boolean bl2, long l, int i) {
+        super(writableLevelData, resourceKey, holder, supplier, bl, bl2, l, i);
     }
 
     @Override

@@ -6,7 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import gg.moonflower.pollen.core.Pollen;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.Arrays;
@@ -20,7 +20,7 @@ public class ColorArgumentType implements ArgumentType<Number> {
 
     private static final Collection<String> EXAMPLES = Arrays.asList("0", "123", "-123", "0xffffff");
 
-    private static final SimpleCommandExceptionType INVALID_TYPE = new SimpleCommandExceptionType(new TranslatableComponent("argument." + Pollen.MOD_ID + ".color.invalid"));
+    private static final SimpleCommandExceptionType INVALID_TYPE = new SimpleCommandExceptionType(Component.translatable("argument." + Pollen.MOD_ID + ".color.invalid"));
 
     public static ColorArgumentType color() {
         return new ColorArgumentType();

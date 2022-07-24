@@ -11,6 +11,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.GameProfileCache;
@@ -46,7 +47,7 @@ public final class SkinHelper {
     public static void init() {
         AuthenticationService authenticationservice = new YggdrasilAuthenticationService(Minecraft.getInstance().getProxy());
         sessionService = authenticationservice.createMinecraftSessionService();
-        gameProfileCache = new GameProfileCache(authenticationservice.createProfileRepository(), new File(Minecraft.getInstance().gameDirectory, MinecraftServer.USERID_CACHE_FILE.getName()));
+        gameProfileCache = new GameProfileCache(authenticationservice.createProfileRepository(), new File(Minecraft.getInstance().gameDirectory, "usercache.json"));
     }
 
     private static CompletableFuture<GameProfile> guiUpdateGameProfile(GameProfile input) {
@@ -117,7 +118,7 @@ public final class SkinHelper {
             if (map.containsKey(type)) {
                 RenderSystem.recordRenderCall(() -> consumer.accept(Minecraft.getInstance().getSkinManager().registerTexture(map.get(type), type)));
             } else {
-                consumer.accept(DefaultPlayerSkin.getDefaultSkin(Player.createPlayerUUID(input)));
+                consumer.accept(DefaultPlayerSkin.getDefaultSkin(UUIDUtil.getOrCreatePlayerUUID(input)));
             }
         }, Util.backgroundExecutor());
     }

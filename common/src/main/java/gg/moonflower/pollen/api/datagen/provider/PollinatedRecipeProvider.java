@@ -10,6 +10,7 @@ import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Registry;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
@@ -20,7 +21,6 @@ import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.recipes.UpgradeRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -53,7 +53,7 @@ public abstract class PollinatedRecipeProvider extends SimpleConditionalDataProv
     }
 
     @Override
-    public void run(HashCache cache) throws IOException {
+    public void run(CachedOutput output) throws IOException {
         Path path = this.generator.getOutputFolder();
         Set<ResourceLocation> set = new HashSet<>();
         this.buildRecipes(finishedRecipe -> {
@@ -63,7 +63,7 @@ public abstract class PollinatedRecipeProvider extends SimpleConditionalDataProv
             try {
                 JsonObject json = finishedRecipe.serializeRecipe();
                 this.injectConditions(finishedRecipe.getId(), json);
-                DataProvider.save(GSON, cache, json, path.resolve("data/" + finishedRecipe.getId().getNamespace() + "/recipes/" + finishedRecipe.getId().getPath() + ".json"));
+                DataProvider.saveStable(output, json, path.resolve("data/" + finishedRecipe.getId().getNamespace() + "/recipes/" + finishedRecipe.getId().getPath() + ".json"));
             } catch (IOException e) {
                 LOGGER.error("Couldn't save recipe {}", path, e);
             }
@@ -72,7 +72,7 @@ public abstract class PollinatedRecipeProvider extends SimpleConditionalDataProv
             if (jsonObject != null) {
                 try {
                     this.injectConditions(finishedRecipe.getId(), jsonObject);
-                    DataProvider.save(GSON, cache, jsonObject, path.resolve("data/" + finishedRecipe.getId().getNamespace() + "/advancements/" + finishedRecipe.getAdvancementId().getPath() + ".json"));
+                    DataProvider.saveStable(output, jsonObject, path.resolve("data/" + finishedRecipe.getId().getNamespace() + "/advancements/" + finishedRecipe.getAdvancementId().getPath() + ".json"));
                 } catch (IOException e) {
                     LOGGER.error("Couldn't save recipe advancement {}", path, e);
                 }

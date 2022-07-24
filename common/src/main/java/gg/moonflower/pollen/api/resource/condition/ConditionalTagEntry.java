@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import gg.moonflower.pollen.api.registry.ResourceConditionRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagEntry;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
@@ -14,12 +15,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 @ApiStatus.Internal
-public class ConditionalTagEntry implements Tag.Entry {
+public class ConditionalTagEntry extends TagEntry {
 
-    private final Tag.Entry entry;
+    private final TagEntry entry;
     private final JsonObject json;
 
-    public ConditionalTagEntry(Tag.Entry entry, JsonObject json) {
+    public ConditionalTagEntry(TagEntry entry, JsonObject json) {
         this.entry = entry;
         this.json = json;
     }

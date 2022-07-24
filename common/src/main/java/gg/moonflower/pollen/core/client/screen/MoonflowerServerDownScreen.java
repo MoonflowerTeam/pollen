@@ -9,14 +9,13 @@ import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 
 public class MoonflowerServerDownScreen extends Screen {
 
-    private final Screen previous;
-    private static final Component TITLE = new TranslatableComponent("screen." + Pollen.MOD_ID + ".moonflowerServerDown.header").withStyle(ChatFormatting.BOLD);
-    private static final Component CONTENT = new TranslatableComponent("screen." + Pollen.MOD_ID + ".moonflowerServerDown.message");
+    private static final Component TITLE = Component.translatable("screen." + Pollen.MOD_ID + ".moonflowerServerDown.header").withStyle(ChatFormatting.BOLD);
+    private static final Component CONTENT = Component.translatable("screen." + Pollen.MOD_ID + ".moonflowerServerDown.message");
     private static final Component NARRATION = TITLE.copy().append("\n").append(CONTENT);
+    private final Screen previous;
     private MultiLineLabel message = MultiLineLabel.EMPTY;
 
     public MoonflowerServerDownScreen(Screen screen) {

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
@@ -49,13 +50,13 @@ public abstract class PollinatedLanguageProvider implements DataProvider {
     protected abstract void registerTranslations();
 
     @Override
-    public void run(HashCache cache) {
+    public void run(CachedOutput output) {
         this.registerTranslations();
 
         Path path = this.generator.getOutputFolder().resolve("assets/" + this.domain + "/lang/" + this.locale + ".json");
         try {
             JsonElement json = GSON.toJsonTree(this.keys);
-            DataProvider.save(GSON, cache, json, path);
+            DataProvider.saveStable(output, json, path);
         } catch (IOException e) {
             LOGGER.error("Couldn't save {}", path, e);
         }

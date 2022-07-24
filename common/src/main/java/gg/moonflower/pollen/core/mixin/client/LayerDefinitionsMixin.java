@@ -20,6 +20,9 @@ public class LayerDefinitionsMixin {
 
     @Inject(method = "createRoots", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/blockentity/SignRenderer;createSignLayer()Lnet/minecraft/client/model/geom/builders/LayerDefinition;"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
     private static void createRoots(CallbackInfoReturnable<Map<ModelLayerLocation, LayerDefinition>> cir, ImmutableMap.Builder<ModelLayerLocation, LayerDefinition> builder) {
-        PollenRegistries.BOAT_TYPE_REGISTRY.stream().forEach(type -> builder.put(PollinatedBoatRenderer.createBoatModelName(type), BoatModel.createBodyModel()));
+        PollenRegistries.BOAT_TYPE_REGISTRY.stream().forEach(type -> {
+            builder.put(PollinatedBoatRenderer.createBoatModelName(type), BoatModel.createBodyModel(false));
+            builder.put(PollinatedBoatRenderer.createChestBoatModelName(type), BoatModel.createBodyModel(true));
+        });
     }
 }

@@ -3,6 +3,7 @@ package gg.moonflower.pollen.api.event.events.entity;
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.core.NonNullList;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
@@ -325,7 +326,7 @@ public final class ModifyTradesEvents {
         }
 
         @Override
-        public MerchantOffer getOffer(Entity entity, Random random) {
+        public MerchantOffer getOffer(Entity entity, RandomSource random) {
             ItemStack emeralds = new ItemStack(Items.EMERALD, this.emeralds);
             ItemStack item = new ItemStack(this.item.get(), this.itemCount);
 

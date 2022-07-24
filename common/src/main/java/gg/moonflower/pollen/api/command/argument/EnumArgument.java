@@ -10,10 +10,11 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import gg.moonflower.pollen.core.Pollen;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.commands.synchronization.ArgumentSerializer;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Arrays;
@@ -29,7 +30,7 @@ import java.util.stream.Stream;
 public class EnumArgument implements ArgumentType<String> {
 
     private static final Collection<String> EXAMPLES = Arrays.asList("creative", "survival", "loot_chest", "accessory");
-    private static final SimpleCommandExceptionType INVALID_TYPE = new SimpleCommandExceptionType(new TranslatableComponent("argument." + Pollen.MOD_ID + ".enum.invalid"));
+    private static final SimpleCommandExceptionType INVALID_TYPE = new SimpleCommandExceptionType(Component.translatable("argument." + Pollen.MOD_ID + ".enum.invalid"));
 
     private final String[] values;
 
@@ -70,29 +71,53 @@ public class EnumArgument implements ArgumentType<String> {
     }
 
     @ApiStatus.Internal
-    public static class Serializer implements ArgumentSerializer<EnumArgument> {
+    public static class Serializer implements ArgumentTypeInfo<EnumArgument, Serializer.Template> {
         @Override
-        public void serializeToNetwork(EnumArgument argument, FriendlyByteBuf buf) {
+        public void serializeToNetwork(Template argument, FriendlyByteBuf buf) {
             buf.writeVarInt(argument.values.length);
             for (String value : argument.values)
                 buf.writeUtf(value);
         }
 
         @Override
-        public EnumArgument deserializeFromNetwork(FriendlyByteBuf buf) {
+        public Template deserializeFromNetwork(FriendlyByteBuf buf) {
             int length = buf.readVarInt();
             String[] values = new String[length];
             for (int i = 0; i < values.length; i++)
                 values[i] = buf.readUtf();
-            return new EnumArgument(values);
+            return new Serializer.Template(values);
         }
 
         @Override
-        public void serializeToJson(EnumArgument argument, JsonObject json) {
+        public void serializeToJson(Template argument, JsonObject json) {
             JsonArray valuesJson = new JsonArray();
             for (String value : argument.values)
                 valuesJson.add(value);
             json.add("values", valuesJson);
+        }
+
+        @Override
+        public Template unpack(EnumArgument argumentType) {
+            return new Template(argumentType.values);
+        }
+
+        public final class Template implements ArgumentTypeInfo.Template<EnumArgument> {
+
+            private final String[] values;
+
+            public Template(String[] values) {
+                this.values = values;
+            }
+
+            @Override
+            public EnumArgument instantiate(CommandBuildContext commandBuildContext) {
+                return new EnumArgument(this.values);
+            }
+
+            @Override
+            public ArgumentTypeInfo<EnumArgument, ?> type() {
+                return Serializer.this;
+            }
         }
     }
 }

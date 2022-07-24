@@ -2,9 +2,9 @@ package gg.moonflower.pollen.core.client.sound;
 
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.ApiStatus;
@@ -17,7 +17,7 @@ public class CustomLiquidSoundInstance extends AbstractTickableSoundInstance {
     private int fade;
 
     public CustomLiquidSoundInstance(LocalPlayer player, TagKey<Fluid> fluid, SoundEvent sound) {
-        super(sound, SoundSource.AMBIENT);
+        super(sound, SoundSource.AMBIENT, SoundInstance.createUnseededRandom());
         this.player = player;
         this.fluid = fluid;
         this.looping = true;

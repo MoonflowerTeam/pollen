@@ -8,7 +8,6 @@ import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.util.NumberCompareMode;
 import gg.moonflower.pollen.core.resource.condition.ConfigResourceCondition;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;

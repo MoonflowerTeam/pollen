@@ -84,7 +84,7 @@ public class SpawnEggItemBase<T extends EntityType<? extends Mob>> extends Spawn
 
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
-        if (this.allowdedIn(group) || (this.addToMisc && group == CreativeModeTab.TAB_MISC)) {
+        if (this.allowedIn(group) || (this.addToMisc && group == CreativeModeTab.TAB_MISC)) {
 //            if (items.stream().anyMatch(stack -> stack.getItem() instanceof SpawnEggItem)) {
 //                String itemName = Registry.ITEM.getKey(this).getPath();
 //                Optional<ItemStack> optional = items.stream().filter(stack -> stack.getItem() instanceof SpawnEggItem).max((a, b) ->

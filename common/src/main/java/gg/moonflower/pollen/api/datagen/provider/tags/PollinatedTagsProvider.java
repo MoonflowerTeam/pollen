@@ -10,9 +10,8 @@ import gg.moonflower.pollen.core.mixin.data.TagsProviderAccessor;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.TagsProvider;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagBuilder;
 import net.minecraft.tags.TagKey;
 
 import java.util.ArrayList;
@@ -67,8 +66,8 @@ public abstract class PollinatedTagsProvider<T> extends TagsProvider<T> implemen
     }
 
     @Override
-    protected Tag.Builder getOrCreateRawBuilder(TagKey<T> tag) {
-        return ((TagsProviderAccessor) this).getBuilders().computeIfAbsent(tag.location(), __ -> new Tag.Builder());
+    protected TagBuilder getOrCreateRawBuilder(TagKey<T> tag) {
+        return ((TagsProviderAccessor) this).getBuilders().computeIfAbsent(tag.location(), __ -> new TagBuilder());
     }
 
     /**
@@ -80,11 +79,11 @@ public abstract class PollinatedTagsProvider<T> extends TagsProvider<T> implemen
      */
     public static class PollinatedTagAppender<T> extends TagsProvider.TagAppender<T> {
 
-        private final Tag.Builder builder;
+        private final TagBuilder builder;
         private final Registry<T> registry;
         private final String source;
 
-        protected PollinatedTagAppender(Tag.Builder builder, Registry<T> registry, String source) {
+        protected PollinatedTagAppender(TagBuilder builder, Registry<T> registry, String source) {
             super(builder, registry, source);
             this.builder = builder;
             this.registry = registry;

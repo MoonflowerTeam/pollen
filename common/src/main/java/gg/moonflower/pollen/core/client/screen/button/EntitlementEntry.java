@@ -3,12 +3,11 @@ package gg.moonflower.pollen.core.client.screen.button;
 import gg.moonflower.pollen.core.client.entitlement.Entitlement;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,22 +47,22 @@ public abstract class EntitlementEntry {
     }
 
     protected Component pixelValueLabel(int value) {
-        return new TranslatableComponent("options.pixel_value", this.getCaption(), value);
+        return Component.translatable("options.pixel_value", this.getCaption(), value);
     }
 
     protected Component percentValueLabel(double percentage) {
-        return new TranslatableComponent("options.percent_value", this.getCaption(), (int) (percentage * 100.0));
+        return Component.translatable("options.percent_value", this.getCaption(), (int) (percentage * 100.0));
     }
 
     protected Component percentAddValueLabel(int doubleValue) {
-        return new TranslatableComponent("options.percent_add_value", this.getCaption(), doubleValue);
+        return Component.translatable("options.percent_add_value", this.getCaption(), doubleValue);
     }
 
     protected Component genericValueLabel(Component valueMessage) {
-        return new TranslatableComponent("options.generic_value", this.getCaption(), valueMessage);
+        return Component.translatable("options.generic_value", this.getCaption(), valueMessage);
     }
 
     protected Component genericValueLabel(int value) {
-        return this.genericValueLabel(new TextComponent(Integer.toString(value)));
+        return this.genericValueLabel(Component.literal(Integer.toString(value)));
     }
 }

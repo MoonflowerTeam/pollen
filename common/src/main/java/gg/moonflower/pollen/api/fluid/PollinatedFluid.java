@@ -13,6 +13,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -80,7 +81,7 @@ public interface PollinatedFluid {
             LocalPlayer localPlayer = (LocalPlayer) entity;
             g *= Math.max(0.25F, localPlayer.getWaterVision());
             Holder<Biome> holder = localPlayer.level.getBiome(localPlayer.blockPosition());
-            if (Biome.getBiomeCategory(holder) == Biome.BiomeCategory.SWAMP) {
+            if (holder.is(BiomeTags.HAS_CLOSER_WATER_FOG)) {
                 g *= 0.85F;
             }
         }

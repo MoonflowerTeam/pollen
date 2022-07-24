@@ -16,7 +16,7 @@ import gg.moonflower.pollen.core.client.entitlement.Entitlement;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.HttpUtil;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -36,6 +36,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -114,7 +115,7 @@ public class ProfileConnection {
 
         Entitlement entitlement = result.result().orElseThrow(() -> new IllegalStateException("Failed to retrieve entitlement result"));
         entitlement.setRegistryName(id);
-        entitlement.setDisplayName(new TextComponent(displayName));
+        entitlement.setDisplayName(Component.literal(displayName));
         return entitlement;
     }
 

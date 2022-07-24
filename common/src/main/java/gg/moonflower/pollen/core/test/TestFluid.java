@@ -15,6 +15,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -78,7 +79,7 @@ public abstract class TestFluid extends FlowingFluid implements PollinatedFluid 
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void animateTick(Level level, BlockPos pos, FluidState state, Random random) {
+    public void animateTick(Level level, BlockPos pos, FluidState state, RandomSource random) {
 //        if (!state.isSource() && !state.getValue(FALLING)) {
 //            if (random.nextInt(64) == 0) {
 //                level.playLocalSound((double) pos.getX() + 0.5, (double) pos.getY() + 0.5, (double) pos.getZ() + 0.5, SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, random.nextFloat() * 0.25F + 0.75F, random.nextFloat() + 0.5F, false);

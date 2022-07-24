@@ -10,7 +10,7 @@ import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagBuilder;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
@@ -66,7 +66,7 @@ public class PollinatedItemTagsProvider extends ItemTagsProvider implements Cond
     }
 
     @Override
-    protected Tag.Builder getOrCreateRawBuilder(TagKey<Item> tag) {
-        return ((TagsProviderAccessor) this).getBuilders().computeIfAbsent(tag.location(), __ -> new Tag.Builder());
+    protected TagBuilder getOrCreateRawBuilder(TagKey<Item> tag) {
+        return ((TagsProviderAccessor) this).getBuilders().computeIfAbsent(tag.location(), __ -> new TagBuilder());
     }
 }

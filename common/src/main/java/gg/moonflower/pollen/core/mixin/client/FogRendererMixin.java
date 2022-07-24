@@ -79,7 +79,7 @@ public class FogRendererMixin {
     }
 
     @Inject(method = "setupFog", at = @At("HEAD"), cancellable = true)
-    private static void setupFog(Camera camera, FogRenderer.FogMode fogType, float farPlaneDistance, boolean nearFog, CallbackInfo ci) {
+    private static void setupFog(Camera camera, FogRenderer.FogMode fogType, float farPlaneDistance, boolean nearFog, float g, CallbackInfo ci) {
         Fluid fluid = camera.getEntity().level.getFluidState(camera.getBlockPosition()).getType();
         if (fluid instanceof PollinatedFluid) {
             ((PollinatedFluid) fluid).applyFog(Minecraft.getInstance().gameRenderer, camera, farPlaneDistance, capturePartialTicks);

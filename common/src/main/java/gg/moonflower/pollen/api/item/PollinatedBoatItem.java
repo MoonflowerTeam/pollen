@@ -2,6 +2,7 @@ package gg.moonflower.pollen.api.item;
 
 import gg.moonflower.pollen.api.entity.PollinatedBoat;
 import gg.moonflower.pollen.api.entity.PollinatedBoatType;
+import gg.moonflower.pollen.api.entity.PollinatedChestBoat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
@@ -25,8 +26,8 @@ import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,6 +44,7 @@ public class PollinatedBoatItem extends Item {
 
     private static final Predicate<Entity> ENTITY_PREDICATE = EntitySelector.NO_SPECTATORS.and(Entity::isPickable);
     private static final Map<PollinatedBoatType, Item> BOAT_ITEMS = new ConcurrentHashMap<>();
+    private static final Map<PollinatedBoatType, Item> CHEST_BOAT_ITEMS = new ConcurrentHashMap<>();
     private static final DispenseItemBehavior DISPENSE_BEHAVIOR = new DefaultDispenseItemBehavior() {
         private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
 
@@ -64,8 +66,9 @@ public class PollinatedBoatItem extends Item {
                 offset = 0.0;
             }
 
-            PollinatedBoat boat = new PollinatedBoat(level, x, y + offset, z);
-            boat.setPollenType(((PollinatedBoatItem) stack.getItem()).getType().get());
+            PollinatedBoatItem item = ((PollinatedBoatItem) stack.getItem());
+            PollinatedBoat boat = item.chest ? new PollinatedChestBoat(level, x, y + offset, z) : new PollinatedBoat(level, x, y + offset, z);
+            boat.setPollenType(item.getType().get());
             boat.setYRot(direction.toYRot());
             level.addFreshEntity(boat);
             stack.shrink(1);
@@ -74,17 +77,25 @@ public class PollinatedBoatItem extends Item {
     };
 
     private final Supplier<PollinatedBoatType> type;
+    private final boolean chest;
 
-    public PollinatedBoatItem(Supplier<PollinatedBoatType> type, Item.Properties properties) {
+    public PollinatedBoatItem(Supplier<PollinatedBoatType> type, boolean chest, Item.Properties properties) {
         super(properties);
         this.type = type;
-        BOAT_ITEMS.put(type.get(), this);
+        this.chest = chest;
+        if (this.chest) {
+            CHEST_BOAT_ITEMS.put(type.get(), this);
+        }
+        else {
+            BOAT_ITEMS.put(type.get(), this);
+        }
+
         DispenserBlock.registerBehavior(this, DISPENSE_BEHAVIOR);
     }
 
     @Nullable
-    public static Item getBoatItem(PollinatedBoatType type) {
-        return BOAT_ITEMS.get(type);
+    public static Item getBoatItem(PollinatedBoatType type, boolean chest) {
+        return chest ? CHEST_BOAT_ITEMS.get(type) : BOAT_ITEMS.get(type);
     }
 
     @Override
@@ -106,7 +117,7 @@ public class PollinatedBoatItem extends Item {
             }
 
             if (hitResult.getType() == HitResult.Type.BLOCK) {
-                PollinatedBoat boat = new PollinatedBoat(level, hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z);
+                PollinatedBoat boat = this.getBoat(level, hitResult);
                 boat.setPollenType(this.type.get());
                 boat.setYRot(player.getYRot());
                 if (!level.noCollision(boat, boat.getBoundingBox().inflate(-0.1)))
@@ -128,11 +139,17 @@ public class PollinatedBoatItem extends Item {
 
     @Override
     public void fillItemCategory(CreativeModeTab category, NonNullList<ItemStack> items) {
-        if (this.allowdedIn(category))
+        if (this.allowedIn(category))
             TabFiller.insert(new ItemStack(this), false, items, stack -> stack.getItem() instanceof BoatItem || stack.getItem() instanceof PollinatedBoatItem);
     }
 
     public Supplier<PollinatedBoatType> getType() {
         return type;
+    }
+
+    private PollinatedBoat getBoat(Level level, HitResult hitResult) {
+        return this.chest
+            ? new PollinatedChestBoat(level, hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z)
+            : new PollinatedBoat(level, hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z);
     }
 }

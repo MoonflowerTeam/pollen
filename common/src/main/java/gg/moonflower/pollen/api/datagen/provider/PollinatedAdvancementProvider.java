@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
@@ -39,7 +40,7 @@ public abstract class PollinatedAdvancementProvider extends SimpleConditionalDat
     protected abstract void registerAdvancements(Consumer<Advancement> registry);
 
     @Override
-    public void run(HashCache cache) {
+    public void run(CachedOutput output) {
         Path folder = this.generator.getOutputFolder();
         Set<ResourceLocation> set = new HashSet<>();
         Consumer<Advancement> registry = advancement ->
@@ -53,7 +54,7 @@ public abstract class PollinatedAdvancementProvider extends SimpleConditionalDat
             this.injectConditions(advancement.getId(), json);
 
             try {
-                DataProvider.save(GSON, cache, json, path);
+                DataProvider.saveStable(output, json, path);
             } catch (IOException e) {
                 LOGGER.error("Couldn't save advancement {}", path, e);
             }

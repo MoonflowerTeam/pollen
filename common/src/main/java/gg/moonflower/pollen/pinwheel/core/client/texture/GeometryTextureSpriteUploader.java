@@ -36,7 +36,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -96,7 +95,7 @@ public class GeometryTextureSpriteUploader extends SimplePreparableReloadListene
             profiler.push("stitching");
             Stopwatch stopwatch = Stopwatch.createUnstarted();
             this.beginStitch(System.currentTimeMillis(), stopwatch);
-            TextureAtlas.Preparations sheetData = this.textureAtlas.prepareToStitch(new OnlineResourceManager(resourceManager, onlineRepository, this.textures.stream().filter(texture -> texture.getType() == GeometryModelTexture.Type.ONLINE).collect(Collectors.toSet())), this.textures.stream().filter(texture -> texture.getType() == GeometryModelTexture.Type.LOCATION || texture.getType() == GeometryModelTexture.Type.ONLINE).map(GeometryModelTexture::getLocation).distinct(), profiler, Minecraft.getInstance().options.mipmapLevels);
+            TextureAtlas.Preparations sheetData = this.textureAtlas.prepareToStitch(new OnlineResourceManager(resourceManager, onlineRepository, this.textures.stream().filter(texture -> texture.getType() == GeometryModelTexture.Type.ONLINE).collect(Collectors.toSet())), this.textures.stream().filter(texture -> texture.getType() == GeometryModelTexture.Type.LOCATION || texture.getType() == GeometryModelTexture.Type.ONLINE).map(GeometryModelTexture::getLocation).distinct(), profiler, Minecraft.getInstance().options.mipmapLevels().get());
             this.endStitch(stopwatch);
             profiler.pop();
             profiler.endTick();
@@ -218,7 +217,7 @@ public class GeometryTextureSpriteUploader extends SimplePreparableReloadListene
         }
 
         @Override
-        public Collection<ResourceLocation> listResources(String path, Predicate<String> filter) {
+        public Map<ResourceLocation, Resource> listResources(String path, Predicate<ResourceLocation> filter) {
             return this.parent.listResources(path, filter);
         }
 

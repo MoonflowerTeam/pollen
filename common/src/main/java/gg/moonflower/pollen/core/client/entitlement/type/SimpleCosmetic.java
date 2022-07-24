@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import gg.moonflower.pollen.core.client.entitlement.Entitlement;
 import gg.moonflower.pollen.core.client.screen.button.EntitlementEntry;
 import gg.moonflower.pollen.core.client.screen.button.ToggleEntry;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -34,7 +34,7 @@ public abstract class SimpleCosmetic extends Entitlement {
 
     @Override
     public void addEntries(Consumer<EntitlementEntry> entryConsumer) {
-        entryConsumer.accept(new ToggleEntry(new TextComponent("Enabled"), this, v -> this.enabled = v, this.enabled));
+        entryConsumer.accept(new ToggleEntry(Component.literal("Enabled"), this, v -> this.enabled = v, this.enabled));
     }
 
     public boolean isEnabled() {

@@ -11,7 +11,6 @@ import net.minecraft.client.gui.components.TooltipAccessor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,15 +22,15 @@ import java.util.concurrent.CompletableFuture;
 
 public class EntitlementListScreen extends Screen {
 
-    private static final Component NO_COSMETICS = new TranslatableComponent("options." + Pollen.MOD_ID + ".entitlementList.none");
-    private static final Component RELOAD = new TranslatableComponent("options." + Pollen.MOD_ID + ".entitlementList.reload");
+    private static final Component NO_COSMETICS = Component.translatable("options." + Pollen.MOD_ID + ".entitlementList.none");
+    private static final Component RELOAD = Component.translatable("options." + Pollen.MOD_ID + ".entitlementList.reload");
 
     private final Screen lastScreen;
     private final CompletableFuture<Map<String, Entitlement>> entitlementsFuture;
     private EntitlementsList list;
 
     public EntitlementListScreen(Screen screen) {
-        super(new TranslatableComponent("options." + Pollen.MOD_ID + ".entitlementList.title"));
+        super(Component.translatable("options." + Pollen.MOD_ID + ".entitlementList.title"));
         this.lastScreen = screen;
         this.entitlementsFuture = EntitlementManager.getEntitlementsFuture(Minecraft.getInstance().getUser().getGameProfile().getId());
     }

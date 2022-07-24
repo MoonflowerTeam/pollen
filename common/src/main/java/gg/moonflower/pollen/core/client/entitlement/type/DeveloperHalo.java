@@ -9,7 +9,7 @@ import gg.moonflower.pollen.core.client.screen.button.ArrayEntry;
 import gg.moonflower.pollen.core.client.screen.button.EntitlementEntry;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTexture;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
@@ -58,7 +58,7 @@ public class DeveloperHalo extends AbstractHalo {
     @Override
     public void addEntries(Consumer<EntitlementEntry> entryConsumer) {
         super.addEntries(entryConsumer);
-        entryConsumer.accept(new ArrayEntry<>(new TextComponent("Type"), this, this::setType, this.type, this.halos.keySet().toArray(new String[0])).setDisplayGenerator(s -> s.toUpperCase(Locale.ROOT)));
+        entryConsumer.accept(new ArrayEntry<>(Component.literal("Type"), this, this::setType, this.type, this.halos.keySet().toArray(new String[0])).setDisplayGenerator(s -> s.toUpperCase(Locale.ROOT)));
     }
 
     @Override

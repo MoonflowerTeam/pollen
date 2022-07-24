@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import net.minecraft.core.Registry;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
@@ -62,7 +63,7 @@ public class PollinatedModelProvider implements DataProvider {
     }
 
     @Override
-    public void run(HashCache cache) {
+    public void run(CachedOutput output) {
         Path path = this.generator.getOutputFolder();
 
         Map<Block, BlockStateGenerator> blockStates = new HashMap<>();
@@ -97,16 +98,16 @@ public class PollinatedModelProvider implements DataProvider {
                     models.put(itemLocation, new DelegatedModel(ModelLocationUtils.getModelLocation(block)));
             }
         });
-        this.saveCollection(cache, path, blockStates, PollinatedModelProvider::createBlockStatePath);
-        this.saveCollection(cache, path, models, PollinatedModelProvider::createModelPath);
+        this.saveCollection(output, path, blockStates, PollinatedModelProvider::createBlockStatePath);
+        this.saveCollection(output, path, models, PollinatedModelProvider::createModelPath);
     }
 
-    private <T> void saveCollection(HashCache cache, Path rootPath, Map<T, ? extends Supplier<JsonElement>> objectToJsonMap, BiFunction<Path, T, Path> resolveObjectPath) {
+    private <T> void saveCollection(CachedOutput output, Path rootPath, Map<T, ? extends Supplier<JsonElement>> objectToJsonMap, BiFunction<Path, T, Path> resolveObjectPath) {
         objectToJsonMap.forEach((object, supplier) -> {
             Path path = resolveObjectPath.apply(rootPath, object);
 
             try {
-                DataProvider.save(GSON, cache, supplier.get(), path);
+                DataProvider.saveStable(output, supplier.get(), path);
             } catch (Exception var7) {
                 LOGGER.error("Couldn't save {}", path, var7);
             }

@@ -4,9 +4,11 @@ import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
 import gg.moonflower.pollen.pinwheel.api.common.animation.AnimatedEntity;
 import gg.moonflower.pollen.pinwheel.api.common.animation.AnimationData;
 import net.minecraft.client.resources.sounds.AbstractSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.resources.sounds.TickableSoundInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +24,7 @@ public class AnimationEffectSound extends AbstractSoundInstance implements Ticka
     private boolean stopped;
 
     public AnimationEffectSound(ResourceLocation sound, SoundSource source, AnimationData animation, @Nullable Entity entity, float pitch, float volume, boolean loop) {
-        super(sound, source);
+        super(sound, source, SoundInstance.createUnseededRandom());
         this.animation = animation;
         this.entity = entity;
         this.pitch = pitch;

@@ -130,7 +130,7 @@ public class BucketItemBase extends BucketItem {
 
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
-        if (this.allowdedIn(group))
+        if (this.allowedIn(group))
             TabFiller.insert(new ItemStack(this), false, items, stack -> stack.getItem() instanceof BucketItem && "minecraft".equals(Registry.ITEM.getKey(stack.getItem()).getNamespace()) && (stack.getItem() == Items.WATER_BUCKET || ((BucketItemAccessor) stack.getItem()).getContent() != Fluids.WATER));
     }
 

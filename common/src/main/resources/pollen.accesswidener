@@ -9,24 +9,24 @@ transitive-accessible method net/minecraft/client/renderer/RenderType create (Lj
 accessible class net/minecraft/client/renderer/LevelRenderer$RenderChunkInfo
 accessible class net/minecraft/client/multiplayer/ClientChunkCache$Storage
 
-accessible class net/minecraft/tags/Tag$ElementEntry
-accessible class net/minecraft/tags/Tag$TagEntry
-accessible class net/minecraft/tags/Tag$OptionalElementEntry
-accessible class net/minecraft/tags/Tag$OptionalTagEntry
+#accessible class net/minecraft/tags/Tag$ElementEntry
+#accessible class net/minecraft/tags/Tag$TagEntry
+#accessible class net/minecraft/tags/Tag$OptionalElementEntry
+#accessible class net/minecraft/tags/Tag$OptionalTagEntry
 
-accessible method net/minecraft/data/tags/TagsProvider$TagAppender <init> (Lnet/minecraft/tags/Tag$Builder;Lnet/minecraft/core/Registry;Ljava/lang/String;)V
+#accessible method net/minecraft/data/tags/TagsProvider$TagAppender <init> (Lnet/minecraft/tags/Tag$Builder;Lnet/minecraft/core/Registry;Ljava/lang/String;)V
 transitive-accessible class net/minecraft/data/models/BlockModelGenerators$TintState
 
 transitive-accessible class net/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier
 transitive-accessible method net/minecraft/world/inventory/MenuType <init> (Lnet/minecraft/world/inventory/MenuType$MenuSupplier;)V
 transitive-accessible class net/minecraft/world/inventory/MenuType$MenuSupplier
 
-transitive-accessible method net/minecraft/world/entity/npc/VillagerProfession <init> (Ljava/lang/String;Lnet/minecraft/world/entity/ai/village/poi/PoiType;Lcom/google/common/collect/ImmutableSet;Lcom/google/common/collect/ImmutableSet;Lnet/minecraft/sounds/SoundEvent;)V
+#transitive-accessible method net/minecraft/world/entity/npc/VillagerProfession <init> (Ljava/lang/String;Lnet/minecraft/world/entity/ai/village/poi/PoiType;Lcom/google/common/collect/ImmutableSet;Lcom/google/common/collect/ImmutableSet;Lnet/minecraft/sounds/SoundEvent;)V
 transitive-accessible method net/minecraft/client/renderer/entity/LivingEntityRenderer addLayer (Lnet/minecraft/client/renderer/entity/layers/RenderLayer;)Z
 
-transitive-accessible method net/minecraft/world/entity/ai/village/poi/PoiType <init> (Ljava/lang/String;Ljava/util/Set;II)V
-transitive-accessible method net/minecraft/world/entity/ai/village/poi/PoiType <init> (Ljava/lang/String;Ljava/util/Set;ILjava/util/function/Predicate;I)V
-transitive-accessible method net/minecraft/world/entity/ai/village/poi/PoiType registerBlockStates (Lnet/minecraft/world/entity/ai/village/poi/PoiType;)Lnet/minecraft/world/entity/ai/village/poi/PoiType;
+#transitive-accessible method net/minecraft/world/entity/ai/village/poi/PoiType <init> (Ljava/lang/String;Ljava/util/Set;II)V
+#transitive-accessible method net/minecraft/world/entity/ai/village/poi/PoiType <init> (Ljava/lang/String;Ljava/util/Set;ILjava/util/function/Predicate;I)V
+#transitive-accessible method net/minecraft/world/entity/ai/village/poi/PoiType registerBlockStates (Lnet/minecraft/world/entity/ai/village/poi/PoiType;)Lnet/minecraft/world/entity/ai/village/poi/PoiType;
 
 transitive-accessible method net/minecraft/core/particles/SimpleParticleType <init> (Z)V
 transitive-accessible method net/minecraft/core/particles/ParticleType <init> (ZLnet/minecraft/core/particles/ParticleOptions$Deserializer;)V
@@ -40,3 +40,5 @@ transitive-accessible class net/minecraft/client/renderer/RenderType$CompositeSt
 transitive-accessible method net/minecraft/world/entity/ai/memory/MemoryModuleType <init> (Ljava/util/Optional;)V
 transitive-accessible method net/minecraft/world/entity/ai/sensing/SensorType <init> (Ljava/util/function/Supplier;)V
 transitive-accessible method net/minecraft/world/entity/schedule/Activity <init> (Ljava/lang/String;)V
+
+transitive-accessible method net/minecraft/commands/synchronization/ArgumentTypeInfos register (Lnet/minecraft/core/Registry;Ljava/lang/String;Ljava/lang/Class;Lnet/minecraft/commands/synchronization/ArgumentTypeInfo;)Lnet/minecraft/commands/synchronization/ArgumentTypeInfo;
