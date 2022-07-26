@@ -42,3 +42,10 @@ transitive-accessible method net/minecraft/world/entity/ai/sensing/SensorType <i
 transitive-accessible method net/minecraft/world/entity/schedule/Activity <init> (Ljava/lang/String;)V
 
 transitive-accessible method net/minecraft/commands/synchronization/ArgumentTypeInfos register (Lnet/minecraft/core/Registry;Ljava/lang/String;Ljava/lang/Class;Lnet/minecraft/commands/synchronization/ArgumentTypeInfo;)Lnet/minecraft/commands/synchronization/ArgumentTypeInfo;
+
+extendable method net/minecraft/tags/TagEntry <init> (Lnet/minecraft/resources/ResourceLocation;ZZ)V
+#extendable method net/minecraft/data/tags/TagsProvider$TagAppender <init> (Lnet/minecraft/tags/TagBuilder;Lnet/minecraft/core/Registry;)V
+
+accessible class net/minecraft/client/renderer/chunk/ChunkRenderDispatcher$ChunkTaskResult
+accessible class net/minecraft/client/renderer/chunk/ChunkRenderDispatcher$RenderChunk$RebuildTask
+accessible class net/minecraft/client/renderer/chunk/ChunkRenderDispatcher$RenderChunk$RebuildTask$CompileResults

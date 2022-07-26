@@ -23,7 +23,9 @@ public interface PollinatedPacketContext {
      *
      * @param runnable The task to execute
      * @return A future that will complete when the task is done
+     * @deprecated Packet handling is now done on the main thread
      */
+    @Deprecated(since = "1.5.0", forRemoval = true)
     CompletableFuture<Void> enqueueWork(Runnable runnable);
 
     /**

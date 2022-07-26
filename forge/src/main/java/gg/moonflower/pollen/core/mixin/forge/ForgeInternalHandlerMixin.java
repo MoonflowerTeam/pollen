@@ -26,6 +26,6 @@ public class ForgeInternalHandlerMixin {
 
     @Redirect(method = "onCommandsRegister", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/server/command/ConfigCommand;register(Lcom/mojang/brigadier/CommandDispatcher;)V"), remap = false)
     public void redirectRegisterConfig(CommandDispatcher<CommandSourceStack> dispatcher) {
-        ConfigCommand.register(dispatcher, this.event.getEnvironment() == Commands.CommandSelection.DEDICATED);
+        ConfigCommand.register(dispatcher, this.event.getCommandSelection() == Commands.CommandSelection.DEDICATED);
     }
 }

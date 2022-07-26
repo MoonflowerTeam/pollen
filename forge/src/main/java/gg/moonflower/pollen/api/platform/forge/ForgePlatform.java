@@ -5,13 +5,13 @@ import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import gg.moonflower.pollen.api.util.forge.PollinatedModContainerImpl;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.CompletableFuture;

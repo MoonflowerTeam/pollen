@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.core.mixin.fabric.client;
 
-import gg.moonflower.pollen.core.extensions.CompiledChunkExtension;
+import gg.moonflower.pollen.core.extensions.ChunkRenderExtensions;
 import gg.moonflower.pollen.core.extensions.LevelRendererExtension;
 import gg.moonflower.pollen.core.mixin.client.LevelRendererRenderChunkInfoAccessor;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -21,11 +21,11 @@ public abstract class LevelRendererVanillaMixin implements LevelRendererExtensio
 
     @Override
     public Stream<BlockPos> pollen_getBlockRenderers() {
-        return this.renderChunksInFrustum.stream().flatMap(info -> ((CompiledChunkExtension) ((LevelRendererRenderChunkInfoAccessor) info).getChunk().getCompiledChunk()).pollen_getBlockRenderPositions().stream());
+        return this.renderChunksInFrustum.stream().flatMap(info -> ((ChunkRenderExtensions) ((LevelRendererRenderChunkInfoAccessor) info).getChunk().getCompiledChunk()).pollen_getBlockRenderPositions().stream());
     }
 
     @Override
     public Stream<BlockPos> pollen_getTickingBlockRenderers() {
-        return this.renderChunksInFrustum.stream().flatMap(info -> ((CompiledChunkExtension) ((LevelRendererRenderChunkInfoAccessor) info).getChunk().getCompiledChunk()).pollen_getTickingBlockRenderers().stream());
+        return this.renderChunksInFrustum.stream().flatMap(info -> ((ChunkRenderExtensions) ((LevelRendererRenderChunkInfoAccessor) info).getChunk().getCompiledChunk()).pollen_getTickingBlockRenderers().stream());
     }
 }

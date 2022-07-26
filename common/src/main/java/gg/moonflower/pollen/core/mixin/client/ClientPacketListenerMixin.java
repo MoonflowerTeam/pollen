@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientPacketListener.class)
 public class ClientPacketListenerMixin {
 
-    @Inject(method = "handleUpdateTags", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/searchtree/MutableSearchTree;refresh()V"))
+    @Inject(method = "handleUpdateTags", at = @At("TAIL"))
     public void updateTags(ClientboundUpdateTagsPacket packet, CallbackInfo ci) {
         ClientTagUpdateEvent.EVENT.invoker().onTagsReloaded();
     }

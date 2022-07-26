@@ -59,10 +59,10 @@ public class PollinatedFluidTagsProvider extends FluidTagsProvider implements Co
             PollinatedResourceConditionProvider.write(json, this.providers.get(id).toArray(new PollinatedResourceConditionProvider[0]));
     }
 
-    @Override
-    protected PollinatedTagsProvider.PollinatedTagAppender<Fluid> tag(TagKey<Fluid> tag) {
-        return new PollinatedTagsProvider.PollinatedTagAppender<>(this.getOrCreateRawBuilder(tag), this.registry, this.domain);
-    }
+//    @Override
+//    protected PollinatedTagsProvider.PollinatedTagAppender<Fluid> tag(TagKey<Fluid> tag) {
+//        return new PollinatedTagsProvider.PollinatedTagAppender<>(this.getOrCreateRawBuilder(tag), this.registry, this.domain);
+//    }
 
     @Override
     protected TagBuilder getOrCreateRawBuilder(TagKey<Fluid> tag) {

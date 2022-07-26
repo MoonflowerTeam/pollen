@@ -5,7 +5,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.BiConsumer;
@@ -18,7 +17,8 @@ public class PollenRecipeTypesImpl {
         return new ForgeRecipeSerializer<>(fromJson, fromNetwork, toNetwork);
     }
 
-    private static class ForgeRecipeSerializer<T extends Recipe<?>> extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<T> {
+    // TODO: might not be needed anymore?
+    private static class ForgeRecipeSerializer<T extends Recipe<?>> implements RecipeSerializer<T> {
 
         private final BiFunction<ResourceLocation, JsonObject, T> fromJson;
         private final BiFunction<ResourceLocation, FriendlyByteBuf, T> fromNetwork;

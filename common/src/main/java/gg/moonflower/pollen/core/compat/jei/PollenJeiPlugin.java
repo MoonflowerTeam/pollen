@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.core.forge.compat.jei;
+package gg.moonflower.pollen.core.compat.jei;
 
 import com.google.common.collect.ImmutableSet;
 import gg.moonflower.pollen.api.crafting.PollenBrewingRecipe;
@@ -15,6 +15,7 @@ import mezz.jei.api.registration.*;
 import net.minecraft.client.gui.screens.inventory.GrindstoneScreen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.GrindstoneMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -72,7 +73,7 @@ public class PollenJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
-        registration.addRecipeTransferHandler(GrindstoneMenu.class, GRINDSTONE_CATEGORY_ID, 0, 2, 3, 36);
+        registration.addRecipeTransferHandler(GrindstoneMenu.class, MenuType.GRINDSTONE, GRINDSTONE_CATEGORY_ID, 0, 2, 3, 36);
     }
 
     @Override

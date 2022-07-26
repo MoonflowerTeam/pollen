@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,9 +33,10 @@ public final class LocalGeometryModelLoader implements BackgroundLoader<Map<Reso
         return CompletableFuture.supplyAsync(() ->
         {
             Map<ResourceLocation, GeometryModel> modelLocations = new HashMap<>();
-            for (ResourceLocation modelLocation : resourceManager.listResources(FOLDER, name -> name.endsWith(".json"))) {
-                try (Resource resource = resourceManager.getResource(modelLocation)) {
-                    GeometryModelData[] models = GeometryModelParser.parseModel(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
+            for (Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources(FOLDER, name -> name.getPath().endsWith(".json")).entrySet()) {
+                ResourceLocation modelLocation = entry.getKey();
+                try (InputStream stream = entry.getValue().open()) {
+                    GeometryModelData[] models = GeometryModelParser.parseModel(IOUtils.toString(stream, StandardCharsets.UTF_8));
                     for (GeometryModelData model : models) {
                         ResourceLocation id = new ResourceLocation(modelLocation.getNamespace(), model.getDescription().getIdentifier());
                         if (modelLocations.put(id, model.create()) != null)

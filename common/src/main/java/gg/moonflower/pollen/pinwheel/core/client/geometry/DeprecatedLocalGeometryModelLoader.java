@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,10 +37,11 @@ public final class DeprecatedLocalGeometryModelLoader implements BackgroundLoade
         {
             Set<ResourceLocation> deprecatedFiles = new HashSet<>();
             Map<ResourceLocation, GeometryModel> modelLocations = new HashMap<>();
-            for (ResourceLocation modelLocation : resourceManager.listResources(FOLDER, name -> name.endsWith(".json"))) {
+            for (Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources(FOLDER, name -> name.getPath().endsWith(".json")).entrySet()) {
+                ResourceLocation modelLocation = entry.getKey();
                 if ("geckolib3".equals(modelLocation.getNamespace())) continue; // Explicitly ignore geckolib3
-                try (Resource resource = resourceManager.getResource(modelLocation)) {
-                    GeometryModelData[] models = GeometryModelParser.parseModel(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
+                try (InputStream stream = entry.getValue().open()) {
+                    GeometryModelData[] models = GeometryModelParser.parseModel(IOUtils.toString(stream, StandardCharsets.UTF_8));
                     for (GeometryModelData model : models) {
                         ResourceLocation id = new ResourceLocation(modelLocation.getNamespace(), model.getDescription().getIdentifier());
                         if (modelLocations.put(id, model.create()) != null)

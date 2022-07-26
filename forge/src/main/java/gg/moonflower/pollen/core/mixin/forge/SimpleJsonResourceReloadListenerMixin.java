@@ -7,6 +7,7 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.conditions.ICondition;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -38,7 +39,7 @@ public class SimpleJsonResourceReloadListenerMixin {
             Map.Entry<ResourceLocation, JsonElement> entry = it.next();
             JsonElement resourceData = entry.getValue();
 
-            if (resourceData.isJsonObject() && !CraftingHelper.processConditions(resourceData.getAsJsonObject(), "conditions"))
+            if (resourceData.isJsonObject() && !CraftingHelper.processConditions(resourceData.getAsJsonObject(), "conditions", ICondition.IContext.EMPTY))
                 it.remove();
         }
 

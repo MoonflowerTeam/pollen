@@ -1,11 +1,10 @@
-package gg.moonflower.pollen.core.forge.compat.jei;
+package gg.moonflower.pollen.core.compat.jei;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import gg.moonflower.pollen.api.crafting.grindstone.PollenGrindstoneRecipe;
 import gg.moonflower.pollen.core.Pollen;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -17,7 +16,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -39,19 +37,7 @@ public class PollenGrindstoneCategory implements IRecipeCategory<PollenGrindston
 
     public PollenGrindstoneCategory(IGuiHelper guiHelper) {
         this.background = guiHelper.drawableBuilder(new ResourceLocation("textures/gui/container/grindstone.png"), 30, 15, 116, 56).build();
-        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(Blocks.GRINDSTONE));
-    }
-
-    @SuppressWarnings("removal")
-    @Override
-    public ResourceLocation getUid() {
-        return getRecipeType().getUid();
-    }
-
-    @SuppressWarnings("removal")
-    @Override
-    public Class<? extends PollenGrindstoneRecipe> getRecipeClass() {
-        return getRecipeType().getRecipeClass();
+        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Blocks.GRINDSTONE));
     }
 
     @Override
@@ -102,8 +88,8 @@ public class PollenGrindstoneCategory implements IRecipeCategory<PollenGrindston
 
 
         if (experience == -1) {
-            Optional<ItemStack> topStack = view.findSlotByName(this.topSlotName).flatMap(slot1 -> slot1.getDisplayedIngredient(VanillaTypes.ITEM));
-            Optional<ItemStack> bottomStack = view.findSlotByName(this.bottomSlotName).flatMap(slot -> slot.getDisplayedIngredient(VanillaTypes.ITEM));
+            Optional<ItemStack> topStack = view.findSlotByName(this.topSlotName).flatMap(slot1 -> slot1.getDisplayedIngredient(VanillaTypes.ITEM_STACK));
+            Optional<ItemStack> bottomStack = view.findSlotByName(this.bottomSlotName).flatMap(slot -> slot.getDisplayedIngredient(VanillaTypes.ITEM_STACK));
 
             if (topStack.isEmpty() || bottomStack.isEmpty())
                 return;
@@ -112,7 +98,7 @@ public class PollenGrindstoneCategory implements IRecipeCategory<PollenGrindston
         }
 
         if (experience > 0) {
-            TranslatableComponent experienceString = new TranslatableComponent("gui.jei.category." + Pollen.MOD_ID + ".grindstone.experience", (int) Math.ceil((double) experience / 2.0), experience);
+            Component experienceString = Component.translatable("gui.jei.category." + Pollen.MOD_ID + ".grindstone.experience", (int) Math.ceil((double) experience / 2.0), experience);
             Font font = Minecraft.getInstance().font;
             font.draw(matrixStack, experienceString, background.getWidth() - font.width(experienceString), 0, 0xFF808080);
         }

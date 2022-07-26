@@ -20,11 +20,7 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ColorHandlerEvent;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
-import net.minecraftforge.client.event.RegisterShadersEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
@@ -48,7 +44,7 @@ public class PollenForge {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         modBus.addListener(PollenForge::init);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-            modBus.addListener(EventPriority.NORMAL, true, ColorHandlerEvent.Block.class, event -> InitRendererEvent.EVENT.invoker().initRenderer());
+            modBus.addListener(EventPriority.NORMAL, true, RegisterColorHandlersEvent.Block.class, event -> InitRendererEvent.EVENT.invoker().initRenderer());
             modBus.addListener(PollenForge::registerParticles);
             modBus.addListener(PollenForge::registerSprites);
             modBus.<EntityRenderersEvent.AddLayers>addListener(event -> {
@@ -96,17 +92,16 @@ public class PollenForge {
         RegisterAtlasSpriteEvent.event(atlas.location()).invoker().registerSprites(atlas, event::addSprite);
     }
 
-    private static void registerParticles(ParticleFactoryRegisterEvent event) {
-        ParticleEngine particleEngine = Minecraft.getInstance().particleEngine;
+    private static void registerParticles(RegisterParticleProvidersEvent event) {
         ParticleFactoryRegistryEvent.EVENT.invoker().registerParticles(new ParticleFactoryRegistryEvent.Registry() {
             @Override
             public <T extends ParticleOptions> void register(ParticleType<T> type, ParticleProvider<T> provider) {
-                particleEngine.register(type, provider);
+                event.register(type, provider);
             }
 
             @Override
             public <T extends ParticleOptions> void register(ParticleType<T> type, ParticleFactoryRegistryEvent.Factory<T> factory) {
-                particleEngine.register(type, factory::create);
+                event.register(type, factory::create);
             }
         });
     }

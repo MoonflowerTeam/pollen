@@ -2,7 +2,7 @@ package gg.moonflower.pollen.core.mixin.forge;
 
 import gg.moonflower.pollen.api.registry.FluidBehaviorRegistry;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.tags.Tag;
+
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;

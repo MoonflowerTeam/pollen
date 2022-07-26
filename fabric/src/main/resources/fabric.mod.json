@@ -39,12 +39,15 @@
     ],
     "modmenu": [
       "gg.moonflower.pollen.core.fabric.PollenModMenu"
+    ],
+    "jei_mod_plugin": [
+      "gg.moonflower.pollen.core.compat.jei.PollenJeiPlugin"
     ]
   },
   "depends": {
     "fabricloader": ">=0.12",
     "fabric": ">=0.47",
-    "minecraft": "1.18.x >=1.18.2"
+    "minecraft": "1.19.x"
   },
   "conflicts": {
     "grindenchantments": "*"

@@ -51,10 +51,9 @@ public class PollinatedNetworkChannelImpl {
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to read packet data", e);
             }
-        }).consumer((msg, ctx) ->
+        }).consumerMainThread((msg, ctx) ->
         {
             NetworkRegistry.processMessage(msg, new PollinatedForgePacketContext(this.channel, ctx), ctx.get().getDirection().getReceptionSide().isClient() ? this.clientMessageHandler : this.serverMessageHandler);
-            ctx.get().setPacketHandled(true);
         });
     }
 }

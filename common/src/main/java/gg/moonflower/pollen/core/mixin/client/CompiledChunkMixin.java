@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.core.mixin.client;
 
-import gg.moonflower.pollen.core.extensions.CompiledChunkExtension;
+import gg.moonflower.pollen.core.extensions.ChunkRenderExtensions;
 import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher;
 import net.minecraft.core.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Mixin(ChunkRenderDispatcher.CompiledChunk.class)
-public class CompiledChunkMixin implements CompiledChunkExtension {
+public class CompiledChunkMixin implements ChunkRenderExtensions {
 
     @Unique
     private final Set<BlockPos> renderableBlocks = new HashSet<>();

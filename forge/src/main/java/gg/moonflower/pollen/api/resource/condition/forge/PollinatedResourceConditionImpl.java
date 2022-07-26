@@ -2,7 +2,7 @@ package gg.moonflower.pollen.api.resource.condition.forge;
 
 import gg.moonflower.pollen.api.resource.condition.PollinatedResourceConditionProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
+
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -95,7 +95,7 @@ public class PollinatedResourceConditionImpl {
         }
 
         @Override
-        public boolean test() {
+        public boolean test(IContext context) {
             return false;
         }
     }

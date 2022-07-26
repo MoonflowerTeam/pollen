@@ -15,18 +15,12 @@ import org.jetbrains.annotations.ApiStatus;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.DirectoryStream;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 @ApiStatus.Internal
 public class ForgeModResourcePack extends AbstractPackResources {
@@ -89,28 +83,30 @@ public class ForgeModResourcePack extends AbstractPackResources {
     }
 
     @Override
-    public Collection<ResourceLocation> getResources(PackType type, String namespace, String path, int depth, Predicate<String> predicate) {
+    public Collection<ResourceLocation> getResources(PackType type, String namespace, String path, Predicate<ResourceLocation> predicate) {
         List<ResourceLocation> ids = new ArrayList<>();
-        String nioPath = path.replace("/", this.separator);
         Path namespacePath = this.getPath(type.getDirectory() + "/" + namespace);
-        if (namespacePath != null) {
-            Path searchPath = namespacePath.resolve(nioPath).toAbsolutePath().normalize();
-            if (Files.exists(searchPath)) {
+        if (namespacePath == null)
+            return Collections.emptySet();
+
+        Path searchPath = namespacePath.resolve(path.replace("/", this.separator)).normalize();
+        if (!Files.exists(searchPath))
+            return Collections.emptySet();
+
+        try(Stream<Path> stream = Files.walk(searchPath)) {
+            stream.filter(Files::isRegularFile).filter(p -> {
+                String fileName = p.getFileName().toString();
+                return !fileName.endsWith(".mcmeta");
+            }).map(namespacePath::relativize).map(p -> p.toString().replace(this.separator, "/")).forEach(s -> {
                 try {
-                    Files.walk(searchPath, depth, new FileVisitOption[0]).filter(Files::isRegularFile).filter((p) -> {
-                        String filename = p.getFileName().toString();
-                        return !filename.endsWith(".mcmeta") && predicate.test(filename);
-                    }).map(namespacePath::relativize).map((p) -> p.toString().replace(this.separator, "/")).forEach((s) -> {
-                        try {
-                            ids.add(new ResourceLocation(namespace, s));
-                        } catch (ResourceLocationException e) {
-                            LOGGER.error(e.getMessage());
-                        }
-                    });
-                } catch (IOException var11) {
-                    LOGGER.warn("getResources at " + path + " in namespace " + namespace + ", mod " + this.container.getId() + " failed!", var11);
+                    ResourceLocation id = new ResourceLocation(namespace, s);
+                    if (predicate.test(id)) ids.add(id);
+                } catch (ResourceLocationException e) {
+                    LOGGER.error(e.getMessage());
                 }
-            }
+            });
+        } catch (IOException e) {
+            LOGGER.warn("getResources at " + path + " in namespace " + namespace + ", mod " + this.container.getId() + " failed!", e);
         }
 
         return ids;

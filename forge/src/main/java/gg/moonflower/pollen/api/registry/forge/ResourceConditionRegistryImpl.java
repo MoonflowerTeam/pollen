@@ -5,12 +5,14 @@ import gg.moonflower.pollen.api.resource.condition.PollinatedResourceCondition;
 import gg.moonflower.pollen.api.resource.condition.forge.*;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -31,7 +33,10 @@ public class ResourceConditionRegistryImpl {
     }
 
     @SubscribeEvent
-    public static void registerRecipeConditions(RegistryEvent.Register<RecipeSerializer<?>> event) {
+    public static void registerRecipeConditions(RegisterEvent event) {
+        if (!event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS))
+            return;
+
         CONDITIONS.forEach(CraftingHelper::register);
         CraftingHelper.register(BlockExistsCondition.Serializer.INSTANCE);
         CraftingHelper.register(FluidExistsCondition.Serializer.INSTANCE);
@@ -45,7 +50,7 @@ public class ResourceConditionRegistryImpl {
     }
 
     public static boolean test(JsonObject json) {
-        return CraftingHelper.processConditions(json, "conditions");
+        return CraftingHelper.processConditions(json, "conditions", ServerLifecycleHooks.getCurrentServer() == null ? ICondition.IContext.EMPTY : ServerLifecycleHooks.getCurrentServer().getServerResources().managers().getConditionContext());
     }
 
     public static String getConditionsKey() {

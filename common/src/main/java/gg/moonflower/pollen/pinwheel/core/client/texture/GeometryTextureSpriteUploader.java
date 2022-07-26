@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.pinwheel.core.client.texture;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.pinwheel.api.client.FileCache;
@@ -15,9 +16,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
+import net.minecraft.server.packs.resources.*;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.apache.commons.codec.binary.Base32;
@@ -35,13 +34,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -190,30 +183,30 @@ public class GeometryTextureSpriteUploader extends SimplePreparableReloadListene
         }
 
         @Override
-        public Resource getResource(ResourceLocation resourceLocation) throws IOException {
+        public List<Resource> getResourceStack(ResourceLocation resourceLocation) {
+            List<Resource> resources = new LinkedList<>(this.parent.getResourceStack(resourceLocation));
+            this.getResource(resourceLocation).ifPresent(resource -> resources.add(0, resource));
+            return resources;
+        }
+
+        @Override
+        public Optional<Resource> getResource(ResourceLocation resourceLocation) {
             String url = parseUrl(new ResourceLocation(resourceLocation.getNamespace(), resourceLocation.getPath().substring(9, resourceLocation.getPath().length() - 4)));
             if (url != null) {
                 if (!this.onlineLocations.containsKey(url))
-                    throw new IOException("Failed to fetch texture data from '" + url + "'");
-
-                Pair<CompletableFuture<Path>, CompletableFuture<JsonObject>> files = this.onlineLocations.get(url);
-                InputStream textureStream = read(files.getLeft());
-                if (textureStream == null)
-                    throw new IOException("Failed to fetch texture data from '" + url + "'");
-
-                return new OnlineResource(url, resourceLocation, textureStream, files.getRight().join());
+                    return Optional.empty();
+                return Optional.of(new Resource(Pollen.MOD_ID + "_online", () -> read(this.onlineLocations.get(url).getLeft()), () -> new ResourceMetadata() {
+                    @Override
+                    public <T> Optional<T> getSection(MetadataSectionSerializer<T> serializer) {
+                        JsonObject metadataJson = onlineLocations.get(url).getRight().join();
+                        if (metadataJson == null)
+                            return Optional.empty();
+                        String s = serializer.getMetadataSectionName();
+                        return metadataJson.has(s) ? Optional.of(serializer.fromJson(GsonHelper.getAsJsonObject(metadataJson, s))) : Optional.empty();
+                    }
+                }));
             }
             return this.parent.getResource(resourceLocation);
-        }
-
-        @Override
-        public boolean hasResource(ResourceLocation resourceLocation) {
-            return resourceLocation.getPath().startsWith("base32") || this.parent.hasResource(resourceLocation);
-        }
-
-        @Override
-        public List<Resource> getResources(ResourceLocation resourceLocation) throws IOException {
-            return this.parent.getResources(resourceLocation);
         }
 
         @Override
@@ -222,65 +215,13 @@ public class GeometryTextureSpriteUploader extends SimplePreparableReloadListene
         }
 
         @Override
-        public Stream<PackResources> listPacks() {
-            return this.parent.listPacks();
+        public Map<ResourceLocation, List<Resource>> listResourceStacks(String path, Predicate<ResourceLocation> filter) {
+            return this.parent.listResourceStacks(path, filter);
         }
 
-        private static class OnlineResource implements Resource {
-
-            private final String url;
-            private final ResourceLocation textureLocation;
-            private final InputStream stream;
-            private final JsonObject metadataJson;
-
-            private OnlineResource(String url, ResourceLocation textureLocation, InputStream stream, @Nullable JsonObject metadataJson) {
-                this.url = url;
-                this.textureLocation = textureLocation;
-                this.stream = stream;
-                this.metadataJson = metadataJson;
-            }
-
-            @Override
-            public ResourceLocation getLocation() {
-                return textureLocation;
-            }
-
-            @Override
-            public InputStream getInputStream() {
-                return stream;
-            }
-
-            @Override
-            public boolean hasMetadata() {
-                return this.metadataJson != null;
-            }
-
-            @Nullable
-            @Override
-            public <T> T getMetadata(MetadataSectionSerializer<T> serializer) {
-                if (this.metadataJson == null)
-                    return null;
-                String s = serializer.getMetadataSectionName();
-                return this.metadataJson.has(s) ? serializer.fromJson(GsonHelper.getAsJsonObject(this.metadataJson, s)) : null;
-            }
-
-            @Override
-            public String getSourceName() {
-                return Pollen.MOD_ID + "_online";
-            }
-
-            @Override
-            public void close() throws IOException {
-                this.stream.close();
-            }
-
-            @Override
-            public String toString() {
-                return "OnlineResource{" +
-                        "url='" + url + '\'' +
-                        ", textureLocation=" + textureLocation +
-                        '}';
-            }
+        @Override
+        public Stream<PackResources> listPacks() {
+            return this.parent.listPacks();
         }
     }
 

@@ -32,7 +32,7 @@ public class ShaderInstanceMixin {
         return "";
     }
 
-    @ModifyVariable(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/resources/ResourceProvider;getResource(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/server/packs/resources/Resource;", shift = At.Shift.BEFORE), index = 4)
+    @ModifyVariable(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/resources/ResourceProvider;openAsReader(Lnet/minecraft/resources/ResourceLocation;)Ljava/io/BufferedReader;", shift = At.Shift.BEFORE), index = 4)
     public ResourceLocation modifyLocation(ResourceLocation location) {
         ResourceLocation id = new ResourceLocation(this.name);
         this.name = id.getNamespace().equals("minecraft") ? id.getPath() : id.toString();

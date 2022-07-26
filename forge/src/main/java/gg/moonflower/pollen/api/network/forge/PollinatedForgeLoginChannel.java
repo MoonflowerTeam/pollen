@@ -42,10 +42,9 @@ public class PollinatedForgeLoginChannel extends PollinatedNetworkChannelImpl im
                         throw new IllegalStateException("Failed to read packet data", e);
                     }
                 })
-                .consumer(HandshakeHandler.indexFirst((__, msg, ctx) ->
+                .consumerMainThread(HandshakeHandler.indexFirst((__, msg, ctx) ->
                 {
                     NetworkRegistry.processMessage(msg, new PollinatedForgePacketContext(this.channel, ctx), ctx.get().getDirection().getReceptionSide().isClient() ? this.clientMessageHandler : this.serverMessageHandler);
-                    ctx.get().setPacketHandled(true);
                 }))
                 .loginIndex(PollinatedLoginPacket::getAsInt, PollinatedLoginPacket::setLoginIndex)
                 .add();

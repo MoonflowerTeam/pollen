@@ -2,6 +2,7 @@ package gg.moonflower.pollen.core.test;
 
 import gg.moonflower.pollen.api.fluid.PollenFluidBehavior;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
@@ -53,7 +54,7 @@ public class TestPollenFluidBehavior implements PollenFluidBehavior {
     }
 
     @Override
-    public void doSplashEffect(Entity entity, Random random) {
+    public void doSplashEffect(Entity entity, RandomSource random) {
     }
 
     @Nullable

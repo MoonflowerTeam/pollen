@@ -5,6 +5,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -188,7 +189,7 @@ public interface PollenFluidBehavior {
      * @param entity The entity splashing
      * @param random The random instance for effects
      */
-    default void doSplashEffect(Entity entity, Random random) {
+    default void doSplashEffect(Entity entity, RandomSource random) {
         Entity vehicle = entity.isVehicle() && entity.getControllingPassenger() != null ? entity.getControllingPassenger() : entity;
         float f = vehicle == entity ? 0.2F : 0.9F;
         Vec3 vec3 = vehicle.getDeltaMovement();

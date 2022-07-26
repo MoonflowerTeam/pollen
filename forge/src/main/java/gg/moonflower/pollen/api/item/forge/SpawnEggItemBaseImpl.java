@@ -1,12 +1,13 @@
 package gg.moonflower.pollen.api.item.forge;
 
 import gg.moonflower.pollen.core.Pollen;
+import net.minecraft.core.Registry;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.SpawnEggItem;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+import net.minecraftforge.registries.RegisterEvent;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
@@ -24,7 +25,10 @@ public class SpawnEggItemBaseImpl {
     }
 
     @SubscribeEvent
-    public static void onEvent(RegistryEvent.Register<EntityType<?>> event) {
+    public static void onEvent(RegisterEvent event) {
+        if (!event.getRegistryKey().equals(Registry.ENTITY_TYPE_REGISTRY))
+            return;
+
         Map<EntityType<?>, SpawnEggItem> spawnEggs = ObfuscationReflectionHelper.getPrivateValue(SpawnEggItem.class, null, "f_43201_");
         if (spawnEggs == null)
             throw new RuntimeException("Failed to inject spawns eggs");

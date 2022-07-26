@@ -35,7 +35,6 @@
   ],
   "mixins": [
     "AxeItemMixin",
-    "ContainerProviderImplMixin",
     "DedicatedServerMixin",
     "ExplosionMixin",
     "LevelChunkMixin",
@@ -51,7 +50,6 @@
     "ServerPlayerMixin",
     "WoodTypeAccessor",
     "data.AdvancementBuilderMixin",
-    "data.TagsProviderMixin",
     "loot.LootTableAccessor"
   ],
   "injectors": {

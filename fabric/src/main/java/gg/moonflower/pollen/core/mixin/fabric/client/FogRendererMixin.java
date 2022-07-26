@@ -24,12 +24,8 @@ public class FogRendererMixin {
     @Shadow
     private static float fogBlue;
 
-    @Unique
-    private static float capturePartialTicks;
-
     @Inject(method = "setupColor", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V", shift = At.Shift.BEFORE))
     private static void modifyFogColor(Camera camera, float partialTicks, ClientLevel level, int renderDistanceChunks, float bossColorModifier, CallbackInfo ci) {
-        capturePartialTicks = partialTicks;
         FogEvents.FOG_COLOR.invoker().setupFogColors(Minecraft.getInstance().gameRenderer, camera, new FogEvents.ColorContext() {
             @Override
             public float getRed() {
@@ -64,7 +60,7 @@ public class FogRendererMixin {
     }
 
     @Inject(method = "setupFog", at = @At("TAIL"))
-    private static void modifyFogDensity(Camera camera, FogRenderer.FogMode fogType, float farPlaneDistance, boolean nearFog, CallbackInfo ci) {
-        FogEvents.FOG_DENSITY.invoker().setupFogDensity(Minecraft.getInstance().gameRenderer, camera, farPlaneDistance, capturePartialTicks);
+    private static void modifyFogDensity(Camera camera, FogRenderer.FogMode fogType, float farPlaneDistance, boolean nearFog, float partialTicks, CallbackInfo ci) {
+        FogEvents.FOG_DENSITY.invoker().setupFogDensity(Minecraft.getInstance().gameRenderer, camera, farPlaneDistance, partialTicks);
     }
 }

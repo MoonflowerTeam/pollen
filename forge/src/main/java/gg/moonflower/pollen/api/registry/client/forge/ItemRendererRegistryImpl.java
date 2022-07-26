@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.client.IItemRenderProperties;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +36,7 @@ public class ItemRendererRegistryImpl {
 
     public static void registerRenderer(ItemLike item, DynamicItemRenderer renderer) {
         try {
-            RENDER_PROPERTIES_FIELD.set(item.asItem(), new RenderPropertiesWrapper((IItemRenderProperties) item.asItem().getRenderPropertiesInternal(), renderer));
+            RENDER_PROPERTIES_FIELD.set(item.asItem(), new RenderPropertiesWrapper((IClientItemExtensions) item.asItem().getRenderPropertiesInternal(), renderer));
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Failed to set renderProperties renderer", e);
         }
@@ -57,25 +57,24 @@ public class ItemRendererRegistryImpl {
         }
     }
 
-    private static class RenderPropertiesWrapper implements IItemRenderProperties {
+    private static class RenderPropertiesWrapper implements IClientItemExtensions {
 
-        private final IItemRenderProperties parent;
+        private final IClientItemExtensions parent;
         private final BlockEntityWithoutLevelRenderer renderer;
 
-        private RenderPropertiesWrapper(@Nullable IItemRenderProperties parent, DynamicItemRenderer renderer) {
-            this.parent = parent != null ? parent : IItemRenderProperties.DUMMY;
+        private RenderPropertiesWrapper(@Nullable IClientItemExtensions parent, DynamicItemRenderer renderer) {
+            this.parent = parent != null ? parent : IClientItemExtensions.DEFAULT;
             this.renderer = new ForgeWrapper(renderer);
         }
 
         @Override
-        public Font getFont(ItemStack stack) {
-            return this.parent.getFont(stack);
+        public Font getFont(ItemStack stack, FontContext context) {
+            return this.parent.getFont(stack, context);
         }
 
-        @Nullable
         @Override
-        public HumanoidModel<?> getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default) {
-            return this.parent.getArmorModel(entityLiving, itemStack, armorSlot, _default);
+        public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default) {
+            return this.parent.getHumanoidArmorModel(entityLiving, itemStack, armorSlot, _default);
         }
 
         @Override
@@ -84,7 +83,7 @@ public class ItemRendererRegistryImpl {
         }
 
         @Override
-        public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+        public BlockEntityWithoutLevelRenderer getCustomRenderer() {
             return this.renderer;
         }
     }

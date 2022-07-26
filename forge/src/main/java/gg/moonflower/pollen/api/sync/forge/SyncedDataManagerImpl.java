@@ -14,14 +14,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.GameRules;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -54,8 +50,8 @@ public class SyncedDataManagerImpl {
 
     @SubscribeEvent
     public static void onStartTracking(PlayerEvent.StartTracking event) {
-        if (event.getPlayer() instanceof ServerPlayer) {
-            ServerPlayer player = (ServerPlayer) event.getPlayer();
+        if (event.getEntity() instanceof ServerPlayer) {
+            ServerPlayer player = (ServerPlayer) event.getEntity();
             Entity target = event.getTarget();
             getDataComponent(player).ifPresent(component -> {
                 if (component.shouldSyncWith(target, player))
@@ -65,7 +61,7 @@ public class SyncedDataManagerImpl {
     }
 
     @SubscribeEvent
-    public static void onPlayerJoinWorld(EntityJoinWorldEvent event) {
+    public static void onPlayerJoinWorld(EntityJoinLevelEvent event) {
         if (event.getEntity() instanceof ServerPlayer) {
             ServerPlayer player = (ServerPlayer) event.getEntity();
             getDataComponent(player).ifPresent(component -> {
@@ -77,9 +73,9 @@ public class SyncedDataManagerImpl {
 
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
-        if (event.getOriginal() instanceof ServerPlayer && event.getPlayer() instanceof ServerPlayer) {
+        if (event.getOriginal() instanceof ServerPlayer && event.getEntity() instanceof ServerPlayer) {
             ServerPlayer original = (ServerPlayer) event.getOriginal();
-            ServerPlayer player = (ServerPlayer) event.getPlayer();
+            ServerPlayer player = (ServerPlayer) event.getEntity();
 
             Optional<ForgeDataComponent> originalOptional = getDataComponent(original).resolve();
             Optional<ForgeDataComponent> copyOptional = getDataComponent(original).resolve();

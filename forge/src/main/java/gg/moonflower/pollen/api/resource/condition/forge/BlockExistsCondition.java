@@ -28,7 +28,7 @@ public class BlockExistsCondition implements ICondition {
     }
 
     @Override
-    public boolean test() {
+    public boolean test(IContext context) {
         return ForgeRegistries.BLOCKS.containsKey(this.block);
     }
 

@@ -12,7 +12,7 @@ import java.util.List;
 @Mixin(LootTable.class)
 public class LootTableMixin implements LootTableExtensions {
 
-    @Shadow
+    @Shadow(remap = false)
     @Final
     private List<LootPool> f_79109_;
 

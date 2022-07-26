@@ -21,6 +21,7 @@ import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
@@ -50,20 +51,20 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
-    public static void onEvent(net.minecraftforge.event.TickEvent.WorldTickEvent event) {
+    public static void onEvent(TickEvent.LevelTickEvent event) {
         switch (event.phase) {
             case START:
-                TickEvents.LEVEL_PRE.invoker().tick(event.world);
+                TickEvents.LEVEL_PRE.invoker().tick(event.level);
                 break;
             case END:
-                TickEvents.LEVEL_POST.invoker().tick(event.world);
+                TickEvents.LEVEL_POST.invoker().tick(event.level);
                 break;
         }
     }
 
     @SubscribeEvent
-    public static void onEvent(LivingEvent.LivingUpdateEvent event) {
-        if (!TickEvents.LIVING_PRE.invoker().tick(event.getEntityLiving()))
+    public static void onEvent(LivingEvent.LivingTickEvent event) {
+        if (!TickEvents.LIVING_PRE.invoker().tick(event.getEntity()))
             event.setCanceled(true);
     }
 
@@ -96,12 +97,12 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(RegisterCommandsEvent event) {
-        CommandRegistryEvent.EVENT.invoker().registerCommands(event.getDispatcher(), event.getEnvironment());
+        CommandRegistryEvent.EVENT.invoker().registerCommands(event.getDispatcher(), event.getBuildContext(), event.getCommandSelection());
     }
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickItem event) {
-        InteractionResultHolder<ItemStack> result = PlayerInteractionEvents.RIGHT_CLICK_ITEM.invoker().interaction(event.getPlayer(), event.getWorld(), event.getHand());
+        InteractionResultHolder<ItemStack> result = PlayerInteractionEvents.RIGHT_CLICK_ITEM.invoker().interaction(event.getEntity(), event.getLevel(), event.getHand());
         if (result.getResult() != InteractionResult.PASS) {
             event.setCanceled(true);
             event.setCancellationResult(result.getResult());
@@ -110,7 +111,7 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event) {
-        InteractionResult result = PlayerInteractionEvents.RIGHT_CLICK_BLOCK.invoker().interaction(event.getPlayer(), event.getWorld(), event.getHand(), event.getHitVec());
+        InteractionResult result = PlayerInteractionEvents.RIGHT_CLICK_BLOCK.invoker().interaction(event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
         if (result != InteractionResult.PASS) {
             event.setCanceled(true);
             event.setCancellationResult(result);
@@ -119,7 +120,7 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event) {
-        InteractionResult result = PlayerInteractionEvents.LEFT_CLICK_BLOCK.invoker().interaction(event.getPlayer(), event.getWorld(), event.getHand(), event.getPos(), event.getFace());
+        InteractionResult result = PlayerInteractionEvents.LEFT_CLICK_BLOCK.invoker().interaction(event.getEntity(), event.getLevel(), event.getHand(), event.getPos(), event.getFace());
         if (result != InteractionResult.PASS) {
             event.setCanceled(true);
             event.setCancellationResult(result);
@@ -128,7 +129,7 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract event) {
-        InteractionResult result = PlayerInteractionEvents.RIGHT_CLICK_ENTITY.invoker().interaction(event.getPlayer(), event.getWorld(), event.getHand(), event.getEntity());
+        InteractionResult result = PlayerInteractionEvents.RIGHT_CLICK_ENTITY.invoker().interaction(event.getEntity(), event.getLevel(), event.getHand(), event.getEntity());
         if (result != InteractionResult.PASS) {
             event.setCanceled(true);
             event.setCancellationResult(result);
@@ -136,50 +137,50 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
-    public static void onEvent(net.minecraftforge.event.world.ChunkEvent.Load event) {
-        ChunkEvents.LOAD.invoker().load(event.getWorld(), event.getChunk());
+    public static void onEvent(net.minecraftforge.event.level.ChunkEvent.Load event) {
+        ChunkEvents.LOAD.invoker().load(event.getLevel(), event.getChunk());
     }
 
     @SubscribeEvent
-    public static void onEvent(net.minecraftforge.event.world.ChunkEvent.Unload event) {
-        ChunkEvents.UNLOAD.invoker().unload(event.getWorld(), event.getChunk());
+    public static void onEvent(net.minecraftforge.event.level.ChunkEvent.Unload event) {
+        ChunkEvents.UNLOAD.invoker().unload(event.getLevel(), event.getChunk());
     }
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.player.PlayerEvent.StartTracking event) {
-        ServerPlayerTrackingEvents.START_TRACKING_ENTITY.invoker().startTracking(event.getPlayer(), event.getEntity());
+        ServerPlayerTrackingEvents.START_TRACKING_ENTITY.invoker().startTracking(event.getEntity(), event.getEntity());
     }
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.player.PlayerEvent.StopTracking event) {
-        ServerPlayerTrackingEvents.STOP_TRACKING_ENTITY.invoker().stopTracking(event.getPlayer(), event.getEntity());
+        ServerPlayerTrackingEvents.STOP_TRACKING_ENTITY.invoker().stopTracking(event.getEntity(), event.getEntity());
     }
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent event) {
-        SetTargetEvent.EVENT.invoker().setTarget(event.getEntityLiving(), event.getTarget());
+        SetTargetEvent.EVENT.invoker().setTarget(event.getEntity(), event.getTarget());
     }
 
     @SubscribeEvent
-    public static void onEvent(net.minecraftforge.event.world.ExplosionEvent.Start event) {
-        if (!ExplosionEvents.START.invoker().start(event.getWorld(), event.getExplosion()))
+    public static void onEvent(net.minecraftforge.event.level.ExplosionEvent.Start event) {
+        if (!ExplosionEvents.START.invoker().start(event.getLevel(), event.getExplosion()))
             event.setCanceled(true);
     }
 
     @SubscribeEvent
-    public static void onEvent(net.minecraftforge.event.world.ExplosionEvent.Detonate event) {
-        ExplosionEvents.DETONATE.invoker().detonate(event.getWorld(), event.getExplosion(), event.getAffectedEntities());
+    public static void onEvent(net.minecraftforge.event.level.ExplosionEvent.Detonate event) {
+        ExplosionEvents.DETONATE.invoker().detonate(event.getLevel(), event.getExplosion(), event.getAffectedEntities());
     }
 
     @SubscribeEvent
-    public static void onEvent(net.minecraftforge.event.entity.EntityJoinWorldEvent event) {
-        if (!EntityEvents.JOIN.invoker().onJoin(event.getEntity(), event.getWorld()))
+    public static void onEvent(net.minecraftforge.event.entity.EntityJoinLevelEvent event) {
+        if (!EntityEvents.JOIN.invoker().onJoin(event.getEntity(), event.getLevel()))
             event.setCanceled(true);
     }
 
     @SubscribeEvent
-    public static void onEvent(net.minecraftforge.event.entity.EntityLeaveWorldEvent event) {
-        EntityEvents.LEAVE.invoker().onLeave(event.getEntity(), event.getWorld());
+    public static void onEvent(net.minecraftforge.event.entity.EntityLeaveLevelEvent event) {
+        EntityEvents.LEAVE.invoker().onLeave(event.getEntity(), event.getLevel());
     }
 
     @SubscribeEvent
@@ -236,12 +237,12 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(PlayerContainerEvent.Open event) {
-        ContainerEvents.OPEN.invoker().open(event.getPlayer(), event.getContainer());
+        ContainerEvents.OPEN.invoker().open(event.getEntity(), event.getContainer());
     }
 
     @SubscribeEvent
     public static void onEvent(PlayerContainerEvent.Close event) {
-        ContainerEvents.CLOSE.invoker().close(event.getPlayer(), event.getContainer());
+        ContainerEvents.CLOSE.invoker().close(event.getEntity(), event.getContainer());
     }
 
     @SubscribeEvent

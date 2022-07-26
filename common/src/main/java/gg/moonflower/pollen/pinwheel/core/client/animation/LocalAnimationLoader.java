@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,9 +38,10 @@ public class LocalAnimationLoader implements BackgroundLoader<Map<ResourceLocati
         {
             Map<ResourceLocation, AnimationData> animationData = new HashMap<>();
             try {
-                for (ResourceLocation animationLocation : resourceManager.listResources(this.folder, name -> name.endsWith(".json"))) {
-                    try (Resource resource = resourceManager.getResource(animationLocation)) {
-                        AnimationData[] animations = AnimationParser.parse(new InputStreamReader(resource.getInputStream()));
+                for (Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources(this.folder, name -> name.getPath().endsWith(".json")).entrySet()) {
+                    ResourceLocation animationLocation = entry.getKey();
+                    try (BufferedReader reader = entry.getValue().openAsReader()) {
+                        AnimationData[] animations = AnimationParser.parse(reader);
                         for (AnimationData animation : animations) {
                             ResourceLocation id = new ResourceLocation(animationLocation.getNamespace(), animation.getName());
                             if (animationData.put(id, animation) != null)

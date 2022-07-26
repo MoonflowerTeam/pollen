@@ -14,6 +14,8 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -63,13 +65,14 @@ public class LocalTextureTableLoader implements TextureTableLoader {
         return CompletableFuture.supplyAsync(() ->
         {
             Map<ResourceLocation, GeometryModelTextureTable> textureLocations = new HashMap<>();
-            for (ResourceLocation textureTableLocation : resourceManager.listResources(this.folder, name -> name.endsWith(".json"))) {
+            for (Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources(this.folder, name -> name.getPath().endsWith(".json")).entrySet()) {
+                ResourceLocation textureTableLocation = entry.getKey();
                 ResourceLocation textureTableName = new ResourceLocation(textureTableLocation.getNamespace(), textureTableLocation.getPath().substring(this.folder.length(), textureTableLocation.getPath().length() - 5));
                 if (textureTableName.getPath().equals("hash_tables"))
                     continue;
 
-                try (Resource resource = resourceManager.getResource(textureTableLocation)) {
-                    textureLocations.put(textureTableName, GeometryModelParser.parseTextures(new InputStreamReader(resource.getInputStream())));
+                try (BufferedReader reader = entry.getValue().openAsReader()) {
+                    textureLocations.put(textureTableName, GeometryModelParser.parseTextures(reader));
                 } catch (Exception e) {
                     LOGGER.error("Failed to load texture table '" + textureTableName + "'", e);
                 }
@@ -81,11 +84,11 @@ public class LocalTextureTableLoader implements TextureTableLoader {
             Set<String> hashTables = new HashSet<>();
             for (String domain : resourceManager.getNamespaces()) {
                 ResourceLocation hashTableLocation = new ResourceLocation(domain, this.folder + "hash_tables.json");
-                if (!resourceManager.hasResource(hashTableLocation))
+                if (resourceManager.getResource(hashTableLocation).isEmpty())
                     continue;
 
-                try (Resource resource = resourceManager.getResource(hashTableLocation)) {
-                    hashTables.addAll(Arrays.asList(GSON.fromJson(new InputStreamReader(resource.getInputStream()), String[].class)));
+                try (BufferedReader reader = resourceManager.openAsReader(hashTableLocation)) {
+                    hashTables.addAll(Arrays.asList(GSON.fromJson(reader, String[].class)));
                 } catch (Exception e) {
                     LOGGER.error("Failed to load texture hash table for " + domain, e);
                 }

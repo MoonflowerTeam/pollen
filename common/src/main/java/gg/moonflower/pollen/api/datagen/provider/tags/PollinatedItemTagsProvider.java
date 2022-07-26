@@ -60,10 +60,10 @@ public class PollinatedItemTagsProvider extends ItemTagsProvider implements Cond
             PollinatedResourceConditionProvider.write(json, this.providers.get(id).toArray(new PollinatedResourceConditionProvider[0]));
     }
 
-    @Override
-    protected PollinatedTagsProvider.PollinatedTagAppender<Item> tag(TagKey<Item> tag) {
-        return new PollinatedTagsProvider.PollinatedTagAppender<>(this.getOrCreateRawBuilder(tag), this.registry, this.domain);
-    }
+//    @Override
+//    protected PollinatedTagsProvider.PollinatedTagAppender<Item> tag(TagKey<Item> tag) {
+//        return new PollinatedTagsProvider.PollinatedTagAppender<>(this.getOrCreateRawBuilder(tag), this.registry, this.domain);
+//    }
 
     @Override
     protected TagBuilder getOrCreateRawBuilder(TagKey<Item> tag) {

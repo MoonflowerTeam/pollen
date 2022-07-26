@@ -28,13 +28,13 @@ public abstract class TagPopulatedCondition<T> implements ICondition {
     }
 
     @Override
-    public boolean test() {
+    public boolean test(IContext context) {
         return Platform.getRegistryAccess().<Registry<T>>flatMap(access -> access.registry(this.registry)).stream().anyMatch(registry -> registry.isKnownTagName(this.tag));
     }
 
     @Override
     public String toString() {
-        return this.registry.getRegistryName() + "_tag_populated(\"" + this.tag + "\")";
+        return this.registry.registry() + "_tag_populated(\"" + this.tag + "\")";
     }
 
     public record Serializer<T>(ResourceLocation name,

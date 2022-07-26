@@ -5,6 +5,7 @@ import gg.moonflower.pollen.api.fluid.PollenFluidBehavior;
 import gg.moonflower.pollen.api.registry.FluidBehaviorRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -43,10 +44,10 @@ public abstract class EntityMixin {
 
     @Shadow
     @Final
-    protected Random random;
+    protected RandomSource random;
 
     @SuppressWarnings("ConstantConditions")
-    @Inject(method = "updateInWaterStateAndDoFluidPushing", at = @At("TAIL"), cancellable = true)
+    @Inject(method = "updateInWaterStateAndDoFluidPushing", at = @At("TAIL"))
     public void updateCustomFluids(CallbackInfoReturnable<Boolean> cir) {
         FluidBehaviorRegistry.getFluids().forEach(tag -> {
             if (FluidBehaviorRegistry.doFluidPushing(tag, (Entity) (Object) this)) {

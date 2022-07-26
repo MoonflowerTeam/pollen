@@ -59,10 +59,10 @@ public class PollinatedBlockTagsProvider extends BlockTagsProvider implements Co
             PollinatedResourceConditionProvider.write(json, this.providers.get(id).toArray(new PollinatedResourceConditionProvider[0]));
     }
 
-    @Override
-    protected PollinatedTagsProvider.PollinatedTagAppender<Block> tag(TagKey<Block> tag) {
-        return new PollinatedTagsProvider.PollinatedTagAppender<>(this.getOrCreateRawBuilder(tag), this.registry, this.domain);
-    }
+//    @Override
+//    protected PollinatedTagsProvider.PollinatedTagAppender<Block> tag(TagKey<Block> tag) {
+//        return new PollinatedTagsProvider.PollinatedTagAppender<>(this.getOrCreateRawBuilder(tag), this.registry, this.domain);
+//    }
 
     @Override
     protected TagBuilder getOrCreateRawBuilder(TagKey<Block> tag) {

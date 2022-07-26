@@ -5,8 +5,7 @@ import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ForgeModelBakery;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.ApiStatus;
@@ -22,9 +21,9 @@ public class ModelRegistryImpl {
     private static final Set<ModelRegistry.ModelFactory> FACTORIES = ConcurrentHashMap.newKeySet();
 
     @SubscribeEvent
-    public static void onEvent(ModelRegistryEvent event) {
-        SPECIAL_MODELS.forEach(ForgeModelBakery::addSpecialModel);
-        FACTORIES.forEach(factory -> factory.registerModels(Minecraft.getInstance().getResourceManager(), ForgeModelBakery::addSpecialModel));
+    public static void onEvent(ModelEvent.RegisterAdditional event) {
+        SPECIAL_MODELS.forEach(event::register);
+        FACTORIES.forEach(factory -> factory.registerModels(Minecraft.getInstance().getResourceManager(), event::register));
     }
 
     public static void registerSpecial(ResourceLocation location) {
