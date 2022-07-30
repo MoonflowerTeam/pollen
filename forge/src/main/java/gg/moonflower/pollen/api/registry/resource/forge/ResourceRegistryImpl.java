@@ -40,23 +40,24 @@ public class ResourceRegistryImpl {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onEvent(AddReloadListenerEvent event) {
-        ResourceRegistryImpl.inject(PackType.SERVER_DATA, event.getListeners());
+        ResourceRegistryImpl.inject(PackType.SERVER_DATA, event.getListeners()).forEach(event::addListener);
     }
 
-    private static void inject(PackType type, List<PreparableReloadListener> listeners) {
+    private static List<PreparableReloadListener> inject(PackType type, List<PreparableReloadListener> existing) {
         Set<PollinatedPreparableReloadListener> addedListeners = LISTENERS.get(type);
         if (addedListeners == null)
-            return;
+            return Collections.emptyList();
 
         List<PollinatedPreparableReloadListener> listenersToAdd = new ArrayList<>(addedListeners);
         Set<ResourceLocation> resolvedIds = new HashSet<>();
 
-        for (PreparableReloadListener listener : listeners)
+        for (PreparableReloadListener listener : existing)
             if (listener instanceof PollinatedPreparableReloadListener)
                 resolvedIds.add(((PollinatedPreparableReloadListener) listener).getPollenId());
 
         int lastSize = -1;
 
+        List<PreparableReloadListener> listeners = new ArrayList<>();
         while (listeners.size() != lastSize) {
             lastSize = listeners.size();
 
@@ -76,6 +77,8 @@ public class ResourceRegistryImpl {
         for (PreparableReloadListener listener : listenersToAdd) {
             LOGGER.warn("Could not resolve dependencies for listener: " + listener.getName() + "!");
         }
+
+        return listeners;
     }
 
     public static void inject(PackType type, Consumer<Pack> consumer, Pack.PackConstructor factory) {
@@ -116,11 +119,7 @@ public class ResourceRegistryImpl {
 
         @SubscribeEvent(priority = EventPriority.LOWEST)
         public static void onEvent(RegisterClientReloadListenersEvent event) {
-            List<PreparableReloadListener> listeners = new ArrayList<>();
-            ResourceRegistryImpl.inject(PackType.CLIENT_RESOURCES, listeners);
-            for (PreparableReloadListener listener : listeners) {
-                event.registerReloadListener(listener);
-            }
+            ResourceRegistryImpl.inject(PackType.CLIENT_RESOURCES, Collections.emptyList()).forEach(event::registerReloadListener);
         }
     }
 }
