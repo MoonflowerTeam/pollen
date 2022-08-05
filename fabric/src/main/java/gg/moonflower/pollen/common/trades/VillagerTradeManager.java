@@ -7,17 +7,22 @@ import net.minecraft.core.Registry;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @ApiStatus.Internal
 public class VillagerTradeManager {
 
     private static final Map<VillagerProfession, Int2ObjectMap<VillagerTrades.ItemListing[]>> VANILLA_TRADES = new HashMap<>();
     private static final Int2ObjectMap<VillagerTrades.ItemListing[]> WANDERER_TRADES = new Int2ObjectOpenHashMap<>();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     static {
         VillagerTrades.TRADES.forEach((key, value) -> {
@@ -59,25 +64,33 @@ public class VillagerTradeManager {
 
     private static void registerVillagerTrades() {
         for (VillagerProfession prof : Registry.VILLAGER_PROFESSION) {
-            Int2ObjectMap<VillagerTrades.ItemListing[]> vanillaTrades = VANILLA_TRADES.get(prof);
-            Int2ObjectMap<ModifyTradesEvents.TradeRegistry> newTrades = new Int2ObjectOpenHashMap<>();
+            Map<Integer, VillagerTrades.ItemListing[]> vanillaTrades = VANILLA_TRADES.get(prof);
+            Map<Integer, ModifyTradesEvents.TradeRegistry> newTrades = new Int2ObjectOpenHashMap<>();
 
             if (vanillaTrades != null) {
                 // Create trades for each
-                for (Map.Entry<Integer, VillagerTrades.ItemListing[]> entry : vanillaTrades.int2ObjectEntrySet()) {
+                for (Map.Entry<Integer, VillagerTrades.ItemListing[]> entry : vanillaTrades.entrySet()) {
                     ModifyTradesEvents.TradeRegistry registry = new ModifyTradesEvents.TradeRegistry();
                     registry.addAll(Arrays.asList(entry.getValue()));
-                    newTrades.put(entry.getKey().intValue(), registry);
+                    newTrades.put(entry.getKey(), registry);
                 }
             } else {
                 // There are no default trades to fill
-                vanillaTrades = new Int2ObjectOpenHashMap<>();
-                for (int i = 1; i < 6; i++)
+                vanillaTrades = Collections.emptyMap();
+                for (int i = 1; i <= 5; i++)
                     newTrades.put(i, new ModifyTradesEvents.TradeRegistry());
             }
 
             int minTier = vanillaTrades.keySet().intStream().min().orElse(1);
             int maxTier = vanillaTrades.keySet().intStream().max().orElse(5);
+
+            // Sanity check to make sure all tiers actually exist
+            for (int i = minTier; i <= maxTier; i++) {
+                if (!newTrades.containsKey(i)) {
+                    LOGGER.warn(Registry.VILLAGER_PROFESSION.getKey(prof) + " Villager Trades for tier: " + i + " didn't exist, adding");
+                    newTrades.put(i, new ModifyTradesEvents.TradeRegistry());
+                }
+            }
 
             ModifyTradesEvents.VILLAGER.invoker().modifyTrades(new ModifyTradesEvents.ModifyVillager.Context() {
                 @Override
@@ -88,7 +101,10 @@ public class VillagerTradeManager {
                 @Override
                 public ModifyTradesEvents.TradeRegistry getTrades(int tier) {
                     Validate.inclusiveBetween(minTier, maxTier, tier, "Tier must be between " + minTier + " and " + maxTier);
-                    return newTrades.get(tier);
+                    ModifyTradesEvents.TradeRegistry registry = newTrades.get(tier);
+                    if (registry == null)
+                        throw new IllegalStateException("No registered " + Registry.VILLAGER_PROFESSION.getKey(prof) + " Villager Trades for tier: " + tier + ". Valid tiers: " + newTrades.keySet().stream().sorted().map(i -> Integer.toString(i)).collect(Collectors.joining(", ")));
+                    return registry;
                 }
 
                 @Override
@@ -102,7 +118,7 @@ public class VillagerTradeManager {
                 }
             });
             Int2ObjectMap<VillagerTrades.ItemListing[]> modifiedTrades = new Int2ObjectOpenHashMap<>();
-            newTrades.int2ObjectEntrySet().forEach(e -> modifiedTrades.put(e.getIntKey(), e.getValue().toArray(new VillagerTrades.ItemListing[0])));
+            newTrades.forEach((key, value) -> modifiedTrades.put(key.intValue(), value.toArray(new VillagerTrades.ItemListing[0])));
             VillagerTrades.TRADES.put(prof, modifiedTrades);
         }
     }
