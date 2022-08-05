@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.common.trades;
 
+import com.mojang.logging.LogUtils;
 import gg.moonflower.pollen.api.event.events.entity.ModifyTradesEvents;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -7,9 +8,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import org.apache.commons.lang3.Validate;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,7 +22,7 @@ public class VillagerTradeManager {
 
     private static final Map<VillagerProfession, Int2ObjectMap<VillagerTrades.ItemListing[]>> VANILLA_TRADES = new HashMap<>();
     private static final Int2ObjectMap<VillagerTrades.ItemListing[]> WANDERER_TRADES = new Int2ObjectOpenHashMap<>();
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     static {
         VillagerTrades.TRADES.forEach((key, value) -> {
