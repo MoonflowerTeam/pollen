@@ -81,8 +81,8 @@ public class VillagerTradeManager {
                     newTrades.put(i, new ModifyTradesEvents.TradeRegistry());
             }
 
-            int minTier = vanillaTrades.keySet().intStream().min().orElse(1);
-            int maxTier = vanillaTrades.keySet().intStream().max().orElse(5);
+            int minTier = vanillaTrades.keySet().stream().mapToInt(Integer::intValue).min().orElse(1);
+            int maxTier = vanillaTrades.keySet().stream().mapToInt(Integer::intValue).max().orElse(5);
 
             // Sanity check to make sure all tiers actually exist
             for (int i = minTier; i <= maxTier; i++) {
