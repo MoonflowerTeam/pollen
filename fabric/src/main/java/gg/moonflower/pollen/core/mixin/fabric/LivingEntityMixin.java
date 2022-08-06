@@ -1,12 +1,11 @@
 package gg.moonflower.pollen.core.mixin.fabric;
 
 import gg.moonflower.pollen.api.event.EventResult;
+import gg.moonflower.pollen.api.event.FabricHooks;
 import gg.moonflower.pollen.api.event.events.entity.living.LivingEntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.living.PotionEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.registry.FluidBehaviorRegistry;
-import gg.moonflower.pollen.common.events.context.HealContextImpl;
-import gg.moonflower.pollen.common.events.context.LivingDamageContextImpl;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.damagesource.DamageSource;
@@ -46,13 +45,13 @@ public abstract class LivingEntityMixin extends Entity {
     private Map<MobEffect, MobEffectInstance> activeEffects;
 
     @Unique
-    private static DamageSource captureDamageSource;
+    private DamageSource captureDamageSource;
 
     @Unique
-    private static float captureDamageAmount;
+    private float captureDamageAmount;
 
     @Unique
-    private static float captureHealAmount;
+    private float captureHealAmount;
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     public void tick(CallbackInfo ci) {
@@ -68,7 +67,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @ModifyVariable(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getHealth()F", shift = At.Shift.BEFORE), ordinal = 0, argsOnly = true)
     public float modifyDamageAmount(float value) {
-        LivingEntityEvents.Damage.Context context = new LivingDamageContextImpl(captureDamageAmount);
+        LivingEntityEvents.Damage.Context context = new FabricHooks.LivingDamageContextImpl(captureDamageAmount);
         boolean event = LivingEntityEvents.DAMAGE.invoker().livingDamage((LivingEntity) (Object) this, captureDamageSource, context);
         return event ? context.getDamageAmount() : 0.0F;
     }
@@ -86,7 +85,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @ModifyVariable(method = "heal", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     public float modifyHealAmount(float value) {
-        LivingEntityEvents.Heal.HealContext context = new HealContextImpl(captureHealAmount);
+        LivingEntityEvents.Heal.HealContext context = new FabricHooks.HealContextImpl(captureHealAmount);
         boolean event = LivingEntityEvents.HEAL.invoker().heal((LivingEntity) (Object) this, context);
         return event ? context.getAmount() : 0.0F;
     }
