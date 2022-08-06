@@ -13,10 +13,11 @@
 	"options.pollen.entitlementList.reload": "Recarregar",
 	"options.pollen.entitlementList.title": "Configurações dos cosméticos do Moonflower",
 	"pack.source.forgemod": "Modificação para o Forge",
-	"screen.pollen.moonflowerServerDown.header": "Servidores do Moonflower offline",
-	"screen.pollen.moonflowerServerDown.message": "Infelizmente, o servidor de cosméticos está offline no momento e você não poderá ver ou gerenciar cosméticos. Tente novamente mais tarde.",
 	"screen.pollen.linkPatreon.error": "Falha ao vincular ao Patreon",
 	"screen.pollen.linkPatreon.header": "Vincular ao Patreon",
 	"screen.pollen.linkPatreon.message": "Você precisa vincular a sua conta do Minecraft à sua conta do Patreon para ter acesso aos cosméticos do Moonflower. Esta etapa continuará em um navegador externo, deseja prosseguir?",
-	"screen.pollen.linkPatreon.waiting": "Aguardando resposta do servidor..."
+	"screen.pollen.linkPatreon.waiting": "Aguardando resposta do servidor...",
+	"screen.pollen.moonflowerProfilesDisabled": "Os perfis do Moonflower estão desativados. Para ver ou alterar seus cosméticos defina a opção '%s' para false nas configurações do cliente.",
+	"screen.pollen.moonflowerServerDown.header": "Servidores do Moonflower offline",
+	"screen.pollen.moonflowerServerDown.message": "Infelizmente, o servidor de cosméticos está offline no momento e você não poderá ver ou gerenciar cosméticos. Tente novamente mais tarde."
 }
