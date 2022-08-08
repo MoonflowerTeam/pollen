@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.api.event;
 
 import gg.moonflower.pollen.api.event.events.entity.living.LivingEntityEvents;
+import gg.moonflower.pollen.api.event.events.entity.player.PlayerEvents;
 import gg.moonflower.pollen.api.event.events.world.WorldEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
@@ -62,6 +63,44 @@ public final class FabricHooks {
         @Override
         public void setDamageAmount(float amount) {
             this.damageAmount = amount;
+        }
+    }
+
+    public static class ExpSetterImpl implements PlayerEvents.ExpChange.ExpSetter {
+
+        private int amount;
+
+        public ExpSetterImpl(int amount) {
+            this.amount = amount;
+        }
+
+        @Override
+        public int getAmount() {
+            return this.amount;
+        }
+
+        @Override
+        public void setAmount(int amount) {
+            this.amount = amount;
+        }
+    }
+
+    public static class LevelSetterImpl implements PlayerEvents.LevelChange.LevelSetter {
+
+        private int levels;
+
+        public LevelSetterImpl(int levels) {
+            this.levels = levels;
+        }
+
+        @Override
+        public int getLevels() {
+            return this.levels;
+        }
+
+        @Override
+        public void setLevels(int levels) {
+            this.levels = levels;
         }
     }
 }

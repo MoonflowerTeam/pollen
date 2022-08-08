@@ -7,8 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 
 public final class PlayerEvents {
@@ -17,6 +16,8 @@ public final class PlayerEvents {
     public static final PollinatedEvent<PlayerLoggedOutEvent> LOGGED_OUT_EVENT = EventRegistry.createLoop(PlayerLoggedOutEvent.class);
     public static final PollinatedEvent<PlayerAdvancementEvent> ADVANCEMENT_EVENT = EventRegistry.createLoop(PlayerAdvancementEvent.class);
     public static final PollinatedEvent<ExpPickup> EXP_PICKUP = EventRegistry.createCancellable(ExpPickup.class);
+    public static final PollinatedEvent<ExpChange> EXP_CHANGE = EventRegistry.createCancellable(ExpChange.class);
+    public static final PollinatedEvent<LevelChange> LEVEL_CHANGE = EventRegistry.createCancellable(LevelChange.class);
     public static final PollinatedEvent<StartSleeping> START_SLEEPING = EventRegistry.create(StartSleeping.class, events -> (player, pos) -> {
         for (StartSleeping event : events) {
             Player.BedSleepingProblem result = event.startSleeping(player, pos);
@@ -100,6 +101,84 @@ public final class PlayerEvents {
          * @return <code>true</code> to continue the process, or <code>false</code> to cancel it
          */
         boolean expPickup(Player player, ExperienceOrb orb);
+    }
+
+    /**
+     * Fired when a player is about to be awarded experience.
+     *
+     * @author ebo2022
+     * @since 2.0.0
+     */
+    @FunctionalInterface
+    public interface ExpChange {
+
+        /**
+         * Called before the specified player is given experience, allowing the amount to be modified.
+         *
+         * @param player The player being given experience
+         * @param setter The context for retrieving and setting the new amount of exp
+         * @return <code>true</code> to continue, or <code>false</code> to stop further processing
+         */
+        boolean expChange(Player player, ExpSetter setter);
+
+        /**
+         * Context for modifying the amount of experience given to the player.
+         *
+         * @since 2.0.0
+         */
+        interface ExpSetter {
+
+            /**
+             * @return The current amount of experience being given
+             */
+            int getAmount();
+
+            /**
+             * Sets a new amount of experience to give to the player.
+             *
+             * @param amount The new amount
+             */
+            void setAmount(int amount);
+        }
+    }
+
+    /**
+     * Fired when a player is about to be awarded experience levels.
+     *
+     * @author ebo2022
+     * @since 2.0.0
+     */
+    @FunctionalInterface
+    public interface LevelChange {
+
+        /**
+         * Called before the specified player is given levels, allowing for the amount to be modified.
+         *
+         * @param player The player being given experience levels
+         * @param setter The context for retrieving and setting the new amount of levels
+         * @return <code>true</code> to continue, or <code>false</code> to stop further processing
+         */
+        boolean levelChange(Player player, LevelSetter setter);
+
+        /**
+         * Context for modifying the amount of levels given to the player.
+         *
+         * @since 2.0.0
+         */
+        interface LevelSetter {
+
+            /**
+             * @return The current amount of levels being given
+             */
+            int getLevels();
+
+            /**
+             * Sets a new amount of levels to give to the player.
+             *
+             * @param levels The new amount of levels
+             */
+            void setLevels(int levels);
+        }
     }
 
     /**

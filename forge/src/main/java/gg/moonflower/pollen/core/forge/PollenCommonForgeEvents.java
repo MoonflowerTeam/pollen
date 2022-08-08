@@ -280,6 +280,38 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
+    public static void onEvent(PlayerXpEvent.XpChange event) {
+        if (!PlayerEvents.EXP_CHANGE.invoker().expChange(event.getPlayer(), new PlayerEvents.ExpChange.ExpSetter() {
+            @Override
+            public int getAmount() {
+                return event.getAmount();
+            }
+
+            @Override
+            public void setAmount(int amount) {
+                event.setAmount(amount);
+            }
+        }))
+            event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void onEvent(PlayerXpEvent.LevelChange event) {
+        if (!PlayerEvents.LEVEL_CHANGE.invoker().levelChange(event.getPlayer(), new PlayerEvents.LevelChange.LevelSetter() {
+            @Override
+            public int getLevels() {
+                return event.getLevels();
+            }
+
+            @Override
+            public void setLevels(int levels) {
+                event.setLevels(levels);
+            }
+        }))
+            event.setCanceled(true);
+    }
+
+    @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.player.PlayerSleepInBedEvent event) {
         Player.BedSleepingProblem result = PlayerEvents.START_SLEEPING.invoker().startSleeping(event.getPlayer(), event.getPos());
         if (result != null)
