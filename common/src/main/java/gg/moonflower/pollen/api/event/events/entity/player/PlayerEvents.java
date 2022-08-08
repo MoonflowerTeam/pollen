@@ -27,6 +27,8 @@ public final class PlayerEvents {
         return null;
     });
     public static final PollinatedEvent<StopSleeping> STOP_SLEEPING = EventRegistry.createLoop(StopSleeping.class);
+    public static final PollinatedEvent<Respawn> RESPAWN = EventRegistry.createLoop(Respawn.class);
+    public static final PollinatedEvent<Clone> CLONE = EventRegistry.createLoop(Clone.class);
 
     private PlayerEvents() {
     }
@@ -219,5 +221,42 @@ public final class PlayerEvents {
          * @param updateLevel Whether the list of sleeping players is being updated
          */
         void stopSleeping(Player player, boolean wakeImmediately, boolean updateLevel);
+    }
+
+    /**
+     * Fired when a player respawns.
+     *
+     * @author ebo2022
+     * @since 2.0.0
+     */
+    @FunctionalInterface
+    public interface Respawn {
+
+        /**
+         * Called when the specified player is about to respawn.
+         *
+         * @param player       The player respawning
+         * @param endConquered Whether the player has won the game and is leaving the end
+         */
+        void respawn(ServerPlayer player, boolean endConquered);
+    }
+
+    /**
+     * Fired when a player is cloned.
+     *
+     * @author ebo2022
+     * @since 2.0.0
+     */
+    @FunctionalInterface
+    public interface Clone {
+
+        /**
+         * Called when the specified player is cloned, usually due to respawning or changing dimensions.
+         *
+         * @param originalPlayer The original {@link ServerPlayer} being cloned
+         * @param player         The cloned player
+         * @param wasDeath       Whether the player died
+         */
+        void clone(ServerPlayer originalPlayer, ServerPlayer player, boolean wasDeath);
     }
 }

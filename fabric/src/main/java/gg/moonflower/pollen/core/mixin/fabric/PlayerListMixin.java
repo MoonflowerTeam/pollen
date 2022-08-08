@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerList.class)
 public class PlayerListMixin {
@@ -36,5 +37,10 @@ public class PlayerListMixin {
     @Inject(method = "remove", at = @At("HEAD"))
     public void remove(ServerPlayer player, CallbackInfo ci) {
         PlayerEvents.LOGGED_OUT_EVENT.invoker().playerLoggedOut(player);
+    }
+
+    @Inject(method = "respawn", at = @At("TAIL"))
+    public void respawn(ServerPlayer serverPlayer, boolean bl, CallbackInfoReturnable<ServerPlayer> cir) {
+        PlayerEvents.RESPAWN.invoker().respawn(cir.getReturnValue(), bl);
     }
 }

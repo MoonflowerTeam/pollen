@@ -20,6 +20,7 @@ import gg.moonflower.pollen.api.event.events.world.WorldEvents;
 import gg.moonflower.pollen.core.Pollen;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.npc.VillagerProfession;
@@ -30,6 +31,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -321,6 +323,17 @@ public class PollenCommonForgeEvents {
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.player.PlayerWakeUpEvent event) {
         PlayerEvents.STOP_SLEEPING.invoker().stopSleeping(event.getPlayer(), event.wakeImmediately(), event.updateWorld());
+    }
+
+    @SubscribeEvent
+    public static void onEvent(PlayerEvent.PlayerRespawnEvent event) {
+        PlayerEvents.RESPAWN.invoker().respawn((ServerPlayer) event.getEntity(), event.isEndConquered());
+    }
+
+    @SubscribeEvent
+    public static void onEvent(PlayerEvent.Clone event) {
+        if (event.getOriginal() instanceof ServerPlayer && event.getPlayer() instanceof ServerPlayer)
+            PlayerEvents.CLONE.invoker().clone((ServerPlayer) event.getOriginal(), (ServerPlayer) event.getPlayer(), event.isWasDeath());
     }
 
     @SubscribeEvent
