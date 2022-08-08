@@ -47,12 +47,6 @@ public abstract class LivingEntityMixin extends Entity {
     @Unique
     private DamageSource captureDamageSource;
 
-    @Unique
-    private float captureDamageAmount;
-
-    @Unique
-    private float captureHealAmount;
-
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     public void tick(CallbackInfo ci) {
         if (!TickEvents.LIVING_PRE.invoker().tick((LivingEntity) (Object) this))
@@ -62,12 +56,11 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(method = "actuallyHurt", at = @At("HEAD"))
     public void captureArgs(DamageSource damageSource, float damageAmount, CallbackInfo ci) {
         captureDamageSource = damageSource;
-        captureDamageAmount = damageAmount;
     }
 
     @ModifyVariable(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getHealth()F", shift = At.Shift.BEFORE), ordinal = 0, argsOnly = true)
     public float modifyDamageAmount(float value) {
-        LivingEntityEvents.Damage.Context context = new FabricHooks.LivingDamageContextImpl(captureDamageAmount);
+        LivingEntityEvents.Damage.Context context = new FabricHooks.LivingDamageContextImpl(value);
         boolean event = LivingEntityEvents.DAMAGE.invoker().livingDamage((LivingEntity) (Object) this, captureDamageSource, context);
         return event ? context.getDamageAmount() : 0.0F;
     }
@@ -78,14 +71,9 @@ public abstract class LivingEntityMixin extends Entity {
             ci.cancel();
     }
 
-    @Inject(method = "heal", at = @At("HEAD"))
-    public void heal(float healAmount, CallbackInfo ci) {
-        captureHealAmount = healAmount;
-    }
-
     @ModifyVariable(method = "heal", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     public float modifyHealAmount(float value) {
-        LivingEntityEvents.Heal.HealContext context = new FabricHooks.HealContextImpl(captureHealAmount);
+        LivingEntityEvents.Heal.HealContext context = new FabricHooks.HealContextImpl(value);
         boolean event = LivingEntityEvents.HEAL.invoker().heal((LivingEntity) (Object) this, context);
         return event ? context.getAmount() : 0.0F;
     }
