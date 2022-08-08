@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.pinwheel.api.client;
 
 import com.google.common.util.concurrent.MoreExecutors;
+import gg.moonflower.pollen.api.util.OnlineRequest;
 import gg.moonflower.pollen.pinwheel.core.client.util.HashedTextureCache;
 import gg.moonflower.pollen.pinwheel.core.client.util.TimedTextureCache;
 import net.minecraft.ReportedException;
@@ -26,10 +27,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public interface FileCache {
 
+    @Deprecated
     String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11";
     @ApiStatus.Internal
     AtomicInteger ID_GENERATOR = new AtomicInteger();
-    HttpClient HTTP_CLIENT = HttpClient.newBuilder().build();
 
     /**
      * Opens a GET stream to the specified URL.
@@ -37,21 +38,11 @@ public interface FileCache {
      * @param url The url to open a stream to
      * @return The opened stream to the resource
      * @throws IOException If any error occurs while trying to fetch resources
+     * @deprecated Use {@link OnlineRequest#get(String)}
      */
+    @Deprecated
     static InputStream get(String url) throws IOException {
-        try {
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).header("User-Agent", USER_AGENT).build();
-            HttpResponse<InputStream> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofInputStream());
-            InputStream stream = response.body();
-            if (response.statusCode() != 200) {
-                stream.close();
-                throw new IOException("Failed to connect to '" + url + "'. " + response.statusCode());
-            }
-
-            return new EofInputStream(stream);
-        } catch (InterruptedException e) {
-            throw new IOException(e);
-        }
+        return OnlineRequest.get(url);
     }
 
     /**
@@ -138,70 +129,4 @@ public interface FileCache {
      * @return A future for the location of the resource locally
      */
     CompletableFuture<Path> requestResource(String url, boolean ignoreMissing);
-
-    class EofInputStream extends InputStream {
-
-        private InputStream stream;
-
-        EofInputStream(InputStream stream) {
-            this.stream = stream;
-        }
-
-        @Override
-        public int read() throws IOException {
-            if (stream == null)
-                return -1;
-
-            try {
-                int value = stream.read();
-                if (value == -1)
-                    this.close();
-                return value;
-            } catch (IOException e) {
-                try {
-                    this.close();
-                } catch (Exception e1) {
-                    e.addSuppressed(e1);
-                }
-                throw e;
-            }
-        }
-
-        @Override
-        public int read(byte[] b, int off, int len) throws IOException {
-            if (stream == null)
-                return 0;
-
-            try {
-                int length = stream.read(b, off, len);
-                if (length == -1)
-                    this.close();
-                return length;
-            } catch (IOException e) {
-                try {
-                    this.close();
-                } catch (Exception e1) {
-                    e.addSuppressed(e1);
-                }
-                throw e;
-            }
-        }
-
-        @Override
-        public int available() throws IOException {
-            if (stream == null)
-                return 0;
-
-            return stream.available();
-        }
-
-        @Override
-        public void close() throws IOException {
-            if (stream == null)
-                return;
-
-            stream.close();
-            stream = null;
-        }
-    }
 }
