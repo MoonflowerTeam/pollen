@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.pinwheel.core.client.util;
 
+import gg.moonflower.pollen.api.util.OnlineRequest;
 import gg.moonflower.pollen.pinwheel.api.client.FileCache;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryCache;
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +39,7 @@ public class TimedTextureCache implements FileCache {
                 return GeometryCache.getPath(url, this.cacheTime, this.cacheTimeUnit, s ->
                 {
                     try {
-                        return FileCache.get(url);
+                        return OnlineRequest.get(url);
                     } catch (IOException e) {
                         if (!ignoreMissing)
                             LOGGER.error("Failed to read data from '" + url + "'");

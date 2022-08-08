@@ -1,18 +1,12 @@
 package gg.moonflower.pollen.pinwheel.api.client;
 
 import com.google.common.util.concurrent.MoreExecutors;
+import gg.moonflower.pollen.api.util.OnlineRequest;
 import gg.moonflower.pollen.pinwheel.core.client.util.HashedTextureCache;
 import gg.moonflower.pollen.pinwheel.core.client.util.TimedTextureCache;
 import net.minecraft.ReportedException;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.util.Mth;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.EofSensorInputStream;
-import org.apache.http.conn.EofSensorWatcher;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -21,13 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinWorkerThread;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -35,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public interface FileCache {
 
+    @Deprecated
     String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11";
     @ApiStatus.Internal
     AtomicInteger ID_GENERATOR = new AtomicInteger();
@@ -45,35 +34,11 @@ public interface FileCache {
      * @param url The url to open a stream to
      * @return The opened stream to the resource
      * @throws IOException If any error occurs while trying to fetch resources
+     * @deprecated Use {@link OnlineRequest#get(String)}
      */
+    @Deprecated
     static InputStream get(String url) throws IOException {
-        HttpGet get = new HttpGet(url);
-        CloseableHttpClient client = HttpClients.custom().setUserAgent(USER_AGENT).build();
-        CloseableHttpResponse response = client.execute(get);
-        StatusLine statusLine = response.getStatusLine();
-        if (statusLine.getStatusCode() != 200) {
-            client.close();
-            response.close();
-            throw new IOException("Failed to connect to '" + url + "'. " + statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
-        }
-        return new EofSensorInputStream(response.getEntity().getContent(), new EofSensorWatcher() {
-            @Override
-            public boolean eofDetected(InputStream wrapped) {
-                return true;
-            }
-
-            @Override
-            public boolean streamClosed(InputStream wrapped) throws IOException {
-                response.close();
-                return true;
-            }
-
-            @Override
-            public boolean streamAbort(InputStream wrapped) throws IOException {
-                response.close();
-                return true;
-            }
-        });
+        return OnlineRequest.get(url);
     }
 
     /**
