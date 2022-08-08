@@ -87,7 +87,6 @@ public class Pollen {
         PollenEntityTypes.ENTITY_TYPES.register(PLATFORM);
         if (TESTS_ENABLED)
             PollenTest.onCommon();
-        WorldEvents.BONEMEAL.register(((level, pos, state, stack) -> EventResult.DENY));
     }
 
     private static void onClientPost(Platform.ModSetupContext context) {
