@@ -2,7 +2,6 @@ package gg.moonflower.pollen.api.event.events.world;
 
 import gg.moonflower.pollen.api.event.EventResult;
 import gg.moonflower.pollen.api.event.PollinatedEvent;
-import gg.moonflower.pollen.api.event.ResultContext;
 import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +14,7 @@ import java.util.Random;
 
 public final class WorldEvents {
 
-    public static final PollinatedEvent<Bonemeal> BONEMEAL = EventRegistry.createCancellable(Bonemeal.class);
+    public static final PollinatedEvent<Bonemeal> BONEMEAL = EventRegistry.createEventResult(Bonemeal.class);
     public static final PollinatedEvent<TreeGrowing> TREE_GROWING = EventRegistry.createEventResult(TreeGrowing.class);
 
     private WorldEvents() {
@@ -35,12 +34,11 @@ public final class WorldEvents {
          *
          * @param level   The level
          * @param pos     The position of the block being bonemealed
-         * @param state   The BlockState of the block being bonemealed
-         * @param stack   The ItemStack of bonemeal
-         * @param context Context for setting the result of this event
-         * @return <code>true</code> to continue processing the event, or <code>false</code> to cancel it
+         * @param state   The block being bonemealed
+         * @param stack   The bonemeal ItemStack in the player's hand
+         * @return The result for this event. {@link EventResult#PASS} continues onto the next listener, while any others will override vanilla behavior
          */
-        boolean bonemeal(Level level, BlockPos pos, BlockState state, ItemStack stack, ResultContext context);
+        EventResult bonemeal(Level level, BlockPos pos, BlockState state, ItemStack stack);
     }
 
     /**
@@ -58,7 +56,7 @@ public final class WorldEvents {
          * @param level The level the sapling is in
          * @param rand  An instance of {@link Random} for use in code
          * @param pos   The origin position of the sapling
-         * @return The result for this event that determines whether the sapling will grow
+         * @return The result for this event. {@link EventResult#PASS} continues onto the next listener, while any others will override vanilla behavior
          */
         EventResult interaction(LevelAccessor level, Random rand, BlockPos pos);
     }

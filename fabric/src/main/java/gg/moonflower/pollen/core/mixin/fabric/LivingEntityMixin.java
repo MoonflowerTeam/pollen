@@ -107,7 +107,7 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(method = "canBeAffected", at = @At("HEAD"), cancellable = true)
     public void canBeAffected(MobEffectInstance effectInstance, CallbackInfoReturnable<Boolean> cir) {
         EventResult result = PotionEvents.APPLICABLE.invoker().applicable((LivingEntity) (Object) this, effectInstance);
-        if (result != EventResult.DEFAULT)
+        if (result != EventResult.PASS)
             cir.setReturnValue(result == EventResult.ALLOW);
     }
 

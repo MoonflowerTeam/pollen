@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(BoneMealItem.class)
 public class BoneMealItemMixin {
 
-    @Inject(method = "growCrop", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;", shift = At.Shift.AFTER), cancellable = true)
+    @Inject(method = "growCrop", at = @At("HEAD"), cancellable = true)
     private static void growCrop(ItemStack stack, Level level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         int processed = FabricHooks.processBonemeal(level, pos, level.getBlockState(pos), stack);
         if (processed != 0)

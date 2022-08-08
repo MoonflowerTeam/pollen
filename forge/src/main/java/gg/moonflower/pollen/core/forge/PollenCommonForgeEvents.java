@@ -1,7 +1,6 @@
 package gg.moonflower.pollen.core.forge;
 
 import gg.moonflower.pollen.api.event.EventResult;
-import gg.moonflower.pollen.api.event.ResultContext;
 import gg.moonflower.pollen.api.event.events.LootTableConstructingEvent;
 import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.ModifyTradesEvents;
@@ -189,19 +188,11 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.player.BonemealEvent event) {
-        boolean result = WorldEvents.BONEMEAL.invoker().bonemeal(event.getWorld(), event.getPos(), event.getBlock(), event.getStack(), new ResultContext() {
-            @Override
-            public EventResult getResult() {
-                return convertResult(event.getResult());
-            }
-
-            @Override
-            public void setResult(EventResult result) {
-                event.setResult(convertResult(result));
-            }
-        });
-        if (!result)
+        EventResult result = WorldEvents.BONEMEAL.invoker().bonemeal(event.getWorld(), event.getPos(), event.getBlock(), event.getStack());
+        if (result == EventResult.DENY)
             event.setCanceled(true);
+        if (result == EventResult.ALLOW)
+            event.setResult(Event.Result.ALLOW);
     }
 
     @SubscribeEvent
@@ -374,7 +365,7 @@ public class PollenCommonForgeEvents {
             case ALLOW:
                 return EventResult.ALLOW;
             case DEFAULT:
-                return EventResult.DEFAULT;
+                return EventResult.PASS;
             default:
                 throw new UnsupportedOperationException("Unknown event result type: " + result);
         }
@@ -386,7 +377,7 @@ public class PollenCommonForgeEvents {
                 return Event.Result.DENY;
             case ALLOW:
                 return Event.Result.ALLOW;
-            case DEFAULT:
+            case PASS:
                 return Event.Result.DEFAULT;
             default:
                 throw new UnsupportedOperationException("Unknown event result type: " + result);

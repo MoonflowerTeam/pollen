@@ -6,8 +6,10 @@ import gg.moonflower.pollen.api.command.argument.EnumArgument;
 import gg.moonflower.pollen.api.command.argument.TimeArgumentType;
 import gg.moonflower.pollen.api.crafting.PollenRecipeTypes;
 import gg.moonflower.pollen.api.entity.PollenEntityTypes;
+import gg.moonflower.pollen.api.event.EventResult;
 import gg.moonflower.pollen.api.event.events.client.render.InitRendererEvent;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
+import gg.moonflower.pollen.api.event.events.world.WorldEvents;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.ResourceConditionRegistry;
 import gg.moonflower.pollen.api.registry.client.EntityRendererRegistry;
@@ -28,6 +30,7 @@ import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.block.Blocks;
 import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -84,6 +87,7 @@ public class Pollen {
         PollenEntityTypes.ENTITY_TYPES.register(PLATFORM);
         if (TESTS_ENABLED)
             PollenTest.onCommon();
+        WorldEvents.BONEMEAL.register(((level, pos, state, stack) -> EventResult.DENY));
     }
 
     private static void onClientPost(Platform.ModSetupContext context) {

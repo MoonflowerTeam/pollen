@@ -15,11 +15,10 @@ public final class FabricHooks {
     }
 
     public static int processBonemeal(Level level, BlockPos pos, BlockState state, ItemStack stack) {
-        ResultContext resultContext = new ResultContextImpl();
-        boolean event = WorldEvents.BONEMEAL.invoker().bonemeal(level, pos, state, stack, resultContext);
-        if (!event) {
+        EventResult result = WorldEvents.BONEMEAL.invoker().bonemeal(level, pos, state, stack);
+        if (result == EventResult.DENY) {
             return -1;
-        } else if (resultContext.getResult() == EventResult.ALLOW) {
+        } else if (result == EventResult.ALLOW) {
             if (!level.isClientSide) {
                 stack.shrink(1);
             }
@@ -63,24 +62,6 @@ public final class FabricHooks {
         @Override
         public void setDamageAmount(float amount) {
             this.damageAmount = amount;
-        }
-    }
-
-    public static class ResultContextImpl implements ResultContext {
-        private EventResult result;
-
-        public ResultContextImpl() {
-            this.setResult(EventResult.DEFAULT);
-        }
-
-        @Override
-        public EventResult getResult() {
-            return result;
-        }
-
-        @Override
-        public void setResult(EventResult result) {
-            this.result = result;
         }
     }
 }
