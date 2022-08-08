@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.api.util;
 
+import net.minecraft.util.HttpUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -7,8 +8,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -36,17 +36,19 @@ public final class OnlineRequest {
      * @param url The url to get the data from
      * @return An open stream to the internet
      */
-    public static InputStream get(String url) throws URISyntaxException, IOException {
-        HttpURLConnection connection = (HttpURLConnection) new URI(url).toURL().openConnection();
+    public static InputStream get(String url) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.addRequestProperty("User-Agent", USER_AGENT);
         InputStream stream = connection.getInputStream();
 
         if (connection.getResponseCode() != 200) {
-            if (stream != null)
+            IOException exception = new IOException("Failed to connect to '" + url + "'. " + connection.getResponseCode() + " " + connection.getResponseMessage());
+            try {
                 stream.close();
-            if (connection.getErrorStream() != null)
-                connection.getErrorStream().close();
-            throw new IOException("Failed to connect to '" + url + "'. " + connection.getResponseCode() + " " + connection.getResponseMessage());
+            } catch (Throwable e) {
+                exception.addSuppressed(e);
+            }
+            throw exception;
         }
 
         return stream;
@@ -80,15 +82,7 @@ public final class OnlineRequest {
      * @return A copy of the data read from the specified URL
      */
     public static CompletableFuture<InputStream> request(String url) {
-        return CompletableFuture.supplyAsync(() ->
-        {
-            try (InputStream stream = get(url)) {
-                return IOUtils.toBufferedInputStream(stream);
-            } catch (Exception e) {
-                LOGGER.error("Failed to fully read stream from '" + url + "'", e);
-                return null;
-            }
-        });
+        return request(url, HttpUtil.DOWNLOAD_EXECUTOR);
     }
 
     /**
