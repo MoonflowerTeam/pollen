@@ -5,8 +5,10 @@ import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -29,6 +31,8 @@ public final class PlayerEvents {
     public static final PollinatedEvent<StopSleeping> STOP_SLEEPING = EventRegistry.createLoop(StopSleeping.class);
     public static final PollinatedEvent<Respawn> RESPAWN = EventRegistry.createLoop(Respawn.class);
     public static final PollinatedEvent<Clone> CLONE = EventRegistry.createLoop(Clone.class);
+    public static final PollinatedEvent<ItemCrafted> ITEM_CRAFTED = EventRegistry.createLoop(ItemCrafted.class);
+    public static final PollinatedEvent<ItemSmelted> ITEM_SMELTED = EventRegistry.createLoop(ItemSmelted.class);
 
     private PlayerEvents() {
     }
@@ -258,5 +262,42 @@ public final class PlayerEvents {
          * @param wasDeath       Whether the player died
          */
         void clone(ServerPlayer originalPlayer, ServerPlayer player, boolean wasDeath);
+    }
+
+    /**
+     * Fired when a player crafts an item.
+     *
+     * @author ebo2022
+     * @since 2.0.0
+     */
+    @FunctionalInterface
+    public interface ItemCrafted {
+
+        /**
+         * Called when the specified player takes the finished item out of the output slot.
+         *
+         * @param player    The player taking the item
+         * @param stack     The item that has been crafteed
+         * @param container The crafting table's inventory
+         */
+        void craft(Player player, ItemStack stack, Container container);
+    }
+
+    /**
+     * Fired when a player smelts an item.
+     *
+     * @author ebo2022
+     * @since 2.0.0
+     */
+    @FunctionalInterface
+    public interface ItemSmelted {
+
+        /**
+         * Called when the specified player takes the given item out of the furnace's output slot.
+         *
+         * @param player The player taking the smelted  item
+         * @param stack  The smelted item
+         */
+        void smelt(Player player, ItemStack stack);
     }
 }

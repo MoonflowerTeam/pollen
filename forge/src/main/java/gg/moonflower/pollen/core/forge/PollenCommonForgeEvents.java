@@ -337,6 +337,16 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
+    public static void onEvent(PlayerEvent.ItemCraftedEvent event) {
+        PlayerEvents.ITEM_CRAFTED.invoker().craft(event.getPlayer(), event.getCrafting(), event.getInventory());
+    }
+
+    @SubscribeEvent
+    public static void onEvent(PlayerEvent.ItemSmeltedEvent event) {
+        PlayerEvents.ITEM_SMELTED.invoker().smelt(event.getPlayer(), event.getSmelting());
+    }
+
+    @SubscribeEvent
     public static void onEvent(LootTableLoadEvent event) {
         LootTableConstructingEvent.Context context = new LootTableConstructingEvent.Context(event.getName(), event.getTable());
         LootTableConstructingEvent.EVENT.invoker().modifyLootTable(context);
