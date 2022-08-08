@@ -38,9 +38,4 @@ public class PlayerListMixin {
     public void remove(ServerPlayer player, CallbackInfo ci) {
         PlayerEvents.LOGGED_OUT_EVENT.invoker().playerLoggedOut(player);
     }
-
-    @Inject(method = "respawn", at = @At("TAIL"))
-    public void respawn(ServerPlayer serverPlayer, boolean bl, CallbackInfoReturnable<ServerPlayer> cir) {
-        PlayerEvents.RESPAWN.invoker().respawn(cir.getReturnValue(), bl);
-    }
 }

@@ -50,9 +50,4 @@ public abstract class ServerPlayerMixin extends Player {
         if (!LivingEntityEvents.DEATH.invoker().death((LivingEntity) (Object) this, damageSource))
             ci.cancel();
     }
-
-    @Inject(method = "restoreFrom", at = @At("TAIL"))
-    public void restoreFrom(ServerPlayer that, boolean keepEverything, CallbackInfo ci) {
-        PlayerEvents.CLONE.invoker().clone((ServerPlayer) (Object) this, that, !keepEverything);
-    }
 }

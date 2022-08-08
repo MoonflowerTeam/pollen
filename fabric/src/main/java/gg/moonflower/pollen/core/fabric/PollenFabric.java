@@ -20,6 +20,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
@@ -94,6 +95,9 @@ public class PollenFabric implements ModInitializer {
             LootTableConstructingEvent.EVENT.invoker().modifyLootTable(context);
             setter.set(context.apply());
         });
+
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> PlayerEvents.RESPAWN.invoker().respawn(newPlayer, alive));
+        ServerPlayerEvents.COPY_FROM.register((oldPlayer, newPlayer, alive) -> PlayerEvents.CLONE.invoker().clone(oldPlayer, newPlayer, alive));
 
         // Pollen Events
         ServerLifecycleEvents.PRE_STARTING.register(server -> {
