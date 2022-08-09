@@ -3,6 +3,8 @@ package gg.moonflower.pollen.core.mixin.fabric;
 import gg.moonflower.pollen.api.event.FabricHooks;
 import gg.moonflower.pollen.api.event.events.entity.living.LivingEntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerEvents;
+import gg.moonflower.pollen.api.util.value.FloatValue;
+import gg.moonflower.pollen.api.util.value.IntValue;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -33,23 +35,23 @@ public class PlayerMixin {
 
     @ModifyVariable(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setAbsorptionAmount(F)V", shift = At.Shift.AFTER), ordinal = 0, argsOnly = true)
     public float modifyDamageAmount(float value) {
-        LivingEntityEvents.Damage.Context context = new FabricHooks.LivingDamageContextImpl(value);
-        boolean event = LivingEntityEvents.DAMAGE.invoker().livingDamage((LivingEntity) (Object) this, captureDamageSource, context);
-        return event ? context.getDamageAmount() : 0.0F;
+        FloatValue modifiableDamage = new FloatValue.Simple(value);
+        boolean event = LivingEntityEvents.DAMAGE.invoker().livingDamage((LivingEntity) (Object) this, captureDamageSource, modifiableDamage);
+        return event ? modifiableDamage.getAsFloat() : 0.0F;
     }
 
     @ModifyVariable(method = "giveExperiencePoints", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     public int modifyExp(int value) {
-        PlayerEvents.ExpChange.ExpSetter setter = new FabricHooks.ExpSetterImpl(value);
-        boolean event = PlayerEvents.EXP_CHANGE.invoker().expChange((Player) (Object) this, setter);
-        return event ? setter.getAmount() : value;
+        IntValue modifiableXp = new IntValue.Simple(value);
+        boolean event = PlayerEvents.EXP_CHANGE.invoker().expChange((Player) (Object) this, modifiableXp);
+        return event ? modifiableXp.getAsInt() : value;
     }
 
     @ModifyVariable(method = "giveExperienceLevels", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     public int modifyLevels(int value) {
-        PlayerEvents.LevelChange.LevelSetter setter = new FabricHooks.LevelSetterImpl(value);
-        boolean event = PlayerEvents.LEVEL_CHANGE.invoker().levelChange((Player) (Object) this, setter);
-        return event ? setter.getLevels() : value;
+        IntValue modifiableLevels = new IntValue.Simple(value);
+        boolean event = PlayerEvents.LEVEL_CHANGE.invoker().levelChange((Player) (Object) this, modifiableLevels);
+        return event ? modifiableLevels.getAsInt() : value;
     }
 
     @Inject(method = "die", at = @At("HEAD"), cancellable = true)

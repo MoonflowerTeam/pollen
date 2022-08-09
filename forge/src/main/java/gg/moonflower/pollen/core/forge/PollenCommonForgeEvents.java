@@ -17,6 +17,8 @@ import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
 import gg.moonflower.pollen.api.event.events.world.ExplosionEvents;
 import gg.moonflower.pollen.api.event.events.world.WorldEvents;
+import gg.moonflower.pollen.api.util.value.FloatValue;
+import gg.moonflower.pollen.api.util.value.IntValue;
 import gg.moonflower.pollen.core.Pollen;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -28,6 +30,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
@@ -209,6 +212,12 @@ public class PollenCommonForgeEvents {
     }
 
     @SubscribeEvent
+    public static void onEvent(EntityStruckByLightningEvent event) {
+        if (!EntityEvents.LIGHTNING_STRIKE.invoker().onLightningStrike(event.getEntity(), event.getLightning()))
+            event.setCanceled(true);
+    }
+
+    @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.village.VillagerTradesEvent event) {
         Int2ObjectMap<ModifyTradesEvents.TradeRegistry> newTrades = new Int2ObjectOpenHashMap<>();
         int minTier = event.getTrades().keySet().stream().mapToInt(Integer::intValue).min().orElse(1);
@@ -283,15 +292,15 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(PlayerXpEvent.XpChange event) {
-        if (!PlayerEvents.EXP_CHANGE.invoker().expChange(event.getPlayer(), new PlayerEvents.ExpChange.ExpSetter() {
+        if (!PlayerEvents.EXP_CHANGE.invoker().expChange(event.getPlayer(), new IntValue() {
             @Override
-            public int getAmount() {
-                return event.getAmount();
+            public void accept(int value) {
+                event.setAmount(value);
             }
 
             @Override
-            public void setAmount(int amount) {
-                event.setAmount(amount);
+            public int getAsInt() {
+                return event.getAmount();
             }
         }))
             event.setCanceled(true);
@@ -299,18 +308,18 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(PlayerXpEvent.LevelChange event) {
-        if (!PlayerEvents.LEVEL_CHANGE.invoker().levelChange(event.getPlayer(), new PlayerEvents.LevelChange.LevelSetter() {
-            @Override
-            public int getLevels() {
-                return event.getLevels();
-            }
+       if (!PlayerEvents.LEVEL_CHANGE.invoker().levelChange(event.getPlayer(), new IntValue() {
+           @Override
+           public void accept(int value) {
+               event.setLevels(value);
+           }
 
-            @Override
-            public void setLevels(int levels) {
-                event.setLevels(levels);
-            }
-        }))
-            event.setCanceled(true);
+           @Override
+           public int getAsInt() {
+               return event.getLevels();
+           }
+       }))
+           event.setCanceled(true);
     }
 
     @SubscribeEvent
@@ -355,18 +364,18 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(LivingDamageEvent event) {
-        if (!LivingEntityEvents.DAMAGE.invoker().livingDamage(event.getEntityLiving(), event.getSource(), new LivingEntityEvents.Damage.Context() {
-            @Override
-            public float getDamageAmount() {
-                return event.getAmount();
-            }
+      if (!LivingEntityEvents.DAMAGE.invoker().livingDamage(event.getEntityLiving(), event.getSource(), new FloatValue() {
+          @Override
+          public void accept(float value) {
+              event.setAmount(value);
+          }
 
-            @Override
-            public void setDamageAmount(float amount) {
-                event.setAmount(amount);
-            }
-        }))
-            event.setCanceled(true);
+          @Override
+          public float getAsFloat() {
+              return event.getAmount();
+          }
+      }))
+          event.setCanceled(true);
     }
 
     @SubscribeEvent
@@ -377,15 +386,15 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(LivingHealEvent event) {
-        if (!LivingEntityEvents.HEAL.invoker().heal(event.getEntityLiving(), new LivingEntityEvents.Heal.HealContext() {
+        if (!LivingEntityEvents.HEAL.invoker().heal(event.getEntityLiving(), new FloatValue() {
             @Override
-            public float getAmount() {
-                return event.getAmount();
+            public void accept(float value) {
+                event.setAmount(value);
             }
 
             @Override
-            public void setAmount(float amount) {
-                event.setAmount(amount);
+            public float getAsFloat() {
+                return event.getAmount();
             }
         }))
             event.setCanceled(true);

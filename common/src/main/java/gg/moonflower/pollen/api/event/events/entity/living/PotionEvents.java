@@ -32,7 +32,7 @@ public final class PotionEvents {
          *
          * @param entity         The entity that would receive the effect
          * @param effectInstance The effect to check if applicable
-         * @return The result for this event. {@link EventResult#DEFAULT} will continue onto the next iteration, while any others will override vanilla behavior
+         * @return The result for this event. {@link EventResult#PASS} will continue onto the next iteration, while any others will override vanilla behavior
          */
         EventResult applicable(LivingEntity entity, MobEffectInstance effectInstance);
     }

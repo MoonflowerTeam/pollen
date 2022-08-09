@@ -2,6 +2,7 @@ package gg.moonflower.pollen.api.event.events.entity.player;
 
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.api.registry.EventRegistry;
+import gg.moonflower.pollen.api.util.value.IntValue;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -121,31 +122,11 @@ public final class PlayerEvents {
         /**
          * Called before the specified player is given experience, allowing the amount to be modified.
          *
-         * @param player The player being given experience
-         * @param setter The context for retrieving and setting the new amount of exp
+         * @param player       The player being given experience
+         * @param modifiableXp The modifiable amount of experience to give to the player
          * @return <code>true</code> to continue, or <code>false</code> to stop further processing
          */
-        boolean expChange(Player player, ExpSetter setter);
-
-        /**
-         * Context for modifying the amount of experience given to the player.
-         *
-         * @since 2.0.0
-         */
-        interface ExpSetter {
-
-            /**
-             * @return The current amount of experience being given
-             */
-            int getAmount();
-
-            /**
-             * Sets a new amount of experience to give to the player.
-             *
-             * @param amount The new amount
-             */
-            void setAmount(int amount);
-        }
+        boolean expChange(Player player, IntValue modifiableXp);
     }
 
     /**
@@ -160,31 +141,11 @@ public final class PlayerEvents {
         /**
          * Called before the specified player is given levels, allowing for the amount to be modified.
          *
-         * @param player The player being given experience levels
-         * @param setter The context for retrieving and setting the new amount of levels
+         * @param player           The player being given experience levels
+         * @param modifiableLevels The modifiable amount of levels to give to the player
          * @return <code>true</code> to continue, or <code>false</code> to stop further processing
          */
-        boolean levelChange(Player player, LevelSetter setter);
-
-        /**
-         * Context for modifying the amount of levels given to the player.
-         *
-         * @since 2.0.0
-         */
-        interface LevelSetter {
-
-            /**
-             * @return The current amount of levels being given
-             */
-            int getLevels();
-
-            /**
-             * Sets a new amount of levels to give to the player.
-             *
-             * @param levels The new amount of levels
-             */
-            void setLevels(int levels);
-        }
+        boolean levelChange(Player player, IntValue modifiableLevels);
     }
 
     /**

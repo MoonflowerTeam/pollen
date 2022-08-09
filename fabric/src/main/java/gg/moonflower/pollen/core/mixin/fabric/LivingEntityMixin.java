@@ -6,6 +6,7 @@ import gg.moonflower.pollen.api.event.events.entity.living.LivingEntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.living.PotionEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.registry.FluidBehaviorRegistry;
+import gg.moonflower.pollen.api.util.value.FloatValue;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.damagesource.DamageSource;
@@ -60,9 +61,9 @@ public abstract class LivingEntityMixin extends Entity {
 
     @ModifyVariable(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getHealth()F", shift = At.Shift.BEFORE), ordinal = 0, argsOnly = true)
     public float modifyDamageAmount(float value) {
-        LivingEntityEvents.Damage.Context context = new FabricHooks.LivingDamageContextImpl(value);
-        boolean event = LivingEntityEvents.DAMAGE.invoker().livingDamage((LivingEntity) (Object) this, captureDamageSource, context);
-        return event ? context.getDamageAmount() : 0.0F;
+        FloatValue modifiableDamage = new FloatValue.Simple(value);
+        boolean event = LivingEntityEvents.DAMAGE.invoker().livingDamage((LivingEntity) (Object) this, captureDamageSource, modifiableDamage);
+        return event ? modifiableDamage.getAsFloat() : 0.0F;
     }
 
     @Inject(method = "die", at = @At("HEAD"), cancellable = true)
@@ -73,22 +74,22 @@ public abstract class LivingEntityMixin extends Entity {
 
     @ModifyVariable(method = "heal", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     public float modifyHealAmount(float value) {
-        LivingEntityEvents.Heal.HealContext context = new FabricHooks.HealContextImpl(value);
-        boolean event = LivingEntityEvents.HEAL.invoker().heal((LivingEntity) (Object) this, context);
-        return event ? context.getAmount() : 0.0F;
+        FloatValue modifiableHealAmount = new FloatValue.Simple(value);
+        boolean event = LivingEntityEvents.HEAL.invoker().heal((LivingEntity) (Object) this, modifiableHealAmount);
+        return event ? modifiableHealAmount.getAsFloat() : 0.0F;
     }
 
     @Inject(method = "tickEffects", at = @At(value = "INVOKE", target = "Ljava/util/Iterator;remove()V", shift = At.Shift.BEFORE))
     public void tickEffects(CallbackInfo ci) {
         Iterator<MobEffect> iterator = this.activeEffects.keySet().iterator();
-        MobEffect effect = (MobEffect)iterator.next();
-        MobEffectInstance effectinstance = (MobEffectInstance)this.activeEffects.get(effect);
+        MobEffect effect = iterator.next();
+        MobEffectInstance effectinstance = this.activeEffects.get(effect);
         PotionEvents.EXPIRE.invoker().expire((LivingEntity) (Object) this, effectinstance);
     }
 
     @Inject(method = "addEffect", at = @At(value = "INVOKE", target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", shift = At.Shift.BEFORE))
     public void addEffect(MobEffectInstance effectInstance, CallbackInfoReturnable<Boolean> cir) {
-        MobEffectInstance effectinstance = (MobEffectInstance)this.activeEffects.get(effectInstance.getEffect());
+        MobEffectInstance effectinstance = this.activeEffects.get(effectInstance.getEffect());
         PotionEvents.ADD.invoker().add((LivingEntity) (Object) this, effectInstance, effectinstance);
     }
 
@@ -108,8 +109,8 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(method = "removeAllEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;onEffectRemoved(Lnet/minecraft/world/effect/MobEffectInstance;)V", shift = At.Shift.BEFORE), cancellable = true)
     public void removeAllEffects(CallbackInfoReturnable<Boolean> cir) {
         Iterator<MobEffectInstance> iterator = this.activeEffects.values().iterator();
-        if (!PotionEvents.REMOVE.invoker().remove((LivingEntity) (Object) this, (MobEffect) iterator.next().getEffect()))
-            cir.cancel();
+        if (!PotionEvents.REMOVE.invoker().remove((LivingEntity) (Object) this, iterator.next().getEffect()))
+            cir.setReturnValue(false);
     }
 
     @ModifyVariable(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getFluidJumpThreshold()D", shift = At.Shift.BEFORE), ordinal = 6)
