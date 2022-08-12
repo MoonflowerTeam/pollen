@@ -17,10 +17,6 @@ public class PollenServerPlayPacketHandlerImpl implements PollenServerPlayPacket
 
     @Override
     public void handleUpdateSettingsPacket(ServerboundUpdateSettingsPacket msg, PollinatedPacketContext ctx) {
-        ClientLevel level = Minecraft.getInstance().level;
-        if (level == null)
-            return;
-
         ServerPlayer sender = ctx.getSender();
         if (sender == null)
             return;
