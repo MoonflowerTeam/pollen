@@ -7,6 +7,8 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
 import gg.moonflower.pollen.pinwheel.core.common.geometry.Geometry110Parser;
 import gg.moonflower.pollen.pinwheel.core.common.geometry.Geometry1120Parser;
@@ -111,7 +113,11 @@ public final class GeometryModelParser {
      * @param json The parsed json element
      * @return A new texture table from the json
      */
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public static GeometryModelTextureTable parseTextures(JsonElement json) throws JsonParseException {
-        return GSON.fromJson(json, GeometryModelTextureTable.class);
+        DataResult<GeometryModelTextureTable> result = GeometryModelTextureTable.CODEC.parse(JsonOps.INSTANCE, json);
+        if (result.error().isPresent())
+            throw new JsonParseException(result.error().get().message());
+        return result.result().get();
     }
 }
