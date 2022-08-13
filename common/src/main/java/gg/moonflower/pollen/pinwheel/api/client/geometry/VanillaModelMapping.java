@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.pinwheel.api.client.geometry;
 
 import com.google.common.collect.ImmutableMap;
+import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.client.model.*;
 import net.minecraft.client.model.dragon.DragonHeadModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -116,18 +117,17 @@ public final class VanillaModelMapping {
         ImmutableMap.Builder<String, String> mappingBuilder = ImmutableMap.builder();
 
         Field[] fields = Arrays.stream(clazz.getDeclaredFields()).filter(field -> !field.isSynthetic() && ModelPart.class.isAssignableFrom(field.getType())).toArray(Field[]::new);
-        if (fields.length != mapping.length) {
-            LOGGER.error("Incorrect mapping configuration for " + clazz.getName() + ". Expected " + fields.length + " fields, got " + mapping.length);
-            return;
-        }
+        if (Pollen.TESTS_ENABLED && fields.length != mapping.length) // Only validate fields if developing Pollen. Ignore extra unknown fields
+            throw new IllegalStateException("Incorrect mapping configuration for " + clazz.getName() + ". Expected " + fields.length + " fields, got " + mapping.length);
 
-        for (int i = 0; i < fields.length; i++)
+        for (int i = 0; i < mapping.length; i++)
             mappingBuilder.put(mapping[i], fields[i].getName());
 
         if (MAPPING.put(clazz, mappingBuilder.build()) != null)
             throw new RuntimeException("Duplicate mappings for " + clazz.getName());
     }
 
+    @Nullable
     private static String getInternal(Class<? extends Model> clazz, String name) {
         if (!MAPPING.containsKey(clazz))
             return null;
