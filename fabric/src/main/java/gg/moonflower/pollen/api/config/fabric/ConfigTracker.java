@@ -65,8 +65,8 @@ public class ConfigTracker {
         this.configSets.get(type).forEach(config -> closeConfig(config, configBasePath));
     }
 
-    public List<Pair<String, ClientboundSyncConfigDataPacket>> syncConfigs(boolean isLocal) {
-        return this.configSets.get(PollinatedConfigType.SERVER).stream().map(mc -> {
+    public List<Pair<String, ClientboundSyncConfigDataPacket>> syncConfigs(boolean isLocal) { // Only sync configs for players joining and if the config actually exists
+        return isLocal ? Collections.emptyList() : this.configSets.get(PollinatedConfigType.SERVER).stream().filter(mc -> mc.getFullPath() != null).map(mc -> {
             try {
                 return Pair.of("Config " + mc.getFileName(), new ClientboundSyncConfigDataPacket(mc.getFileName(), Files.readAllBytes(mc.getFullPath())));
             } catch (IOException e) {
