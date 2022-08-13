@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModel;
@@ -17,13 +18,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * <p>A table of textures to be used for {@link GeometryModel} rendering. Texture tables must be made from {@link GeometryTextureManager}.</p>
@@ -33,8 +28,14 @@ import java.util.Objects;
  */
 public class GeometryModelTextureTable {
 
-    public static final Codec<GeometryModelTextureTable> CODEC = Codec.unboundedMap(Codec.STRING, GeometryModelTexture.CODEC.listOf().xmap(list -> list.toArray(new GeometryModelTexture[0]), Arrays::asList)).xmap(GeometryModelTextureTable::new, table -> table.textures);
+    public static final Codec<GeometryModelTextureTable> CODEC = Codec.unboundedMap(Codec.STRING,
+                    Codec.either(
+                            GeometryModelTexture.CODEC.listOf().xmap(list -> list.toArray(new GeometryModelTexture[0]), Arrays::asList),
+                            GeometryModelTexture.CODEC.xmap(texture -> new GeometryModelTexture[]{texture}, array -> array.length > 0 ? array[0] : GeometryModelTexture.MISSING)
+                    ).xmap(either -> either.left().orElseGet(() -> either.right().orElseThrow(() -> new NoSuchElementException("No value present"))), array -> array.length > 1 ? Either.left(array) : Either.right(array))) // Left is multiple layers, right is one layer
+            .xmap(GeometryModelTextureTable::new, table -> table.textures);
     public static GeometryModelTextureTable EMPTY = new GeometryModelTextureTable(new HashMap<>());
+    private static final GeometryModelTexture[] MISSING = new GeometryModelTexture[]{GeometryModelTexture.MISSING};
 
     private final Map<String, GeometryModelTexture[]> textures;
 
@@ -50,7 +51,7 @@ public class GeometryModelTextureTable {
      * @return The texture with that key or {@link GeometryModelTexture#MISSING} if there is no texture bound to that key
      */
     public GeometryModelTexture[] getLayerTextures(@Nullable String key) {
-        return this.textures.getOrDefault(key, new GeometryModelTexture[]{GeometryModelTexture.MISSING});
+        return this.textures.getOrDefault(key, MISSING);
     }
 
     /**
@@ -88,10 +89,12 @@ public class GeometryModelTextureTable {
     }
 
     /**
-     * <p>Deserializes a new {@link GeometryModelTextureTable} from JSON.</p>
+     * Deserializes a new {@link GeometryModelTextureTable} from JSON.
      *
      * @author Ocelot
+     * @deprecated {@link GeometryModelTextureTable#CODEC} serializes to/from JSON properly
      */
+    @Deprecated
     public static class Serializer implements JsonSerializer<GeometryModelTextureTable>, JsonDeserializer<GeometryModelTextureTable> {
         private static final Logger LOGGER = LogManager.getLogger();
 
