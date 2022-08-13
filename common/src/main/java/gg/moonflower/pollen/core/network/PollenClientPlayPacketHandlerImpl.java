@@ -32,12 +32,11 @@ public class PollenClientPlayPacketHandlerImpl implements PollenClientPlayPacket
         ctx.enqueueWork(() ->
         {
             Entity e = level.getEntity(msg.getEntityId());
-            if (!(e instanceof AnimatedEntity)) {
+            if (!(e instanceof AnimatedEntity entity)) {
                 LOGGER.warn("Server sent animation for entity: " + e + ", but it is not an instance of AnimatedEntity");
                 return;
             }
 
-            AnimatedEntity entity = (AnimatedEntity) e;
             int animationId = msg.getAnimationId();
             if (animationId == -1) {
                 entity.resetAnimationState(msg.getDuration());
