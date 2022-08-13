@@ -3,6 +3,7 @@ package gg.moonflower.pollen.pinwheel.core.client.texture;
 import com.google.gson.Gson;
 import gg.moonflower.pollen.pinwheel.api.client.texture.TextureTableLoader;
 import gg.moonflower.pollen.pinwheel.api.common.geometry.GeometryModelParser;
+import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTexture;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -69,7 +70,14 @@ public class LocalTextureTableLoader implements TextureTableLoader {
                     continue;
 
                 try (Resource resource = resourceManager.getResource(textureTableLocation)) {
-                    textureLocations.put(textureTableName, GeometryModelParser.parseTextures(new InputStreamReader(resource.getInputStream())));
+                    GeometryModelTextureTable table = GeometryModelParser.parseTextures(new InputStreamReader(resource.getInputStream()));
+                    // Validate there are no online textures
+                    table.getTextureDefinitions().forEach((name, textures) -> {
+                        for (GeometryModelTexture texture : textures)
+                            if (texture.getType() == GeometryModelTexture.Type.ONLINE)
+                                throw new IllegalArgumentException(name + " uses unsupported texture type: " + texture.getType().name().toLowerCase());
+                    });
+                    textureLocations.put(textureTableName, table);
                 } catch (Exception e) {
                     LOGGER.error("Failed to load texture table '" + textureTableName + "'", e);
                 }
