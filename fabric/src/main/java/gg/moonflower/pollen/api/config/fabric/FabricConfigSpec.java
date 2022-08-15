@@ -15,6 +15,7 @@ import gg.moonflower.pollen.api.config.PollinatedConfigBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -30,6 +31,7 @@ import static com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction.ADD;
 import static com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction.REMOVE;
 import static com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction.REPLACE;
 
+@ApiStatus.Internal
 public class FabricConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfig> {
 
     static final Joiner LINE_JOINER = Joiner.on("\n");
