@@ -5,6 +5,8 @@ import gg.moonflower.pollen.api.PollenRegistries;
 import gg.moonflower.pollen.api.block.PollinatedLiquidBlock;
 import gg.moonflower.pollen.api.block.PollinatedStandingSignBlock;
 import gg.moonflower.pollen.api.block.PollinatedWallSignBlock;
+import gg.moonflower.pollen.api.config.ConfigManager;
+import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.entity.PollinatedBoatType;
 import gg.moonflower.pollen.api.item.BucketItemBase;
 import gg.moonflower.pollen.api.item.PollinatedBoatItem;
@@ -22,6 +24,7 @@ import gg.moonflower.pollen.api.registry.resource.TagRegistry;
 import gg.moonflower.pollen.core.client.render.DebugPollenFlowerPotRenderer;
 import gg.moonflower.pollen.core.test.TestFluid;
 import gg.moonflower.pollen.core.test.TestPollenFluidBehavior;
+import gg.moonflower.pollen.core.test.TestServerConfig;
 import gg.moonflower.pollen.pinwheel.api.client.render.BlockRendererRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockSource;
@@ -57,6 +60,7 @@ public class PollenTest {
 
     public static final Supplier<PollinatedBoatType> TEST_BOAT = create(() -> Objects.requireNonNull(BOATS).register("test_boat", () -> new PollinatedBoatType(new ResourceLocation("textures/entity/ghast/ghast.png"))));
     public static final Tag.Named<Fluid> TEST_TAG = create(() -> TagRegistry.bindFluid(new ResourceLocation(Pollen.MOD_ID, "test")));
+    public static final TestServerConfig SERVER_CONFIG = create(() -> ConfigManager.register(Pollen.MOD_ID, PollinatedConfigType.SERVER, TestServerConfig::new));
 
     public static final Supplier<FlowingFluid> TEST_FLUID = create(() -> Objects.requireNonNull(FLUIDS).register("test", TestFluid.Source::new));
     public static final Supplier<FlowingFluid> FLOWING_TEST_FLUID = create(() -> Objects.requireNonNull(FLUIDS).register("flowing_test", TestFluid.Flowing::new));
