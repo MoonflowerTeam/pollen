@@ -99,6 +99,9 @@ public class ConfigTracker {
         }
     }
 
+    /**
+     * Populates all server configs with a blank memory config that will be filled by the server.
+     */
     public void loadDefaultServerConfigs() {
         this.configSets.get(PollinatedConfigType.SERVER).forEach(config -> {
             CommentedConfig commentedConfig = CommentedConfig.inMemory();
