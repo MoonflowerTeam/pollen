@@ -258,7 +258,7 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
         runtime.setQuery("camera_rotation", 1, CAMERA_ROTATION);
         runtime.setQuery("log", 1, LOG);
 
-        animationTime %= AnimatedModel.getAnimationLength(animationTime, animations);
+        float clampedAnimationTime = animationTime % AnimatedModel.getAnimationLength(animationTime, animations);
 
         this.transformations.values().forEach(AnimatedModelPart.AnimationPose::reset);
         MolangCache cache = MOLANG_CACHE.get();
@@ -270,7 +270,8 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
             if (Math.abs(blendWeight) <= 1E-6) // No need to add if weight is 0
                 continue;
 
-            float localAnimationTime = Math.min(animationTime, animation.getAnimationLength());
+            // Loop for loop, otherwise clamp to length
+            float localAnimationTime = animation.getLoop() == AnimationData.Loop.LOOP ? animationTime % animation.getAnimationLength() : Math.min(clampedAnimationTime, animation.getAnimationLength());
             for (AnimationData.BoneAnimation boneAnimation : animation.getBoneAnimations()) {
                 if (!this.modelParts.containsKey(boneAnimation.getName()))
                     continue;
