@@ -69,7 +69,7 @@ public class ConfigTracker {
         return isLocal ? Collections.emptyList() : this.configSets.get(PollinatedConfigType.SERVER).stream().filter(mc -> mc.getFullPath() != null).map(mc -> {
             try {
                 return Pair.of("Config " + mc.getFileName(), new ClientboundSyncConfigDataPacket(mc.getFileName(), Files.readAllBytes(mc.getFullPath())));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 LOGGER.error("Failed to sync {} config for {}", mc.getType(), mc.getModId(), e);
                 return null;
             }

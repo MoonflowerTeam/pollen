@@ -36,7 +36,12 @@ allprojects {
 
     repositories {
         mavenCentral()
-        maven { url "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1" }
+        maven {
+            url "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"
+            content {
+                includeGroup "me.djtheredstoner"
+            }
+        }
         maven { url "https://repo.moonflower.gg/releases"}
         maven { url "https://maven.parchmentmc.org"}
         maven { url "https://jitpack.io" }
