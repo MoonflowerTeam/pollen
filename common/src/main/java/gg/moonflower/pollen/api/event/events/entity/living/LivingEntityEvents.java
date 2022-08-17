@@ -2,7 +2,7 @@ package gg.moonflower.pollen.api.event.events.entity.living;
 
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.api.registry.EventRegistry;
-import gg.moonflower.pollen.api.util.value.FloatValue;
+import gg.moonflower.pollen.api.util.value.FloatValueHolder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -32,7 +32,7 @@ public final class LivingEntityEvents {
          * @param modifiableDamage The modifiable amount to damage the entity
          * @return <code>true</code> to allow damage, or <code>false</code> to prevent it from being dealt
          */
-        boolean livingDamage(LivingEntity entity, DamageSource source, FloatValue modifiableDamage);
+        boolean livingDamage(LivingEntity entity, DamageSource source, FloatValueHolder modifiableDamage);
     }
 
     /**
@@ -70,6 +70,6 @@ public final class LivingEntityEvents {
          * @param modifiableRegen   The modifiable amount of health the entity will regenerate
          * @return <code>true</code> to continue healing the entity, or <code>false</code> to cancel it
          */
-        boolean heal(LivingEntity entity, FloatValue modifiableRegen);
+        boolean heal(LivingEntity entity, FloatValueHolder modifiableRegen);
     }
 }

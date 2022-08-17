@@ -1,12 +1,11 @@
 package gg.moonflower.pollen.core.mixin.fabric;
 
 import gg.moonflower.pollen.api.event.EventResult;
-import gg.moonflower.pollen.api.event.FabricHooks;
 import gg.moonflower.pollen.api.event.events.entity.living.LivingEntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.living.PotionEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.registry.FluidBehaviorRegistry;
-import gg.moonflower.pollen.api.util.value.FloatValue;
+import gg.moonflower.pollen.api.util.value.FloatValueHolder;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.damagesource.DamageSource;
@@ -61,7 +60,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @ModifyVariable(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getHealth()F", shift = At.Shift.BEFORE), ordinal = 0, argsOnly = true)
     public float modifyDamageAmount(float value) {
-        FloatValue modifiableDamage = new FloatValue.Simple(value);
+        FloatValueHolder modifiableDamage = FloatValueHolder.of(value);
         boolean event = LivingEntityEvents.DAMAGE.invoker().livingDamage((LivingEntity) (Object) this, captureDamageSource, modifiableDamage);
         return event ? modifiableDamage.getAsFloat() : 0.0F;
     }
@@ -74,7 +73,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @ModifyVariable(method = "heal", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     public float modifyHealAmount(float value) {
-        FloatValue modifiableHealAmount = new FloatValue.Simple(value);
+        FloatValueHolder modifiableHealAmount = FloatValueHolder.of(value);
         boolean event = LivingEntityEvents.HEAL.invoker().heal((LivingEntity) (Object) this, modifiableHealAmount);
         return event ? modifiableHealAmount.getAsFloat() : 0.0F;
     }

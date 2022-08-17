@@ -2,7 +2,7 @@ package gg.moonflower.pollen.api.event.events.entity.player;
 
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.api.registry.EventRegistry;
-import gg.moonflower.pollen.api.util.value.IntValue;
+import gg.moonflower.pollen.api.util.value.IntValueHolder;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -126,7 +126,7 @@ public final class PlayerEvents {
          * @param modifiableXp The modifiable amount of experience to give to the player
          * @return <code>true</code> to continue, or <code>false</code> to stop further processing
          */
-        boolean expChange(Player player, IntValue modifiableXp);
+        boolean expChange(Player player, IntValueHolder modifiableXp);
     }
 
     /**
@@ -145,7 +145,7 @@ public final class PlayerEvents {
          * @param modifiableLevels The modifiable amount of levels to give to the player
          * @return <code>true</code> to continue, or <code>false</code> to stop further processing
          */
-        boolean levelChange(Player player, IntValue modifiableLevels);
+        boolean levelChange(Player player, IntValueHolder modifiableLevels);
     }
 
     /**
