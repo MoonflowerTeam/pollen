@@ -83,6 +83,9 @@ public class PollenGrindstoneCategory implements IRecipeCategory<PollenGrindston
     }
 
     private static int getExperienceFromItem(ItemStack stack) {
+        if (stack.isEmpty())
+            return 0;
+        
         int i = 0;
         Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(stack);
 
