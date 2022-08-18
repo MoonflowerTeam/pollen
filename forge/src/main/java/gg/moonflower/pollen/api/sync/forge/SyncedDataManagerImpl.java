@@ -57,7 +57,7 @@ public class SyncedDataManagerImpl {
         if (event.getPlayer() instanceof ServerPlayer) {
             ServerPlayer player = (ServerPlayer) event.getPlayer();
             Entity target = event.getTarget();
-            getDataComponent(player).ifPresent(component -> {
+            getDataComponent(target).ifPresent(component -> {
                 if (component.shouldSyncWith(target, player))
                     PollenMessages.PLAY.sendTo(player, new ClientboundUpdateSyncedDataPacket(target, player, true));
             });
@@ -82,7 +82,7 @@ public class SyncedDataManagerImpl {
             ServerPlayer player = (ServerPlayer) event.getPlayer();
 
             Optional<ForgeDataComponent> originalOptional = getDataComponent(original).resolve();
-            Optional<ForgeDataComponent> copyOptional = getDataComponent(original).resolve();
+            Optional<ForgeDataComponent> copyOptional = getDataComponent(player).resolve();
 
             if (!originalOptional.isPresent() || !copyOptional.isPresent())
                 return;

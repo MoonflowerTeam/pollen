@@ -105,14 +105,14 @@ public final class SyncedDataManager {
     }
 
     /**
-     * Retrieves the value of the specified data key from the specified player.
+     * Retrieves the value of the specified data key from the specified entity.
      *
-     * @param player The entity to get the data from
+     * @param entity The entity to get the data from
      * @param key    The key to get
      * @param <T>    The type of data to get
      */
     @ExpectPlatform
-    public static <T> T get(Entity player, SyncedDataKey<T> key) {
+    public static <T> T get(Entity entity, SyncedDataKey<T> key) {
         return Platform.error();
     }
 
