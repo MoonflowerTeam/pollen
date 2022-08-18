@@ -7,6 +7,8 @@ import gg.moonflower.pollen.api.block.PollinatedStandingSignBlock;
 import gg.moonflower.pollen.api.block.PollinatedWallSignBlock;
 import gg.moonflower.pollen.api.config.ConfigManager;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
+import gg.moonflower.pollen.api.datagen.provider.loot_table.PollinatedLootGenerator;
+import gg.moonflower.pollen.api.datagen.provider.loot_table.PollinatedLootTableProvider;
 import gg.moonflower.pollen.api.entity.PollinatedBoatType;
 import gg.moonflower.pollen.api.item.BucketItemBase;
 import gg.moonflower.pollen.api.item.PollinatedBoatItem;
@@ -22,6 +24,7 @@ import gg.moonflower.pollen.api.registry.content.FlammabilityRegistry;
 import gg.moonflower.pollen.api.registry.content.FurnaceFuelRegistry;
 import gg.moonflower.pollen.api.registry.resource.TagRegistry;
 import gg.moonflower.pollen.core.client.render.DebugPollenFlowerPotRenderer;
+import gg.moonflower.pollen.core.datagen.TestBlockLootGenerator;
 import gg.moonflower.pollen.core.test.TestFluid;
 import gg.moonflower.pollen.core.test.TestPollenFluidBehavior;
 import gg.moonflower.pollen.core.test.TestServerConfig;
@@ -30,6 +33,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.Registry;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
@@ -46,9 +50,13 @@ import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal
@@ -111,6 +119,13 @@ public class PollenTest {
         FlammabilityRegistry.register(Blocks.DIAMOND_BLOCK, 200, 50);
         CompostablesRegistry.register(Blocks.SAND, 1);
         FurnaceFuelRegistry.register(Items.BUCKET, 100);
+    }
+
+    static void onData(Platform.DataSetupContext context) {
+        DataGenerator generator = context.getGenerator();
+        generator.addProvider(new PollinatedLootTableProvider(generator).add(
+                LootContextParamSets.CHEST, new TestBlockLootGenerator()
+        ));
     }
 
     private static <T> T create(Supplier<T> factory) {

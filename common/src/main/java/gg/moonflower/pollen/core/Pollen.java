@@ -108,6 +108,7 @@ public class Pollen {
         if (!TESTS_ENABLED)
             return;
         context.getGenerator().addProvider(new PollenLanguageProvider(context.getGenerator(), context.getMod()));
+        PollenTest.onData(context);
     }
 
     @Nullable
