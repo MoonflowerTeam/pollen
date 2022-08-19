@@ -3,9 +3,12 @@ package gg.moonflower.pollen.api.datagen.provider.model;
 import com.google.gson.JsonElement;
 import net.minecraft.data.models.model.ModelLocationUtils;
 import net.minecraft.data.models.model.ModelTemplate;
+import net.minecraft.data.models.model.ModelTemplates;
 import net.minecraft.data.models.model.TextureMapping;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -18,7 +21,7 @@ import java.util.function.Supplier;
  */
 public abstract class PollinatedItemModelGenerator implements PollinatedModelGenerator {
 
-    private final BiConsumer<ResourceLocation, Supplier<JsonElement>> modelOutput;
+    protected final BiConsumer<ResourceLocation, Supplier<JsonElement>> modelOutput;
 
     public PollinatedItemModelGenerator(BiConsumer<ResourceLocation, Supplier<JsonElement>> modelOutput) {
         this.modelOutput = modelOutput;
@@ -38,5 +41,11 @@ public abstract class PollinatedItemModelGenerator implements PollinatedModelGen
 
     protected void generateFlatItem(Item item, Item layerZeroItem, ModelTemplate modelTemplate) {
         modelTemplate.create(ModelLocationUtils.getModelLocation(item), TextureMapping.layer0(layerZeroItem), this.modelOutput);
+    }
+
+    protected void createSimpleFlatItemModel(Block flatBlock) {
+        Item item = flatBlock.asItem();
+        if (item != Items.AIR)
+            ModelTemplates.FLAT_ITEM.create(ModelLocationUtils.getModelLocation(item), TextureMapping.layer0(flatBlock), this.modelOutput);
     }
 }
