@@ -7,7 +7,6 @@ import gg.moonflower.pollen.api.block.PollinatedStandingSignBlock;
 import gg.moonflower.pollen.api.block.PollinatedWallSignBlock;
 import gg.moonflower.pollen.api.config.ConfigManager;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
-import gg.moonflower.pollen.api.datagen.provider.loot_table.PollinatedLootGenerator;
 import gg.moonflower.pollen.api.datagen.provider.loot_table.PollinatedLootTableProvider;
 import gg.moonflower.pollen.api.entity.PollinatedBoatType;
 import gg.moonflower.pollen.api.item.BucketItemBase;
@@ -18,10 +17,7 @@ import gg.moonflower.pollen.api.registry.FluidBehaviorRegistry;
 import gg.moonflower.pollen.api.registry.PollinatedBlockRegistry;
 import gg.moonflower.pollen.api.registry.PollinatedFluidRegistry;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
-import gg.moonflower.pollen.api.registry.content.CompostablesRegistry;
-import gg.moonflower.pollen.api.registry.content.DispenseItemBehaviorRegistry;
-import gg.moonflower.pollen.api.registry.content.FlammabilityRegistry;
-import gg.moonflower.pollen.api.registry.content.FurnaceFuelRegistry;
+import gg.moonflower.pollen.api.registry.content.*;
 import gg.moonflower.pollen.api.registry.resource.TagRegistry;
 import gg.moonflower.pollen.core.client.render.DebugPollenFlowerPotRenderer;
 import gg.moonflower.pollen.core.datagen.TestBlockLootGenerator;
@@ -49,13 +45,10 @@ import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Objects;
-import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal
@@ -81,6 +74,8 @@ public class PollenTest {
     public static final Pair<Supplier<PollinatedStandingSignBlock>, Supplier<PollinatedWallSignBlock>> TEST_SIGN = create(() -> Objects.requireNonNull(BLOCKS).registerSign("test", Material.WOOD, MaterialColor.COLOR_BLUE));
 
     static void init() {
+        FlatteningRegistry.register(Blocks.EMERALD_BLOCK, Blocks.DIAMOND_BLOCK.defaultBlockState());
+        FlatteningRegistry.register(Blocks.DIAMOND_BLOCK, Blocks.EMERALD_BLOCK.defaultBlockState());
     }
 
     static void onClient() {

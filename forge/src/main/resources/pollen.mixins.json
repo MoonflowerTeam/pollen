@@ -23,6 +23,7 @@
     "LivingEntityMixin",
     "PackRepositoryAccessor",
     "PackRepositoryMixin",
+    "ShovelItemMixin",
     "SimpleReloadableResourceManagerMixin",
     "loot.ForgeHooksMixin",
     "loot.LootPoolAccessor",
