@@ -64,6 +64,10 @@ dependencies {
     forgeRuntimeLibrary implementation("com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}")
     shadowCommon "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
 
+    forgeRuntimeLibrary implementation("com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}")
+    shadowCommon "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
+    annotationProcessor "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
+
     modRuntimeOnly "me.djtheredstoner:DevAuth-forge-latest:${rootProject.devauth_version}"
     modRuntimeOnly "curse.maven:configured-457570:3546348"
     modRuntimeOnly "curse.maven:catalogue-459701:3529457"
@@ -96,16 +100,17 @@ processResources {
 }
 
 shadowJar {
-    exclude "fabric.mod.json"
+    mergeServiceFiles()
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
     relocate "io.github.ocelot.molangcompiler", "gg.moonflower.pollen.molangcompiler"
+    relocate "com.llamalad7.mixinextras", "gg.moonflower.pollen.mixinextras"
     classifier "dev-shadow"
 }
 
 remapJar {
-    input.set shadowJar.archiveFile
+    inputFile.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier null
 }

@@ -53,6 +53,10 @@ dependencies {
     implementation "com.electronwill.night-config:toml:${project.night_config_version}"
     shadowCommon "com.electronwill.night-config:toml:${project.night_config_version}"
 
+    implementation "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
+    shadowCommon "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
+    annotationProcessor "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
+
     // Fabric-only Dependencies
     modApi "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cardinal_components_version}"
     modApi "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cardinal_components_version}"
@@ -95,11 +99,13 @@ processResources {
 }
 
 shadowJar {
+    mergeServiceFiles()
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
     relocate "io.github.ocelot.molangcompiler", "gg.moonflower.pollen.molangcompiler"
     relocate "com.electronwill.nightconfig", "gg.moonflower.pollen.nightconfig"
+    relocate "com.llamalad7.mixinextras", "gg.moonflower.pollen.mixinextras"
     classifier "dev-shadow"
 }
 
