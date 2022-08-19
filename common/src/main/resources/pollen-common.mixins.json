@@ -44,6 +44,7 @@
     "data.AdvancementRewardsAccessor",
     "data.TagBuilderMixin",
     "data.TagsProviderAccessor",
+    "loot.BlockLootAccessor",
     "loot.LootPoolAccessor",
     "loot.LootPoolBuilderAccessor",
     "loot.LootPoolEntryContainerAccessor",

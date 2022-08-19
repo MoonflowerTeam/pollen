@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootTable;
 
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * Generates loot tables through {@link PollinatedLootTableProvider}.
@@ -11,10 +12,11 @@ import java.util.function.BiConsumer;
  * @author Ocelot
  * @since 1.4.10
  */
-public interface PollinatedLootGenerator {
+public interface PollinatedLootGenerator extends Consumer<BiConsumer<ResourceLocation, LootTable.Builder>> {
 
     /**
      * Creates all the models just before saving all files.
      */
-    void run(BiConsumer<ResourceLocation, LootTable.Builder> registry);
+    @Override
+    void accept(BiConsumer<ResourceLocation, LootTable.Builder> registry);
 }
