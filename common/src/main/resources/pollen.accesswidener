@@ -41,6 +41,15 @@ transitive-accessible method net/minecraft/world/entity/ai/memory/MemoryModuleTy
 transitive-accessible method net/minecraft/world/entity/ai/sensing/SensorType <init> (Ljava/util/function/Supplier;)V
 transitive-accessible method net/minecraft/world/entity/schedule/Activity <init> (Ljava/lang/String;)V
 
+transitive-accessible field net/minecraft/data/loot/BlockLoot HAS_SILK_TOUCH Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition$Builder;
+transitive-accessible field net/minecraft/data/loot/BlockLoot HAS_NO_SILK_TOUCH Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition$Builder;
+transitive-accessible field net/minecraft/data/loot/BlockLoot HAS_SHEARS Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition$Builder;
+transitive-accessible field net/minecraft/data/loot/BlockLoot HAS_SHEARS_OR_SILK_TOUCH Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition$Builder;
+transitive-accessible field net/minecraft/data/loot/BlockLoot HAS_NO_SHEARS_OR_SILK_TOUCH Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition$Builder;
+transitive-accessible field net/minecraft/data/loot/BlockLoot EXPLOSION_RESISTANT Ljava/util/Set;
+transitive-accessible field net/minecraft/data/loot/BlockLoot NORMAL_LEAVES_SAPLING_CHANCES [F
+transitive-accessible field net/minecraft/data/loot/BlockLoot JUNGLE_LEAVES_SAPLING_CHANGES [F
+
 transitive-accessible method net/minecraft/data/loot/BlockLoot applyExplosionDecay (Lnet/minecraft/world/level/ItemLike;Lnet/minecraft/world/level/storage/loot/functions/FunctionUserBuilder;)Ljava/lang/Object;
 transitive-accessible method net/minecraft/data/loot/BlockLoot applyExplosionCondition (Lnet/minecraft/world/level/ItemLike;Lnet/minecraft/world/level/storage/loot/predicates/ConditionUserBuilder;)Ljava/lang/Object;
 transitive-accessible method net/minecraft/data/loot/BlockLoot createSingleItemTable (Lnet/minecraft/world/level/ItemLike;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;)Lnet/minecraft/world/level/storage/loot/LootTable$Builder;
