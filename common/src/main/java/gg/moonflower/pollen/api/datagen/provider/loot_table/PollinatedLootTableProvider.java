@@ -27,7 +27,7 @@ import java.util.function.BiConsumer;
  * Generates block states and models for blocks and items.
  *
  * @author Ocelot
- * @since 1.4.10
+ * @since 1.5.0
  */
 public class PollinatedLootTableProvider implements DataProvider {
 
