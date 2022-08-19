@@ -13,8 +13,8 @@ public interface LootPoolAccessor {
     @Accessor
     LootItemFunction[] getFunctions();
 
-    @Accessor
-    RandomIntGenerator getRolls();
+    @Accessor("rolls")
+    RandomIntGenerator getPoolRolls();
 
     @Accessor
     RandomValueBounds getBonusRolls();
