@@ -74,8 +74,6 @@ public class PollenTest {
     public static final Pair<Supplier<PollinatedStandingSignBlock>, Supplier<PollinatedWallSignBlock>> TEST_SIGN = create(() -> Objects.requireNonNull(BLOCKS).registerSign("test", Material.WOOD, MaterialColor.COLOR_BLUE));
 
     static void init() {
-        FlatteningRegistry.register(Blocks.EMERALD_BLOCK, Blocks.DIAMOND_BLOCK.defaultBlockState());
-        FlatteningRegistry.register(Blocks.DIAMOND_BLOCK, Blocks.EMERALD_BLOCK.defaultBlockState());
     }
 
     static void onClient() {
@@ -107,6 +105,9 @@ public class PollenTest {
         });
 
         FluidBehaviorRegistry.register(TEST_TAG, new TestPollenFluidBehavior());
+
+        FlatteningRegistry.register(Blocks.EMERALD_BLOCK, Blocks.DIAMOND_BLOCK.defaultBlockState());
+        FlatteningRegistry.register(Blocks.DIAMOND_BLOCK, Blocks.EMERALD_BLOCK.defaultBlockState());
     }
 
     static void onClientPost(Platform.ModSetupContext context) {
