@@ -49,6 +49,7 @@
     "ServerLevelMixin",
     "ServerLoginPacketListenerImplMixin",
     "ServerPlayerMixin",
+    "ShovelItemMixin",
     "WoodTypeAccessor",
     "data.AdvancementBuilderMixin",
     "data.TagsProviderMixin",

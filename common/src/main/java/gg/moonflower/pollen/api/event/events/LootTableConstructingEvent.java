@@ -80,7 +80,7 @@ public interface LootTableConstructingEvent {
 
             LootPoolAccessor sourceAccessor = (LootPoolAccessor) pools.get(index);
 
-            LootPool.Builder builder = LootPool.lootPool().setRolls(sourceAccessor.getRolls());
+            LootPool.Builder builder = LootPool.lootPool().setRolls(sourceAccessor.getPoolRolls());
             LootPoolBuilderAccessor accessor = (LootPoolBuilderAccessor) builder;
             accessor.getEntries().addAll(Arrays.asList(sourceAccessor.getEntries()));
             accessor.getConditions().addAll(Arrays.asList(sourceAccessor.getConditions()));
