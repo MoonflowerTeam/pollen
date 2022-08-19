@@ -27,9 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -42,16 +40,18 @@ public abstract class PollinatedRecipeProvider extends SimpleConditionalDataProv
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private final DataGenerator generator;
+    private final Map<Block, BlockFamily> blockFamilies;
 
     public PollinatedRecipeProvider(DataGenerator generator) {
         this.generator = generator;
+        this.blockFamilies = new HashMap<>();
     }
 
     @Override
     public void run(HashCache cache) throws IOException {
         Path path = this.generator.getOutputFolder();
         Set<ResourceLocation> set = new HashSet<>();
-        this.buildRecipes(finishedRecipe -> {
+        Consumer<FinishedRecipe> consumer = finishedRecipe -> {
             if (!set.add(finishedRecipe.getId()))
                 throw new IllegalStateException("Duplicate recipe " + finishedRecipe.getId());
 
@@ -72,7 +72,9 @@ public abstract class PollinatedRecipeProvider extends SimpleConditionalDataProv
                     LOGGER.error("Couldn't save recipe advancement {}", path, e);
                 }
             }
-        });
+        };
+        this.buildRecipes(consumer);
+        this.blockFamilies.values().stream().filter(BlockFamily::shouldGenerateRecipe).forEach(family -> generateRecipes(consumer, family)); // Build block family recipes after
     }
 
     /**
@@ -81,6 +83,14 @@ public abstract class PollinatedRecipeProvider extends SimpleConditionalDataProv
      * @param consumer The registry for recipes
      */
     protected abstract void buildRecipes(Consumer<FinishedRecipe> consumer);
+
+    protected BlockFamily.Builder blockFamily(Block block) {
+        BlockFamily.Builder builder = new BlockFamily.Builder(block);
+        BlockFamily old = this.blockFamilies.put(block, builder.getFamily());
+        if (old != null)
+            throw new IllegalStateException("Duplicate family definition for " + Registry.BLOCK.getKey(block));
+        return builder;
+    }
 
     public static void oneToOneConversionRecipe(Consumer<FinishedRecipe> consumer, ItemLike result, ItemLike ingredient, @Nullable String group) {
         oneToOneConversionRecipe(consumer, result, ingredient, group, 1);
