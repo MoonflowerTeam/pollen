@@ -1,9 +1,18 @@
+plugins {
+    id "com.github.johnrengelman.shadow" version "7.0.0"
+}
+
+configurations {
+    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+}
+
 dependencies {
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
     // Do NOT use other classes from fabric loader
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 
-    implementation "com.github.Ocelot5836:molang-compiler:${rootProject.molang_compiler_version}"
+    api "com.github.Ocelot5836:molang-compiler:${rootProject.molang_compiler_version}"
+    shadowCommon "com.github.Ocelot5836:molang-compiler:${rootProject.molang_compiler_version}"
     implementation "com.electronwill.night-config:core:${rootProject.night_config_version}"
     implementation "com.electronwill.night-config:toml:${rootProject.night_config_version}"
 
@@ -17,6 +26,22 @@ architectury {
 
 loom {
     accessWidenerPath.set(file("src/main/resources/${project.mod_id}.accesswidener"))
+}
+
+shadowJar {
+    configurations = [project.configurations.shadowCommon]
+    relocate "io.github.ocelot.molangcompiler", "gg.moonflower.pollen.molangcompiler"
+    classifier "dev-shadow"
+}
+
+remapJar {
+    inputFile.set shadowJar.archiveFile
+    dependsOn shadowJar
+    classifier null
+}
+
+jar {
+    classifier "dev"
 }
 
 publishing {
