@@ -1,15 +1,12 @@
 package gg.moonflower.pollen.api.datagen.provider.loot_table;
 
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.world.level.storage.loot.ValidationContext;
@@ -25,8 +22,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * Generates block states and models for blocks and items.
@@ -58,7 +53,7 @@ public class PollinatedLootTableProvider implements DataProvider {
                     throw new IllegalStateException("Duplicate loot table " + name);
             };
 
-            lootGenerators.forEach(generator -> generator.run(registry));
+            lootGenerators.forEach(generator -> generator.accept(registry));
         });
 
         ValidationContext validationContext = new ValidationContext(LootContextParamSets.ALL_PARAMS, resourceLocationx -> null, lootTables::get);

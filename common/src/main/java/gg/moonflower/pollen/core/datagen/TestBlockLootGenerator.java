@@ -13,7 +13,7 @@ import java.util.function.BiConsumer;
 public class TestBlockLootGenerator implements PollinatedLootGenerator {
 
     @Override
-    public void run(BiConsumer<ResourceLocation, LootTable.Builder> registry) {
+    public void accept(BiConsumer<ResourceLocation, LootTable.Builder> registry) {
         register(registry, "test_diamond", LootTable.lootTable().withPool(LootPool.lootPool().add(LootItem.lootTableItem(Items.DIAMOND))));
     }
 
