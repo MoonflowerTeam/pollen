@@ -95,6 +95,12 @@ public class PollinatedResourceConditionImpl {
         }
 
         @Override
+        public boolean test(IContext context) {
+            return this.test();
+        }
+
+        @Deprecated
+        @Override
         public boolean test() {
             return false;
         }

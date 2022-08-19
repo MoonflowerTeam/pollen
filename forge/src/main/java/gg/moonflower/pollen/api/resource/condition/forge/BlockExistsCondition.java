@@ -28,6 +28,12 @@ public class BlockExistsCondition implements ICondition {
     }
 
     @Override
+    public boolean test(IContext context) {
+        return this.test();
+    }
+
+    @Deprecated
+    @Override
     public boolean test() {
         return ForgeRegistries.BLOCKS.containsKey(this.block);
     }

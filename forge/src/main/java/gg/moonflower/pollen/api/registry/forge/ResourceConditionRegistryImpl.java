@@ -7,6 +7,7 @@ import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -45,7 +46,7 @@ public class ResourceConditionRegistryImpl {
     }
 
     public static boolean test(JsonObject json) {
-        return CraftingHelper.processConditions(json, "conditions");
+        return CraftingHelper.processConditions(json, "conditions", ICondition.IContext.EMPTY);
     }
 
     public static String getConditionsKey() {

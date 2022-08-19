@@ -29,6 +29,12 @@ public class PollinatedRecipeConditionWrapper implements ICondition {
     }
 
     @Override
+    public boolean test(IContext context) {
+        return this.test();
+    }
+
+    @Deprecated
+    @Override
     public boolean test() {
         return result;
     }

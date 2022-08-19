@@ -28,6 +28,12 @@ public abstract class TagPopulatedCondition<T> implements ICondition {
     }
 
     @Override
+    public boolean test(IContext context) {
+        return this.test();
+    }
+
+    @Deprecated
+    @Override
     public boolean test() {
         return Platform.getRegistryAccess().<Registry<T>>flatMap(access -> access.registry(this.registry)).stream().anyMatch(registry -> registry.isKnownTagName(this.tag));
     }

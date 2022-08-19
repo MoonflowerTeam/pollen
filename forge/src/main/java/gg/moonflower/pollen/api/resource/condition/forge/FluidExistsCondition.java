@@ -28,8 +28,14 @@ public class FluidExistsCondition implements ICondition {
     }
 
     @Override
+    public boolean test(IContext context) {
+        return this.test();
+    }
+
+    @Deprecated
+    @Override
     public boolean test() {
-        return ForgeRegistries.FLUIDS.containsKey(fluid);
+        return ForgeRegistries.FLUIDS.containsKey(this.fluid);
     }
 
     @Override
