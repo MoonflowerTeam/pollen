@@ -1,0 +1,26 @@
+plugins {
+    id "pollen.module.platform"
+}
+
+archivesBaseName = "$archivesBaseName-forge"
+
+architectury {
+    platformSetupLoomIde()
+    forge()
+}
+
+dependencies {
+    forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
+
+    common(project(path: commonProject, configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: commonProject, configuration: "transformProductionForge")) { transitive = false }
+}
+
+processResources {
+    filesMatching(["META-INF/mods.toml", "pack.mcmeta"]) {
+        expand "id": pollenExtension.apiName.get(),
+                "name": pollenExtension.apiName.get(),
+                "version": rootProject.mod_version,
+                "repo": rootProject.name
+    }
+}

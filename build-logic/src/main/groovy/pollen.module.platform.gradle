@@ -1,0 +1,79 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
+plugins {
+    id "com.github.johnrengelman.shadow"
+}
+
+ext.pollenExtension = parent.extensions.getByName("pollen")
+ext.commonProject = ":${parent.name}:common"
+
+configurations {
+    common
+    shadowCommon
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+}
+
+processResources {
+    inputs.property "id", pollenExtension.apiName.get()
+    inputs.property "name", pollenExtension.apiName.get()
+    inputs.property "version", rootProject.mod_version
+    inputs.property "repo", rootProject.name
+
+    doLast {
+        fileTree(dir: outputs.files.asPath, include: "**/*.json").each {
+            File file -> file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
+        }
+    }
+}
+
+shadowJar {
+    mergeServiceFiles()
+    exclude "architectury.common.json"
+    configurations = [project.configurations.shadowCommon]
+    classifier "dev-shadow"
+}
+
+remapJar {
+    inputFile.set shadowJar.archiveFile
+    dependsOn shadowJar
+    classifier null
+}
+
+jar {
+    classifier "dev"
+}
+
+sourcesJar {
+    def commonSources = project(commonProject).sourcesJar
+    dependsOn commonSources
+    from commonSources.archiveFile.map { zipTree(it) }
+}
+
+publishing {
+    publications {
+        mavenPollen(MavenPublication) {
+            artifactId = archivesBaseName
+
+            artifact remapJar
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+
+            pom.withXml {
+                def depsNode = asNode().appendNode('dependencies')
+                [this.configurations.modApi, this.configurations.api].each {
+                    it.allDependencies.each {
+                        def depNode = depsNode.appendNode('dependency')
+                        depNode.appendNode('groupId', it.group)
+                        depNode.appendNode('artifactId', it.name)
+                        depNode.appendNode('version', it.version)
+                    }
+                }
+            }
+        }
+    }
+}
+
+loom.disableDeprecatedPomGeneration(publishing.publications.mavenPollen)

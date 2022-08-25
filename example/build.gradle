@@ -1,0 +1,9 @@
+plugins {
+    id "pollen.module"
+}
+
+pollen {
+    apiName = "example"
+}
+
+version = rootProject.version

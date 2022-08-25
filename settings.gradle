@@ -10,6 +10,8 @@ pluginManagement {
 
 rootProject.name = "pollen"
 
-include("common")
-include("fabric")
-include("forge")
+includeBuild "build-logic"
+
+include "pollen-api-base:common"
+include "pollen-api-base:forge"
+include "pollen-api-base:fabric"

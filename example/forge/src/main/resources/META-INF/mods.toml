@@ -1,6 +1,5 @@
 modLoader = "javafml"
 loaderVersion = "[40,)"
-issueTrackerURL = "https://github.com/MoonflowerTeam/${repo}/issues"
 license = "LGPLv3"
 
 [[mods]]
@@ -8,13 +7,7 @@ modId = "${id}"
 version = "${version}"
 displayName = "${name}"
 authors = "Moonflower"
-credits = "Jackson, Ocelot"
-description = "Pollen is a library mod which includes various utilities and platform bridges for Fabric and Forge using Architectury."
-displayURL= "https://www.moonflower.gg/"
-logoFile = "logo.png"
-
-[modproperties.${id}]
-catalogueImageIcon="icon.png"
+description = ""
 
 [[dependencies.${id}]]
 modId = "forge"

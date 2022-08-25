@@ -1,0 +1,18 @@
+plugins {
+    id "dev.architectury.loom"
+    id "io.github.juuxel.loom-quiltflower"
+    id "com.github.johnrengelman.shadow"
+}
+
+def extension = project.extensions.create("pollen", gg.moonflower.gradle.pollen.extension.PollenExtension, project)
+this.project.afterEvaluate {
+    archivesBaseName = extension.apiName.get()
+}
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+    it.options.release.set(17)
+}

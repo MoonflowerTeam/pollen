@@ -1,0 +1,27 @@
+plugins {
+    id "pollen.module.platform"
+}
+
+archivesBaseName = "$archivesBaseName-fabric"
+
+architectury {
+    platformSetupLoomIde()
+    fabric()
+}
+
+dependencies {
+    modApi "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+
+    common(project(path: commonProject, configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: commonProject, configuration: "transformProductionFabric")) { transitive false }
+}
+
+processResources {
+    filesMatching("fabric.mod.json") {
+        expand "id": pollenExtension.apiName.get(),
+                "name": pollenExtension.apiName.get(),
+                "version": rootProject.mod_version,
+                "repo": rootProject.name
+    }
+}
