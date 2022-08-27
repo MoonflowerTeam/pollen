@@ -1,7 +1,5 @@
 package gg.moonflower.pollen.api.event;
 
-import gg.moonflower.pollen.api.event.events.entity.living.LivingEntityEvents;
-import gg.moonflower.pollen.api.event.events.entity.player.PlayerEvents;
 import gg.moonflower.pollen.api.event.events.world.WorldEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;

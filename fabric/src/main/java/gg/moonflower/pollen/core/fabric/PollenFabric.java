@@ -10,6 +10,7 @@ import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
+import gg.moonflower.pollen.api.event.events.world.LevelEvents;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.resource.condition.fabric.PollinatedResourceConditionImpl;
 import gg.moonflower.pollen.common.trades.VillagerTradeManager;
@@ -23,6 +24,7 @@ import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
@@ -74,6 +76,9 @@ public class PollenFabric implements ModInitializer {
 
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STOPPING.register(server -> ServerLifecycleEvents.STOPPING.invoker().stopping(server));
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STOPPED.register(server -> ServerLifecycleEvents.STOPPED.invoker().stopped(server));
+
+        ServerWorldEvents.LOAD.register((server, world) -> LevelEvents.LOAD.invoker().load(world));
+        ServerWorldEvents.UNLOAD.register((server, world) -> LevelEvents.UNLOAD.invoker().unload(world));
 
         ServerChunkEvents.CHUNK_LOAD.register((level, chunk)->ChunkEvents.LOAD.invoker().load(level, chunk));
         ServerChunkEvents.CHUNK_UNLOAD.register((level, chunk)->ChunkEvents.UNLOAD.invoker().unload(level, chunk));

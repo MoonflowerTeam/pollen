@@ -16,6 +16,7 @@ import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
 import gg.moonflower.pollen.api.event.events.world.ExplosionEvents;
+import gg.moonflower.pollen.api.event.events.world.LevelEvents;
 import gg.moonflower.pollen.api.event.events.world.WorldEvents;
 import gg.moonflower.pollen.api.util.value.FloatValueHolder;
 import gg.moonflower.pollen.api.util.value.IntValueHolder;
@@ -30,12 +31,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -111,6 +112,15 @@ public class PollenCommonForgeEvents {
     @SubscribeEvent
     public static void onEvent(RegisterCommandsEvent event) {
         CommandRegistryEvent.EVENT.invoker().registerCommands(event.getDispatcher(), event.getEnvironment());
+    }
+
+    @SubscribeEvent
+    public static void onEvent(WorldEvent.Load event) {
+        LevelEvents.LOAD.invoker().load(event.getWorld());
+    }
+
+    public static void onEvent(WorldEvent.Unload event) {
+        LevelEvents.UNLOAD.invoker().unload(event.getWorld());
     }
 
     @SubscribeEvent
