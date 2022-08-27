@@ -18,8 +18,8 @@ import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
 import gg.moonflower.pollen.api.event.events.world.ExplosionEvents;
 import gg.moonflower.pollen.api.event.events.world.LevelEvents;
 import gg.moonflower.pollen.api.event.events.world.WorldEvents;
-import gg.moonflower.pollen.api.util.value.FloatValueHolder;
-import gg.moonflower.pollen.api.util.value.IntValueHolder;
+import gg.moonflower.pollen.api.util.value.MutableFloat;
+import gg.moonflower.pollen.api.util.value.MutableInt;
 import gg.moonflower.pollen.core.Pollen;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -119,6 +119,7 @@ public class PollenCommonForgeEvents {
         LevelEvents.LOAD.invoker().load(event.getWorld());
     }
 
+    @SubscribeEvent
     public static void onEvent(WorldEvent.Unload event) {
         LevelEvents.UNLOAD.invoker().unload(event.getWorld());
     }
@@ -296,13 +297,13 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(PlayerXpEvent.XpChange event) {
-        if (!PlayerEvents.EXP_CHANGE.invoker().expChange(event.getPlayer(), IntValueHolder.complex(event, PlayerXpEvent.XpChange::getAmount, PlayerXpEvent.XpChange::setAmount)))
+        if (!PlayerEvents.EXP_CHANGE.invoker().expChange(event.getPlayer(), MutableInt.complex(event, PlayerXpEvent.XpChange::getAmount, PlayerXpEvent.XpChange::setAmount)))
             event.setCanceled(true);
     }
 
     @SubscribeEvent
     public static void onEvent(PlayerXpEvent.LevelChange event) {
-       if (!PlayerEvents.LEVEL_CHANGE.invoker().levelChange(event.getPlayer(), IntValueHolder.complex(event, PlayerXpEvent.LevelChange::getLevels, PlayerXpEvent.LevelChange::setLevels)))
+       if (!PlayerEvents.LEVEL_CHANGE.invoker().levelChange(event.getPlayer(), MutableInt.complex(event, PlayerXpEvent.LevelChange::getLevels, PlayerXpEvent.LevelChange::setLevels)))
            event.setCanceled(true);
     }
 
@@ -348,7 +349,7 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(LivingDamageEvent event) {
-      if (!LivingEntityEvents.DAMAGE.invoker().livingDamage(event.getEntityLiving(), event.getSource(), FloatValueHolder.complex(event, LivingDamageEvent::getAmount, LivingDamageEvent::setAmount)))
+      if (!LivingEntityEvents.DAMAGE.invoker().livingDamage(event.getEntityLiving(), event.getSource(), MutableFloat.complex(event, LivingDamageEvent::getAmount, LivingDamageEvent::setAmount)))
           event.setCanceled(true);
     }
 
@@ -360,7 +361,7 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(LivingHealEvent event) {
-        if (!LivingEntityEvents.HEAL.invoker().heal(event.getEntityLiving(), FloatValueHolder.complex(event, LivingHealEvent::getAmount, LivingHealEvent::setAmount)))
+        if (!LivingEntityEvents.HEAL.invoker().heal(event.getEntityLiving(), MutableFloat.complex(event, LivingHealEvent::getAmount, LivingHealEvent::setAmount)))
             event.setCanceled(true);
     }
 

@@ -1,37 +1,35 @@
 package gg.moonflower.pollen.api.util.value;
 
-import org.jetbrains.annotations.ApiStatus;
-
 import java.util.function.*;
 
 /**
- * A specialization of {@link ValueHolder} for primitive <code>int</code> values.
+ * A specialization of {@link MutableValue} for primitive <code>int</code> values.
  *
  * @author ebo2022
  * @since 2.0.0
  */
-public interface IntValueHolder extends IntSupplier, IntConsumer {
+public interface MutableInt extends IntSupplier, IntConsumer {
 
     /**
-     * @return A new {@link IntValueHolder} initialized with the specified value
+     * @return A new {@link MutableInt} initialized with the specified value
      */
-    static IntValueHolder of(int value) {
+    static MutableInt of(int value) {
         return new DefaultImpl(value);
     }
 
     /**
-     * Creates a {@link IntValueHolder} that uses an external object to manage its data.
+     * Creates a {@link MutableInt} that uses an external object to manage its data.
      *
      * @param provider      The class used to retrieve and set the stored value
      * @param valueSupplier A function to retrieve the value from the provider class
      * @param valueSetter   A consumer to externally modify the stored value
-     * @return A new {@link IntValueHolder} with the specified provider class
+     * @return A new {@link MutableInt} with the specified provider class
      */
-    static <T> IntValueHolder complex(T provider, ToIntFunction<T> valueSupplier, ObjIntConsumer<T> valueSetter) {
+    static <T> MutableInt complex(T provider, ToIntFunction<T> valueSupplier, ObjIntConsumer<T> valueSetter) {
         return new Complex<>(provider, valueSupplier, valueSetter);
     }
 
-    class DefaultImpl implements IntValueHolder {
+    class DefaultImpl implements MutableInt {
 
         private int value;
 
@@ -50,7 +48,7 @@ public interface IntValueHolder extends IntSupplier, IntConsumer {
         }
     }
 
-    class Complex<T> implements IntValueHolder {
+    class Complex<T> implements MutableInt {
 
         private final T provider;
         private final ToIntFunction<T> valueSupplier;

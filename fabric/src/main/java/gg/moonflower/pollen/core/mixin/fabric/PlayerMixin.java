@@ -2,8 +2,8 @@ package gg.moonflower.pollen.core.mixin.fabric;
 
 import gg.moonflower.pollen.api.event.events.entity.living.LivingEntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerEvents;
-import gg.moonflower.pollen.api.util.value.FloatValueHolder;
-import gg.moonflower.pollen.api.util.value.IntValueHolder;
+import gg.moonflower.pollen.api.util.value.MutableFloat;
+import gg.moonflower.pollen.api.util.value.MutableInt;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -32,21 +32,21 @@ public class PlayerMixin {
 
     @ModifyVariable(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setAbsorptionAmount(F)V", shift = At.Shift.AFTER), ordinal = 0, argsOnly = true)
     public float modifyDamageAmount(float value) {
-        FloatValueHolder modifiableDamage = FloatValueHolder.of(value);
+        MutableFloat modifiableDamage = MutableFloat.of(value);
         boolean event = LivingEntityEvents.DAMAGE.invoker().livingDamage((LivingEntity) (Object) this, captureDamageSource, modifiableDamage);
         return event ? modifiableDamage.getAsFloat() : 0.0F;
     }
 
     @ModifyVariable(method = "giveExperiencePoints", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     public int modifyExp(int value) {
-        IntValueHolder modifiableXp = IntValueHolder.of(value);
+        MutableInt modifiableXp = MutableInt.of(value);
         boolean event = PlayerEvents.EXP_CHANGE.invoker().expChange((Player) (Object) this, modifiableXp);
         return event ? modifiableXp.getAsInt() : value;
     }
 
     @ModifyVariable(method = "giveExperienceLevels", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     public int modifyLevels(int value) {
-        IntValueHolder modifiableLevels = IntValueHolder.of(value);
+        MutableInt modifiableLevels = MutableInt.of(value);
         boolean event = PlayerEvents.LEVEL_CHANGE.invoker().levelChange((Player) (Object) this, modifiableLevels);
         return event ? modifiableLevels.getAsInt() : value;
     }
