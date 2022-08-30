@@ -31,6 +31,9 @@
     "client": [
       "gg.moonflower.pollen.core.fabric.PollenFabricClient"
     ],
+    "terrablender": [
+      "gg.moonflower.pollen.core.fabric.PollenFabricTerrablender"
+    ],
     "fabric-datagen": [
       "gg.moonflower.pollen.core.fabric.PollenFabricData"
     ],
@@ -44,7 +47,8 @@
   "depends": {
     "fabricloader": ">=0.12",
     "fabric": ">=0.47",
-    "minecraft": "1.18.x >=1.18.2"
+    "minecraft": "1.18.x >=1.18.2",
+    "terrablender": ">=1.1.0.101"
   },
   "conflicts": {
     "grindenchantments": "*"

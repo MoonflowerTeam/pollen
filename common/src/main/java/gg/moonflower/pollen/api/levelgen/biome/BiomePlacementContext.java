@@ -17,7 +17,7 @@ import java.util.function.Consumer;
  * @author ebo2022
  * @since 1.5.0
  */
-public interface PollinatedBiomeGenerator {
+public interface BiomePlacementContext {
 
     /**
      * @return The biome registry
@@ -76,7 +76,7 @@ public interface PollinatedBiomeGenerator {
      * @param biome        The biome to add
      */
     default void addBiomeSimilar(ResourceKey<Biome> similarBiome, ResourceKey<Biome> biome) {
-        List<Climate.ParameterPoint> points = VanillaClimateParameters.get(similarBiome).stream().collect(ImmutableList.toImmutableList());
+        List<Climate.ParameterPoint> points = ParameterPoints.getVanilla(similarBiome).stream().collect(ImmutableList.toImmutableList());
         points.forEach(point -> this.addBiome(point, biome));
     }
 

@@ -10,7 +10,9 @@ import gg.moonflower.pollen.api.crafting.PollenRecipeTypes;
 import gg.moonflower.pollen.api.entity.PollenEntityTypes;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.api.registry.RegionRegistry;
 import gg.moonflower.pollen.api.registry.ResourceConditionRegistry;
+import gg.moonflower.pollen.api.registry.SurfaceRuleRegistry;
 import gg.moonflower.pollen.api.registry.client.EntityRendererRegistry;
 import gg.moonflower.pollen.api.resource.modifier.ResourceModifierManager;
 import gg.moonflower.pollen.api.sync.SyncedDataManager;
@@ -29,6 +31,10 @@ import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.levelgen.Noises;
+import net.minecraft.world.level.levelgen.SurfaceRules;
 import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -102,6 +108,9 @@ public class Pollen {
         PollenMessages.init();
         if (TESTS_ENABLED)
             PollenTest.onCommonPost(context);
+        context.enqueueWork(() -> {
+
+        });
     }
 
     private static void onDataInit(Platform.DataSetupContext context) {

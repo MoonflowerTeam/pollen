@@ -2,6 +2,13 @@ package gg.moonflower.pollen.api.levelgen.biome.parameters;
 
 import net.minecraft.world.level.biome.Climate;
 
+/**
+ * Represents the temperature at a given point in the world.
+ *
+ * @author ebo2022
+ * @see <a href="https://github.com/Glitchfiend/TerraBlender/blob/TB-1.19.x-2.x.x/Common/src/main/java/terrablender/api/ParameterUtils.java">ParameterUtils</a>
+ * @since 1.5.0
+ */
 public enum Temperature {
 
     ICY(Climate.Parameter.span(-1.0F, -0.45F)),
@@ -18,10 +25,21 @@ public enum Temperature {
     Temperature(Climate.Parameter parameter) {
         this.parameter = parameter;
     }
+
+    /**
+     * @return The actual parameter the temperature value represents
+     */
     public Climate.Parameter parameter() {
         return this.parameter;
     }
 
+    /**
+     * Creates a {@link Climate.Parameter} with a range between the specified minimum and maximum values.
+     *
+     * @param min The minimum temperature value
+     * @param max The maximum temperature value
+     * @return A climate parameter spanning the given values
+     */
     public static Climate.Parameter span(Temperature min, Temperature max) {
         return Climate.Parameter.span(Climate.unquantizeCoord(min.parameter().min()), Climate.unquantizeCoord(max.parameter().max()));
     }

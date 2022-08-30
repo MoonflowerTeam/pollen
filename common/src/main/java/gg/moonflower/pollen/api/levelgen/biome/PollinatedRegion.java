@@ -10,26 +10,21 @@ package gg.moonflower.pollen.api.levelgen.biome;
 public interface PollinatedRegion {
 
     /**
-     * @return The id of the mod the region is for
-     */
-    String getModId();
-
-    /**
      * @return The type of the region
      */
     Type getType();
 
     /**
-     * @return The weight of the region, which determines how frequently it will spawn
+     * @return The weight of the region, which determines how frequently it will generate compared to others
      */
     int getWeight();
 
     /**
-     * Adds biomes using the provided generator. Modded regions should override this method to apply their changes.
+     * Adds biomes using the provided generator. Modded regions should override this method to apply their generation.
      *
      * @param generator The generator for adding biome generation
      */
-    void addBiomes(PollinatedBiomeGenerator generator);
+    void addBiomes(BiomePlacementContext generator);
 
     /**
      * A type of region that determines what dimension a region should spawn in.
