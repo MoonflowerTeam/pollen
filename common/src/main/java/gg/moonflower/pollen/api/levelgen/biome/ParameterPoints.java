@@ -49,7 +49,6 @@ public final class ParameterPoints {
     /**
      * Builds a list of {@link Climate.ParameterPoint}s with the given parameters.
      *
-     * @author ebo2022
      * @see <a href="https://github.com/Glitchfiend/TerraBlender/blob/TB-1.19.x-2.x.x/Common/src/main/java/terrablender/api/ParameterUtils.java">ParameterUtils</a>
      * @since 1.5.0
      */

@@ -10,7 +10,7 @@ package gg.moonflower.pollen.api.levelgen.biome;
 public interface PollinatedRegion {
 
     /**
-     * @return The type of the region
+     * @return The region type
      */
     Type getType();
 
@@ -50,7 +50,7 @@ public interface PollinatedRegion {
         }
 
         /**
-         * @return The string path the parent region will register as
+         * @return The name the region will register as if a custom one isn't specified
          */
         public String getPath() {
             return this.path;

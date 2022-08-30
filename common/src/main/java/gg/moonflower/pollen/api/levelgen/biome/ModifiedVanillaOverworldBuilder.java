@@ -10,6 +10,7 @@ import net.minecraft.world.level.biome.Climate;
  *
  * @author ebo2022
  * @see <a href="https://github.com/Glitchfiend/TerraBlender/blob/TB-1.19.x-2.x.x/Common/src/main/java/terrablender/api/ModifiedVanillaOverworldBuilder.java">ModifiedVanillaOverworldBuilder</a>
+ * @since 1.5.0
  */
 public interface ModifiedVanillaOverworldBuilder {
 
