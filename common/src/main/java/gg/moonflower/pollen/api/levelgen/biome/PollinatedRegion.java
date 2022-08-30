@@ -27,7 +27,7 @@ public interface PollinatedRegion {
     void addBiomes(BiomePlacementContext generator);
 
     /**
-     * A type of region that determines what dimension a region should spawn in.
+     * A type of region that determines what dimension it should spawn in.
      *
      * @since 1.5.0
      */
