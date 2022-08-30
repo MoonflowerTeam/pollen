@@ -64,6 +64,7 @@ dependencies {
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
 
     modImplementation "com.terraformersmc:modmenu:${rootProject.mod_menu_version}" // TODO: modApi when config gui is implemented
+    modApi "com.github.glitchfiend:TerraBlender-fabric:${rootProject.minecraft_version}-${rootProject.terrablender_version}"
 
     // Common Dependencies
     api "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"

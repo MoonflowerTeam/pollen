@@ -60,6 +60,7 @@ repositories {
 
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
+    modApi "com.github.glitchfiend:TerraBlender-forge:${rootProject.minecraft_version}-${rootProject.terrablender_version}"
 
     forgeRuntimeLibrary api("com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}")
     shadowCommon "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
