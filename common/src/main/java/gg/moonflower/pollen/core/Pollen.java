@@ -108,9 +108,6 @@ public class Pollen {
         PollenMessages.init();
         if (TESTS_ENABLED)
             PollenTest.onCommonPost(context);
-        context.enqueueWork(() -> {
-
-        });
     }
 
     private static void onDataInit(Platform.DataSetupContext context) {
