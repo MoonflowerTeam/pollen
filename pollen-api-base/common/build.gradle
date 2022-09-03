@@ -1,3 +1,8 @@
 plugins {
     id "pollen.module.common"
 }
+
+dependencies {
+    implementation "com.electronwill.night-config:core:${rootProject.night_config_version}"
+    implementation "com.electronwill.night-config:toml:${rootProject.night_config_version}"
+}
