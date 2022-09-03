@@ -9,8 +9,8 @@
   "license": "LGPLv3",
   "environment": "*",
   "entrypoints": {
-    "main": [
-      "gg.moonflower.pollen.impl.fabric.ExampleFabric"
+    "client": [
+      "gg.moonflower.pollen.impl.pinwheel.fabric.PinwheelClientFabric"
     ]
   },
   "depends": {
@@ -18,12 +18,16 @@
   },
   "custom": {
     "modmenu": {
-      "badges": [ "library" ],
+      "badges": [
+        "library"
+      ],
       "parent": {
         "id": "pollen",
         "name": "Pollen",
         "description": "A minecraft library",
-        "badges": [ "library" ]
+        "badges": [
+          "library"
+        ]
       }
     }
   }

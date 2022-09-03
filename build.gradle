@@ -39,6 +39,14 @@ allprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven {
+            url "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"
+            content {
+                includeGroup "me.djtheredstoner"
+            }
+        }
+        maven { url "https://repo.moonflower.gg/releases"}
+        maven { url "https://jitpack.io" }
     }
 
     tasks.withType(JavaCompile) {

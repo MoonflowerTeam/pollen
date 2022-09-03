@@ -10,7 +10,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "gg.moonflower.pollen.impl.fabric.ExampleFabric"
+      "gg.moonflower.pollen.impl.example.fabric.ExampleFabric"
     ]
   },
   "depends": {

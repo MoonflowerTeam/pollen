@@ -1,3 +1,7 @@
 plugins {
     id "pollen.module.common"
 }
+
+dependencies {
+    api "com.github.Ocelot5836:molang-compiler:${rootProject.molang_compiler_version}"
+}
