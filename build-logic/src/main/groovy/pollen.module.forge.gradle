@@ -9,8 +9,17 @@ architectury {
     forge()
 }
 
+sourceSets {
+    testmod {
+        compileClasspath += main.compileClasspath
+        runtimeClasspath += main.runtimeClasspath
+    }
+}
+
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
+
+    testmodImplementation sourceSets.main.output
 
     common(project(path: commonProject, configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: commonProject, configuration: "transformProductionForge")) { transitive = false }

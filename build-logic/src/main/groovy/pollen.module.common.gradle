@@ -6,8 +6,25 @@ configurations {
     shadowCommon
 }
 
+loom {
+    splitEnvironmentSourceSets()
+}
+
+sourceSets {
+    testmod {
+        compileClasspath += main.compileClasspath
+        runtimeClasspath += main.runtimeClasspath
+
+        compileClasspath += client.compileClasspath
+        runtimeClasspath += client.runtimeClasspath
+    }
+}
+
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+
+    testmodImplementation sourceSets.main.output
+    testmodImplementation sourceSets.client.output
 }
 
 architectury {

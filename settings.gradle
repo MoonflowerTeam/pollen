@@ -12,6 +12,11 @@ rootProject.name = "pollen"
 
 includeBuild "build-logic"
 
-include "pollen-api-base:common"
-include "pollen-api-base:forge"
-include "pollen-api-base:fabric"
+module "pollen-api-base"
+module "pollen-pinwheel-api-v1"
+
+def module(String name) {
+    include "$name:common"
+    include "$name:forge"
+    include "$name:fabric"
+}

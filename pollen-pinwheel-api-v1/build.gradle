@@ -1,0 +1,9 @@
+plugins {
+    id "pollen.module"
+}
+
+pollen {
+    apiName = "pollen-pinwheel-api-v1"
+}
+
+version = rootProject.version

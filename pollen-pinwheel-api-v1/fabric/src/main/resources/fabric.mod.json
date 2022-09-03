@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "version": "${version}",
+  "name": "${name}",
+  "authors": [
+    "Moonflower"
+  ],
+  "license": "LGPLv3",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "gg.moonflower.pollen.impl.fabric.ExampleFabric"
+    ]
+  },
+  "depends": {
+    "minecraft": ">=1.18.2 <1.19"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": [ "library" ],
+      "parent": {
+        "id": "pollen",
+        "name": "Pollen",
+        "description": "A minecraft library",
+        "badges": [ "library" ]
+      }
+    }
+  }
+}
