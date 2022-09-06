@@ -4,6 +4,8 @@ plugins {
 
 pollen {
     apiName = "pollen-pinwheel-api-v1"
+
+    moduleDependency "pollen-api-base"
 }
 
 version = rootProject.version

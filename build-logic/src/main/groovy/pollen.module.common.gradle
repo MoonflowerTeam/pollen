@@ -6,6 +6,8 @@ configurations {
     shadowCommon
 }
 
+ext.pollenExtension = parent.extensions.getByName("pollen")
+
 loom {
     splitEnvironmentSourceSets()
 }
@@ -22,6 +24,12 @@ sourceSets {
 
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+
+    pollenExtension.moduleDependencies.get().forEach {
+        def moduleSource = findProject(":$it:${project.name}").sourceSets
+        implementation moduleSource.main.output
+        clientImplementation moduleSource.client.output
+    }
 
     testmodImplementation sourceSets.main.output
     testmodImplementation sourceSets.client.output

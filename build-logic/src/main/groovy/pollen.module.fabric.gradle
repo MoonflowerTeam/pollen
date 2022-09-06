@@ -30,6 +30,12 @@ dependencies {
     testmodImplementation sourceSets.main.output
     testmodImplementation sourceSets.client.output
 
+    pollenExtension.moduleDependencies.get().forEach {
+        def moduleSource = findProject(":$it:${project.name}").sourceSets
+        implementation moduleSource.main.output
+        clientImplementation moduleSource.client.output
+    }
+
     clientImplementation(project(commonProject).sourceSets.client.output)
     common(project(path: commonProject, configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: commonProject, configuration: "transformProductionFabric")) { transitive false }
