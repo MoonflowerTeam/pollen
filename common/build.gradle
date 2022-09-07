@@ -51,9 +51,22 @@ publishing {
     publications {
         mavenCommon(MavenPublication) {
             artifactId = project.archivesBaseName
+
             artifact remapJar
             artifact(sourcesJar) {
                 builtBy remapSourcesJar
+            }
+
+            pom.withXml {
+                def depsNode = asNode().appendNode('dependencies')
+                [this.configurations.modApi, this.configurations.api].each {
+                    it.allDependencies.each {
+                        def depNode = depsNode.appendNode('dependency')
+                        depNode.appendNode('groupId', it.group)
+                        depNode.appendNode('artifactId', it.name)
+                        depNode.appendNode('version', it.version)
+                    }
+                }
             }
         }
     }
