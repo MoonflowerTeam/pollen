@@ -46,8 +46,8 @@ dependencies {
     modImplementation "com.terraformersmc:modmenu:${rootProject.mod_menu_version}" // TODO: modApi when config gui is implemented
 
     // Common Dependencies
-    implementation "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
-    shadowCommon "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
+    implementation "com.github.MoonflowerTeam:molang-compiler:${project.molang_compiler_version}"
+    shadowCommon "com.github.MoonflowerTeam:molang-compiler:${project.molang_compiler_version}"
     implementation "com.electronwill.night-config:core:${project.night_config_version}"
     shadowCommon "com.electronwill.night-config:core:${project.night_config_version}"
     implementation "com.electronwill.night-config:toml:${project.night_config_version}"

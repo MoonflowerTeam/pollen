@@ -61,8 +61,8 @@ repositories {
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
 
-    forgeRuntimeLibrary implementation("com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}")
-    shadowCommon "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
+    forgeRuntimeLibrary implementation("com.github.MoonflowerTeam:molang-compiler:${project.molang_compiler_version}")
+    shadowCommon "com.github.MoonflowerTeam:molang-compiler:${project.molang_compiler_version}"
 
     forgeRuntimeLibrary implementation("com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}")
     shadowCommon "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
