@@ -1,6 +1,7 @@
 {
   "required": true,
   "package": "gg.moonflower.pollen.core.mixin",
+  "plugin": "gg.moonflower.pollen.core.PollenMixinPlugin",
   "compatibilityLevel": "JAVA_8",
   "minVersion": "0.8",
   "client": [
