@@ -73,6 +73,10 @@ dependencies {
     implementation "com.electronwill.night-config:toml:${project.night_config_version}"
     shadowCommon "com.electronwill.night-config:toml:${project.night_config_version}"
 
+    implementation "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
+    shadowCommon "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
+    annotationProcessor "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
+
     // Fabric-only Dependencies
     modApi "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cardinal_components_version}"
     modApi "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cardinal_components_version}"

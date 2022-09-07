@@ -64,6 +64,10 @@ dependencies {
     forgeRuntimeLibrary api("com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}")
     shadowCommon "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
 
+    forgeRuntimeLibrary implementation("com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}")
+    shadowCommon "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
+    annotationProcessor "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
+
     modRuntimeOnly "me.djtheredstoner:DevAuth-forge-latest:${rootProject.devauth_version}"
     modRuntimeOnly "curse.maven:configured-457570:3559398"
     modRuntimeOnly "curse.maven:catalogue-459701:3559402"
@@ -101,7 +105,6 @@ processResources {
 
 shadowJar {
     mergeServiceFiles()
-    exclude "fabric.mod.json"
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
@@ -111,7 +114,7 @@ shadowJar {
 }
 
 remapJar {
-    input.set shadowJar.archiveFile
+    inputFile.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier null
 }
