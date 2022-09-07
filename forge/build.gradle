@@ -61,8 +61,8 @@ repositories {
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
 
-    forgeRuntimeLibrary api("com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}")
-    shadowCommon "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
+    forgeRuntimeLibrary implementation("com.github.MoonflowerTeam:molang-compiler:${project.molang_compiler_version}")
+    shadowCommon "com.github.MoonflowerTeam:molang-compiler:${project.molang_compiler_version}"
 
     forgeRuntimeLibrary implementation("com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}")
     shadowCommon "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
@@ -143,6 +143,18 @@ publishing {
             artifact remapJar
             artifact(sourcesJar) {
                 builtBy remapSourcesJar
+            }
+
+            pom.withXml {
+                def depsNode = asNode().appendNode('dependencies')
+                [this.configurations.modApi, this.configurations.api].each {
+                    it.allDependencies.each {
+                        def depNode = depsNode.appendNode('dependency')
+                        depNode.appendNode('groupId', it.group)
+                        depNode.appendNode('artifactId', it.name)
+                        depNode.appendNode('version', it.version)
+                    }
+                }
             }
         }
     }
