@@ -1,9 +1,9 @@
 package gg.moonflower.pollen.impl.pinwheel;
 
 import com.mojang.logging.LogUtils;
+import gg.moonflower.pollen.api.base.OnlineRequest;
 import gg.moonflower.pollen.api.pinwheel.v1.FileCache;
 import gg.moonflower.pollen.api.pinwheel.v1.geometry.GeometryCache;
-import gg.moonflower.pollen.api.util.OnlineRequest;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 

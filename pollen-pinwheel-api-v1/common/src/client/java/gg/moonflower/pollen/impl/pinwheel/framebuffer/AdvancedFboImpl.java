@@ -148,6 +148,7 @@ public class AdvancedFboImpl implements AdvancedFbo {
         AdvancedFbo.unbindDraw();
         glDrawBuffer(GL_BACK);
         glBlitFramebuffer(0, 0, this.width, this.height, 0, 0, window.getWidth(), window.getHeight(), mask, filtering);
+        glDrawBuffer(GL_FRONT);
         AdvancedFbo.unbindRead();
     }
 
@@ -232,7 +233,7 @@ public class AdvancedFboImpl implements AdvancedFbo {
      * A vanilla {@link RenderTarget} wrapper of the {@link AdvancedFboImpl}.
      *
      * @author Ocelot
-     * @see AdvancedFboImpl
+     * @see AdvancedFbo
      * @since 3.0.0
      */
     public static class Wrapper extends TextureTarget {

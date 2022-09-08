@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.api.pinwheel.v1.texture;
 
-import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 
