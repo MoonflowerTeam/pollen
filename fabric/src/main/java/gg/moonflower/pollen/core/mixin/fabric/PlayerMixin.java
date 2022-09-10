@@ -32,14 +32,14 @@ public class PlayerMixin {
     public int modifyExp(int value) {
         MutableInt mutableXp = MutableInt.of(value);
         boolean event = PlayerEvents.EXP_CHANGE.invoker().expChange((Player) (Object) this, mutableXp);
-        return event ? mutableXp.getAsInt() : value;
+        return event ? mutableXp.getAsInt() : 0;
     }
 
     @ModifyVariable(method = "giveExperienceLevels", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     public int modifyLevels(int value) {
         MutableInt mutableLevels = MutableInt.of(value);
         boolean event = PlayerEvents.LEVEL_CHANGE.invoker().levelChange((Player) (Object) this, mutableLevels);
-        return event ? mutableLevels.getAsInt() : value;
+        return event ? mutableLevels.getAsInt() : 0;
     }
 
     @Inject(method = "die", at = @At("HEAD"), cancellable = true)
