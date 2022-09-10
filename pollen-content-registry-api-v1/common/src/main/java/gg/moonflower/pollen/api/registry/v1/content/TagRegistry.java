@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.api.registry.v1.content;
 
-import gg.moonflower.pollen.api.registry.v1.PollinatedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;

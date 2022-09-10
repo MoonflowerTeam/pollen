@@ -15,6 +15,7 @@ includeBuild "build-logic"
 module "pollen-api-base"
 module "pollen-pinwheel-api-v1"
 module "pollen-registry-api-v1"
+module "pollen-content-registry-api-v1"
 module "pollen-fluid-api-v1"
 
 def module(String name) {

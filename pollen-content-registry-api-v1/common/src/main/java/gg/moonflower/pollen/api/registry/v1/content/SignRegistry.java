@@ -2,7 +2,6 @@ package gg.moonflower.pollen.api.registry.v1.content;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.base.platform.Platform;
-import gg.moonflower.pollen.api.registry.v1.PollinatedBlockRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.properties.WoodType;
 

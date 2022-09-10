@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import gg.moonflower.pollen.api.base.platform.Platform;
-import gg.moonflower.pollen.impl.registry.PollinatedRegistryImpl;
+import gg.moonflower.pollen.impl.PollinatedRegistryImpl;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;

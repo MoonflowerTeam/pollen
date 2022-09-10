@@ -4,26 +4,17 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.*;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.base.platform.Platform;
-import gg.moonflower.pollen.api.registry.v1.PollinatedBlockRegistry;
-import gg.moonflower.pollen.api.registry.v1.PollinatedEntityRegistry;
-import gg.moonflower.pollen.api.registry.v1.PollinatedFluidRegistry;
-import gg.moonflower.pollen.api.registry.v1.PollinatedRegistry;
-import net.minecraft.core.DefaultedRegistry;
-import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 @ApiStatus.Internal
 public abstract class PollinatedRegistryImpl<T> implements PollinatedRegistry<T> {

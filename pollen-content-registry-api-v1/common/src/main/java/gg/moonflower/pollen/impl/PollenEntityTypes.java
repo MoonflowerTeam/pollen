@@ -1,7 +1,5 @@
 package gg.moonflower.pollen.impl;
 
-import gg.moonflower.pollen.api.registry.v1.PollinatedEntityRegistry;
-import gg.moonflower.pollen.api.registry.v1.PollinatedRegistry;
 import gg.moonflower.pollen.impl.entity.PollinatedBoat;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
