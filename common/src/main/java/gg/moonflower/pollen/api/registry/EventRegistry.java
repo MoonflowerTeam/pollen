@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.api.registry;
 
-import gg.moonflower.pollen.api.event.EventResult;
+import gg.moonflower.pollen.api.event.PollinatedEventResult;
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.core.event.PollinatedEventImpl;
 import net.minecraft.world.InteractionResult;
@@ -61,12 +61,12 @@ public final class EventRegistry {
     public static <T> PollinatedEvent<T> createEventResult(Class<? super T> type) {
         return create(type, events -> (T) Proxy.newProxyInstance(EventRegistry.class.getClassLoader(), new Class[]{type}, (proxy, method, args) -> {
             for (Object event : events) {
-                EventResult result = invokeFast(event, method, args);
-                if (result != EventResult.PASS) {
+                PollinatedEventResult result = invokeFast(event, method, args);
+                if (result != PollinatedEventResult.PASS) {
                     return result;
                 }
             }
-            return EventResult.PASS;
+            return PollinatedEventResult.PASS;
         }));
     }
 

@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.core.mixin.fabric;
 
-import gg.moonflower.pollen.api.event.EventResult;
+import gg.moonflower.pollen.api.event.PollinatedEventResult;
 import gg.moonflower.pollen.api.event.events.entity.living.PotionEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -23,7 +23,7 @@ public class SpiderMixin extends Monster {
 
     @Inject(method = "canBeAffected", at = @At("HEAD"), cancellable = true)
     public void canBeAffected(MobEffectInstance effectInstance, CallbackInfoReturnable<Boolean> cir) {
-        EventResult result = PotionEvents.APPLICABLE.invoker().applicable((LivingEntity) (Object) this, effectInstance);
-        cir.setReturnValue(effectInstance.getEffect() == MobEffects.POISON ? result == EventResult.ALLOW : super.canBeAffected(effectInstance));
+        PollinatedEventResult result = PotionEvents.APPLICABLE.invoker().applicable((LivingEntity) (Object) this, effectInstance);
+        cir.setReturnValue(effectInstance.getEffect() == MobEffects.POISON ? result == PollinatedEventResult.ALLOW : super.canBeAffected(effectInstance));
     }
 }

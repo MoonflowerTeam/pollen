@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.api.event.events.entity.living;
 
-import gg.moonflower.pollen.api.event.EventResult;
+import gg.moonflower.pollen.api.event.PollinatedEventResult;
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.world.effect.MobEffect;
@@ -32,9 +32,9 @@ public final class PotionEvents {
          *
          * @param entity         The entity that would receive the effect
          * @param effectInstance The effect to check if applicable
-         * @return The result for this event. {@link EventResult#PASS} will continue onto the next iteration, while any others will override vanilla behavior
+         * @return The result for this event. {@link PollinatedEventResult#PASS} will continue onto the next iteration, while any others will override vanilla behavior
          */
-        EventResult applicable(LivingEntity entity, MobEffectInstance effectInstance);
+        PollinatedEventResult applicable(LivingEntity entity, MobEffectInstance effectInstance);
     }
 
     /**

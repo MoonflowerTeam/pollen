@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.api.event.events.world;
 
-import gg.moonflower.pollen.api.event.EventResult;
+import gg.moonflower.pollen.api.event.PollinatedEventResult;
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.core.BlockPos;
@@ -36,9 +36,9 @@ public final class WorldEvents {
          * @param pos     The position of the block being bonemealed
          * @param state   The block being bonemealed
          * @param stack   The bonemeal ItemStack in the player's hand
-         * @return The result for this event. {@link EventResult#PASS} continues onto the next listener, while any others will override vanilla behavior
+         * @return The result for this event. {@link PollinatedEventResult#PASS} continues onto the next listener, while any others will override vanilla behavior
          */
-        EventResult bonemeal(Level level, BlockPos pos, BlockState state, ItemStack stack);
+        PollinatedEventResult bonemeal(Level level, BlockPos pos, BlockState state, ItemStack stack);
     }
 
     /**
@@ -56,8 +56,8 @@ public final class WorldEvents {
          * @param level The level the sapling is in
          * @param rand  An instance of {@link Random} for use in code
          * @param pos   The origin position of the sapling
-         * @return The result for this event. {@link EventResult#PASS} continues onto the next listener, while any others will override vanilla behavior
+         * @return The result for this event. {@link PollinatedEventResult#PASS} continues onto the next listener, while any others will override vanilla behavior
          */
-        EventResult interaction(LevelAccessor level, Random rand, BlockPos pos);
+        PollinatedEventResult interaction(LevelAccessor level, Random rand, BlockPos pos);
     }
 }

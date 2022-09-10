@@ -14,10 +14,10 @@ public final class FabricHooks {
     }
 
     public static int processBonemeal(Level level, BlockPos pos, BlockState state, ItemStack stack) {
-        EventResult result = WorldEvents.BONEMEAL.invoker().bonemeal(level, pos, state, stack);
-        if (result == EventResult.DENY) {
+        PollinatedEventResult result = WorldEvents.BONEMEAL.invoker().bonemeal(level, pos, state, stack);
+        if (result == PollinatedEventResult.DENY) {
             return -1;
-        } else if (result == EventResult.ALLOW) {
+        } else if (result == PollinatedEventResult.ALLOW) {
             if (!level.isClientSide) {
                 stack.shrink(1);
             }

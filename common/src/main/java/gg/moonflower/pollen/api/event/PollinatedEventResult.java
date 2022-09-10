@@ -6,7 +6,7 @@ package gg.moonflower.pollen.api.event;
  * @author ebo2022
  * @since 2.0.0
  */
-public enum EventResult {
+public enum PollinatedEventResult {
 
     /**
      * Represents a false outcome of an event. Usage varies depending on the event.

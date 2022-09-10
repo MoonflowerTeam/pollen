@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.core.forge;
 
-import gg.moonflower.pollen.api.event.EventResult;
+import gg.moonflower.pollen.api.event.PollinatedEventResult;
 import gg.moonflower.pollen.api.event.events.LootTableConstructingEvent;
 import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.ModifyTradesEvents;
@@ -16,7 +16,7 @@ import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
 import gg.moonflower.pollen.api.event.events.registry.CommandRegistryEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
 import gg.moonflower.pollen.api.event.events.world.ExplosionEvents;
-import gg.moonflower.pollen.api.event.events.world.LevelEvents;
+import gg.moonflower.pollen.api.event.events.lifecycle.LevelLoadingEvents;
 import gg.moonflower.pollen.api.event.events.world.WorldEvents;
 import gg.moonflower.pollen.api.util.value.MutableFloat;
 import gg.moonflower.pollen.api.util.value.MutableInt;
@@ -116,12 +116,12 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(WorldEvent.Load event) {
-        LevelEvents.LOAD.invoker().load(event.getWorld());
+        LevelLoadingEvents.LOAD.invoker().load(event.getWorld());
     }
 
     @SubscribeEvent
     public static void onEvent(WorldEvent.Unload event) {
-        LevelEvents.UNLOAD.invoker().unload(event.getWorld());
+        LevelLoadingEvents.UNLOAD.invoker().unload(event.getWorld());
     }
 
     @SubscribeEvent
@@ -198,16 +198,16 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.world.SaplingGrowTreeEvent event) {
-        EventResult result = WorldEvents.TREE_GROWING.invoker().interaction(event.getWorld(), event.getRand(), event.getPos());
+        PollinatedEventResult result = WorldEvents.TREE_GROWING.invoker().interaction(event.getWorld(), event.getRand(), event.getPos());
         event.setResult(convertResult(result));
     }
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.player.BonemealEvent event) {
-        EventResult result = WorldEvents.BONEMEAL.invoker().bonemeal(event.getWorld(), event.getPos(), event.getBlock(), event.getStack());
-        if (result == EventResult.DENY)
+        PollinatedEventResult result = WorldEvents.BONEMEAL.invoker().bonemeal(event.getWorld(), event.getPos(), event.getBlock(), event.getStack());
+        if (result == PollinatedEventResult.DENY)
             event.setCanceled(true);
-        if (result == EventResult.ALLOW)
+        else if (result == PollinatedEventResult.ALLOW)
             event.setResult(Event.Result.ALLOW);
     }
 
@@ -367,7 +367,7 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(PotionEvent.PotionApplicableEvent event) {
-        EventResult result = PotionEvents.APPLICABLE.invoker().applicable(event.getEntityLiving(), event.getPotionEffect());
+        PollinatedEventResult result = PotionEvents.APPLICABLE.invoker().applicable(event.getEntityLiving(), event.getPotionEffect());
         event.setResult(convertResult(result));
     }
 
@@ -387,20 +387,20 @@ public class PollenCommonForgeEvents {
         PotionEvents.EXPIRE.invoker().expire(event.getEntityLiving(), event.getPotionEffect());
     }
 
-    public static EventResult convertResult(Event.Result result) {
+    public static PollinatedEventResult convertResult(Event.Result result) {
         switch (result) {
             case DENY:
-                return EventResult.DENY;
+                return PollinatedEventResult.DENY;
             case ALLOW:
-                return EventResult.ALLOW;
+                return PollinatedEventResult.ALLOW;
             case DEFAULT:
-                return EventResult.PASS;
+                return PollinatedEventResult.PASS;
             default:
                 throw new UnsupportedOperationException("Unknown event result type: " + result);
         }
     }
 
-    public static Event.Result convertResult(EventResult result) {
+    public static Event.Result convertResult(PollinatedEventResult result) {
         switch (result) {
             case DENY:
                 return Event.Result.DENY;

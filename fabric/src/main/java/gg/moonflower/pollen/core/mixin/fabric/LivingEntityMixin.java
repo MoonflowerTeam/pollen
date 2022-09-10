@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.core.mixin.fabric;
 
-import gg.moonflower.pollen.api.event.EventResult;
+import gg.moonflower.pollen.api.event.PollinatedEventResult;
 import gg.moonflower.pollen.api.event.events.entity.living.LivingEntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.living.PotionEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.TickEvents;
@@ -19,7 +19,6 @@ import net.minecraft.world.level.material.Fluid;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -44,38 +43,30 @@ public abstract class LivingEntityMixin extends Entity {
     @Final
     private Map<MobEffect, MobEffectInstance> activeEffects;
 
-    @Unique
-    private DamageSource captureDamageSource;
-
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     public void tick(CallbackInfo ci) {
         if (!TickEvents.LIVING_PRE.invoker().tick((LivingEntity) (Object) this))
             ci.cancel();
     }
 
-    @Inject(method = "actuallyHurt", at = @At("HEAD"))
-    public void captureArgs(DamageSource damageSource, float damageAmount, CallbackInfo ci) {
-        captureDamageSource = damageSource;
+    @ModifyVariable(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getHealth()F", shift = At.Shift.BEFORE), ordinal = 0, argsOnly = true)
+    public float modifyDamageAmount(float value, DamageSource damageSource) {
+        MutableFloat mutableDamage = MutableFloat.of(value);
+        boolean event = LivingEntityEvents.DAMAGE.invoker().livingDamage((LivingEntity) (Object) this, damageSource, mutableDamage);
+        return event ? mutableDamage.getAsFloat() : 0.0F;
     }
 
-    @ModifyVariable(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getHealth()F", shift = At.Shift.BEFORE), ordinal = 0, argsOnly = true)
-    public float modifyDamageAmount(float value) {
-        MutableFloat modifiableDamage = MutableFloat.of(value);
-        boolean event = LivingEntityEvents.DAMAGE.invoker().livingDamage((LivingEntity) (Object) this, captureDamageSource, modifiableDamage);
-        return event ? modifiableDamage.getAsFloat() : 0.0F;
+    @ModifyVariable(method = "heal", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+    public float modifyHealAmount(float value) {
+        MutableFloat mutableRegen = MutableFloat.of(value);
+        boolean event = LivingEntityEvents.HEAL.invoker().heal((LivingEntity) (Object) this, mutableRegen);
+        return event ? mutableRegen.getAsFloat() : 0.0F;
     }
 
     @Inject(method = "die", at = @At("HEAD"), cancellable = true)
     public void die(DamageSource damageSource, CallbackInfo ci) {
         if (!LivingEntityEvents.DEATH.invoker().death((LivingEntity) (Object) this, damageSource))
             ci.cancel();
-    }
-
-    @ModifyVariable(method = "heal", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-    public float modifyHealAmount(float value) {
-        MutableFloat modifiableHealAmount = MutableFloat.of(value);
-        boolean event = LivingEntityEvents.HEAL.invoker().heal((LivingEntity) (Object) this, modifiableHealAmount);
-        return event ? modifiableHealAmount.getAsFloat() : 0.0F;
     }
 
     @Inject(method = "tickEffects", at = @At(value = "INVOKE", target = "Ljava/util/Iterator;remove()V", shift = At.Shift.BEFORE))
@@ -94,9 +85,9 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "canBeAffected", at = @At("HEAD"), cancellable = true)
     public void canBeAffected(MobEffectInstance effectInstance, CallbackInfoReturnable<Boolean> cir) {
-        EventResult result = PotionEvents.APPLICABLE.invoker().applicable((LivingEntity) (Object) this, effectInstance);
-        if (result != EventResult.PASS)
-            cir.setReturnValue(result == EventResult.ALLOW);
+        PollinatedEventResult result = PotionEvents.APPLICABLE.invoker().applicable((LivingEntity) (Object) this, effectInstance);
+        if (result != PollinatedEventResult.PASS)
+            cir.setReturnValue(result == PollinatedEventResult.ALLOW);
     }
 
     @Inject(method = "removeEffect", at = @At("HEAD"), cancellable = true)

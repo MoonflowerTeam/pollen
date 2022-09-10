@@ -1,15 +1,15 @@
-package gg.moonflower.pollen.api.event.events.world;
+package gg.moonflower.pollen.api.event.events.lifecycle;
 
 import gg.moonflower.pollen.api.event.PollinatedEvent;
 import gg.moonflower.pollen.api.registry.EventRegistry;
 import net.minecraft.world.level.LevelAccessor;
 
-public final class LevelEvents {
+public final class LevelLoadingEvents {
 
     public static final PollinatedEvent<Load> LOAD = EventRegistry.createLoop(Load.class);
     public static final PollinatedEvent<Unload> UNLOAD = EventRegistry.createLoop(Unload.class);
 
-    private LevelEvents() {
+    private LevelLoadingEvents() {
     }
 
     /**
