@@ -1,0 +1,12 @@
+plugins {
+    id "pollen.module"
+}
+
+pollen {
+    apiName = "pollen-registry-api-v1"
+
+    moduleDependency "pollen-api-base"
+    moduleDependency "pollen-fluid-api-v1"
+}
+
+version = rootProject.version

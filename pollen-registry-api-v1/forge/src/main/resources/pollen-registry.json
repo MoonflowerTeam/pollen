@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "gg.moonflower.pollen.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "mixins": [
+    "EntityMixin",
+    "ForgeHooksMixin",
+    "LivingEntityMixin",
+    "EntityAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

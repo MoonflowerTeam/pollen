@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "gg.moonflower.pollen.mixin.fabric.client",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "mixins": [
+    "LivingEntityRendererMixin",
+    "ClientLevelMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
