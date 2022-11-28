@@ -688,7 +688,7 @@ public class AnimationData {
                 /* Parse global animation properties */
                 String animationName = animationEntry.getKey();
                 Loop loop = animationObject.has("loop") ? parseLoop(animationObject.get("loop")) : Loop.NONE; // bool
-                MolangExpression blendWeight = JSONTupleParser.getExpression(animationObject, "blend_weight", () -> MolangExpression.of(1.0F)); // expression TODO Molang
+                MolangExpression blendWeight = JSONTupleParser.getExpression(animationObject, "blend_weight", () -> MolangExpression.of(1.0F)); // expression
                 float animationLength = GsonHelper.getAsFloat(animationObject, "animation_length", -1); // float
                 boolean overridePreviousAnimation = GsonHelper.getAsBoolean(animationObject, "override_previous_animation", false); // bool
                 Set<BoneAnimation> bones = new HashSet<>();

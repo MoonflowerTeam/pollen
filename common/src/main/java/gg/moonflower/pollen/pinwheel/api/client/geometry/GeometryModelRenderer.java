@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTexture;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
+import gg.moonflower.pollen.pinwheel.core.client.particle.CachedBufferSource;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -17,7 +18,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * <p>Manages the caching of model fields and renders {@link GeometryModel}.</p>
+ * Manages the caching of model fields and renders {@link GeometryModel}.
  *
  * @author Ocelot
  * @since 1.0.0
@@ -26,6 +27,7 @@ public final class GeometryModelRenderer {
 
     private static final Map<Model, Map<String, ModelPart>> MODEL_PARTS = new HashMap<>();
     private static final Map<String, String> MAPPED_NAMES = new HashMap<>();
+    private static final CachedBufferSource CACHED_BUFFER_SOURCE = new CachedBufferSource();
 
     private GeometryModelRenderer() {
     }
@@ -92,6 +94,13 @@ public final class GeometryModelRenderer {
                 model.render(material, texture, matrixStack, model.getBuffer(buffer, GeometryTextureManager.getAtlas(), texture, renderTypeConsumer), texture.isGlowing() ? 15728880 : packedLight, packedOverlay, red * texture.getRed(), green * texture.getGreen(), blue * texture.getBlue(), alpha);
             }
         }
+    }
+
+    /**
+     * @return A special buffer source optimized for few render types
+     */
+    public static CachedBufferSource getCachedBufferSource() {
+        return CACHED_BUFFER_SOURCE;
     }
 
     private static Map<String, ModelPart> mapRenderers(Model model) {

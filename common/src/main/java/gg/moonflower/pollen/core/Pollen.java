@@ -8,7 +8,12 @@ import gg.moonflower.pollen.api.config.ConfigManager;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.crafting.PollenRecipeTypes;
 import gg.moonflower.pollen.api.entity.PollenEntityTypes;
+import gg.moonflower.pollen.api.event.events.client.render.RenderParticleEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
+import gg.moonflower.pollen.api.event.events.registry.client.ParticleFactoryRegistryEvent;
+import gg.moonflower.pollen.pinwheel.core.client.particle.CustomParticleInstanceImpl;
+import gg.moonflower.pollen.pinwheel.core.client.particle.CustomParticleEmitterImpl;
+import gg.moonflower.pollen.api.particle.PollenParticles;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.ResourceConditionRegistry;
 import gg.moonflower.pollen.api.registry.client.EntityRendererRegistry;
@@ -25,7 +30,9 @@ import gg.moonflower.pollen.core.resource.condition.ConfigResourceCondition;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.VanillaModelMapping;
+import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleManager;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
+import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.server.MinecraftServer;
@@ -62,12 +69,17 @@ public class Pollen {
         GeometryModelManager.init();
         GeometryTextureManager.init();
         AnimationManager.init();
+        CustomParticleManager.init();
         PollenShaderTypes.init();
         GeometryModelManager.addLoader(new CosmeticModelLoader());
         GeometryTextureManager.addProvider(new CosmeticTextureLoader());
         DebugInputs.init();
         EntitlementManager.init();
         EntityRendererRegistry.register(PollenEntityTypes.BOAT, PollinatedBoatRenderer::new);
+        ParticleFactoryRegistryEvent.EVENT.register(registry -> registry.register(PollenParticles.CUSTOM.get(), new CustomParticleEmitterImpl.Provider()));
+        RenderParticleEvents.PRE.register((context, bufferSource, lightTexture, camera, partialTicks) -> {
+            context.addRenderTypeAfter(ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT, CustomParticleInstanceImpl.GEOMETRY_SHEET);
+        });
 
         if (TESTS_ENABLED)
             PollenTest.onClient();
@@ -81,6 +93,7 @@ public class Pollen {
         PollenRecipeTypes.RECIPE_SERIALIZERS.register(PLATFORM);
         PollenRecipeTypes.RECIPES.register(PLATFORM);
         PollenEntityTypes.ENTITY_TYPES.register(PLATFORM);
+        PollenParticles.PARTICLE_TYPES.register(PLATFORM);
         if (TESTS_ENABLED)
             PollenTest.onCommon();
     }

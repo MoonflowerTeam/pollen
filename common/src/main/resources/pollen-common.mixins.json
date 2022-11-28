@@ -22,6 +22,7 @@
     "client.ModelBakeryMixin",
     "client.ModelManagerMixin",
     "client.MouseHandlerMixin",
+    "client.ParticleEngineMixin",
     "client.SkinCustomizationScreenMixin",
     "client.WolfAccessor"
   ],
