@@ -114,7 +114,7 @@ public class ParticleAppearanceBillboardComponent implements CustomParticleCompo
                 float xRot = (float) Mth.atan2(dy, Math.sqrt(dx * dx + dz * dz));
                 Quaternion rotation = renderProperties.getRotation();
                 rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
-                rotation.mul(Vector3f.YN.rotation(90 + yRot));
+                rotation.mul(Vector3f.YN.rotation((float) (Math.PI / 2F) + yRot));
                 rotation.mul(Vector3f.XP.rotation(xRot));
             }
             case LOOK_AT_Y -> {
@@ -123,7 +123,7 @@ public class ParticleAppearanceBillboardComponent implements CustomParticleCompo
                 float yRot = (float) Mth.atan2(dz, dx);
                 Quaternion rotation = renderProperties.getRotation();
                 rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
-                rotation.mul(Vector3f.YN.rotation(90 + yRot));
+                rotation.mul(Vector3f.YN.rotation((float) (Math.PI / 2F) + yRot));
             }
             case DIRECTION_X -> {
                 int factor = particle.getSpeed() > this.minSpeedThreshold ? 1 : 0;
@@ -148,8 +148,8 @@ public class ParticleAppearanceBillboardComponent implements CustomParticleCompo
                 float xRot = (float) Mth.atan2(dy, Math.sqrt(dx * dx + dz * dz));
                 Quaternion rotation = renderProperties.getRotation();
                 rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
-                rotation.mul(Vector3f.YN.rotation(yRot - 90));
-                rotation.mul(Vector3f.XN.rotation(xRot - 90));
+                rotation.mul(Vector3f.YN.rotation(yRot - (float) (Math.PI / 2F)));
+                rotation.mul(Vector3f.XN.rotation(xRot - (float) (Math.PI / 2F)));
             }
             case DIRECTION_Z -> {
                 int factor = particle.getSpeed() > this.minSpeedThreshold ? 1 : 0;
@@ -161,7 +161,7 @@ public class ParticleAppearanceBillboardComponent implements CustomParticleCompo
                 float xRot = (float) Mth.atan2(dy, Math.sqrt(dx * dx + dz * dz));
                 Quaternion rotation = renderProperties.getRotation();
                 rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
-                rotation.mul(Vector3f.YN.rotation(90 + yRot));
+                rotation.mul(Vector3f.YN.rotation((float) (Math.PI / 2F) + yRot));
                 rotation.mul(Vector3f.XP.rotation(xRot));
             }
         }

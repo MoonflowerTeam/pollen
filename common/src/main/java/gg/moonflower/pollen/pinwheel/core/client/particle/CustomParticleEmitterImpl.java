@@ -8,7 +8,6 @@ import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleEmitter;
 import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomParticleComponent;
 import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomParticleComponentType;
-import gg.moonflower.pollen.pinwheel.api.common.particle.component.ParticleLifetimeEventComponent;
 import gg.moonflower.pollen.pinwheel.api.common.particle.event.ParticleEvent;
 import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomEmitterListener;
 import gg.moonflower.pollen.pinwheel.api.common.particle.render.CustomParticleRenderProperties;
@@ -25,7 +24,7 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -39,12 +38,17 @@ import java.util.Set;
 @ApiStatus.Internal
 public class CustomParticleEmitterImpl extends CustomParticleImpl implements CustomParticleEmitter {
 
+    @Nullable
+    private final Entity entity;
     private final Set<CustomEmitterListener> listeners;
     private final Set<CustomParticle> particles;
-    private final boolean allowLoop;
 
-    public CustomParticleEmitterImpl(ClientLevel clientLevel, double x, double y, double z, ResourceLocation name, boolean allowLoop) {
-        super(clientLevel, x, y, z, name, particle -> {
+    public CustomParticleEmitterImpl(Entity entity, ResourceLocation name) {
+        this(entity, (ClientLevel) entity.level, entity.getX(), entity.getY(), entity.getZ(), name);
+    }
+
+    public CustomParticleEmitterImpl(@Nullable Entity entity, ClientLevel level, double x, double y, double z, ResourceLocation name) {
+        super(level, x, y, z, name, particle -> {
             particle.data.curves().forEach((variable, curve) -> {
                 String[] parts = variable.split("\\.", 2);
                 String varName = parts.length > 1 ? parts[1] : parts[0];
@@ -69,9 +73,9 @@ public class CustomParticleEmitterImpl extends CustomParticleImpl implements Cus
             });
             return MolangRuntime.runtime().setVariable("entity_scale", MolangVariable.create(1.0F)).setVariables(particle);
         });
+        this.entity = entity;
         this.listeners = new HashSet<>();
         this.particles = new HashSet<>();
-        this.allowLoop = allowLoop;
     }
 
     @Override
@@ -113,15 +117,9 @@ public class CustomParticleEmitterImpl extends CustomParticleImpl implements Cus
 
     @Override
     public void restart() {
-        if (this.allowLoop) {
-            this.age = 0;
-            this.lifetime.setValue(0);
-            this.particles.forEach(CustomParticle::expire);
-            this.particles.clear();
-            this.listeners.forEach(listener -> listener.onLoop(this));
-        } else {
-            this.remove();
-        }
+        this.age = 0;
+        this.lifetime.setValue(0);
+        this.listeners.forEach(listener -> listener.onLoop(this));
     }
 
     @Override
@@ -155,6 +153,12 @@ public class CustomParticleEmitterImpl extends CustomParticleImpl implements Cus
     @Override
     public int getSpawnedParticles() {
         return this.particles.size();
+    }
+
+    @Nullable
+    @Override
+    public Entity getEntity() {
+        return entity;
     }
 
     @Override
@@ -199,11 +203,16 @@ public class CustomParticleEmitterImpl extends CustomParticleImpl implements Cus
         return false;
     }
 
+    @Override
+    public CustomParticleEmitter getEmitter() {
+        return this;
+    }
+
     public static class Provider implements ParticleProvider<CustomParticleOption> {
 
         @Override
         public Particle createParticle(CustomParticleOption type, ClientLevel clientLevel, double x, double y, double z, double motionX, double motionY, double motionZ) {
-            return new CustomParticleEmitterImpl(clientLevel, x, y, z, type.getName(), false);
+            return new CustomParticleEmitterImpl(null, clientLevel, x, y, z, type.getName());
         }
     }
 }

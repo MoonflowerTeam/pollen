@@ -2,6 +2,8 @@ package gg.moonflower.pollen.pinwheel.api.client.particle;
 
 import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomEmitterListener;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * An emitter for {@link CustomParticle}.
@@ -87,4 +89,10 @@ public interface CustomParticleEmitter extends CustomParticle {
      * @return The number of particles spawned
      */
     int getSpawnedParticles();
+
+    /**
+     * @return The entity this emitter is attached to or <code>null</code> if freestanding
+     */
+    @Nullable
+    Entity getEntity();
 }

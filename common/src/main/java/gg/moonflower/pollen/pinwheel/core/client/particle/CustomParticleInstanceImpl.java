@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.math.*;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelRenderer;
+import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleEmitter;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryAtlasTexture;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
 import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomParticleComponent;
@@ -63,6 +64,7 @@ public class CustomParticleInstanceImpl extends CustomParticleImpl {
     };
     private static final PoseStack MATRIX_STACK = new PoseStack();
 
+    private final CustomParticleEmitter emitter;
     private final Set<CustomParticleRenderComponent> renderComponents;
 
     @Nullable
@@ -77,6 +79,7 @@ public class CustomParticleInstanceImpl extends CustomParticleImpl {
             });
             return MolangRuntime.runtime(emitter.getRuntimeBuilder()).setVariables(particle);
         });
+        this.emitter = emitter;
         this.renderComponents = new HashSet<>();
     }
 
@@ -237,5 +240,10 @@ public class CustomParticleInstanceImpl extends CustomParticleImpl {
     @Override
     public boolean isParticle() {
         return true;
+    }
+
+    @Override
+    public CustomParticleEmitter getEmitter() {
+        return emitter;
     }
 }

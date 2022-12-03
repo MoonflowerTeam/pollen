@@ -296,4 +296,9 @@ public interface CustomParticle {
      * @return If this particle is an actual particle instead of an emitter
      */
     boolean isParticle();
+
+    /**
+     * @return The emitter this particle came from if {@link #isParticle()} is <code>true</code>, otherwise this particle
+     */
+    CustomParticleEmitter getEmitter();
 }
