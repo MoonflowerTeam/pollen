@@ -263,11 +263,12 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
         float clampedAnimationTime = animationTime % AnimatedModel.getAnimationLength(animationTime, animations);
 
         this.transformations.values().forEach(AnimatedModelPart.AnimationPose::reset);
-        MolangCache cache = MOLANG_CACHE.get();
-        cache.setRuntime(runtime.create());
+        MolangCache environment = MOLANG_CACHE.get();
+        environment.setRuntime(runtime.create());
         for (int i = 0; i < animations.length; i++) {
             AnimationData animation = animations[i];
-            float blendWeight = cache.resolve(1, animation.getBlendWeight());
+            environment.setThisValue(1);
+            float blendWeight = environment.resolve(animation.getBlendWeight());
             if (i < weights.length)
                 blendWeight *= weights[i];
             if (Math.abs(blendWeight) <= 1E-6) // No need to add if weight is 0
@@ -282,14 +283,14 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
                 POSITION.set(0, 0, 0);
                 ROTATION.set(0, 0, 0);
                 SCALE.set(1, 1, 1);
-                get(localAnimationTime, cache, 0, boneAnimation.getPositionFrames(), POSITION);
-                get(localAnimationTime, cache, 0, boneAnimation.getRotationFrames(), ROTATION);
-                get(localAnimationTime, cache, 1, boneAnimation.getScaleFrames(), SCALE);
+                get(localAnimationTime, environment, 0, boneAnimation.getPositionFrames(), POSITION);
+                get(localAnimationTime, environment, 0, boneAnimation.getRotationFrames(), ROTATION);
+                get(localAnimationTime, environment, 1, boneAnimation.getScaleFrames(), SCALE);
 
                 this.transformations.computeIfAbsent(boneAnimation.getName(), key -> new AnimatedModelPart.AnimationPose()).add(POSITION.x() * blendWeight, POSITION.y() * blendWeight, POSITION.z() * blendWeight, ROTATION.x() * blendWeight, ROTATION.y() * blendWeight, ROTATION.z() * blendWeight, (SCALE.x() - 1) * blendWeight, (SCALE.y() - 1) * blendWeight, (SCALE.z() - 1) * blendWeight);
             }
         }
-        cache.clear();
+        environment.clear();
         this.transformations.forEach((name, pose) ->
         {
             AnimatedModelPart.AnimationPose p = this.modelParts.get(name).getAnimationPose();
@@ -349,22 +350,22 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
         result.set(x, y, z);
     }
 
-    private static void catmullRom(float progress, MolangCache cache, float startValue, @Nullable AnimationData.KeyFrame before, @Nullable AnimationData.KeyFrame from, AnimationData.KeyFrame to, @Nullable AnimationData.KeyFrame after, Vector3f result) {
-        float fromX = from == null ? startValue : cache.resolve(from.getTransformPostX());
-        float fromY = from == null ? startValue : cache.resolve(from.getTransformPostY());
-        float fromZ = from == null ? startValue : cache.resolve(from.getTransformPostZ());
+    private static void catmullRom(float progress, MolangEnvironment cache, float startValue, @Nullable AnimationData.KeyFrame before, @Nullable AnimationData.KeyFrame from, AnimationData.KeyFrame to, @Nullable AnimationData.KeyFrame after, Vector3f result) {
+        float fromX = from == null ? startValue : cache.safeResolve(from.getTransformPostX());
+        float fromY = from == null ? startValue : cache.safeResolve(from.getTransformPostY());
+        float fromZ = from == null ? startValue : cache.safeResolve(from.getTransformPostZ());
 
-        float beforeX = before == null ? fromX : cache.resolve(before.getTransformPostX());
-        float beforeY = before == null ? fromY : cache.resolve(before.getTransformPostY());
-        float beforeZ = before == null ? fromZ : cache.resolve(before.getTransformPostZ());
+        float beforeX = before == null ? fromX : cache.safeResolve(before.getTransformPostX());
+        float beforeY = before == null ? fromY : cache.safeResolve(before.getTransformPostY());
+        float beforeZ = before == null ? fromZ : cache.safeResolve(before.getTransformPostZ());
 
-        float toX = cache.resolve(to.getTransformPreX());
-        float toY = cache.resolve(to.getTransformPreY());
-        float toZ = cache.resolve(to.getTransformPreZ());
+        float toX = cache.safeResolve(to.getTransformPreX());
+        float toY = cache.safeResolve(to.getTransformPreY());
+        float toZ = cache.safeResolve(to.getTransformPreZ());
 
-        float afterX = after == null ? toX : cache.resolve(after.getTransformPreX());
-        float afterY = after == null ? toY : cache.resolve(after.getTransformPreY());
-        float afterZ = after == null ? toZ : cache.resolve(after.getTransformPreZ());
+        float afterX = after == null ? toX : cache.safeResolve(after.getTransformPreX());
+        float afterY = after == null ? toY : cache.safeResolve(after.getTransformPreY());
+        float afterZ = after == null ? toZ : cache.safeResolve(after.getTransformPreZ());
 
         result.set(catmullRom(beforeX, fromX, toX, afterX, progress), catmullRom(beforeY, fromY, toY, afterY, progress), catmullRom(beforeZ, fromZ, toZ, afterZ, progress));
     }
