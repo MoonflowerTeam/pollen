@@ -28,11 +28,6 @@ public interface CustomParticleComponent {
     void tick(CustomParticle particle);
 
     /**
-     * @return The type of component this is
-     */
-    CustomParticleComponentType<?> type();
-
-    /**
      * Reads all event references in the specified json.
      *
      * @param json The json to read references from

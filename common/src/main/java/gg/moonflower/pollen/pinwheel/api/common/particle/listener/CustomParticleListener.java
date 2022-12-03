@@ -40,9 +40,9 @@ public interface CustomParticleListener {
      * Called when the particle collides with a block.
      *
      * @param particle The particle colliding
-     * @param x If the collision was in the x axis
-     * @param y If the collision was in the y axis
-     * @param z If the collision was in the z axis
+     * @param x        If the collision was in the x axis
+     * @param y        If the collision was in the y axis
+     * @param z        If the collision was in the z axis
      */
     default void onCollide(CustomParticle particle, boolean x, boolean y, boolean z) {
     }
@@ -51,13 +51,10 @@ public interface CustomParticleListener {
      * Called when the particle moves.
      *
      * @param particle The particle to move
-     * @param oldX     The x position before moving
-     * @param oldY     The y position before moving
-     * @param oldZ     The z position before moving
-     * @param x        The current x position
-     * @param y        The current y position
-     * @param z        The current z position
+     * @param dx       The offset in the x
+     * @param dy       The offset in the y
+     * @param dz       The offset in the z
      */
-    default void onMove(CustomParticle particle, double oldX, double oldY, double oldZ, double x, double y, double z) {
+    default void onMove(CustomParticle particle, double dx, double dy, double dz) {
     }
 }

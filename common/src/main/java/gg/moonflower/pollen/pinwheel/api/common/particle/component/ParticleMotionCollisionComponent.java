@@ -2,12 +2,10 @@ package gg.moonflower.pollen.pinwheel.api.common.particle.component;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import gg.moonflower.pollen.api.particle.PollenParticleComponents;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
 import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomParticleListener;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
-import net.minecraft.core.Direction;
 import net.minecraft.util.GsonHelper;
 
 /**
@@ -59,10 +57,5 @@ public class ParticleMotionCollisionComponent implements CustomParticleComponent
         for (String event : this.events) {
             particle.runEvent(event);
         }
-    }
-
-    @Override
-    public CustomParticleComponentType<?> type() {
-        return PollenParticleComponents.PARTICLE_MOTION_COLLISION.get();
     }
 }

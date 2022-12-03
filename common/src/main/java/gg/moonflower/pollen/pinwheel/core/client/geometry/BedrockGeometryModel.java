@@ -264,9 +264,10 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
 
         this.transformations.values().forEach(AnimatedModelPart.AnimationPose::reset);
         MolangCache cache = MOLANG_CACHE.get();
+        cache.setRuntime(runtime.create());
         for (int i = 0; i < animations.length; i++) {
             AnimationData animation = animations[i];
-            float blendWeight = cache.resolve(runtime, 1, animation.getBlendWeight());
+            float blendWeight = cache.resolve(1, animation.getBlendWeight());
             if (i < weights.length)
                 blendWeight *= weights[i];
             if (Math.abs(blendWeight) <= 1E-6) // No need to add if weight is 0
@@ -281,9 +282,9 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
                 POSITION.set(0, 0, 0);
                 ROTATION.set(0, 0, 0);
                 SCALE.set(1, 1, 1);
-                get(localAnimationTime, cache, cache.get(runtime, 0), 0, boneAnimation.getPositionFrames(), POSITION);
-                get(localAnimationTime, cache, cache.get(runtime, 0), 0, boneAnimation.getRotationFrames(), ROTATION);
-                get(localAnimationTime, cache, cache.get(runtime, 1), 1, boneAnimation.getScaleFrames(), SCALE);
+                get(localAnimationTime, cache, 0, boneAnimation.getPositionFrames(), POSITION);
+                get(localAnimationTime, cache, 0, boneAnimation.getRotationFrames(), ROTATION);
+                get(localAnimationTime, cache, 1, boneAnimation.getScaleFrames(), SCALE);
 
                 this.transformations.computeIfAbsent(boneAnimation.getName(), key -> new AnimatedModelPart.AnimationPose()).add(POSITION.x() * blendWeight, POSITION.y() * blendWeight, POSITION.z() * blendWeight, ROTATION.x() * blendWeight, ROTATION.y() * blendWeight, ROTATION.z() * blendWeight, (SCALE.x() - 1) * blendWeight, (SCALE.y() - 1) * blendWeight, (SCALE.z() - 1) * blendWeight);
             }
@@ -311,11 +312,12 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
         return activeMaterial;
     }
 
-    private static void get(float animationTime, MolangCache cache, MolangEnvironment environment, float startValue, AnimationData.KeyFrame[] frames, Vector3f result) {
+    private static void get(float animationTime, MolangCache cache, float startValue, AnimationData.KeyFrame[] frames, Vector3f result) {
+        cache.getRuntime().setThisValue(startValue);
         if (frames.length == 1) {
-            float x = cache.resolve(environment, frames[0].getTransformPostX());
-            float y = cache.resolve(environment, frames[0].getTransformPostY());
-            float z = cache.resolve(environment, frames[0].getTransformPostZ());
+            float x = cache.resolve(frames[0].getTransformPostX());
+            float y = cache.resolve(frames[0].getTransformPostY());
+            float z = cache.resolve(frames[0].getTransformPostZ());
             result.set(x, y, z);
             return;
         }
@@ -328,41 +330,41 @@ public class BedrockGeometryModel extends Model implements GeometryModel, Animat
             AnimationData.KeyFrame from = i == 0 ? null : frames[i - 1];
             float progress = (from == null ? animationTime / to.getTime() : Math.min(1.0F, (animationTime - from.getTime()) / (to.getTime() - from.getTime())));
             if (to.getLerpMode() == AnimationData.LerpMode.CATMULLROM) {
-                catmullRom(progress, cache, environment, startValue, i > 1 ? frames[i - 2] : null, from, to, i < frames.length - 1 ? frames[i + 1] : null, result);
+                catmullRom(progress, cache, startValue, i > 1 ? frames[i - 2] : null, from, to, i < frames.length - 1 ? frames[i + 1] : null, result);
             } else {
-                lerp(to.getLerpMode().apply(progress), cache, environment, startValue, from, to, result);
+                lerp(to.getLerpMode().apply(progress), cache, startValue, from, to, result);
             }
             break;
         }
     }
 
-    private static void lerp(float progress, MolangCache cache, MolangEnvironment environment, float startValue, @Nullable AnimationData.KeyFrame from, AnimationData.KeyFrame to, Vector3f result) {
-        float fromX = from == null ? startValue : cache.resolve(environment, from.getTransformPostX());
-        float fromY = from == null ? startValue : cache.resolve(environment, from.getTransformPostY());
-        float fromZ = from == null ? startValue : cache.resolve(environment, from.getTransformPostZ());
+    private static void lerp(float progress, MolangCache cache, float startValue, @Nullable AnimationData.KeyFrame from, AnimationData.KeyFrame to, Vector3f result) {
+        float fromX = from == null ? startValue : cache.resolve(from.getTransformPostX());
+        float fromY = from == null ? startValue : cache.resolve(from.getTransformPostY());
+        float fromZ = from == null ? startValue : cache.resolve(from.getTransformPostZ());
 
-        float x = Mth.lerp(progress, fromX, cache.resolve(environment, to.getTransformPreX()));
-        float y = Mth.lerp(progress, fromY, cache.resolve(environment, to.getTransformPreY()));
-        float z = Mth.lerp(progress, fromZ, cache.resolve(environment, to.getTransformPreZ()));
+        float x = Mth.lerp(progress, fromX, cache.resolve(to.getTransformPreX()));
+        float y = Mth.lerp(progress, fromY, cache.resolve(to.getTransformPreY()));
+        float z = Mth.lerp(progress, fromZ, cache.resolve(to.getTransformPreZ()));
         result.set(x, y, z);
     }
 
-    private static void catmullRom(float progress, MolangCache cache, MolangEnvironment environment, float startValue, @Nullable AnimationData.KeyFrame before, @Nullable AnimationData.KeyFrame from, AnimationData.KeyFrame to, @Nullable AnimationData.KeyFrame after, Vector3f result) {
-        float fromX = from == null ? startValue : cache.resolve(environment, from.getTransformPostX());
-        float fromY = from == null ? startValue : cache.resolve(environment, from.getTransformPostY());
-        float fromZ = from == null ? startValue : cache.resolve(environment, from.getTransformPostZ());
+    private static void catmullRom(float progress, MolangCache cache, float startValue, @Nullable AnimationData.KeyFrame before, @Nullable AnimationData.KeyFrame from, AnimationData.KeyFrame to, @Nullable AnimationData.KeyFrame after, Vector3f result) {
+        float fromX = from == null ? startValue : cache.resolve(from.getTransformPostX());
+        float fromY = from == null ? startValue : cache.resolve(from.getTransformPostY());
+        float fromZ = from == null ? startValue : cache.resolve(from.getTransformPostZ());
 
-        float beforeX = before == null ? fromX : cache.resolve(environment, before.getTransformPostX());
-        float beforeY = before == null ? fromY : cache.resolve(environment, before.getTransformPostY());
-        float beforeZ = before == null ? fromZ : cache.resolve(environment, before.getTransformPostZ());
+        float beforeX = before == null ? fromX : cache.resolve(before.getTransformPostX());
+        float beforeY = before == null ? fromY : cache.resolve(before.getTransformPostY());
+        float beforeZ = before == null ? fromZ : cache.resolve(before.getTransformPostZ());
 
-        float toX = cache.resolve(environment, to.getTransformPreX());
-        float toY = cache.resolve(environment, to.getTransformPreY());
-        float toZ = cache.resolve(environment, to.getTransformPreZ());
+        float toX = cache.resolve(to.getTransformPreX());
+        float toY = cache.resolve(to.getTransformPreY());
+        float toZ = cache.resolve(to.getTransformPreZ());
 
-        float afterX = after == null ? toX : cache.resolve(environment, after.getTransformPreX());
-        float afterY = after == null ? toY : cache.resolve(environment, after.getTransformPreY());
-        float afterZ = after == null ? toZ : cache.resolve(environment, after.getTransformPreZ());
+        float afterX = after == null ? toX : cache.resolve(after.getTransformPreX());
+        float afterY = after == null ? toY : cache.resolve(after.getTransformPreY());
+        float afterZ = after == null ? toZ : cache.resolve(after.getTransformPreZ());
 
         result.set(catmullRom(beforeX, fromX, toX, afterX, progress), catmullRom(beforeY, fromY, toY, afterY, progress), catmullRom(beforeZ, fromZ, toZ, afterZ, progress));
     }

@@ -2,10 +2,9 @@ package gg.moonflower.pollen.pinwheel.api.common.particle.component;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleEmitter;
 import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomEmitterListener;
-import gg.moonflower.pollen.api.particle.PollenParticleComponents;
-import gg.moonflower.pollen.api.util.JSONTupleParser;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 
 /**
@@ -33,10 +32,5 @@ public class EmitterRateInstantComponent implements CustomParticleEmitterCompone
     @Override
     public void onLoop(CustomParticleEmitter emitter) {
         this.complete = false;
-    }
-
-    @Override
-    public CustomParticleComponentType<?> type() {
-        return PollenParticleComponents.EMITTER_RATE_INSTANT.get();
     }
 }

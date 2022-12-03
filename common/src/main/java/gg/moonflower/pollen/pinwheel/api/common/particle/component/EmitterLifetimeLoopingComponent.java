@@ -2,12 +2,12 @@ package gg.moonflower.pollen.pinwheel.api.common.particle.component;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import gg.moonflower.pollen.api.particle.PollenParticleComponents;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleEmitter;
 import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomEmitterListener;
 import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomParticleListener;
+import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
 
@@ -43,13 +43,8 @@ public class EmitterLifetimeLoopingComponent implements CustomParticleEmitterCom
 
     @Override
     public void onCreate(CustomParticle particle) {
-        MolangRuntime runtime = particle.getRuntime();
+        MolangEnvironment runtime = particle.getRuntime();
         this.activeTimeEval = (int) this.activeTime.safeResolve(runtime);
         this.sleepTimer = (int) this.sleepTime.safeResolve(runtime);
-    }
-
-    @Override
-    public CustomParticleComponentType<?> type() {
-        return PollenParticleComponents.EMITTER_LIFETIME_LOOPING.get();
     }
 }

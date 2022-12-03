@@ -13,6 +13,7 @@ import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomParticl
 import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomParticleComponentType;
 import gg.moonflower.pollen.pinwheel.api.common.particle.event.ParticleEvent;
 import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomParticleListener;
+import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import io.github.ocelot.molangcompiler.api.bridge.MolangVariable;
@@ -139,7 +140,7 @@ public abstract class CustomParticleImpl extends Particle implements MolangVaria
     protected void evaluateCurves() {
         if (this.variables.isEmpty())
             return;
-        MolangRuntime runtime = this.getRuntime();
+        MolangEnvironment runtime = this.getRuntime();
         ProfilerFiller profiler = this.level.getProfiler();
         profiler.push("evaluateCurves");
         this.variables.forEach((variable, pair) -> pair.getSecond().setValue(evaluateCurve(runtime, pair.getFirst())));
@@ -154,7 +155,7 @@ public abstract class CustomParticleImpl extends Particle implements MolangVaria
         this.oRoll = this.roll;
         this.blockPos.set(this.x, this.y, this.z);
 
-        MolangRuntime runtime = this.getRuntime(); // Load runtime
+        MolangEnvironment runtime = this.getRuntime(); // Load runtime
         ProfilerFiller profiler = this.level.getProfiler();
         profiler.push("pollenTickCustomParticle");
 
@@ -205,6 +206,8 @@ public abstract class CustomParticleImpl extends Particle implements MolangVaria
         if (dx != 0.0 || dy != 0.0 || dz != 0.0) {
             this.setBoundingBox(this.getBoundingBox().move(dx, dy, dz));
             this.setLocationFromBoundingbox();
+            for (CustomParticleListener listener : this.listeners)
+                listener.onMove(this, dx, dy, dz);
         }
 
         boolean xCollision = Math.abs(g) >= 1.0E-5F && Math.abs(dx) < 1.0E-5F;
@@ -282,7 +285,7 @@ public abstract class CustomParticleImpl extends Particle implements MolangVaria
         return new TextComponent("").append(new TextComponent("[" + this.name + "]").withStyle(ChatFormatting.AQUA)).append(" ");
     }
 
-    private static float evaluateCurve(MolangRuntime runtime, ParticleData.Curve curve) {
+    private static float evaluateCurve(MolangEnvironment runtime, ParticleData.Curve curve) {
         float horizontalRange = curve.horizontalRange().safeResolve(runtime);
         if (horizontalRange == 0)
             return 1.0F;
@@ -378,7 +381,7 @@ public abstract class CustomParticleImpl extends Particle implements MolangVaria
     }
 
     @Override
-    public MolangRuntime getRuntime() {
+    public MolangEnvironment getRuntime() {
         return this.runtime.get();
     }
 
@@ -433,7 +436,7 @@ public abstract class CustomParticleImpl extends Particle implements MolangVaria
 
     @Override
     public void setRotation(float rotation) {
-        this.roll = rotation;
+        this.oRoll = this.roll = rotation;
     }
 
     @Override

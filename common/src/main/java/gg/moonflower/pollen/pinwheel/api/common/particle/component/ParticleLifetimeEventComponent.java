@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
-import gg.moonflower.pollen.api.particle.PollenParticleComponents;
 import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomParticleListener;
 import net.minecraft.util.GsonHelper;
 
@@ -20,19 +19,20 @@ import java.util.Map;
  * @author Ocelot
  * @since 1.6.0
  */
-public abstract class ParticleLifetimeEventComponent implements CustomParticleComponent, CustomParticleListener {
+public class ParticleLifetimeEventComponent implements CustomParticleComponent, CustomParticleListener {
 
     private final String[] creationEvent;
     private final String[] expirationEvent;
     private final TimelineEvent[] timelineEvents;
     private final Map<CustomParticle, Integer> currentEvent;
 
-    protected ParticleLifetimeEventComponent(JsonObject json) throws JsonParseException {
-        this.creationEvent = CustomParticleComponent.getEvents(json, "creation_event");
-        this.expirationEvent = CustomParticleComponent.getEvents(json, "expiration_event");
+    public ParticleLifetimeEventComponent(JsonElement json) throws JsonParseException {
+        JsonObject jsonObject = json.getAsJsonObject();
+        this.creationEvent = CustomParticleComponent.getEvents(jsonObject, "creation_event");
+        this.expirationEvent = CustomParticleComponent.getEvents(jsonObject, "expiration_event");
 
-        if (json.has("timeline")) {
-            JsonObject timelineJson = GsonHelper.getAsJsonObject(json, "timeline");
+        if (jsonObject.has("timeline")) {
+            JsonObject timelineJson = GsonHelper.getAsJsonObject(jsonObject, "timeline");
             List<TimelineEvent> events = new ArrayList<>(timelineJson.entrySet().size());
             for (Map.Entry<String, JsonElement> entry : timelineJson.entrySet()) {
                 try {
@@ -83,29 +83,5 @@ public abstract class ParticleLifetimeEventComponent implements CustomParticleCo
     }
 
     private record TimelineEvent(float time, String[] events) {
-    }
-
-    public static class Emitter extends ParticleLifetimeEventComponent {
-
-        public Emitter(JsonElement json) throws JsonParseException {
-            super(json.getAsJsonObject());
-        }
-
-        @Override
-        public CustomParticleComponentType<?> type() {
-            return PollenParticleComponents.EMITTER_LIFETIME_EVENTS.get();
-        }
-    }
-
-    public static class Particle extends ParticleLifetimeEventComponent {
-
-        public Particle(JsonElement json) throws JsonParseException {
-            super(json.getAsJsonObject());
-        }
-
-        @Override
-        public CustomParticleComponentType<?> type() {
-            return PollenParticleComponents.PARTICLE_LIFETIME_EVENTS.get();
-        }
     }
 }

@@ -2,7 +2,6 @@ package gg.moonflower.pollen.pinwheel.api.common.particle.component;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import gg.moonflower.pollen.api.particle.PollenParticleComponents;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleEmitter;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
@@ -28,10 +27,5 @@ public class EmitterLifetimeExpressionComponent implements CustomParticleEmitter
         emitter.setActive(this.activationExpression.safeResolve(emitter.getRuntime()) != 0);
         if (this.expirationExpression.safeResolve(emitter.getRuntime()) != 0)
             emitter.expire();
-    }
-
-    @Override
-    public CustomParticleComponentType<?> type() {
-        return PollenParticleComponents.EMITTER_LIFETIME_EXPRESSION.get();
     }
 }

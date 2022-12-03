@@ -20,10 +20,10 @@ public record ParticleData(Description description, Map<String, Curve> curves, M
     public static final ParticleData EMPTY = new ParticleData(new Description("empty", new ResourceLocation("missing"), "missing"), new HashMap<>(), new HashMap<>(), new HashMap<>());
 
     /**
-     * The different types of polygons that can be represented by a poly mesh.
+     * The different types of curves for calculating particle variables.
      *
      * @author Ocelot
-     * @since 1.0.0
+     * @since 1.6.0
      */
     public enum CurveType {
 

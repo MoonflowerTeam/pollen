@@ -2,7 +2,6 @@ package gg.moonflower.pollen.pinwheel.api.common.particle.component;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import gg.moonflower.pollen.api.particle.PollenParticleComponents;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
 import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomParticleListener;
@@ -33,10 +32,5 @@ public class ParticleLifetimeExpressionComponent implements CustomParticleCompon
     @Override
     public void onCreate(CustomParticle particle) {
         particle.setLifetime(this.maxLifetime.safeResolve(particle.getRuntime()));
-    }
-
-    @Override
-    public CustomParticleComponentType<?> type() {
-        return PollenParticleComponents.PARTICLE_LIFETIME_EXPRESSION.get();
     }
 }

@@ -1,5 +1,7 @@
 package gg.moonflower.pollen.pinwheel.api.common.particle.render;
 
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
 import gg.moonflower.pollen.pinwheel.api.common.particle.Flipbook;
 import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import net.minecraft.util.Mth;
@@ -12,6 +14,7 @@ import net.minecraft.util.Mth;
  */
 public class SingleQuadRenderProperties extends ColoredRenderProperties {
 
+    private Quaternion quaternion = new Quaternion(Quaternion.ONE);
     private float width;
     private float height;
     private float uMin;
@@ -97,6 +100,16 @@ public class SingleQuadRenderProperties extends ColoredRenderProperties {
         this.vMin = (v + vo) / (float) textureHeight;
         this.uMax = (u + uo + uSize) / (float) textureWidth;
         this.vMax = (v + vo + vSize) / (float) textureHeight;
+    }
+
+    @Override
+    public Quaternion getRotation() {
+        return quaternion;
+    }
+
+    @Override
+    public void setRotation(Quaternion rotation) {
+        this.quaternion = rotation;
     }
 
     @Override

@@ -12,28 +12,27 @@ import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.util.Mth;
 
 import java.util.Random;
 
 /**
- * Component that spawns particles in a sphere.
+ * Component that spawns particles in a box.
  *
  * @author Ocelot
  * @since 1.6.0
  */
-public class EmitterShapeSphereComponent implements CustomParticleEmitterComponent, CustomEmitterListener {
+public class EmitterShapeBoxComponent implements CustomParticleEmitterComponent, CustomEmitterListener {
 
     private final MolangExpression[] offset;
-    private final MolangExpression radius;
+    private final MolangExpression[] halfDimensions;
     private final boolean surfaceOnly;
     private final MolangExpression[] direction;
     private final boolean inwards;
 
-    public EmitterShapeSphereComponent(JsonElement json) throws JsonParseException {
+    public EmitterShapeBoxComponent(JsonElement json) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
         this.offset = JSONTupleParser.getExpression(jsonObject, "offset", 3, () -> new MolangExpression[]{MolangExpression.ZERO, MolangExpression.ZERO, MolangExpression.ZERO});
-        this.radius = JSONTupleParser.getExpression(jsonObject, "radius", () -> MolangExpression.of(1));
+        this.halfDimensions = JSONTupleParser.getExpression(jsonObject, "half_dimensions", 3, null);
         this.surfaceOnly = GsonHelper.getAsBoolean(jsonObject, "surface_only", false);
 
         if (jsonObject.has("direction")) {
@@ -73,16 +72,16 @@ public class EmitterShapeSphereComponent implements CustomParticleEmitterCompone
             float offsetX = this.offset[0].safeResolve(runtime);
             float offsetY = this.offset[1].safeResolve(runtime);
             float offsetZ = this.offset[2].safeResolve(runtime);
-            float radius = this.radius.safeResolve(runtime);
-            float r = this.surfaceOnly ? radius : radius * Mth.sqrt(random.nextFloat());
+            float radiusX = this.halfDimensions[0].safeResolve(runtime);
+            float radiusY = this.halfDimensions[1].safeResolve(runtime);
+            float radiusZ = this.halfDimensions[2].safeResolve(runtime);
+            float rx = this.surfaceOnly ? radiusX : radiusX * random.nextFloat();
+            float ry = this.surfaceOnly ? radiusY : radiusY * random.nextFloat();
+            float rz = this.surfaceOnly ? radiusZ : radiusZ * random.nextFloat();
 
-            float x = random.nextFloat() * 2 - 1;
-            float y = random.nextFloat() * 2 - 1;
-            float z = random.nextFloat() * 2 - 1;
-            float length = r / (x * x + y * y + z * z);
-            x *= length;
-            y *= length;
-            z *= length;
+            float x = (random.nextFloat() * 2 - 1) * rx;
+            float y = (random.nextFloat() * 2 - 1) * ry;
+            float z = (random.nextFloat() * 2 - 1) * rz;
 
             float dx;
             float dy;

@@ -2,6 +2,8 @@ package gg.moonflower.pollen.pinwheel.api.client.particle;
 
 import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomParticleListener;
 import gg.moonflower.pollen.pinwheel.api.common.particle.render.CustomParticleRenderProperties;
+import gg.moonflower.pollen.pinwheel.core.client.geometry.MolangCache;
+import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -92,7 +94,7 @@ public interface CustomParticle {
     /**
      * @return The runtime used to evaluate expression
      */
-    MolangRuntime getRuntime();
+    MolangEnvironment getRuntime();
 
     /**
      * @return The level this particle is in

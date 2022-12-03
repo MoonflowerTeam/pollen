@@ -2,9 +2,9 @@ package gg.moonflower.pollen.pinwheel.api.common.particle.component;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import gg.moonflower.pollen.api.particle.PollenParticleComponents;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
+import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import net.minecraft.world.phys.Vec3;
@@ -33,7 +33,7 @@ public class ParticleMotionDynamicComponent implements CustomParticleComponent {
 
     @Override
     public void tick(CustomParticle particle) {
-        MolangRuntime runtime = particle.getRuntime();
+        MolangEnvironment runtime = particle.getRuntime();
         Vec3 acceleration = particle.getAcceleration();
         float accelerationX = (float) (acceleration.x() + this.linearAcceleration[0].safeResolve(runtime)) / 400F; // 400 because 20 * 20 and the units need to be blocks/tick/tick
         float accelerationY = (float) (acceleration.y() + this.linearAcceleration[1].safeResolve(runtime)) / 400F;
@@ -45,10 +45,5 @@ public class ParticleMotionDynamicComponent implements CustomParticleComponent {
         float rotationAcceleration = particle.getRotationAcceleration() + this.rotationAcceleration.safeResolve(runtime) / 400F;
         float rotationDrag = this.rotationDragCoefficient.safeResolve(runtime) / 400F;
         particle.setRotationAcceleration(rotationAcceleration - rotationDrag * particle.getRotationVelocity());
-    }
-
-    @Override
-    public CustomParticleComponentType<?> type() {
-        return PollenParticleComponents.PARTICLE_MOTION_DYNAMIC.get();
     }
 }

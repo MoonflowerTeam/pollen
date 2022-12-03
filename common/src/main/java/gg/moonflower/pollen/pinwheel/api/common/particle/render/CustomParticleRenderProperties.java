@@ -1,5 +1,7 @@
 package gg.moonflower.pollen.pinwheel.api.common.particle.render;
 
+import com.mojang.math.Quaternion;
+
 /**
  * Generic interface for specifying render properties.
  *
@@ -7,6 +9,8 @@ package gg.moonflower.pollen.pinwheel.api.common.particle.render;
  * @since 1.6.0
  */
 public interface CustomParticleRenderProperties {
+
+    Quaternion getRotation();
 
     float getRed();
 
@@ -17,6 +21,8 @@ public interface CustomParticleRenderProperties {
     float getAlpha();
 
     int getPackedLight();
+
+    void setRotation(Quaternion rotation);
 
     void setRed(float red);
 

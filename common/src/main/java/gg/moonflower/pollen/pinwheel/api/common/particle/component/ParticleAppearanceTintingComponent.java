@@ -5,12 +5,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.datafixers.util.Pair;
-import gg.moonflower.pollen.api.particle.PollenParticleComponents;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
 import gg.moonflower.pollen.pinwheel.api.common.particle.render.CustomParticleRenderProperties;
 import io.github.ocelot.molangcompiler.api.MolangCompiler;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
+import net.minecraft.client.Camera;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
@@ -155,7 +155,7 @@ public class ParticleAppearanceTintingComponent implements CustomParticleCompone
     }
 
     @Override
-    public void render(CustomParticle particle) {
+    public void render(CustomParticle particle, Camera camera, float partialTicks) {
         CustomParticleRenderProperties properties = particle.getRenderProperties();
         if (properties != null) {
             properties.setRed(this.red.get(particle));
@@ -163,11 +163,6 @@ public class ParticleAppearanceTintingComponent implements CustomParticleCompone
             properties.setBlue(this.blue.get(particle));
             properties.setAlpha(this.alpha.get(particle));
         }
-    }
-
-    @Override
-    public CustomParticleComponentType<?> type() {
-        return PollenParticleComponents.PARTICLE_APPEARANCE_TINTING.get();
     }
 
     private interface ColorSupplier {

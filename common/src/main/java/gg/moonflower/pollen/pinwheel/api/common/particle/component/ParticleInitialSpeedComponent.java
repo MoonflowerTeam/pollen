@@ -3,14 +3,13 @@ package gg.moonflower.pollen.pinwheel.api.common.particle.component;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
-import gg.moonflower.pollen.api.particle.PollenParticleComponents;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
 import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomParticleListener;
+import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.phys.Vec3;
 
 /**
  * Component that specifies the initial speed of a particle.
@@ -45,15 +44,10 @@ public class ParticleInitialSpeedComponent implements CustomParticleComponent, C
 
     @Override
     public void onCreate(CustomParticle particle) {
-        MolangRuntime runtime = particle.getRuntime();
+        MolangEnvironment runtime = particle.getRuntime();
         float dx = this.speed[0].safeResolve(runtime) / 20F;
         float dy = this.speed[1].safeResolve(runtime) / 20F;
         float dz = this.speed[2].safeResolve(runtime) / 20F;
         particle.setVelocity(particle.getDirection().multiply(dx, dy, dz));
-    }
-
-    @Override
-    public CustomParticleComponentType<?> type() {
-        return PollenParticleComponents.PARTICLE_INITIAL_SPEED.get();
     }
 }

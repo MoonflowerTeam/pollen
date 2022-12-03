@@ -6,11 +6,11 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
-import gg.moonflower.pollen.api.particle.PollenParticleComponents;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleEmitter;
 import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomEmitterListener;
+import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import net.minecraft.util.GsonHelper;
@@ -87,7 +87,7 @@ public class EmitterShapeDiscComponent implements CustomParticleEmitterComponent
 
     @Override
     public void onEmitParticles(CustomParticleEmitter emitter, int count) {
-        MolangRuntime runtime = emitter.getRuntime();
+        MolangEnvironment runtime = emitter.getRuntime();
         Random random = emitter.getRandom();
         float normalX = this.normal[0].safeResolve(runtime);
         float normalY = this.normal[1].safeResolve(runtime);
@@ -155,10 +155,5 @@ public class EmitterShapeDiscComponent implements CustomParticleEmitterComponent
 
             emitter.summonParticle(particle, offsetX + pos.x(), offsetY + pos.y(), offsetZ + pos.z(), dx, dy, dz);
         }
-    }
-
-    @Override
-    public CustomParticleComponentType<?> type() {
-        return PollenParticleComponents.EMITTER_SHAPE_DISC.get();
     }
 }

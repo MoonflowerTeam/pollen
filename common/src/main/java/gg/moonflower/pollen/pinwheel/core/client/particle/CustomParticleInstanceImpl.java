@@ -32,13 +32,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -107,7 +105,7 @@ public class CustomParticleInstanceImpl extends CustomParticleImpl {
         this.renderAge.setValue((this.age + partialTicks) / 20F);
         this.evaluateCurves();
         profiler.push("updateRenderComponents");
-        this.renderComponents.forEach(component -> component.render(this));
+        this.renderComponents.forEach(component -> component.render(this, camera, partialTicks));
         profiler.pop();
         if (this.renderProperties != null) {
             profiler.push("tessellate");
@@ -122,17 +120,16 @@ public class CustomParticleInstanceImpl extends CustomParticleImpl {
                 GeometryModelTextureTable table = GeometryTextureManager.getTextures(this.data.description().material());
                 GeometryModelTexture[] textures = table.getLayerTextures(this.data.description().texture());
 
-                Quaternion rotation;
-                if (true) {
-                    // TODO rotation modes
-                    rotation = new Quaternion(camera.rotation());
-                }
-                rotation.mul(Vector3f.ZP.rotationDegrees(Mth.lerp(partialTicks, this.oRoll, this.roll)));
-
+                float zRot = Mth.lerp(partialTicks, this.oRoll, this.roll);
+                MATRIX_STACK.pushPose();
+                MATRIX_STACK.mulPose(properties.getRotation());
+                MATRIX_STACK.mulPose(Vector3f.ZP.rotationDegrees(zRot));
+                MATRIX_STACK.scale(properties.getWidth(), properties.getHeight(), 1.0F);
                 for (GeometryModelTexture texture : textures) {
                     VertexConsumer consumer = GeometryModelRenderer.getCachedBufferSource().getBuffer(texture.getLayer().getRenderType(texture, atlas, null));
-                    this.renderQuad(MATRIX_STACK, atlas.getSprite(texture.getLocation()).wrap(consumer), rotation, properties, texture.getRed(), texture.getGreen(), texture.getBlue(), partialTicks);
+                    this.renderQuad(atlas.getSprite(texture.getLocation()).wrap(consumer), properties, texture.getRed(), texture.getGreen(), texture.getBlue(), partialTicks);
                 }
+                MATRIX_STACK.popPose();
             }
             MATRIX_STACK.popPose();
             profiler.pop();
@@ -145,10 +142,7 @@ public class CustomParticleInstanceImpl extends CustomParticleImpl {
         return GEOMETRY_SHEET;
     }
 
-    private void renderQuad(PoseStack matrixStack, VertexConsumer consumer, Quaternion rotation, SingleQuadRenderProperties properties, float red, float green, float blue, float partialTicks) {
-        matrixStack.mulPose(rotation);
-        matrixStack.scale(properties.getWidth(), properties.getHeight(), 1.0F);
-
+    private void renderQuad(VertexConsumer consumer, SingleQuadRenderProperties properties, float red, float green, float blue, float partialTicks) {
         float uMin = properties.getUMin();
         float uMax = properties.getUMax();
         float vMin = properties.getVMin();
@@ -159,8 +153,8 @@ public class CustomParticleInstanceImpl extends CustomParticleImpl {
         float a = properties.getAlpha();
         int light = properties.getPackedLight();
 
-        Matrix4f matrix4f = matrixStack.last().pose();
-        Matrix3f matrix3f = matrixStack.last().normal();
+        Matrix4f matrix4f = MATRIX_STACK.last().pose();
+        Matrix3f matrix3f = MATRIX_STACK.last().normal();
 
         Vector4f vector4f = new Vector4f(-1.0F, -1.0F, 0.0F, 1.0F);
         vector4f.transform(matrix4f);

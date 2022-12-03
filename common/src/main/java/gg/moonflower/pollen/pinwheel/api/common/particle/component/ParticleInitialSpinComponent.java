@@ -1,10 +1,10 @@
 package gg.moonflower.pollen.pinwheel.api.common.particle.component;
 
 import com.google.gson.JsonElement;
-import gg.moonflower.pollen.api.particle.PollenParticleComponents;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
 import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomParticleListener;
+import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
 
@@ -30,13 +30,8 @@ public class ParticleInitialSpinComponent implements CustomParticleComponent, Cu
 
     @Override
     public void onCreate(CustomParticle particle) {
-        MolangRuntime runtime = particle.getRuntime();
-        particle.setRotation(this.rotation.safeResolve(runtime) / 20F);
+        MolangEnvironment runtime = particle.getRuntime();
+        particle.setRotation(this.rotation.safeResolve(runtime));
         particle.setRotationVelocity(this.rotationRate.safeResolve(runtime) / 20F);
-    }
-
-    @Override
-    public CustomParticleComponentType<?> type() {
-        return PollenParticleComponents.PARTICLE_INITIAL_SPIN.get();
     }
 }
