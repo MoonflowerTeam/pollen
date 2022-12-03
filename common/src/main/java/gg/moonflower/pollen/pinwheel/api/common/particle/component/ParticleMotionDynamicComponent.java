@@ -15,7 +15,7 @@ import net.minecraft.world.phys.Vec3;
  * @author Ocelot
  * @since 1.6.0
  */
-public class ParticleMotionDynamicComponent implements CustomParticleComponent {
+public class ParticleMotionDynamicComponent implements CustomParticleComponent, CustomParticlePhysicsTickComponent {
 
     private final MolangExpression[] linearAcceleration;
     private final MolangExpression linearDragCoefficient;
@@ -32,7 +32,7 @@ public class ParticleMotionDynamicComponent implements CustomParticleComponent {
     }
 
     @Override
-    public void tick(CustomParticle particle) {
+    public void physicsTick(CustomParticle particle) {
         MolangEnvironment runtime = particle.getRuntime();
         Vec3 acceleration = particle.getAcceleration();
         float accelerationX = (float) (acceleration.x() + this.linearAcceleration[0].safeResolve(runtime)) / 400F; // 400 because 20 * 20 and the units need to be blocks/tick/tick

@@ -10,11 +10,9 @@ import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
 import gg.moonflower.pollen.pinwheel.api.common.particle.Flipbook;
 import gg.moonflower.pollen.pinwheel.api.common.particle.ParticleParser;
-import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomParticleListener;
 import gg.moonflower.pollen.pinwheel.api.common.particle.render.SingleQuadRenderProperties;
 import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
-import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import net.minecraft.client.Camera;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
@@ -31,13 +29,13 @@ import java.util.stream.Collectors;
  */
 public class ParticleAppearanceBillboardComponent implements CustomParticleComponent, CustomParticleListener, CustomParticleRenderComponent {
 
+    private static final UVSetter DEFAULT = (__, properties) -> properties.setUV(0, 0, 1, 1);
+
     private final MolangExpression[] size;
     private final FaceCameraMode cameraMode;
     private final float minSpeedThreshold;
     private final MolangExpression[] customDirection;
-    private final int textureWidth;
-    private final int textureHeight;
-    private final Flipbook flipbook;
+    private final UVSetter uvSetter;
 
     public ParticleAppearanceBillboardComponent(JsonElement json) {
         JsonObject jsonObject = json.getAsJsonObject();
@@ -60,20 +58,18 @@ public class ParticleAppearanceBillboardComponent implements CustomParticleCompo
 
         if (jsonObject.has("uv")) {
             JsonObject uvJson = GsonHelper.getAsJsonObject(jsonObject, "uv");
-            this.textureWidth = GsonHelper.getAsInt(uvJson, "texture_width", 1);
-            this.textureHeight = GsonHelper.getAsInt(uvJson, "texture_height", 1);
+            int textureWidth = GsonHelper.getAsInt(uvJson, "texture_width", 1);
+            int textureHeight = GsonHelper.getAsInt(uvJson, "texture_height", 1);
 
             if (uvJson.has("flipbook")) {
-                this.flipbook = ParticleParser.parseFlipbook(uvJson.get("flipbook"));
+                this.uvSetter = UVSetter.flipbook(textureWidth, textureHeight, ParticleParser.parseFlipbook(uvJson.get("flipbook")));
             } else {
                 MolangExpression[] uv = JSONTupleParser.getExpression(uvJson, "uv", 2, null);
                 MolangExpression[] uvSize = JSONTupleParser.getExpression(uvJson, "uv_size", 2, null);
-                this.flipbook = new Flipbook(uv[0], uv[1], uvSize[0], uvSize[1], 0, 0, 1, MolangExpression.of(1), false, false);
+                this.uvSetter = UVSetter.constant(textureWidth, textureHeight, uv, uvSize);
             }
         } else {
-            this.textureWidth = 1;
-            this.textureHeight = 1;
-            this.flipbook = new Flipbook(MolangExpression.ZERO, MolangExpression.ZERO, MolangExpression.of(1), MolangExpression.of(1), 0, 0, 1, MolangExpression.of(1), false, false);
+            this.uvSetter = DEFAULT;
         }
     }
 
@@ -93,16 +89,12 @@ public class ParticleAppearanceBillboardComponent implements CustomParticleCompo
     }
 
     @Override
-    public void tick(CustomParticle particle) {
-    }
-
-    @Override
     public void render(CustomParticle particle, Camera camera, float partialTicks) {
         MolangEnvironment runtime = particle.getRuntime();
         SingleQuadRenderProperties renderProperties = getRenderProperties(particle);
         renderProperties.setWidth(this.size[0].safeResolve(runtime));
         renderProperties.setHeight(this.size[1].safeResolve(runtime));
-        renderProperties.setUV(runtime, this.textureWidth, this.textureHeight, this.flipbook, particle.getParticleAge(), particle.getParticleLifetime());
+        this.uvSetter.setUV(particle, renderProperties);
         switch (this.cameraMode) {
             case ROTATE_XYZ -> renderProperties.setRotation(camera.rotation());
             case ROTATE_Y -> renderProperties.setRotation(Vector3f.YN.rotationDegrees(camera.getYRot()));
@@ -173,6 +165,27 @@ public class ParticleAppearanceBillboardComponent implements CustomParticleCompo
         switch (this.cameraMode) {
             case EMITTER_TRANSFORM_XZ -> renderProperties.setRotation(Vector3f.XP.rotationDegrees(90));
             case EMITTER_TRANSFORM_YZ -> renderProperties.setRotation(Vector3f.YP.rotationDegrees(90));
+        }
+    }
+
+    @FunctionalInterface
+    private interface UVSetter {
+
+        void setUV(CustomParticle particle, SingleQuadRenderProperties properties);
+
+        static UVSetter constant(int textureWidth, int textureHeight, MolangExpression[] uv, MolangExpression[] uvSize) {
+            return (particle, properties) -> {
+                MolangEnvironment runtime = particle.getRuntime();
+                float u0 = uv[0].safeResolve(runtime);
+                float v0 = uv[1].safeResolve(runtime);
+                float u1 = u0 + uvSize[0].safeResolve(runtime);
+                float v1 = v0 + uvSize[1].safeResolve(runtime);
+                properties.setUV(u0 / (float) textureWidth, v0 / (float) textureHeight, u1 / (float) textureWidth, v1 / (float) textureHeight);
+            };
+        }
+
+        static UVSetter flipbook(int textureWidth, int textureHeight, Flipbook flipbook) {
+            return (particle, properties) -> properties.setUV(particle.getRuntime(), textureWidth, textureHeight, flipbook, particle.getParticleAge(), particle.getParticleLifetime());
         }
     }
 

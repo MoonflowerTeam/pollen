@@ -2,15 +2,12 @@ package gg.moonflower.pollen.pinwheel.api.common.particle.component;
 
 import com.google.gson.*;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
-import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleEmitter;
-import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomParticleListener;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
 
 /**
  * Component that specifies what blocks particles will immediately expire in.
@@ -18,7 +15,7 @@ import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
  * @author Ocelot
  * @since 1.6.0
  */
-public class ParticleExpireInBlocksComponent implements CustomParticleComponent {
+public class ParticleExpireInBlocksComponent implements CustomParticleComponent, CustomParticleTickComponent {
 
     private final Block[] blocks;
 

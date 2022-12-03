@@ -17,10 +17,6 @@ public class ParticleAppearanceLightingComponent implements CustomParticleCompon
     }
 
     @Override
-    public void tick(CustomParticle particle) {
-    }
-
-    @Override
     public void render(CustomParticle particle, Camera camera, float partialTicks) {
         CustomParticleRenderProperties properties = particle.getRenderProperties();
         if (properties != null) {

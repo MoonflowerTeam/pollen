@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.pinwheel.api.common.particle.listener;
+package gg.moonflower.pollen.pinwheel.api.common.particle.component;
 
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleEmitter;
 

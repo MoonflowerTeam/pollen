@@ -6,7 +6,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Pair;
-import com.mojang.math.*;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelRenderer;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleEmitter;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryAtlasTexture;
@@ -25,9 +28,11 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.core.particles.ParticleGroup;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -38,6 +43,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -46,6 +52,7 @@ import java.util.Set;
 @ApiStatus.Internal
 public class CustomParticleInstanceImpl extends CustomParticleImpl {
 
+    public static final ParticleGroup GROUP = new ParticleGroup(10000);
     public static final ParticleRenderType GEOMETRY_SHEET = new ParticleRenderType() {
         @Override
         public void begin(BufferBuilder bufferBuilder, TextureManager textureManager) {
@@ -104,10 +111,10 @@ public class CustomParticleInstanceImpl extends CustomParticleImpl {
         if (this.age < 0)
             return;
         ProfilerFiller profiler = this.level.getProfiler();
-        profiler.push("pollenRenderCustomParticle");
+        profiler.push("pollen");
         this.renderAge.setValue((this.age + partialTicks) / 20F);
         this.evaluateCurves();
-        profiler.push("updateRenderComponents");
+        profiler.push("components");
         this.renderComponents.forEach(component -> component.render(this, camera, partialTicks));
         profiler.pop();
         if (this.renderProperties != null) {
@@ -143,6 +150,11 @@ public class CustomParticleInstanceImpl extends CustomParticleImpl {
     @Override
     public ParticleRenderType getRenderType() {
         return GEOMETRY_SHEET;
+    }
+
+    @Override
+    public Optional<ParticleGroup> getParticleGroup() {
+        return Optional.of(GROUP);
     }
 
     private void renderQuad(VertexConsumer consumer, SingleQuadRenderProperties properties, float red, float green, float blue, float partialTicks) {

@@ -6,7 +6,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleEmitter;
-import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomParticleListener;
 import net.minecraft.util.GsonHelper;
 
 /**
@@ -37,10 +36,6 @@ public class ParticleKillPlane implements CustomParticleComponent, CustomParticl
 
     private double solve(double x, double y, double z) {
         return this.coefficients[0] * x + this.coefficients[1] * y + this.coefficients[2] * z + this.coefficients[3];
-    }
-
-    @Override
-    public void tick(CustomParticle particle) {
     }
 
     @Override

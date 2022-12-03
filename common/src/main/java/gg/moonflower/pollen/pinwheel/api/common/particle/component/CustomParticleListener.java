@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.pinwheel.api.common.particle.listener;
+package gg.moonflower.pollen.pinwheel.api.common.particle.component;
 
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
 import net.minecraft.core.Direction;
@@ -25,15 +25,6 @@ public interface CustomParticleListener {
      * @param particle The removed particle
      */
     default void onExpire(CustomParticle particle) {
-    }
-
-    /**
-     * Called each tick to update the amount of time the particle has been alive.
-     *
-     * @param particle The ticking particle
-     * @param time     The time alive in seconds
-     */
-    default void onTimeline(CustomParticle particle, float time) {
     }
 
     /**

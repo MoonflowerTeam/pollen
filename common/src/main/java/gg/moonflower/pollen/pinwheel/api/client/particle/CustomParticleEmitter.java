@@ -1,6 +1,6 @@
 package gg.moonflower.pollen.pinwheel.api.client.particle;
 
-import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomEmitterListener;
+import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomEmitterListener;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;

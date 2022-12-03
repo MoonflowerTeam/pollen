@@ -5,11 +5,8 @@ import com.google.gson.JsonParseException;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleEmitter;
-import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomEmitterListener;
-import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomParticleListener;
 import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
-import io.github.ocelot.molangcompiler.api.MolangRuntime;
 
 /**
  * Component that spawns particles during the active time.
@@ -17,7 +14,7 @@ import io.github.ocelot.molangcompiler.api.MolangRuntime;
  * @author Ocelot
  * @since 1.6.0
  */
-public class EmitterLifetimeLoopingComponent implements CustomParticleEmitterComponent, CustomParticleListener, CustomEmitterListener {
+public class EmitterLifetimeLoopingComponent implements CustomParticleComponent, CustomEmitterTickComponent, CustomParticleListener, CustomEmitterListener {
 
     private final MolangExpression activeTime;
     private final MolangExpression sleepTime;

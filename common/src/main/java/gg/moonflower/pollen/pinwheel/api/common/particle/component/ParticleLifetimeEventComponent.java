@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
-import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomParticleListener;
 import net.minecraft.util.GsonHelper;
 
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ import java.util.Map;
  * @author Ocelot
  * @since 1.6.0
  */
-public class ParticleLifetimeEventComponent implements CustomParticleComponent, CustomParticleListener {
+public class ParticleLifetimeEventComponent implements CustomParticleComponent, CustomParticleTickComponent, CustomParticleListener {
 
     private final String[] creationEvent;
     private final String[] expirationEvent;
@@ -51,6 +50,19 @@ public class ParticleLifetimeEventComponent implements CustomParticleComponent, 
 
     @Override
     public void tick(CustomParticle particle) {
+        float time = particle.getParticleAge();
+        int currentEvent = this.currentEvent.getOrDefault(particle, 0);
+        if (currentEvent >= this.timelineEvents.length)
+            return;
+        TimelineEvent event = this.timelineEvents[currentEvent];
+        while (time >= event.time()) { // Execute all events that have been passed
+            for (String e : event.events)
+                particle.runEvent(e);
+            if (++currentEvent >= this.timelineEvents.length)
+                break;
+            event = this.timelineEvents[currentEvent];
+        }
+        this.currentEvent.put(particle, currentEvent);
     }
 
     @Override
@@ -64,22 +76,6 @@ public class ParticleLifetimeEventComponent implements CustomParticleComponent, 
         for (String event : this.expirationEvent)
             particle.runEvent(event);
         this.currentEvent.remove(particle);
-    }
-
-    @Override
-    public void onTimeline(CustomParticle particle, float time) {
-        int currentEvent = this.currentEvent.getOrDefault(particle, 0);
-        if (currentEvent >= this.timelineEvents.length)
-            return;
-        TimelineEvent event = this.timelineEvents[currentEvent];
-        while (time >= event.time()) { // Execute all events that have been passed
-            for (String e : event.events)
-                particle.runEvent(e);
-            if (++currentEvent >= this.timelineEvents.length)
-                break;
-            event = this.timelineEvents[currentEvent];
-        }
-        this.currentEvent.put(particle, currentEvent);
     }
 
     private record TimelineEvent(float time, String[] events) {

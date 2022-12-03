@@ -15,9 +15,9 @@ public record SpawnParticleEvent(String effect, ParticleSpawnType type,
 
     @Override
     public void execute(Context context) {
-        context.particleEffect(this.effect, this.type);
         if (this.preEffectExpression != null)
             context.expression(this.preEffectExpression);
+        context.particleEffect(this.effect, this.type);
     }
 
     public static class Deserializer implements JsonDeserializer<SpawnParticleEvent> {

@@ -18,15 +18,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface CustomParticleComponent {
 
-    // TODO motion parametric
-
-    /**
-     * Called every tick to update this component.
-     *
-     * @param particle The particle to tick
-     */
-    void tick(CustomParticle particle);
-
     /**
      * Reads all event references in the specified json.
      *

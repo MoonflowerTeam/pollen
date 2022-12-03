@@ -11,7 +11,7 @@ import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleManager;
  * @see CustomParticleManager
  * @since 1.6.0
  */
-public interface CustomParticleEmitterComponent extends CustomParticleComponent {
+public interface CustomEmitterTickComponent extends CustomParticleTickComponent {
 
     /**
      * Called every tick to update this component.

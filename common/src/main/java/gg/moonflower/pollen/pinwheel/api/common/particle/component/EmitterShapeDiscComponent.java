@@ -9,10 +9,8 @@ import com.mojang.math.Vector3f;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleEmitter;
-import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomEmitterListener;
 import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
-import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
 
@@ -24,7 +22,7 @@ import java.util.Random;
  * @author Ocelot
  * @since 1.6.0
  */
-public class EmitterShapeDiscComponent implements CustomParticleEmitterComponent, CustomEmitterListener {
+public class EmitterShapeDiscComponent implements CustomParticleComponent, CustomEmitterListener {
 
     private final MolangExpression[] normal;
     private final MolangExpression[] offset;
@@ -79,10 +77,6 @@ public class EmitterShapeDiscComponent implements CustomParticleEmitterComponent
             this.inwards = false;
             this.direction = null;
         }
-    }
-
-    @Override
-    public void tick(CustomParticleEmitter emitter) {
     }
 
     @Override

@@ -1,10 +1,8 @@
 package gg.moonflower.pollen.pinwheel.api.common.particle.render;
 
-import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import gg.moonflower.pollen.pinwheel.api.common.particle.Flipbook;
 import io.github.ocelot.molangcompiler.api.MolangEnvironment;
-import net.minecraft.util.Mth;
 
 /**
  * Specifies render properties for a single quad.
@@ -21,6 +19,7 @@ public class SingleQuadRenderProperties extends ColoredRenderProperties {
     private float vMin;
     private float uMax;
     private float vMax;
+    private int lastFrame = -1;
 
     public float getWidth() {
         return width;
@@ -59,6 +58,7 @@ public class SingleQuadRenderProperties extends ColoredRenderProperties {
         this.vMin = vMin;
         this.uMax = uMax;
         this.vMax = vMax;
+        this.lastFrame = -1;
     }
 
     /**
@@ -73,26 +73,25 @@ public class SingleQuadRenderProperties extends ColoredRenderProperties {
      */
     public void setUV(MolangEnvironment environment, int textureWidth, int textureHeight, Flipbook flipbook, float time, float maxLife) {
         int maxFrame = (int) flipbook.maxFrame().safeResolve(environment);
-        int frame = 0;
-
-        // Calculate flipbook if there are more frames
-        if (maxFrame > 1) {
-            if (flipbook.stretchToLifetime()) {
-                frame = Math.min((int) (time / maxLife * (maxFrame + 1)), maxFrame);
+        int frame;
+        if (flipbook.stretchToLifetime()) {
+            frame = Math.min((int) (time / maxLife * (maxFrame + 1)), maxFrame);
+        } else {
+            frame = (int) (time * flipbook.fps());
+            if (flipbook.loop()) {
+                frame %= maxFrame;
             } else {
-                frame = (int) (time * flipbook.fps());
-                if (flipbook.loop()) {
-                    frame %= maxFrame;
-                } else {
-                    frame = Math.min(frame, maxFrame);
-                }
+                frame = Math.min(frame, maxFrame);
             }
         }
 
+        if (this.lastFrame == frame) // Only update uvs if the frame has changed
+            return;
+
         float u = flipbook.baseU().safeResolve(environment);
         float v = flipbook.baseV().safeResolve(environment);
-        float uSize = flipbook.sizeU().safeResolve(environment);
-        float vSize = flipbook.sizeV().safeResolve(environment);
+        float uSize = flipbook.sizeU();
+        float vSize = flipbook.sizeV();
         float uo = flipbook.stepU() * frame;
         float vo = flipbook.stepV() * frame;
 

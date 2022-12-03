@@ -12,7 +12,7 @@ import io.github.ocelot.molangcompiler.api.MolangExpression;
  * @author Ocelot
  * @since 1.6.0
  */
-public class EmitterLifetimeExpressionComponent implements CustomParticleEmitterComponent {
+public class EmitterLifetimeExpressionComponent implements CustomParticleComponent, CustomEmitterTickComponent {
 
     private final MolangExpression activationExpression;
     private final MolangExpression expirationExpression;

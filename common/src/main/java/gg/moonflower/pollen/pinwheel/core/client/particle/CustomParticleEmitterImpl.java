@@ -9,7 +9,7 @@ import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleEmitter;
 import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomParticleComponent;
 import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomParticleComponentType;
 import gg.moonflower.pollen.pinwheel.api.common.particle.event.ParticleEvent;
-import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomEmitterListener;
+import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomEmitterListener;
 import gg.moonflower.pollen.pinwheel.api.common.particle.render.CustomParticleRenderProperties;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import io.github.ocelot.molangcompiler.api.bridge.MolangVariable;

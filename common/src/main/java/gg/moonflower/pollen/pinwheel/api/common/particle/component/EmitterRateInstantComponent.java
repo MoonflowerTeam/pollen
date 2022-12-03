@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleEmitter;
-import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomEmitterListener;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 
 /**
@@ -13,7 +12,7 @@ import io.github.ocelot.molangcompiler.api.MolangExpression;
  * @author Ocelot
  * @since 1.6.0
  */
-public class EmitterRateInstantComponent implements CustomParticleEmitterComponent, CustomEmitterListener {
+public class EmitterRateInstantComponent implements CustomParticleComponent, CustomEmitterTickComponent, CustomEmitterListener {
 
     private final MolangExpression particleCount;
     private boolean complete;

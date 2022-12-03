@@ -1,11 +1,9 @@
 package gg.moonflower.pollen.pinwheel.api.client.particle;
 
-import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomParticleListener;
+import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomParticleListener;
 import gg.moonflower.pollen.pinwheel.api.common.particle.render.CustomParticleRenderProperties;
-import gg.moonflower.pollen.pinwheel.core.client.geometry.MolangCache;
 import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
-import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;

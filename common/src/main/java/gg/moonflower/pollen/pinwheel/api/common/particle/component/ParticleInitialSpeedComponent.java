@@ -5,10 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
-import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomParticleListener;
 import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
-import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import net.minecraft.util.GsonHelper;
 
 /**
@@ -36,10 +34,6 @@ public class ParticleInitialSpeedComponent implements CustomParticleComponent, C
         } else {
             throw new JsonSyntaxException("Expected speed to be a JsonArray or float, was " + GsonHelper.getType(json));
         }
-    }
-
-    @Override
-    public void tick(CustomParticle particle) {
     }
 
     @Override

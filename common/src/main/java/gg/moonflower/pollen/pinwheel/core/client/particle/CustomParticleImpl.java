@@ -9,10 +9,9 @@ import gg.moonflower.pollen.api.particle.PollenParticles;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleManager;
 import gg.moonflower.pollen.pinwheel.api.common.particle.ParticleData;
-import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomParticleComponent;
-import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomParticleComponentType;
+import gg.moonflower.pollen.pinwheel.api.common.particle.component.*;
 import gg.moonflower.pollen.pinwheel.api.common.particle.event.ParticleEvent;
-import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomParticleListener;
+import gg.moonflower.pollen.pinwheel.core.client.ProfilingMolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
@@ -26,7 +25,6 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.commands.arguments.ParticleArgument;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -68,8 +66,10 @@ public abstract class CustomParticleImpl extends Particle implements MolangVaria
     protected final Map<CustomParticleComponentType<?>, CustomParticleComponent> components = new HashMap<>();
     protected final Map<CustomParticleComponentType<?>, CustomParticleComponent> childComponents = new HashMap<>();
     protected final Map<String, Pair<ParticleData.Curve, MolangVariable>> variables = new HashMap<>();
+    private final Set<CustomParticleTickComponent> tickComponents;
+    private final Set<CustomParticlePhysicsTickComponent> physicsTickComponents;
     private final Supplier<MolangRuntime.Builder> builder;
-    private final Supplier<MolangRuntime> runtime;
+    private final Supplier<MolangEnvironment> runtime;
     private final BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
 
     protected Vec3 direction = Vec3.ZERO;
@@ -77,6 +77,7 @@ public abstract class CustomParticleImpl extends Particle implements MolangVaria
     protected Vec3 acceleration = Vec3.ZERO;
     protected float rotationVelocity = 0;
     protected float rotationAcceleration = 0;
+    private boolean disableMovement;
 
     protected CustomParticleImpl(ClientLevel clientLevel, double x, double y, double z, ResourceLocation name, Function<CustomParticleImpl, MolangRuntime.Builder> runtimeFactory) {
         super(clientLevel, x, y, z);
@@ -86,8 +87,10 @@ public abstract class CustomParticleImpl extends Particle implements MolangVaria
         this.random2 = MolangVariable.create(this.random.nextFloat());
         this.random3 = MolangVariable.create(this.random.nextFloat());
         this.random4 = MolangVariable.create(this.random.nextFloat());
+        this.tickComponents = new HashSet<>();
+        this.physicsTickComponents = new HashSet<>();
         this.builder = Suppliers.memoize(() -> runtimeFactory.apply(this));
-        this.runtime = Suppliers.memoize(() -> this.getRuntimeBuilder().create());
+        this.runtime = Suppliers.memoize(() -> new ProfilingMolangEnvironment(this.getRuntimeBuilder().create(), clientLevel.getProfilerSupplier()));
         this.hasPhysics = false;
         this.age = -1;
     }
@@ -97,6 +100,12 @@ public abstract class CustomParticleImpl extends Particle implements MolangVaria
             this.components.put(type, instance);
             if (instance instanceof CustomParticleListener listener) {
                 this.addListener(listener);
+            }
+            if (instance instanceof CustomParticleTickComponent tickComponent) {
+                this.tickComponents.add(tickComponent);
+            }
+            if (instance instanceof CustomParticlePhysicsTickComponent tickComponent) {
+                this.physicsTickComponents.add(tickComponent);
             }
         }
     }
@@ -149,17 +158,17 @@ public abstract class CustomParticleImpl extends Particle implements MolangVaria
 
     @Override
     public void tick() {
+        ProfilerFiller profiler = this.level.getProfiler();
+        profiler.push("pollen");
+
         this.xo = this.x;
         this.yo = this.y;
         this.zo = this.z;
         this.oRoll = this.roll;
         this.blockPos.set(this.x, this.y, this.z);
 
-        MolangEnvironment runtime = this.getRuntime(); // Load runtime
-        ProfilerFiller profiler = this.level.getProfiler();
-        profiler.push("pollenTickCustomParticle");
-
         // Init
+        this.getRuntime(); // Load runtime
         if (this.age == -1) {
             this.age = 0;
             profiler.push("init");
@@ -170,18 +179,23 @@ public abstract class CustomParticleImpl extends Particle implements MolangVaria
         this.evaluateCurves();
 
         // Tick components
-        profiler.push("tickComponents");
-        this.components.values().forEach(component -> component.tick(this));
-        this.listeners.forEach(listener -> listener.onTimeline(this, this.getParticleAge()));
+        profiler.push("components");
+        this.tickComponents.forEach(component -> component.tick(this));
         profiler.popPush("physics");
 
         // Tick motion
-        if (this.acceleration.lengthSqr() > 1.0E-7) {
-            Vec3 velocity = this.getVelocity();
-            this.setVelocity(velocity.add(this.acceleration));
-            if (velocity.lengthSqr() > 1.0E-7) {
-                this.move(velocity.x(), velocity.y(), velocity.z());
+        if (!this.disableMovement) { // Stop moving particles if they collide and effectively stop because of it
+            profiler.push("components");
+            this.physicsTickComponents.forEach(component -> component.physicsTick(this));
+            profiler.popPush("move");
+            if (this.acceleration.lengthSqr() > 1.0E-7) {
+                this.setVelocity(this.getVelocity().add(this.acceleration));
             }
+            if (this.speed * this.speed > 1.0E-7) {
+                Vec3 direction = this.getDirection();
+                this.move(direction.x() * this.speed, direction.y() * this.speed, direction.z() * this.speed);
+            }
+            profiler.pop();
         }
         profiler.pop();
 
@@ -210,14 +224,19 @@ public abstract class CustomParticleImpl extends Particle implements MolangVaria
                 listener.onMove(this, dx, dy, dz);
         }
 
-        boolean xCollision = Math.abs(g) >= 1.0E-5F && Math.abs(dx) < 1.0E-5F;
-        boolean yCollision = Math.abs(h) >= 1.0E-5F && Math.abs(dy) < 1.0E-5F;
-        boolean zCollision = Math.abs(i) >= 1.0E-5F && Math.abs(dz) < 1.0E-5F;
-        if (xCollision || yCollision || zCollision) {
-            this.listeners.forEach(listener -> listener.onCollide(this, xCollision, yCollision, zCollision));
-        }
+        if (this.hasPhysics) {
+            boolean xCollision = Math.abs(g) >= 1.0E-5F && Math.abs(dx) < 1.0E-5F;
+            boolean yCollision = Math.abs(h) >= 1.0E-5F && Math.abs(dy) < 1.0E-5F;
+            boolean zCollision = Math.abs(i) >= 1.0E-5F && Math.abs(dz) < 1.0E-5F;
+            this.onGround = h != dy && h < 0.0;
 
-        this.onGround = h != dy && h < 0.0;
+            if (xCollision || yCollision || zCollision) {
+                this.listeners.forEach(listener -> listener.onCollide(this, xCollision, yCollision, zCollision));
+                if (this.onGround && this.speed * this.speed <= 1.0E-7) {
+                    this.disableMovement = true;
+                }
+            }
+        }
     }
 
     @Override
@@ -436,7 +455,9 @@ public abstract class CustomParticleImpl extends Particle implements MolangVaria
 
     @Override
     public void setRotation(float rotation) {
-        this.oRoll = this.roll = rotation;
+        if (this.oRoll == 0 && this.roll == 0)
+            this.oRoll = this.roll;
+        this.roll = rotation;
     }
 
     @Override

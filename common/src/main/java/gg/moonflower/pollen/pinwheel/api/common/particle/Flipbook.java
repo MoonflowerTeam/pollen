@@ -7,7 +7,7 @@ import net.minecraft.util.GsonHelper;
 
 import java.lang.reflect.Type;
 
-public record Flipbook(MolangExpression baseU, MolangExpression baseV, MolangExpression sizeU, MolangExpression sizeV,
+public record Flipbook(MolangExpression baseU, MolangExpression baseV, float sizeU, float sizeV,
                        float stepU, float stepV, float fps, MolangExpression maxFrame, boolean stretchToLifetime,
                        boolean loop) {
 
@@ -17,7 +17,7 @@ public record Flipbook(MolangExpression baseU, MolangExpression baseV, MolangExp
         public Flipbook deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject jsonObject = json.getAsJsonObject();
             MolangExpression[] uv = JSONTupleParser.getExpression(jsonObject, "base_UV", 2, null);
-            MolangExpression[] sizeUV = JSONTupleParser.getExpression(jsonObject, "size_UV", 2, null);
+            float[] sizeUV = JSONTupleParser.getFloat(jsonObject, "size_UV", 2, null);
             float[] stepUV = JSONTupleParser.getFloat(jsonObject, "step_UV", 2, null);
             float fps = GsonHelper.getAsFloat(jsonObject, "frames_per_second", 1);
             MolangExpression maxFrame = JSONTupleParser.getExpression(jsonObject, "max_frame", null);

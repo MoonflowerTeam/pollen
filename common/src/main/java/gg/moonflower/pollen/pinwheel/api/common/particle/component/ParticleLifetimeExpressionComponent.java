@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
-import gg.moonflower.pollen.pinwheel.api.common.particle.listener.CustomParticleListener;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 
 /**
@@ -13,7 +12,7 @@ import io.github.ocelot.molangcompiler.api.MolangExpression;
  * @author Ocelot
  * @since 1.6.0
  */
-public class ParticleLifetimeExpressionComponent implements CustomParticleComponent, CustomParticleListener {
+public class ParticleLifetimeExpressionComponent implements CustomParticleComponent, CustomParticleTickComponent, CustomParticleListener {
 
     private final MolangExpression expirationExpression;
     private final MolangExpression maxLifetime;

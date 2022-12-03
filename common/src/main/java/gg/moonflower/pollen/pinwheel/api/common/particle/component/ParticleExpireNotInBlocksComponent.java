@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.Block;
  * @author Ocelot
  * @since 1.6.0
  */
-public class ParticleExpireNotInBlocksComponent implements CustomParticleComponent {
+public class ParticleExpireNotInBlocksComponent implements CustomParticleComponent, CustomParticleTickComponent {
 
     private final Block[] blocks;
 
