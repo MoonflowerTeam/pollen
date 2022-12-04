@@ -119,6 +119,10 @@ public class CustomParticleEmitterImpl extends CustomParticleImpl implements Cus
     public void restart() {
         this.age = 0;
         this.lifetime.setValue(0);
+        this.random1.setValue(this.random.nextFloat());
+        this.random2.setValue(this.random.nextFloat());
+        this.random3.setValue(this.random.nextFloat());
+        this.random4.setValue(this.random.nextFloat());
         this.listeners.forEach(listener -> listener.onLoop(this));
     }
 

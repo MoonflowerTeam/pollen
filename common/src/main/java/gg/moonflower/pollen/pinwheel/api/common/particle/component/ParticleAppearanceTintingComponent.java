@@ -154,10 +154,7 @@ public class ParticleAppearanceTintingComponent implements CustomParticleCompone
     public void render(CustomParticle particle, Camera camera, float partialTicks) {
         CustomParticleRenderProperties properties = particle.getRenderProperties();
         if (properties != null) {
-            properties.setRed(this.red.get(particle));
-            properties.setGreen(this.green.get(particle));
-            properties.setBlue(this.blue.get(particle));
-            properties.setAlpha(this.alpha.get(particle));
+            properties.setColor(this.red.get(particle), this.green.get(particle), this.blue.get(particle), this.alpha.get(particle));
         }
     }
 

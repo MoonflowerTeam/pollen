@@ -9,7 +9,6 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelRenderer;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleEmitter;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryAtlasTexture;
@@ -28,7 +27,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -132,6 +130,7 @@ public class CustomParticleInstanceImpl extends CustomParticleImpl {
 
                 float zRot = Mth.lerp(partialTicks, this.oRoll, this.roll);
                 MATRIX_STACK.pushPose();
+                MATRIX_STACK.translate(0, 0.01, 0);
                 MATRIX_STACK.mulPose(properties.getRotation());
                 MATRIX_STACK.mulPose(Vector3f.ZP.rotationDegrees(zRot));
                 MATRIX_STACK.scale(properties.getWidth(), properties.getHeight(), 1.0F);
@@ -171,8 +170,6 @@ public class CustomParticleInstanceImpl extends CustomParticleImpl {
         Matrix4f matrix4f = MATRIX_STACK.last().pose();
         Matrix3f matrix3f = MATRIX_STACK.last().normal();
 
-        Vector4f vector4f = new Vector4f(-1.0F, -1.0F, 0.0F, 1.0F);
-        vector4f.transform(matrix4f);
         consumer.vertex(matrix4f, -1.0F, -1.0F, 0.0F);
         consumer.color(r, g, b, a);
         consumer.uv(uMax, vMax);
