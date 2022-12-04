@@ -126,6 +126,21 @@ public interface CustomParticle {
     double y();
 
     /**
+     * @return The render x position of the particle
+     */
+    double x(float partialTicks);
+
+    /**
+     * @return The render y position of the particle
+     */
+    double y(float partialTicks);
+
+    /**
+     * @return The render z position of the particle
+     */
+    double z(float partialTicks);
+
+    /**
      * @return The z position of the particle
      */
     double z();
@@ -205,12 +220,34 @@ public interface CustomParticle {
         this.setLifetime(active ? Float.MAX_VALUE : 0);
     }
 
+    /**
+     * Sets the x position of this particle.
+     *
+     * @param x The new x value
+     */
     void setX(double x);
 
+    /**
+     * Sets the y position of this particle.
+     *
+     * @param y The new y value
+     */
     void setY(double y);
 
+    /**
+     * Sets the z position of this particle.
+     *
+     * @param z The new z value
+     */
     void setZ(double z);
 
+    /**
+     * Sets the position of this particle.
+     *
+     * @param x The new x value
+     * @param y The new y value
+     * @param z The new z value
+     */
     default void setPos(double x, double y, double z) {
         this.setX(x);
         this.setY(y);

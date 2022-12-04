@@ -434,6 +434,21 @@ public abstract class CustomParticleImpl extends Particle implements MolangVaria
     }
 
     @Override
+    public double x(float partialTicks) {
+        return Mth.lerp(partialTicks, this.xo, this.x);
+    }
+
+    @Override
+    public double y(float partialTicks) {
+        return Mth.lerp(partialTicks, this.yo, this.y);
+    }
+
+    @Override
+    public double z(float partialTicks) {
+        return Mth.lerp(partialTicks, this.zo, this.z);
+    }
+
+    @Override
     public float rotation() {
         return roll;
     }

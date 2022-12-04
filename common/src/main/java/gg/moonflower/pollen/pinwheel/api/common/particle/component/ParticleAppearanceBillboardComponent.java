@@ -99,9 +99,9 @@ public class ParticleAppearanceBillboardComponent implements CustomParticleCompo
             case ROTATE_XYZ -> renderProperties.setRotation(camera.rotation());
             case ROTATE_Y -> renderProperties.setRotation(Vector3f.YN.rotationDegrees(camera.getYRot()));
             case LOOK_AT_XYZ -> {
-                double dx = camera.getPosition().x() - particle.x();
-                double dy = camera.getPosition().y() - particle.y();
-                double dz = camera.getPosition().z() - particle.z();
+                double dx = camera.getPosition().x() - particle.x(partialTicks);
+                double dy = camera.getPosition().y() - particle.y(partialTicks);
+                double dz = camera.getPosition().z() - particle.z(partialTicks);
                 float yRot = (float) Mth.atan2(dz, dx);
                 float xRot = (float) Mth.atan2(dy, Math.sqrt(dx * dx + dz * dz));
                 Quaternion rotation = renderProperties.getRotation();
@@ -110,8 +110,8 @@ public class ParticleAppearanceBillboardComponent implements CustomParticleCompo
                 rotation.mul(Vector3f.XP.rotation(xRot));
             }
             case LOOK_AT_Y -> {
-                double dx = camera.getPosition().x() - particle.x();
-                double dz = camera.getPosition().z() - particle.z();
+                double dx = camera.getPosition().x() - particle.x(partialTicks);
+                double dz = camera.getPosition().z() - particle.z(partialTicks);
                 float yRot = (float) Mth.atan2(dz, dx);
                 Quaternion rotation = renderProperties.getRotation();
                 rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
