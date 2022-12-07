@@ -135,7 +135,7 @@ public class CustomParticleEmitterImpl extends CustomParticleImpl implements Cus
 
     @Override
     public void summonParticle(CustomParticle particle, double x, double y, double z, double dx, double dy, double dz) {
-        particle.setPos(particle.x() + x, particle.y() + y, particle.z() + z);
+        particle.setPosition(particle.x() + x, particle.y() + y, particle.z() + z);
         particle.setDirection(new Vec3(dx, dy, dz));
         if (!(particle instanceof Particle p))
             throw new UnsupportedOperationException(particle.getName() + " must extent net.minecraft.client.particle.Particle");

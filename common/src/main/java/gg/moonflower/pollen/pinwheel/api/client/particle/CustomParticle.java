@@ -1,17 +1,15 @@
 package gg.moonflower.pollen.pinwheel.api.client.particle;
 
 import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomParticleListener;
+import gg.moonflower.pollen.pinwheel.api.common.particle.event.ParticleEvent;
 import gg.moonflower.pollen.pinwheel.api.common.particle.render.CustomParticleRenderProperties;
 import io.github.ocelot.molangcompiler.api.MolangEnvironment;
-import io.github.ocelot.molangcompiler.api.MolangExpression;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Random;
 
 /**
  * A custom particle loaded from {@link CustomParticleManager}.
@@ -20,7 +18,7 @@ import java.util.Random;
  * @see CustomParticleManager
  * @since 1.6.0
  */
-public interface CustomParticle {
+public interface CustomParticle extends ParticleEvent.Context {
 
     /**
      * Adds the specified listener to the listener list.
@@ -42,27 +40,6 @@ public interface CustomParticle {
      * @param name The event to run
      */
     void runEvent(String name);
-
-    /**
-     * Plays a sound.
-     *
-     * @param sound The id of the sound to play
-     */
-    void soundEffect(ResourceLocation sound);
-
-    /**
-     * Executes an expression.
-     *
-     * @param expression The expression to execute
-     */
-    void expression(MolangExpression expression);
-
-    /**
-     * Logs a message to chat.
-     *
-     * @param message The message to send
-     */
-    void log(String message);
 
     /**
      * Removes this particle and triggers listeners.
@@ -184,11 +161,6 @@ public interface CustomParticle {
     float getRotationAcceleration();
 
     /**
-     * @return The particle random instance
-     */
-    Random getRandom();
-
-    /**
      * @return The properties to use when rendering or <code>null</code> if nothing is rendered
      */
     @Nullable
@@ -248,7 +220,7 @@ public interface CustomParticle {
      * @param y The new y value
      * @param z The new z value
      */
-    default void setPos(double x, double y, double z) {
+    default void setPosition(double x, double y, double z) {
         this.setX(x);
         this.setY(y);
         this.setZ(z);

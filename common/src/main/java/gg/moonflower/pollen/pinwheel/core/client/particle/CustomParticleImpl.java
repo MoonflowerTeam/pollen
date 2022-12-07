@@ -47,7 +47,7 @@ import java.util.function.Supplier;
  * @author Ocelot
  */
 @ApiStatus.Internal
-public abstract class CustomParticleImpl extends Particle implements MolangVariableProvider, ParticleEvent.Context, CustomParticle {
+public abstract class CustomParticleImpl extends Particle implements CustomParticle, MolangVariableProvider {
 
     protected static final Logger LOGGER = LogUtils.getLogger();
     protected static final double MAXIMUM_COLLISION_VELOCITY_SQUARED = Mth.square(100.0);
@@ -455,23 +455,28 @@ public abstract class CustomParticleImpl extends Particle implements MolangVaria
 
     @Override
     public void setX(double x) {
-        this.x = x;
+        this.setPos(x, this.y, this.z);
     }
 
     @Override
     public void setY(double y) {
-        this.y = y;
+        this.setPos(this.x, y, this.z);
     }
 
     @Override
     public void setZ(double z) {
-        this.z = z;
+        this.setPos(this.x, this.y, z);
+    }
+
+    @Override
+    public void setPosition(double x, double y, double z) {
+        this.setPos(x, y, z);
     }
 
     @Override
     public void setRotation(float rotation) {
         if (this.oRoll == 0 && this.roll == 0)
-            this.oRoll = this.roll;
+            this.oRoll = rotation;
         this.roll = rotation;
     }
 

@@ -38,7 +38,7 @@ public class ParticleMotionParametricComponent implements CustomParticleComponen
             double x = emitter.x() + this.relativePosition[0].safeResolve(runtime);
             double y = emitter.y() + this.relativePosition[1].safeResolve(runtime);
             double z = emitter.z() + this.relativePosition[2].safeResolve(runtime);
-            particle.setPos(x, y, z);
+            particle.setPosition(x, y, z);
         }
 
         if (this.direction != null) {
