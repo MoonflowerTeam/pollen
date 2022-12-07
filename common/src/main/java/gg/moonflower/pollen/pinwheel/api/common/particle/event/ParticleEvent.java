@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
+import gg.moonflower.pollen.pinwheel.api.common.particle.ParticleContext;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -27,7 +28,7 @@ public interface ParticleEvent {
      *
      * @param context The context for execution
      */
-    void execute(Context context);
+    void execute(ParticleContext context);
 
     /**
      * Creates an event that executes each given event one after another.
@@ -70,47 +71,6 @@ public interface ParticleEvent {
      */
     static ParticleEvent expression(MolangExpression expression) {
         return context -> context.expression(expression);
-    }
-
-    /**
-     * @author Ocelot
-     * @since 1.6.0
-     */
-    interface Context {
-
-        /**
-         * Spawns a particle effect.
-         *
-         * @param effect The effect to spawn
-         * @param type   The way to spawn the particle
-         */
-        void particleEffect(String effect, ParticleSpawnType type);
-
-        /**
-         * Plays a sound.
-         *
-         * @param sound The id of the sound to play
-         */
-        void soundEffect(ResourceLocation sound);
-
-        /**
-         * Executes an expression.
-         *
-         * @param expression The expression to execute
-         */
-        void expression(MolangExpression expression);
-
-        /**
-         * Logs a message to chat.
-         *
-         * @param message The message to send
-         */
-        void log(String message);
-
-        /**
-         * @return The source of random
-         */
-        Random getRandom();
     }
 
     enum ParticleSpawnType {

@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.pinwheel.api.client.particle;
 
+import gg.moonflower.pollen.pinwheel.api.common.particle.ParticleContext;
 import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomParticleListener;
 import gg.moonflower.pollen.pinwheel.api.common.particle.event.ParticleEvent;
 import gg.moonflower.pollen.pinwheel.api.common.particle.render.CustomParticleRenderProperties;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
  * @see CustomParticleManager
  * @since 1.6.0
  */
-public interface CustomParticle extends ParticleEvent.Context {
+public interface CustomParticle extends ParticleContext {
 
     /**
      * Adds the specified listener to the listener list.

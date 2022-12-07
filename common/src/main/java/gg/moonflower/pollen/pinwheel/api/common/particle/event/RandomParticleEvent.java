@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.pinwheel.api.common.particle.event;
 
+import gg.moonflower.pollen.pinwheel.api.common.particle.ParticleContext;
 import net.minecraft.util.random.Weight;
 import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.util.random.WeightedRandom;
@@ -18,7 +19,7 @@ public class RandomParticleEvent implements ParticleEvent {
     }
 
     @Override
-    public void execute(Context context) {
+    public void execute(ParticleContext context) {
         WeightedRandom.getRandomItem(context.getRandom(), this.events).ifPresent(event -> event.event.execute(context));
     }
 

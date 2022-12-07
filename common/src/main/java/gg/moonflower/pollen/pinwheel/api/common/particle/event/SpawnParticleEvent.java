@@ -2,6 +2,7 @@ package gg.moonflower.pollen.pinwheel.api.common.particle.event;
 
 import com.google.gson.*;
 import gg.moonflower.pollen.api.util.JSONTupleParser;
+import gg.moonflower.pollen.pinwheel.api.common.particle.ParticleContext;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +15,7 @@ public record SpawnParticleEvent(String effect, ParticleSpawnType type,
                                  @Nullable MolangExpression preEffectExpression) implements ParticleEvent {
 
     @Override
-    public void execute(Context context) {
+    public void execute(ParticleContext context) {
         if (this.preEffectExpression != null)
             context.expression(this.preEffectExpression);
         context.particleEffect(this.effect, this.type);

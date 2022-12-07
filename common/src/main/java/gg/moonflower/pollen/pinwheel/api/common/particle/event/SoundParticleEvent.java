@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.pinwheel.api.common.particle.event;
 
 import com.google.gson.*;
+import gg.moonflower.pollen.pinwheel.api.common.particle.ParticleContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 
@@ -9,7 +10,7 @@ import java.lang.reflect.Type;
 public record SoundParticleEvent(ResourceLocation effect) implements ParticleEvent {
 
     @Override
-    public void execute(Context context) {
+    public void execute(ParticleContext context) {
         context.soundEffect(this.effect);
     }
 
