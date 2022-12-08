@@ -181,17 +181,6 @@ public class CustomParticleEmitterImpl extends CustomParticleImpl implements Cus
         context.addVariable("emitter_random_4", this.random4);
     }
 
-    @Override
-    public void particleEffect(String effect, ParticleEvent.ParticleSpawnType type) {
-        switch (type) {
-            case EMITTER, EMITTER_BOUND -> {
-                ParticleOptions options = this.getOptions(effect);
-                if (options != null)
-                    this.level.addParticle(options, this.x, this.y, this.z, 0, 0, 0);
-            }
-        }
-    }
-
     @Nullable
     @Override
     public CustomParticleRenderProperties getRenderProperties() {

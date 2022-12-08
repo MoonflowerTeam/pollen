@@ -1,12 +1,17 @@
 package gg.moonflower.pollen.pinwheel.api.client.particle;
 
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import gg.moonflower.pollen.api.particle.CustomParticleOption;
+import gg.moonflower.pollen.api.particle.PollenParticles;
 import gg.moonflower.pollen.pinwheel.api.common.particle.ParticleContext;
 import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomParticleListener;
-import gg.moonflower.pollen.pinwheel.api.common.particle.event.ParticleEvent;
 import gg.moonflower.pollen.pinwheel.api.common.particle.render.CustomParticleRenderProperties;
 import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.commands.arguments.ParticleArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -20,6 +25,23 @@ import org.jetbrains.annotations.Nullable;
  * @since 1.6.0
  */
 public interface CustomParticle extends ParticleContext {
+
+
+    /**
+     * Retrieves the particle options for the specified particle name. This allows custom particles to also function
+     *
+     * @param effect The effect to parse
+     * @return The options to spawn that particle
+     * @throws CommandSyntaxException If the effect is vanilla and fails to parse
+     */
+    static ParticleOptions getOptions(String effect) throws CommandSyntaxException {
+        ResourceLocation id = ResourceLocation.tryParse(effect);
+        if (id != null && CustomParticleManager.hasParticle(id)) {
+            return new CustomParticleOption(PollenParticles.CUSTOM.get(), id);
+        } else {
+            return ParticleArgument.readParticle(new StringReader(effect));
+        }
+    }
 
     /**
      * Adds the specified listener to the listener list.

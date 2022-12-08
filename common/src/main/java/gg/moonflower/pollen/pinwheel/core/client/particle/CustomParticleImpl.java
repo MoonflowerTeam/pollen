@@ -1,11 +1,8 @@
 package gg.moonflower.pollen.pinwheel.core.client.particle;
 
 import com.google.common.base.Suppliers;
-import com.mojang.brigadier.StringReader;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
-import gg.moonflower.pollen.api.particle.CustomParticleOption;
-import gg.moonflower.pollen.api.particle.PollenParticles;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleManager;
 import gg.moonflower.pollen.pinwheel.api.common.particle.ParticleData;
@@ -23,9 +20,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.commands.arguments.ParticleArgument;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -36,7 +31,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.*;
@@ -251,6 +245,22 @@ public abstract class CustomParticleImpl extends Particle implements CustomParti
     }
 
     @Override
+    public void particleEffect(String effect, ParticleEvent.ParticleSpawnType type) {
+        try {
+            switch (type) {
+                case EMITTER, EMITTER_BOUND ->
+                        this.getEmitter().particleEffect(effect, ParticleEvent.ParticleSpawnType.PARTICLE);
+                case PARTICLE ->
+                        this.level.addParticle(CustomParticle.getOptions(effect), this.x, this.y, this.z, 0, 0, 0);
+                case PARTICLE_WITH_VELOCITY ->
+                        this.level.addParticle(CustomParticle.getOptions(effect), this.x, this.y, this.z, this.xd, this.yd, this.zd);
+            }
+        } catch (Exception e) {
+            LOGGER.error(this.getPrefix().getString() + "Failed to spawn particle: {}", effect, e);
+        }
+    }
+
+    @Override
     public void soundEffect(ResourceLocation sound) {
         Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(sound, SoundSource.AMBIENT, 1.0F, 1.0F, false, 0, SoundInstance.Attenuation.LINEAR, this.x, this.y, this.z, false));
     }
@@ -283,21 +293,6 @@ public abstract class CustomParticleImpl extends Particle implements CustomParti
     @Override
     public void setLifetime(float time) {
         this.lifetime.setValue(time);
-    }
-
-    @Nullable
-    public ParticleOptions getOptions(String effect) {
-        try {
-            ResourceLocation id = new ResourceLocation(effect);
-            if (CustomParticleManager.hasParticle(id)) {
-                return new CustomParticleOption(PollenParticles.CUSTOM.get(), id);
-            } else {
-                return ParticleArgument.readParticle(new StringReader(effect));
-            }
-        } catch (Exception e) {
-            LOGGER.error(this.getPrefix().getString() + "Failed to spawn particle: {}", effect, e);
-        }
-        return null;
     }
 
     protected Component getPrefix() {

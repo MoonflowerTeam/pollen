@@ -219,22 +219,6 @@ public class CustomParticleInstanceImpl extends CustomParticleImpl {
         context.addVariable("particle_random_4", this.random4);
     }
 
-    @Override
-    public void particleEffect(String effect, ParticleEvent.ParticleSpawnType type) {
-        switch (type) {
-            case PARTICLE -> {
-                ParticleOptions options = this.getOptions(effect);
-                if (options != null)
-                    this.level.addParticle(options, this.x, this.y, this.z, 0, 0, 0);
-            }
-            case PARTICLE_WITH_VELOCITY -> {
-                ParticleOptions options = this.getOptions(effect);
-                if (options != null)
-                    this.level.addParticle(options, this.x, this.y, this.z, this.xd, this.yd, this.zd);
-            }
-        }
-    }
-
     @Nullable
     @Override
     public CustomParticleRenderProperties getRenderProperties() {

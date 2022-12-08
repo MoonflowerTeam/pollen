@@ -39,7 +39,7 @@ public class LocalTextureTableLoader implements TextureTableLoader {
     private String[] hashTables;
 
     public LocalTextureTableLoader() {
-        this("pinwheel/textures/geometry");
+        this("pinwheel/textures");
     }
 
     public LocalTextureTableLoader(@Nullable String folder) {
