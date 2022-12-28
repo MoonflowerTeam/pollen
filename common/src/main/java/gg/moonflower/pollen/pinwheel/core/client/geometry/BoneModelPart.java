@@ -173,7 +173,7 @@ public class BoneModelPart extends ModelPart implements AnimatedModelPart {
                     new Vertex(matrix4f, x1, -y1, z1, uv.getU() / this.parent.getTextureWidth(), uv.getV() / this.parent.getTextureHeight()),
                     new Vertex(matrix4f, x2, -y2, z2, uv.getU() / this.parent.getTextureWidth(), (uv.getV() + uv.getVSize()) / this.parent.getTextureHeight()),
                     new Vertex(matrix4f, x3, -y3, z3, (uv.getU() + uv.getUSize()) / this.parent.getTextureWidth(), (uv.getV() + uv.getVSize()) / this.parent.getTextureHeight())
-            }, matrix3f, uv.getMaterialInstance(), cube.isOverrideMirror() ? cube.isMirror() : this.bone.isMirror(), face.getOpposite()));
+            }, matrix3f, cube.isOverrideMirror() ? cube.isMirror() : this.bone.isMirror(), face.getOpposite()));
         }
     }
 
@@ -311,11 +311,9 @@ public class BoneModelPart extends ModelPart implements AnimatedModelPart {
     private static class Quad {
         private final Vertex[] vertices;
         private final Vector3f normal;
-        private final String material;
 
-        public Quad(Vertex[] vertices, Matrix3f normal, String material, boolean mirror, Direction direction) {
+        public Quad(Vertex[] vertices, Matrix3f normal, boolean mirror, Direction direction) {
             this.vertices = vertices;
-            this.material = material;
             if (mirror) {
                 int i = vertices.length;
 
@@ -327,7 +325,6 @@ public class BoneModelPart extends ModelPart implements AnimatedModelPart {
             }
 
             this.normal = direction.step();
-            this.normal.mul(-1.0F, 1.0F, -1.0F);
             if (mirror) {
                 this.normal.mul(-1.0F, 1.0F, 1.0F);
             }
@@ -335,13 +332,6 @@ public class BoneModelPart extends ModelPart implements AnimatedModelPart {
         }
     }
 
-    private static class Polygon {
-        private final Vertex[] vertices;
-        private final Vector3f[] normals;
-
-        public Polygon(Vertex[] vertices, Vector3f[] normals) {
-            this.vertices = vertices;
-            this.normals = normals;
-        }
+    private record Polygon(Vertex[] vertices, Vector3f[] normals) {
     }
 }
