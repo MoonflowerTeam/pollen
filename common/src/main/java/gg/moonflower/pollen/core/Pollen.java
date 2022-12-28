@@ -76,7 +76,7 @@ public class Pollen {
         DebugInputs.init();
         EntitlementManager.init();
         EntityRendererRegistry.register(PollenEntityTypes.BOAT, PollinatedBoatRenderer::new);
-        ParticleFactoryRegistryEvent.EVENT.register(registry -> registry.register(PollenParticles.CUSTOM.get(), new CustomParticleEmitterImpl.Provider()));
+        ParticleFactoryRegistryEvent.EVENT.register(CustomParticleEmitterImpl::registerFactory);
         RenderParticleEvents.PRE.register((context, bufferSource, lightTexture, camera, partialTicks) -> {
             context.addRenderTypeAfter(ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT, CustomParticleInstanceImpl.GEOMETRY_SHEET);
         });

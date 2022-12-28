@@ -2,13 +2,14 @@ package gg.moonflower.pollen.pinwheel.core.client.particle;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Pair;
+import gg.moonflower.pollen.api.event.events.registry.client.ParticleFactoryRegistryEvent;
 import gg.moonflower.pollen.api.particle.CustomParticleOption;
 import gg.moonflower.pollen.api.particle.PollenParticleComponents;
+import gg.moonflower.pollen.api.particle.PollenParticles;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticle;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleEmitter;
 import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomParticleComponent;
 import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomParticleComponentType;
-import gg.moonflower.pollen.pinwheel.api.common.particle.event.ParticleEvent;
 import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomEmitterListener;
 import gg.moonflower.pollen.pinwheel.api.common.particle.render.CustomParticleRenderProperties;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
@@ -27,6 +28,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -43,7 +45,7 @@ public class CustomParticleEmitterImpl extends CustomParticleImpl implements Cus
     private final Set<CustomEmitterListener> listeners;
     private final Set<CustomParticle> particles;
 
-    public CustomParticleEmitterImpl(Entity entity, ResourceLocation name) {
+    public CustomParticleEmitterImpl(@NotNull Entity entity, ResourceLocation name) {
         this(entity, (ClientLevel) entity.level, entity.getX(), entity.getY(), entity.getZ(), name);
     }
 
@@ -201,11 +203,15 @@ public class CustomParticleEmitterImpl extends CustomParticleImpl implements Cus
         return this;
     }
 
+    public static void registerFactory(ParticleFactoryRegistryEvent.Registry registry) {
+        registry.register(PollenParticles.CUSTOM.get(), new CustomParticleEmitterImpl.Provider());
+    }
+
     public static class Provider implements ParticleProvider<CustomParticleOption> {
 
         @Override
-        public Particle createParticle(CustomParticleOption type, ClientLevel clientLevel, double x, double y, double z, double motionX, double motionY, double motionZ) {
-            return new CustomParticleEmitterImpl(null, clientLevel, x, y, z, type.getName());
+        public Particle createParticle(CustomParticleOption type, ClientLevel level, double x, double y, double z, double motionX, double motionY, double motionZ) {
+            return new CustomParticleEmitterImpl(null, level, x, y, z, type.getName());
         }
     }
 }
