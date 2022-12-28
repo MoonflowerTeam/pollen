@@ -327,6 +327,7 @@ public class BoneModelPart extends ModelPart implements AnimatedModelPart {
             }
 
             this.normal = direction.step();
+            this.normal.mul(-1.0F, 1.0F, -1.0F);
             if (mirror) {
                 this.normal.mul(-1.0F, 1.0F, 1.0F);
             }
