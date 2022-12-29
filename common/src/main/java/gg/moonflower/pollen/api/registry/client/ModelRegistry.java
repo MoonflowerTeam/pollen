@@ -2,6 +2,7 @@ package gg.moonflower.pollen.api.registry.client;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.platform.Platform;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 
@@ -34,6 +35,17 @@ public final class ModelRegistry {
     @ExpectPlatform
     public static void registerFactory(ModelFactory factory) {
         Platform.error();
+    }
+
+    /**
+     * Retrieves a baked model from the model registry using a regular resource location.
+     *
+     * @param location The location to get the model by
+     * @return The model retrieves by the id
+     */
+    @ExpectPlatform
+    public static BakedModel getModel(ResourceLocation location) {
+        return Platform.error();
     }
 
     /**
