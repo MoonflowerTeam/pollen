@@ -223,7 +223,7 @@ public abstract class DynamicInventory implements Container {
         ListTag list = nbt.getList("Items", 10);
         for (int i = 0; i < list.size(); ++i) {
             CompoundTag slotNbt = list.getCompound(i);
-            int index = slotNbt.getByte("Slot") & 255;
+            int index = slotNbt.getInt("Slot");
             if (index < this.getContainerSize()) {
                 this.inventory.put(index, ItemStack.of(slotNbt));
             }

@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import java.nio.file.Path;
 
 /**
- * Config for a specific mod. Wrapper for Forge ModConfig
+ * Config for a specific mod. Wrapper for Forge ModConfig.
  *
  * @author Ocelot
  * @since 1.0.0

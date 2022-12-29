@@ -65,7 +65,7 @@ public interface VoxelShapeHelper {
     }
 
     /**
-     * <p>Manages the combining of {@link VoxelShape} into a single complex shape.</p>
+     * Manages the combining of {@link VoxelShape} into a single complex shape.
      *
      * @author Ocelot
      * @see VoxelShape

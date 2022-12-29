@@ -9,13 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>Quick moves items from one slot to another in an easier way than manually checking for slot indices.</p>
+ * Quick moves items from one slot to another in an easier way than manually checking for slot indices.
  * <p>Actions are performed from top to bottom, so overlaps between actions will always prioritize the one added first.</p>
  *
  * @author Ocelot
  * @since 1.0.0
  */
 public class QuickMoveHelper {
+
     private final List<Action> actions;
 
     public QuickMoveHelper() {
