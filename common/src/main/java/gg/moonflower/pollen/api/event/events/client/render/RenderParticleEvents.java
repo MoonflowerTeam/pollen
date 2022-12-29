@@ -73,23 +73,10 @@ public final class RenderParticleEvents {
         ParticleEngine getParticleEngine();
 
         /**
-         * @return All render types that will be rendered this frame. This can be modified
-         */
-        List<ParticleRenderType> getRenderOrder();
-
-        /**
-         * Prevents the specified render type from drawing.
+         * Inserts the specified render type to draw last.
          *
-         * @param type The render type to cancel
-         */
-        void cancel(ParticleRenderType type);
-
-        /**
-         * Inserts the specified render type to draw after the target.
-         *
-         * @param target The target to insert after. If the target can't be found it will be inserted at the end
          * @param type   The render type to add
          */
-        void addRenderTypeAfter(ParticleRenderType target, ParticleRenderType type);
+        void addRenderType(ParticleRenderType type);
     }
 }
