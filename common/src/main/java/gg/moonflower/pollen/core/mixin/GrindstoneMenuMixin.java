@@ -11,6 +11,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.GrindstoneMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -42,6 +43,11 @@ public abstract class GrindstoneMenuMixin extends AbstractContainerMenu implemen
         super(menuType, i);
     }
 
+    @Unique
+    private boolean isValid(ItemStack stack) {
+        return stack.isDamageableItem() || stack.is(Items.ENCHANTED_BOOK) || stack.isEnchanted();
+    }
+
     @Inject(method = "createResult", at = @At("RETURN"))
     public void modifyAllowed(CallbackInfo ci) {
         this.recipe = null;
@@ -54,6 +60,17 @@ public abstract class GrindstoneMenuMixin extends AbstractContainerMenu implemen
                 });
                 this.broadcastChanges();
             });
+        }
+
+        if (this.resultSlots.getItem(0).isEmpty()) {
+            return;
+        }
+
+        for (int i = 0; i < this.repairSlots.getContainerSize(); i++) {
+            if (!this.isValid(this.repairSlots.getItem(i))) {
+                this.resultSlots.setItem(0, ItemStack.EMPTY);
+                break;
+            }
         }
     }
 
