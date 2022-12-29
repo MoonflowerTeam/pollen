@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.core.mixin.fabric.client;
 
+import gg.moonflower.pollen.api.event.events.client.render.FreeRendererEvent;
 import gg.moonflower.pollen.api.event.events.client.render.InitRendererEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.main.GameConfig;
@@ -14,5 +15,10 @@ public class MinecraftMixin {
     @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;initRenderer(IZ)V", shift = At.Shift.AFTER))
     public void init(GameConfig gameConfig, CallbackInfo ci) {
         InitRendererEvent.EVENT.invoker().initRenderer();
+    }
+
+    @Inject(method = "close", at = @At(value = "INVOKE", target = "Lnet/minecraft/Util;shutdownExecutors()V", shift = At.Shift.BEFORE))
+    public void close(CallbackInfo ci) {
+        FreeRendererEvent.EVENT.invoker().closeRenderer();
     }
 }

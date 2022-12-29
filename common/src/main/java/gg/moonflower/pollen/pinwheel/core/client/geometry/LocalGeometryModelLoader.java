@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +26,7 @@ import java.util.concurrent.Executor;
 public final class LocalGeometryModelLoader implements BackgroundLoader<Map<ResourceLocation, GeometryModel>> {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    static final String FOLDER = "pinwheel/geometry/";
+    static final String FOLDER = "pinwheel/geometry";
 
     @Override
     public CompletableFuture<Map<ResourceLocation, GeometryModel>> reload(ResourceManager resourceManager, Executor backgroundExecutor, Executor gameExecutor) {
@@ -34,14 +35,14 @@ public final class LocalGeometryModelLoader implements BackgroundLoader<Map<Reso
             Map<ResourceLocation, GeometryModel> modelLocations = new HashMap<>();
             for (ResourceLocation modelLocation : resourceManager.listResources(FOLDER, name -> name.endsWith(".json"))) {
                 try (Resource resource = resourceManager.getResource(modelLocation)) {
-                    GeometryModelData[] models = GeometryModelParser.parseModel(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
+                    GeometryModelData[] models = GeometryModelParser.parseModel(new InputStreamReader(resource.getInputStream()));
                     for (GeometryModelData model : models) {
                         ResourceLocation id = new ResourceLocation(modelLocation.getNamespace(), model.getDescription().getIdentifier());
                         if (modelLocations.put(id, model.create()) != null)
                             LOGGER.warn("Duplicate geometry model with id '" + id + "'");
                     }
                 } catch (Exception e) {
-                    LOGGER.error("Failed to load geometry file '" + modelLocation.getNamespace() + ":" + modelLocation.getPath().substring(FOLDER.length(), modelLocation.getPath().length() - 5) + "'", e);
+                    LOGGER.error("Failed to load geometry file '" + modelLocation.getNamespace() + ":" + modelLocation.getPath().substring(FOLDER.length() + 1, modelLocation.getPath().length() - 5) + "'", e);
                 }
             }
 

@@ -47,7 +47,7 @@
     "minecraft": "1.18.x >=1.18.2"
   },
   "conflicts": {
-    "grindenchantments": "*"
+    "grindenchantments": "<1.6.2"
   },
   "custom": {
     "cardinal-components": [

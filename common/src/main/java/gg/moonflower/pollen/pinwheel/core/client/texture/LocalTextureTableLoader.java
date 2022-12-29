@@ -39,12 +39,12 @@ public class LocalTextureTableLoader implements TextureTableLoader {
     private String[] hashTables;
 
     public LocalTextureTableLoader() {
-        this("textures/geometry");
+        this("pinwheel/textures");
     }
 
     public LocalTextureTableLoader(@Nullable String folder) {
         this.textures = new HashMap<>();
-        this.folder = folder == null || folder.isEmpty() ? "" : folder + "/";
+        this.folder = folder == null || folder.isEmpty() ? "" : folder;
         this.hashTables = new String[0];
     }
 
@@ -65,7 +65,7 @@ public class LocalTextureTableLoader implements TextureTableLoader {
         {
             Map<ResourceLocation, GeometryModelTextureTable> textureLocations = new HashMap<>();
             for (ResourceLocation textureTableLocation : resourceManager.listResources(this.folder, name -> name.endsWith(".json"))) {
-                ResourceLocation textureTableName = new ResourceLocation(textureTableLocation.getNamespace(), textureTableLocation.getPath().substring(this.folder.length(), textureTableLocation.getPath().length() - 5));
+                ResourceLocation textureTableName = new ResourceLocation(textureTableLocation.getNamespace(), textureTableLocation.getPath().substring(this.folder.length() + 1, textureTableLocation.getPath().length() - 5));
                 if (textureTableName.getPath().equals("hash_tables"))
                     continue;
 

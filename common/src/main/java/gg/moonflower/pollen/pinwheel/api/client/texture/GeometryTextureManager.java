@@ -5,6 +5,7 @@ import gg.moonflower.pollen.api.registry.resource.ResourceRegistry;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelRenderer;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
+import gg.moonflower.pollen.pinwheel.core.client.texture.DeprecatedLocalTextureTableLoader;
 import gg.moonflower.pollen.pinwheel.core.client.texture.GeometryTextureSpriteUploader;
 import gg.moonflower.pollen.pinwheel.core.client.texture.LocalTextureTableLoader;
 import gg.moonflower.pollen.pinwheel.core.client.texture.StaticTextureTableLoader;
@@ -55,6 +56,7 @@ public final class GeometryTextureManager {
     public static void init() {
         ResourceRegistry.registerReloadListener(PackType.CLIENT_RESOURCES, RELOADER);
         addProvider(new LocalTextureTableLoader());
+        addProvider(new DeprecatedLocalTextureTableLoader());
     }
 
     /**

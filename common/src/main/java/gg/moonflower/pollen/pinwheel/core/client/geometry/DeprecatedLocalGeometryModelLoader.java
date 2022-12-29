@@ -51,7 +51,6 @@ public final class DeprecatedLocalGeometryModelLoader implements BackgroundLoade
             }
 
             deprecatedFiles.stream().map(ResourceLocation::getNamespace).forEach(namespace -> LOGGER.error("Mod: " + namespace + " is using deprecated Pollen models. Geometry models should be relocated to 'assets/" + namespace + "/" + LocalGeometryModelLoader.FOLDER.substring(0, LocalGeometryModelLoader.FOLDER.length() - 1) + "'"));
-            LOGGER.info("Loaded " + modelLocations.size() + " geometry models.");
             return modelLocations;
         }, backgroundExecutor);
     }
