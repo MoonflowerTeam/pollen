@@ -1,9 +1,10 @@
 package gg.moonflower.pollen.api.base.platform;
 
+import com.google.common.base.Suppliers;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.injectables.annotations.PlatformOnly;
 import dev.architectury.injectables.targets.ArchitecturyTarget;
-import gg.moonflower.pollen.impl.BaseApiInitializer;
+import gg.moonflower.pollen.impl.base.platform.ClientPlatformService;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
@@ -13,6 +14,7 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -27,14 +29,7 @@ import java.util.stream.Stream;
 public abstract class Platform {
 
     private static final boolean FORGE = ArchitecturyTarget.getCurrentTarget().equals(PlatformOnly.FORGE);
-    private static final Supplier<RegistryAccess> CLIENT_REGISTRY_ACCESS = () -> {
-        ClientPacketListener listener = Minecraft.getInstance().getConnection();
-        return listener != null ? listener.registryAccess() : null;
-    };
-    private static final Supplier<RecipeManager> CLIENT_RECIPE_MANAGER = () -> {
-        ClientPacketListener listener = Minecraft.getInstance().getConnection();
-        return listener != null ? listener.getRecipeManager() : null;
-    };
+    private static final Supplier<ClientPlatformService> CLIENT_PLATFORM = Suppliers.memoize(() -> ServiceLoader.load(ClientPlatformService.class).findFirst().orElseThrow(() -> new IllegalStateException("Server attempted to access client platfor")));
 
     private final String modId;
 
@@ -77,9 +72,8 @@ public abstract class Platform {
     /**
      * @return The main game executor. This is the Minecraft Client or Server instance
      */
-    @ExpectPlatform
     public static BlockableEventLoop<?> getGameExecutor() {
-        return Platform.error();
+        return isClient() ? CLIENT_PLATFORM.get().getExecutor() : getRunningServer().orElseThrow(IllegalStateException::new);
     }
 
     /**
@@ -104,28 +98,31 @@ public abstract class Platform {
     /**
      * @return The currently running Minecraft Server instance. This will not be present in a remote client level
      */
+    @ExpectPlatform
     public static Optional<MinecraftServer> getRunningServer() {
-        return Optional.ofNullable(BaseApiInitializer.getRunningServer());
+        return error();
     }
 
     /**
      * @return The access to registries for the running server or client
      */
     public static Optional<RegistryAccess> getRegistryAccess() {
-        MinecraftServer server = BaseApiInitializer.getRunningServer();
-        if (server != null)
-            return Optional.of(server.registryAccess());
-        return isClient() ? Optional.ofNullable(CLIENT_REGISTRY_ACCESS.get()) : Optional.empty();
+        Optional<MinecraftServer> server = getRunningServer();
+        if (server.isPresent()) {
+            return server.map(MinecraftServer::registryAccess);
+        }
+        return isClient() ? CLIENT_PLATFORM.get().getRegistryAccess() : Optional.empty();
     }
 
     /**
      * @return The recipe manager for the running server or client
      */
     public static Optional<RecipeManager> getRecipeManager() {
-        MinecraftServer server = Pollen.getRunningServer();
-        if (server != null)
-            return Optional.of(server.getRecipeManager());
-        return isClient() ? Optional.ofNullable(CLIENT_RECIPE_MANAGER.get()) : Optional.empty();
+        Optional<MinecraftServer> server = getRunningServer();
+        if (server.isPresent()) {
+            return server.map(MinecraftServer::getRecipeManager);
+        }
+        return isClient() ? CLIENT_PLATFORM.get().getRecipeManager() : Optional.empty();
     }
 
     /**

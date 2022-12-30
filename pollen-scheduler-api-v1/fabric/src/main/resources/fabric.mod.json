@@ -10,10 +10,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "gg.moonflower.pollen.impl.fabric.BaseApiInitializerFabric"
-    ],
-    "client": [
-      "gg.moonflower.pollen.impl.fabric.BaseApiClientInitializerFabric"
+      "gg.moonflower.pollen.impl.fabric.SchedulerFabric"
     ]
   },
   "depends": {

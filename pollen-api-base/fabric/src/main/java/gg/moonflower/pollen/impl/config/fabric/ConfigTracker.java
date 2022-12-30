@@ -2,16 +2,13 @@ package gg.moonflower.pollen.impl.config.fabric;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.electronwill.nightconfig.toml.TomlFormat;
 import com.mojang.logging.LogUtils;
 import gg.moonflower.pollen.api.base.config.PollinatedConfigType;
-import gg.moonflower.pollen.api.event.events.ConfigEvent;
-import net.minecraft.client.Minecraft;
+import gg.moonflower.pollen.api.base.event.events.ConfigEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
-import java.io.ByteArrayInputStream;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -81,13 +78,13 @@ public class ConfigTracker {
         }
     }
 
-    public void receiveSyncedConfig(String fileName, byte[] fileData) {
-        if (!Minecraft.getInstance().isLocalServer() && this.fileMap.containsKey(fileName)) {
-            PollinatedModConfigImpl config = this.fileMap.get(fileName);
-            config.setConfigData(TomlFormat.instance().createParser().parse(new ByteArrayInputStream(fileData)));
-            ConfigEvent.RELOADING.invoker().configChanged(config);
-        }
-    }
+//    public void receiveSyncedConfig(String fileName, byte[] fileData) {
+//        if (!Minecraft.getInstance().isLocalServer() && this.fileMap.containsKey(fileName)) {
+//            PollinatedModConfigImpl config = this.fileMap.get(fileName);
+//            config.setConfigData(TomlFormat.instance().createParser().parse(new ByteArrayInputStream(fileData)));
+//            ConfigEvent.RELOADING.invoker().configChanged(config);
+//        }
+//    }
 
     /**
      * Populates all server configs with a blank memory config that will be filled by the server.

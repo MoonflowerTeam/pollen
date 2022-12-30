@@ -1,27 +1,20 @@
 package gg.moonflower.pollen.api.base.platform.fabric;
 
-import gg.moonflower.pollen.api.base.platform.Platform;
 import gg.moonflower.pollen.api.base.platform.PollinatedModContainer;
+import gg.moonflower.pollen.impl.fabric.BaseApiInitializerFabric;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.thread.BlockableEventLoop;
+import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.function.Supplier;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @ApiStatus.Internal
 public class PlatformImpl {
 
-    private static final Supplier<Supplier<BlockableEventLoop<?>>> CLIENT_EXECUTOR = () -> Minecraft::getInstance;
-
     public static boolean isProduction() {
         return !FabricLoader.getInstance().isDevelopmentEnvironment();
-    }
-
-    public static BlockableEventLoop<?> getGameExecutor() {
-        return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ? CLIENT_EXECUTOR.get().get() : Platform.getRunningServer().orElseThrow(IllegalStateException::new);
     }
 
     public static boolean isModLoaded(String modId) {
@@ -38,5 +31,9 @@ public class PlatformImpl {
 
     public static boolean isOptifineLoaded() {
         return isModLoaded("optifabric");
+    }
+
+    public static Optional<MinecraftServer> getRunningServer() {
+        return Optional.ofNullable(BaseApiInitializerFabric.getServer());
     }
 }

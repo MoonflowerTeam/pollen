@@ -1,8 +1,7 @@
-package gg.moonflower.pollen.impl.base;
+package gg.moonflower.pollen.impl.scheduler;
 
 import gg.moonflower.pollen.api.base.platform.Platform;
-import gg.moonflower.pollen.api.base.Scheduler;
-import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
+import gg.moonflower.pollen.api.scheduler.v1.Scheduler;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Collection;
@@ -25,11 +24,12 @@ public class SchedulerImpl implements Scheduler {
             SIDED_SCHEDULERS.values().forEach(SchedulerImpl::shutdownInternal);
             SIDED_SCHEDULERS.clear();
         }));
-        ServerLifecycleEvents.STOPPING.register(server -> {
-            SchedulerImpl scheduler = SIDED_SCHEDULERS.remove(false);
-            if (scheduler != null)
-                scheduler.shutdownInternal();
-        });
+        // TODO
+//        ServerLifecycleEvents.STOPPING.register(server -> {
+//            SchedulerImpl scheduler = SIDED_SCHEDULERS.remove(false);
+//            if (scheduler != null)
+//                scheduler.shutdownInternal();
+//        });
     }
 
     private final Executor serverExecutor;

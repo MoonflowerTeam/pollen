@@ -1,13 +1,16 @@
 package gg.moonflower.pollen.api.base.platform.forge;
 
 import gg.moonflower.pollen.api.base.platform.PollinatedModContainer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @ApiStatus.Internal
@@ -15,10 +18,6 @@ public class PlatformImpl {
 
     public static boolean isProduction() {
         return FMLLoader.isProduction();
-    }
-
-    public static BlockableEventLoop<?> getGameExecutor() {
-        return LogicalSidedProvider.WORKQUEUE.get(EffectiveSide.get());
     }
 
     public static boolean isModLoaded(String modId) {
@@ -35,5 +34,9 @@ public class PlatformImpl {
 
     public static boolean isOptifineLoaded() {
         return isModLoaded("optifine");
+    }
+
+    public static Optional<MinecraftServer> getRunningServer() {
+        return Optional.ofNullable(ServerLifecycleHooks.getCurrentServer());
     }
 }

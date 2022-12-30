@@ -1,6 +1,6 @@
-package gg.moonflower.pollen.api.base;
+package gg.moonflower.pollen.api.scheduler.v1;
 
-import gg.moonflower.pollen.impl.base.SchedulerImpl;
+import gg.moonflower.pollen.impl.scheduler.SchedulerImpl;
 
 import java.util.concurrent.ScheduledExecutorService;
 

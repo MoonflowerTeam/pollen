@@ -3,7 +3,7 @@ package gg.moonflower.pollen.impl.config.forge;
 import gg.moonflower.pollen.api.base.config.PollinatedConfigBuilder;
 import gg.moonflower.pollen.api.base.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.base.config.PollinatedModConfig;
-import gg.moonflower.pollen.api.event.events.ConfigEvent;
+import gg.moonflower.pollen.api.base.event.events.ConfigEvent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;

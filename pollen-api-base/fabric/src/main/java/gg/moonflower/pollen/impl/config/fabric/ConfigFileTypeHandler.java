@@ -6,7 +6,7 @@ import com.electronwill.nightconfig.core.file.FileWatcher;
 import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import com.mojang.logging.LogUtils;
-import gg.moonflower.pollen.api.event.events.ConfigEvent;
+import gg.moonflower.pollen.api.base.event.events.ConfigEvent;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;

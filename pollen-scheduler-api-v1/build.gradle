@@ -1,0 +1,11 @@
+plugins {
+    id "pollen.module"
+}
+
+pollen {
+    apiName = "pollen-scheduler-api-v1"
+
+    moduleDependency "pollen-api-base"
+}
+
+version = rootProject.version
