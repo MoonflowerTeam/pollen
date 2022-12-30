@@ -4,5 +4,5 @@ import gg.moonflower.pollen.impl.SchedulerApiInitializer;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod(SchedulerApiInitializer.MOD_ID)
-public class SchedulerForge {
+public class SchedulerApiForge {
 }

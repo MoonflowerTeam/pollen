@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "gg.moonflower.pollen.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "mixins": [
+    "loot.LootPoolAccessor",
+    "loot.LootPoolBuilderAccessor",
+    "loot.LootTableAccessor",
+    "loot.LootTableBuilderAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

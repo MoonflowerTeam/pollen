@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.mixin;
+package gg.moonflower.pollen.mixin.loot;
 
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
