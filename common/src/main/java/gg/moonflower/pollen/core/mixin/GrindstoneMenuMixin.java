@@ -62,10 +62,11 @@ public abstract class GrindstoneMenuMixin extends AbstractContainerMenu implemen
             });
         }
 
-        if (this.resultSlots.getItem(0).isEmpty()) {
+        if (this.recipe != null || this.resultSlots.getItem(0).isEmpty()) {
             return;
         }
 
+        // The recipe was invalid, so the slots need to be checked for the vanilla recipe
         for (int i = 0; i < this.repairSlots.getContainerSize(); i++) {
             if (!this.isValid(this.repairSlots.getItem(i))) {
                 this.resultSlots.setItem(0, ItemStack.EMPTY);
