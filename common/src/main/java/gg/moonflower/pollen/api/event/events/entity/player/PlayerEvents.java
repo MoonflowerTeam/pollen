@@ -75,7 +75,7 @@ public final class PlayerEvents {
      * Fired when a player is awarded an advancement.
      *
      * @author ebo2022
-     * @since 2.0.0
+     * @since
      */
     @FunctionalInterface
     public interface PlayerAdvancementEvent {
@@ -94,7 +94,7 @@ public final class PlayerEvents {
      * Fired when a player picks up experience orbs.
      *
      * @author ebo2022
-     * @since 2.0.0
+     * @since
      */
     @FunctionalInterface
     public interface ExpPickup {
@@ -113,7 +113,7 @@ public final class PlayerEvents {
      * Fired when a player is about to be awarded experience.
      *
      * @author ebo2022
-     * @since 2.0.0
+     * @since
      */
     @FunctionalInterface
     public interface ExpChange {
@@ -132,7 +132,7 @@ public final class PlayerEvents {
      * Fired when a player is about to be awarded experience levels.
      *
      * @author ebo2022
-     * @since 2.0.0
+     * @since
      */
     @FunctionalInterface
     public interface LevelChange {
@@ -151,7 +151,7 @@ public final class PlayerEvents {
      * Fired when a player starts sleeping.
      *
      * @author ebo2022
-     * @since 2.0.0
+     * @since
      */
     @FunctionalInterface
     public interface StartSleeping {
@@ -172,7 +172,7 @@ public final class PlayerEvents {
      * Fired when a player stops sleeping and wakes up.
      *
      * @author ebo2022
-     * @since 2.0.0
+     * @since
      */
     @FunctionalInterface
     public interface StopSleeping {
@@ -191,7 +191,7 @@ public final class PlayerEvents {
      * Fired when a player respawns.
      *
      * @author ebo2022
-     * @since 2.0.0
+     * @since
      */
     @FunctionalInterface
     public interface Respawn {
@@ -209,7 +209,7 @@ public final class PlayerEvents {
      * Fired when a player crafts an item.
      *
      * @author ebo2022
-     * @since 2.0.0
+     * @since
      */
     @FunctionalInterface
     public interface ItemCrafted {
@@ -228,7 +228,7 @@ public final class PlayerEvents {
      * Fired when a player smelts an item.
      *
      * @author ebo2022
-     * @since 2.0.0
+     * @since
      */
     @FunctionalInterface
     public interface ItemSmelted {

@@ -16,7 +16,7 @@ public final class LevelLoadingEvents {
      * Fired when a level is loaded.
      *
      * @author ebo2022
-     * @since 2.0.0
+     * @since
      */
     @FunctionalInterface
     public interface Load {
@@ -33,7 +33,7 @@ public final class LevelLoadingEvents {
      * Fired when a level is unloaded.
      *
      * @author ebo2022
-     * @since 2.0.0
+     * @since
      */
     @FunctionalInterface
     public interface Unload {

@@ -45,6 +45,7 @@
     "MinecraftServerMixin",
     "MobMixin",
     "PlayerListMixin",
+    "ProjectileMixin",
     "ServerLevelEntityCallbacksMixin",
     "ServerLevelMixin",
     "ServerLoginPacketListenerImplMixin",
@@ -53,7 +54,11 @@
     "WoodTypeAccessor",
     "data.AdvancementBuilderMixin",
     "data.TagsProviderMixin",
-    "loot.LootTableAccessor"
+    "loot.LootTableAccessor",
+    "projectile.AbstractArrowMixin",
+    "projectile.AbstractHurtingProjectileMixin",
+    "projectile.FireworkRocketEntityMixin",
+    "projectile.FishingHookMixin"
   ],
   "injectors": {
     "defaultRequire": 1
