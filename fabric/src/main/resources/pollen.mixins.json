@@ -54,11 +54,7 @@
     "WoodTypeAccessor",
     "data.AdvancementBuilderMixin",
     "data.TagsProviderMixin",
-    "loot.LootTableAccessor",
-    "projectile.AbstractArrowMixin",
-    "projectile.AbstractHurtingProjectileMixin",
-    "projectile.FireworkRocketEntityMixin",
-    "projectile.FishingHookMixin"
+    "loot.LootTableAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
