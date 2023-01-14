@@ -56,6 +56,19 @@ public final class EventRegistry {
         }));
     }
 
+    @SuppressWarnings({"unchecked", "SuspiciousInvocationHandlerImplementation"})
+    public static <T> PollinatedEvent<T> createCancellable(Class<? super T> type) {
+        return create(type, events -> (T) Proxy.newProxyInstance(EventRegistry.class.getClassLoader(), new Class[]{type}, (proxy, method, args) -> {
+            for (Object event : events) {
+                boolean result = invokeFast(event, method, args);
+                if (!result) {
+                    return false;
+                }
+            }
+            return true;
+        }));
+    }
+
     @SuppressWarnings("unchecked")
     private static <T, S> S invokeFast(T object, Method method, Object[] args) throws Throwable {
         return (S) MethodHandles.lookup().unreflect(method).bindTo(object).invokeWithArguments(args);
