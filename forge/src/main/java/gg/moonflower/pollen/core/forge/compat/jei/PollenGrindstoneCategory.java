@@ -77,8 +77,12 @@ public class PollenGrindstoneCategory implements IRecipeCategory<PollenGrindston
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, PollenGrindstoneRecipe recipe, IFocusGroup focus) {
         NonNullList<Ingredient> ingredients = recipe.getIngredients();
-        builder.addSlot(RecipeIngredientRole.INPUT, 19, 4).addIngredients(ingredients.get(0)).setSlotName(TOP_SLOT);
-        builder.addSlot(RecipeIngredientRole.INPUT, 19, 25).addIngredients(ingredients.get(1)).setSlotName(BOTTOM_SLOT);
+        if (!ingredients.isEmpty()) {
+            builder.addSlot(RecipeIngredientRole.INPUT, 19, 4).addIngredients(ingredients.get(0)).setSlotName(TOP_SLOT);
+            if (ingredients.size() > 1) {
+                builder.addSlot(RecipeIngredientRole.INPUT, 19, 25).addIngredients(ingredients.get(1)).setSlotName(BOTTOM_SLOT);
+            }
+        }
         builder.addSlot(RecipeIngredientRole.OUTPUT, 99, 19).addItemStack(recipe.getResultItem());
     }
 

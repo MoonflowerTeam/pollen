@@ -24,11 +24,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -45,12 +41,14 @@ public final class PollenRecipeMaker {
         Collection<ItemStack> ingredients = ingredientManager.getAllIngredients(VanillaTypes.ITEM);
         Collection<Enchantment> enchantments = ForgeRegistries.ENCHANTMENTS.getValues();
         for (ItemStack ingredient : ingredients) {
-            if (!ingredient.isEnchantable())
+            if (!ingredient.isEnchantable()) {
                 continue;
+            }
 
             ResourceLocation id = ForgeRegistries.ITEMS.getKey(ingredient.getItem());
-            if (id == null)
+            if (id == null) {
                 continue;
+            }
 
             Stream<ItemStack> inputs = enchantments.stream().filter(enchantment -> !enchantment.isCurse()).flatMap(enchantment -> IntStream.rangeClosed(enchantment.getMinLevel(), enchantment.getMaxLevel()).mapToObj(level -> {
                 Map<Enchantment, Integer> enchantmentsMap = new HashMap<>(1);
