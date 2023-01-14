@@ -35,6 +35,7 @@
   ],
   "mixins": [
     "AxeItemMixin",
+    "BoneMealItemMixin",
     "ContainerProviderImplMixin",
     "DedicatedServerMixin",
     "ExplosionMixin",
@@ -46,6 +47,7 @@
     "MobMixin",
     "PlayerListMixin",
     "ProjectileMixin",
+    "SaplingBlockMixin",
     "ServerLevelEntityCallbacksMixin",
     "ServerLevelMixin",
     "ServerLoginPacketListenerImplMixin",
