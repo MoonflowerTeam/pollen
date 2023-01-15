@@ -87,7 +87,6 @@ public class Pollen {
     }
 
     private static void onCommon() {
-        LivingEntityEvents.SHIELD_BLOCK.register((damageSource, originalBlockedDamage, blockedDamage, loseDurability) -> false);
         PollenSuggestionProviders.init();
         SyncedDataManager.init();
         ResourceModifierManager.init();

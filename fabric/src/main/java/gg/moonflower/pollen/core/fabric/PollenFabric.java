@@ -85,7 +85,6 @@ public class PollenFabric implements ModInitializer {
         ServerWorldEvents.UNLOAD.register((server, world) -> LevelLoadingEvents.UNLOAD.invoker().unload(world));
 
         EntitySleepEvents.ALLOW_SLEEPING.register(((player, sleepingPos) -> PlayerEvents.START_SLEEPING_EVENT.invoker().startSleeping(player, sleepingPos)));
-        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> PlayerEvents.RESPAWN_EVENT.invoker().respawn(newPlayer, alive));
 
         UseItemCallback.EVENT.register((player, level, hand) -> PlayerInteractionEvents.RIGHT_CLICK_ITEM.invoker().interaction(player, level, hand));
         UseBlockCallback.EVENT.register((player, level, hand, result) -> PlayerInteractionEvents.RIGHT_CLICK_BLOCK.invoker().interaction(player, level, hand, result));
@@ -99,6 +98,7 @@ public class PollenFabric implements ModInitializer {
 
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> EntityEvents.JOIN.invoker().onJoin(entity, level));
         ServerEntityEvents.ENTITY_UNLOAD.register((entity, level) -> EntityEvents.LEAVE.invoker().onLeave(entity, level));
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> PlayerEvents.RESPAWN_EVENT.invoker().respawn(newPlayer, alive));
 
         LootTableLoadingCallback.EVENT.register((resourceManager, manager, id, supplier, setter) -> {
             LootTableConstructingEvent.Context context = new LootTableConstructingEvent.Context(id, supplier.build());
