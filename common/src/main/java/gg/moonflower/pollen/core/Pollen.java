@@ -127,11 +127,4 @@ public class Pollen {
     public static MinecraftServer getRunningServer() {
         return server;
     }
-
-    private static float calculateBounceVelocity(float velocity) {
-        if (velocity * 0.8F >= 0.5F) {
-            return velocity * 0.8F;
-        }
-        else return 0.5F;
-    }
 }
