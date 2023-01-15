@@ -9,11 +9,8 @@ import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.crafting.PollenRecipeTypes;
 import gg.moonflower.pollen.api.entity.PollenEntityTypes;
 import gg.moonflower.pollen.api.event.events.client.render.RenderParticleEvents;
-import gg.moonflower.pollen.api.event.events.entity.LivingEntityEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.event.events.registry.client.ParticleFactoryRegistryEvent;
-import gg.moonflower.pollen.pinwheel.core.client.particle.CustomParticleInstanceImpl;
-import gg.moonflower.pollen.pinwheel.core.client.particle.CustomParticleEmitterImpl;
 import gg.moonflower.pollen.api.particle.PollenParticles;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.ResourceConditionRegistry;
@@ -33,7 +30,8 @@ import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.VanillaModelMapping;
 import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleManager;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
-import net.minecraft.client.particle.ParticleRenderType;
+import gg.moonflower.pollen.pinwheel.core.client.particle.CustomParticleEmitterImpl;
+import gg.moonflower.pollen.pinwheel.core.client.particle.CustomParticleInstanceImpl;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.server.MinecraftServer;
@@ -130,5 +128,10 @@ public class Pollen {
         return server;
     }
 
-
+    private static float calculateBounceVelocity(float velocity) {
+        if (velocity * 0.8F >= 0.5F) {
+            return velocity * 0.8F;
+        }
+        else return 0.5F;
+    }
 }

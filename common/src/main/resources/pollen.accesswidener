@@ -43,8 +43,6 @@ transitive-accessible method net/minecraft/world/entity/schedule/Activity <init>
 
 accessible field net/minecraft/data/recipes/RecipeProvider shapeBuilders Ljava/util/Map;
 
-accessible method net/minecraft/world/entity/projectile/Projectile <init> (Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;)V
-
 transitive-accessible field net/minecraft/data/loot/BlockLoot HAS_SILK_TOUCH Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition$Builder;
 transitive-accessible field net/minecraft/data/loot/BlockLoot HAS_NO_SILK_TOUCH Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition$Builder;
 transitive-accessible field net/minecraft/data/loot/BlockLoot HAS_SHEARS Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition$Builder;
