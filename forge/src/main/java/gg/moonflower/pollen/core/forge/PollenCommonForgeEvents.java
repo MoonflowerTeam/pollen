@@ -285,7 +285,7 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(ShieldBlockEvent event) {
-        if (!LivingEntityEvents.SHIELD_BLOCK.invoker().onShieldBlock(event.getDamageSource(), event.getOriginalBlockedDamage(),
+        if (!LivingEntityEvents.SHIELD_BLOCK.invoker().onShieldBlock(event.getEntity(), event.getDamageSource(), event.getOriginalBlockedDamage(),
                 MutableFloat.linkToForge(event, ShieldBlockEvent::getBlockedDamage, ShieldBlockEvent::setBlockedDamage), MutableBoolean.linkToForge(event, ShieldBlockEvent::shieldTakesDamage, ShieldBlockEvent::setShieldTakesDamage)))
             event.setCanceled(true);
     }

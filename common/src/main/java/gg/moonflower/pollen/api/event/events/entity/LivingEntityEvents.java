@@ -5,6 +5,7 @@ import gg.moonflower.pollen.api.registry.EventRegistry;
 import gg.moonflower.pollen.api.util.MutableBoolean;
 import gg.moonflower.pollen.api.util.MutableFloat;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 public final class LivingEntityEvents {
@@ -29,13 +30,14 @@ public final class LivingEntityEvents {
         /**
          * Called when an entity has blocked with a shield.
          *
+         * @param entity                The entity holding a shield
          * @param damageSource          The source of the incoming damage
          * @param originalBlockedDamage The original amount of damage blocked, equal to the incoming damage
          * @param blockedDamage         The amount of damage to block. Event listeners can modify this
          * @param loseDurability        Whether the shield will take durability damage. Event listeners can modify this
          * @return <code>false</code> if the shield should not be eligible to work
          */
-        boolean onShieldBlock(DamageSource damageSource, float originalBlockedDamage, MutableFloat blockedDamage, MutableBoolean loseDurability);
+        boolean onShieldBlock(Entity entity, DamageSource damageSource, float originalBlockedDamage, MutableFloat blockedDamage, MutableBoolean loseDurability);
     }
 
     /**

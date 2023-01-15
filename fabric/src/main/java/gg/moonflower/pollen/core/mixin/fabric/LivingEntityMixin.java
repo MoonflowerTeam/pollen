@@ -93,7 +93,7 @@ public abstract class LivingEntityMixin extends Entity {
     public boolean addCancellationCheck(boolean original, DamageSource damageSource, float f) {
         this.blockedDamage = MutableFloat.of(f);
         this.loseDurability = MutableBoolean.of(true);
-        return original && LivingEntityEvents.SHIELD_BLOCK.invoker().onShieldBlock(damageSource, f, this.blockedDamage, this.loseDurability);
+        return original && LivingEntityEvents.SHIELD_BLOCK.invoker().onShieldBlock((LivingEntity) (Object) this, damageSource, f, this.blockedDamage, this.loseDurability);
     }
 
     @WrapWithCondition(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;hurtCurrentlyUsedShield(F)V"))
