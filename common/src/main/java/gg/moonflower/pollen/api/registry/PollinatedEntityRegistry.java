@@ -53,7 +53,7 @@ public class PollinatedEntityRegistry extends WrapperPollinatedRegistry<EntityTy
      * @param <R> The type of object the module is for
      * @return A new memory module type
      */
-    public <R> Supplier<MemoryModuleType<R>> registerMemoryModuleType(String id) {
+    public <R> RegistryValue<MemoryModuleType<R>> registerMemoryModuleType(String id) {
         return this.registerMemoryModuleType(id, null);
     }
 
@@ -65,7 +65,7 @@ public class PollinatedEntityRegistry extends WrapperPollinatedRegistry<EntityTy
      * @param <R>   The type of object the module is for
      * @return A new memory module type
      */
-    public <R> Supplier<MemoryModuleType<R>> registerMemoryModuleType(String id, @Nullable Codec<R> codec) {
+    public <R> RegistryValue<MemoryModuleType<R>> registerMemoryModuleType(String id, @Nullable Codec<R> codec) {
         return this.memoryModuleTypeRegistry.register(id, () -> new MemoryModuleType<>(Optional.ofNullable(codec)));
     }
 
@@ -77,7 +77,7 @@ public class PollinatedEntityRegistry extends WrapperPollinatedRegistry<EntityTy
      * @param <R>      The type of sensor to generate
      * @return A new sensor type
      */
-    public <R extends Sensor<?>> Supplier<SensorType<R>> registerSensorType(String id, Supplier<R> supplier) {
+    public <R extends Sensor<?>> RegistryValue<SensorType<R>> registerSensorType(String id, Supplier<R> supplier) {
         return this.sensorTypeRegistry.register(id, () -> new SensorType<>(supplier));
     }
 
@@ -88,7 +88,7 @@ public class PollinatedEntityRegistry extends WrapperPollinatedRegistry<EntityTy
      * @param builder The consumer for adding properties to the schedule
      * @return A new schedule
      */
-    public Supplier<Schedule> registerSchedule(String id, Consumer<ScheduleBuilder> builder) {
+    public RegistryValue<Schedule> registerSchedule(String id, Consumer<ScheduleBuilder> builder) {
         return this.scheduleRegistry.register(id, () -> {
             Schedule schedule = new Schedule();
             builder.accept(new ScheduleBuilder(schedule));
@@ -102,7 +102,7 @@ public class PollinatedEntityRegistry extends WrapperPollinatedRegistry<EntityTy
      * @param id The id of the activity
      * @return A new activity
      */
-    public Supplier<Activity> registerActivity(String id) {
+    public RegistryValue<Activity> registerActivity(String id) {
         return this.activityRegistry.register(id, () -> new Activity(this.activityRegistry.getModId() + ":" + id));
     }
 
