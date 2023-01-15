@@ -1,11 +1,14 @@
 package gg.moonflower.pollen.core.mixin.fabric;
 
 import com.mojang.authlib.GameProfile;
+import gg.moonflower.pollen.api.event.events.entity.LivingEntityEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.ContainerEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -35,7 +38,13 @@ public abstract class ServerPlayerMixin extends Player {
     }
 
     @Inject(method = "doCloseContainer", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/AbstractContainerMenu;removed(Lnet/minecraft/world/entity/player/Player;)V", shift = At.Shift.AFTER))
-    public void openHorseInventory(CallbackInfo ci) {
-        ContainerEvents.OPEN.invoker().open(this, this.containerMenu);
+    public void doCloseContainer(CallbackInfo ci) {
+        ContainerEvents.CLOSE.invoker().close(this, this.containerMenu);
+    }
+
+    @Inject(method = "die", at = @At("HEAD"), cancellable = true)
+    public void die(DamageSource damageSource, CallbackInfo ci) {
+        if (!LivingEntityEvents.DEATH.invoker().death((LivingEntity) (Object) this, damageSource))
+            ci.cancel();
     }
 }

@@ -9,6 +9,7 @@ import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.crafting.PollenRecipeTypes;
 import gg.moonflower.pollen.api.entity.PollenEntityTypes;
 import gg.moonflower.pollen.api.event.events.client.render.RenderParticleEvents;
+import gg.moonflower.pollen.api.event.events.entity.LivingEntityEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
 import gg.moonflower.pollen.api.event.events.registry.client.ParticleFactoryRegistryEvent;
 import gg.moonflower.pollen.pinwheel.core.client.particle.CustomParticleInstanceImpl;
@@ -86,6 +87,7 @@ public class Pollen {
     }
 
     private static void onCommon() {
+        LivingEntityEvents.SHIELD_BLOCK.register((damageSource, originalBlockedDamage, blockedDamage, loseDurability) -> false);
         PollenSuggestionProviders.init();
         SyncedDataManager.init();
         ResourceModifierManager.init();

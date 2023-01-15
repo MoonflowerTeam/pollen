@@ -4,6 +4,7 @@ import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.config.fabric.ConfigTracker;
 import gg.moonflower.pollen.api.event.events.LootTableConstructingEvent;
 import gg.moonflower.pollen.api.event.events.entity.EntityEvents;
+import gg.moonflower.pollen.api.event.events.entity.player.PlayerEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractionEvents;
 import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.LevelLoadingEvents;
@@ -20,6 +21,8 @@ import gg.moonflower.pollen.core.mixin.fabric.LevelResourceAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -80,6 +83,9 @@ public class PollenFabric implements ModInitializer {
 
         ServerWorldEvents.LOAD.register((server, world) -> LevelLoadingEvents.LOAD.invoker().load(world));
         ServerWorldEvents.UNLOAD.register((server, world) -> LevelLoadingEvents.UNLOAD.invoker().unload(world));
+
+        EntitySleepEvents.ALLOW_SLEEPING.register(((player, sleepingPos) -> PlayerEvents.START_SLEEPING_EVENT.invoker().startSleeping(player, sleepingPos)));
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> PlayerEvents.RESPAWN_EVENT.invoker().respawn(newPlayer, alive));
 
         UseItemCallback.EVENT.register((player, level, hand) -> PlayerInteractionEvents.RIGHT_CLICK_ITEM.invoker().interaction(player, level, hand));
         UseBlockCallback.EVENT.register((player, level, hand, result) -> PlayerInteractionEvents.RIGHT_CLICK_BLOCK.invoker().interaction(player, level, hand, result));
