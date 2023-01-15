@@ -33,12 +33,12 @@ public class WrapperPollinatedRegistry<T> extends PollinatedRegistry<T> {
     }
 
     @Override
-    public <R extends T> Supplier<R> register(String id, Supplier<R> object) {
+    public <R extends T> RegistryValue<R> register(String id, Supplier<R> object) {
         return this.parent.register(id, object);
     }
 
     @Override
-    public <R extends T> Supplier<R> registerConditional(String id, Supplier<R> dummy, Supplier<R> object, boolean register) {
+    public <R extends T> RegistryValue<R> registerConditional(String id, Supplier<R> dummy, Supplier<R> object, boolean register) {
         return this.parent.registerConditional(id, dummy, object, register);
     }
 
