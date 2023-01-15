@@ -9,6 +9,7 @@ import com.mojang.serialization.Lifecycle;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.platform.Platform;
 import net.minecraft.core.DefaultedRegistry;
+import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -173,7 +174,7 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
      * @param <R>    The registry type.
      * @return The registered object in a {@link Supplier}.
      */
-    public abstract <R extends T> Supplier<R> register(String id, Supplier<R> object);
+    public abstract <R extends T> RegistryValue<R> register(String id, Supplier<R> object);
 
     /**
      * Registers an object or a dummy object based on a condition.
@@ -185,7 +186,7 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
      * @param <R>      The registry type.
      * @return The registered object in a {@link Supplier}
      */
-    public <R extends T> Supplier<R> registerConditional(String id, Supplier<R> dummy, Supplier<R> object, boolean register) {
+    public <R extends T> RegistryValue<R> registerConditional(String id, Supplier<R> dummy, Supplier<R> object, boolean register) {
         return this.register(id, register ? object : dummy);
     }
 
@@ -303,9 +304,40 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
         }
 
         @Override
-        public <R extends T> Supplier<R> register(String id, Supplier<R> object) {
-            R registered = Registry.register(this.registry, new ResourceLocation(this.modId, id), object.get());
-            return () -> registered;
+        @SuppressWarnings("unchecked")
+        public <R extends T> RegistryValue<R> register(String id, Supplier<R> object) {
+            ResourceLocation name = new ResourceLocation(this.modId, id);
+            R registered = Registry.register(this.registry, name, object.get());
+            return new RegistryValue<>() {
+
+                ResourceKey<R> objectKey = ResourceKey.create((ResourceKey<? extends Registry<R>>) registry.key(), name);
+
+                @Override
+                public R get() {
+                    return registered;
+                }
+
+                @Override
+                public Optional<Holder<R>> getHolder() {
+                    Holder<R> holder = (Holder<R>) registry.getHolder((ResourceKey<T>) objectKey).orElse(null);
+                    return Optional.ofNullable(holder);
+                }
+
+                @Override
+                public boolean isPresent() {
+                    return registry.containsKey(name);
+                }
+
+                @Override
+                public ResourceLocation getId() {
+                    return name;
+                }
+
+                @Override
+                public ResourceKey<R> getKey() {
+                    return objectKey;
+                }
+            };
         }
 
         @Nullable
