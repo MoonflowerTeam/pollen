@@ -8,7 +8,9 @@ import com.mojang.serialization.Keyable;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.platform.forge.ForgePlatform;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
+import gg.moonflower.pollen.api.registry.RegistryValue;
 import gg.moonflower.pollen.api.util.forge.ForgeRegistryCodec;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -23,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -82,8 +85,35 @@ public final class PollinatedRegistryImpl<T> extends PollinatedRegistry<T> {
     }
 
     @Override
-    public <R extends T> Supplier<R> register(String id, Supplier<R> object) {
-        return this.registry.register(id, object);
+    public <R extends T> RegistryValue<R> register(String id, Supplier<R> object) {
+        RegistryObject<R> registered = this.registry.register(id, object);
+        return new RegistryValue<>() {
+
+            @Override
+            public R get() {
+                return registered.get();
+            }
+
+            @Override
+            public Optional<Holder<R>> getHolder() {
+                return registered.getHolder();
+            }
+
+            @Override
+            public boolean isPresent() {
+                return registered.isPresent();
+            }
+
+            @Override
+            public ResourceLocation getId() {
+                return registered.getId();
+            }
+
+            @Override
+            public ResourceKey<R> getKey() {
+                return registered.getKey();
+            }
+        };
     }
 
     @Nullable

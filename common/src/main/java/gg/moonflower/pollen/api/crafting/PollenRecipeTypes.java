@@ -6,6 +6,7 @@ import gg.moonflower.pollen.api.crafting.grindstone.PollenGrindstoneRecipe;
 import gg.moonflower.pollen.api.crafting.grindstone.PollenShapelessGrindstoneRecipe;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
+import gg.moonflower.pollen.api.registry.RegistryValue;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -32,11 +33,11 @@ public final class PollenRecipeTypes {
     @ApiStatus.Internal
     public static final PollinatedRegistry<RecipeType<?>> RECIPES = PollinatedRegistry.create(Registry.RECIPE_TYPE, Pollen.MOD_ID);
 
-    public static final Supplier<RecipeType<PollenBrewingRecipe>> BREWING_TYPE = register("brewing");
-    public static final Supplier<RecipeSerializer<PollenBrewingRecipe>> BREWING = RECIPE_SERIALIZERS.register("brewing", () -> createSerializer(PollenBrewingRecipe::fromJson, PollenBrewingRecipe::fromNetwork, PollenBrewingRecipe::toNetwork));
+    public static final RegistryValue<RecipeType<PollenBrewingRecipe>> BREWING_TYPE = register("brewing");
+    public static final RegistryValue<RecipeSerializer<PollenBrewingRecipe>> BREWING = RECIPE_SERIALIZERS.register("brewing", () -> createSerializer(PollenBrewingRecipe::fromJson, PollenBrewingRecipe::fromNetwork, PollenBrewingRecipe::toNetwork));
 
-    public static final Supplier<RecipeType<PollenGrindstoneRecipe>> GRINDSTONE_TYPE = register("grindstone");
-    public static final Supplier<RecipeSerializer<PollenShapelessGrindstoneRecipe>> GRINDSTONE = RECIPE_SERIALIZERS.register("grindstone", () -> createSerializer(PollenShapelessGrindstoneRecipe::fromJson, PollenShapelessGrindstoneRecipe::fromNetwork, PollenShapelessGrindstoneRecipe::toNetwork));
+    public static final RegistryValue<RecipeType<PollenGrindstoneRecipe>> GRINDSTONE_TYPE = register("grindstone");
+    public static final RegistryValue<RecipeSerializer<PollenShapelessGrindstoneRecipe>> GRINDSTONE = RECIPE_SERIALIZERS.register("grindstone", () -> createSerializer(PollenShapelessGrindstoneRecipe::fromJson, PollenShapelessGrindstoneRecipe::fromNetwork, PollenShapelessGrindstoneRecipe::toNetwork));
 
     private PollenRecipeTypes() {
     }
@@ -55,7 +56,7 @@ public final class PollenRecipeTypes {
         return Platform.error();
     }
 
-    private static <T extends Recipe<?>> Supplier<RecipeType<T>> register(String name) {
+    private static <T extends Recipe<?>> RegistryValue<RecipeType<T>> register(String name) {
         return RECIPES.register(name, () -> new RecipeType<T>() {
             @Override
             public String toString() {
