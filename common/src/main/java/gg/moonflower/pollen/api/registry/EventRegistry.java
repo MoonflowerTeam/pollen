@@ -1,7 +1,6 @@
 package gg.moonflower.pollen.api.registry;
 
 import gg.moonflower.pollen.api.event.PollinatedEvent;
-import gg.moonflower.pollen.api.event.PollinatedEventResult;
 import gg.moonflower.pollen.core.event.PollinatedEventImpl;
 import net.minecraft.world.InteractionResult;
 

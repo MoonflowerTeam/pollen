@@ -1,8 +1,8 @@
 package gg.moonflower.pollen.core.mixin.fabric;
 
-import gg.moonflower.pollen.api.event.PollinatedEventResult;
 import gg.moonflower.pollen.api.event.events.world.WorldEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -25,10 +25,10 @@ public class BoneMealItemMixin {
 
     @Unique
     private static int processBonemeal(Level level, BlockPos pos, BlockState state, ItemStack stack) {
-        PollinatedEventResult result = WorldEvents.BONEMEAL.invoker().bonemeal(level, pos, state, stack);
-        if (result == PollinatedEventResult.DENY) {
+        InteractionResult result = WorldEvents.BONEMEAL.invoker().bonemeal(level, pos, state, stack);
+        if (result == InteractionResult.FAIL) {
             return -1;
-        } else if (result == PollinatedEventResult.ALLOW) {
+        } else if (result == InteractionResult.SUCCESS) {
             if (!level.isClientSide) {
                 stack.shrink(1);
             }

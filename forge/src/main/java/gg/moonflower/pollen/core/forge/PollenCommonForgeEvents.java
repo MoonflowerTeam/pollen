@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.core.forge;
 
-import gg.moonflower.pollen.api.event.PollinatedEventResult;
 import gg.moonflower.pollen.api.event.events.LootTableConstructingEvent;
 import gg.moonflower.pollen.api.event.events.entity.*;
 import gg.moonflower.pollen.api.event.events.entity.player.ContainerEvents;
@@ -26,7 +25,6 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.LevelEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.*;
@@ -160,17 +158,17 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.world.SaplingGrowTreeEvent event) {
-        PollinatedEventResult result = WorldEvents.TREE_GROWING.invoker().interaction(event.getWorld(), event.getRand(), event.getPos());
-        if (result != PollinatedEventResult.PASS)
+        InteractionResult result = WorldEvents.TREE_GROWING.invoker().interaction(event.getWorld(), event.getRand(), event.getPos());
+        if (result != InteractionResult.PASS)
             event.setResult(convertResult(result));
     }
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.player.BonemealEvent event) {
-        PollinatedEventResult result = WorldEvents.BONEMEAL.invoker().bonemeal(event.getWorld(), event.getPos(), event.getBlock(), event.getStack());
-        if (result == PollinatedEventResult.DENY)
+        InteractionResult result = WorldEvents.BONEMEAL.invoker().bonemeal(event.getWorld(), event.getPos(), event.getBlock(), event.getStack());
+        if (result == InteractionResult.FAIL)
             event.setCanceled(true);
-        else if (result == PollinatedEventResult.ALLOW)
+        else if (result == InteractionResult.SUCCESS)
             event.setResult(Event.Result.ALLOW);
     }
 
@@ -383,16 +381,14 @@ public class PollenCommonForgeEvents {
         event.setTable(context.apply());
     }
 
-    public static Event.Result convertResult(PollinatedEventResult result) {
+    public static Event.Result convertResult(InteractionResult result) {
         switch (result) {
-            case DENY:
+            case FAIL:
                 return Event.Result.DENY;
-            case ALLOW:
+            case SUCCESS:
                 return Event.Result.ALLOW;
-            case PASS:
-                return Event.Result.DEFAULT;
             default:
-                throw new UnsupportedOperationException("Unknown event result type: " + result);
+                return Event.Result.DEFAULT;
         }
     }
 }
