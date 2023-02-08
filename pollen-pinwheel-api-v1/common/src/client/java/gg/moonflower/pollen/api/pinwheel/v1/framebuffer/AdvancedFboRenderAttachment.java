@@ -24,7 +24,6 @@ public class AdvancedFboRenderAttachment implements AdvancedFboAttachment {
     private final int samples;
 
     public AdvancedFboRenderAttachment(int attachmentType, int attachmentFormat, int width, int height, int samples) {
-        this.id = -1;
         this.attachmentType = attachmentType;
         this.attachmentFormat = attachmentFormat;
         this.width = width;
@@ -33,7 +32,8 @@ public class AdvancedFboRenderAttachment implements AdvancedFboAttachment {
         this.samples = samples;
     }
 
-    private void createRaw() {
+    @Override
+    public void create() {
         this.bindAttachment();
         if (this.samples == 1) {
             glRenderbufferStorage(GL_RENDERBUFFER, this.attachmentFormat, this.width, this.height);
@@ -43,33 +43,10 @@ public class AdvancedFboRenderAttachment implements AdvancedFboAttachment {
         this.unbindAttachment();
     }
 
-    private int getId() {
-        RenderSystem.assertOnRenderThreadOrInit();
-        if (this.id == -1) {
-            this.id = glGenRenderbuffers();
-        }
-
-        return this.id;
-    }
-
-    @Override
-    public void create() {
-        if (!RenderSystem.isOnRenderThreadOrInit()) {
-            RenderSystem.recordRenderCall(this::createRaw);
-        } else {
-            this.createRaw();
-        }
-    }
-
     @Override
     public void attach(int target, int attachment) {
         Validate.isTrue(this.attachmentType != GL_DEPTH_ATTACHMENT || attachment == 0, "Only one depth buffer attachment is supported.");
-
-        if (!RenderSystem.isOnRenderThreadOrInit()) {
-            RenderSystem.recordRenderCall(() -> glFramebufferRenderbuffer(target, this.attachmentType, GL_RENDERBUFFER, this.getId()));
-        } else {
-            glFramebufferRenderbuffer(target, this.attachmentType, GL_RENDERBUFFER, this.getId());
-        }
+        glFramebufferRenderbuffer(target, this.attachmentType, GL_RENDERBUFFER, this.getId());
     }
 
     @Override
@@ -90,6 +67,25 @@ public class AdvancedFboRenderAttachment implements AdvancedFboAttachment {
         }
     }
 
+    public int getId() {
+        RenderSystem.assertOnRenderThreadOrInit();
+        if (this.id == 0) {
+            this.id = glGenRenderbuffers();
+        }
+
+        return this.id;
+    }
+
+    @Override
+    public int getAttachmentType() {
+        return attachmentType;
+    }
+
+    @Override
+    public int getFormat() {
+        return attachmentFormat;
+    }
+
     @Override
     public int getWidth() {
         return width;
@@ -101,7 +97,7 @@ public class AdvancedFboRenderAttachment implements AdvancedFboAttachment {
     }
 
     @Override
-    public int getSamples() {
+    public int getLevels() {
         return samples;
     }
 
@@ -117,18 +113,9 @@ public class AdvancedFboRenderAttachment implements AdvancedFboAttachment {
 
     @Override
     public void free() {
-        if (this.id == -1)
-            return;
-
-        if (!RenderSystem.isOnRenderThread()) {
-            RenderSystem.recordRenderCall(() ->
-            {
-                glDeleteRenderbuffers(this.id);
-                this.id = -1;
-            });
-        } else {
+        if (this.id != 0) {
             glDeleteRenderbuffers(this.id);
-            this.id = -1;
         }
+        this.id = 0;
     }
 }

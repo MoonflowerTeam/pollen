@@ -14,7 +14,7 @@ import java.util.List;
 import static org.lwjgl.opengl.GL30.*;
 
 /**
- * A framebuffer that has more capabilities than the vanilla {@link RenderTarget}.
+ * A framebuffer that has more capabilities than the vanilla Minecraft {@link RenderTarget}.
  *
  * @author Ocelot
  * @since 1.0.0
@@ -516,13 +516,13 @@ public interface AdvancedFbo extends NativeResource {
             int samples = -1;
             for (AdvancedFboAttachment attachment : this.colorAttachments) {
                 if (samples == -1) {
-                    samples = attachment.getSamples();
+                    samples = attachment instanceof AdvancedFboRenderAttachment renderAttachment ? renderAttachment.getLevels() : 1;
                     continue;
                 }
-                if (attachment.getSamples() != samples)
+                if (attachment instanceof AdvancedFboRenderAttachment && attachment.getLevels() != samples)
                     throw new IllegalArgumentException("Framebuffer attachments need to have the same number of samples to be complete.");
             }
-            if (this.depthAttachment != null && this.depthAttachment.getSamples() != samples)
+            if (this.depthAttachment != null && this.depthAttachment.getLevels() != samples)
                 throw new IllegalArgumentException("Framebuffer attachments need to have the same number of samples to be complete.");
             AdvancedFbo advancedFbo = new AdvancedFboImpl(this.width, this.height, this.colorAttachments.toArray(new AdvancedFboAttachment[0]), this.depthAttachment);
             if (create)

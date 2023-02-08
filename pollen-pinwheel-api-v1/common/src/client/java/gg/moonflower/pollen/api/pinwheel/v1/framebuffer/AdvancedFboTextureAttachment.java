@@ -32,7 +32,8 @@ public class AdvancedFboTextureAttachment extends AbstractTexture implements Adv
         this.mipmapLevels = mipmapLevels;
     }
 
-    private void _create() {
+    @Override
+    public void create() {
         RenderSystem.assertOnRenderThreadOrInit();
         this.bind();
         this.setFilter(false, this.mipmapLevels > 1);
@@ -47,30 +48,9 @@ public class AdvancedFboTextureAttachment extends AbstractTexture implements Adv
     }
 
     @Override
-    public void create() {
-        if (!RenderSystem.isOnRenderThreadOrInit()) {
-            RenderSystem.recordRenderCall(this::_create);
-        } else {
-            this._create();
-        }
-    }
-
-    @Override
     public void attach(int target, int attachment) {
-        if (!RenderSystem.isOnRenderThreadOrInit()) {
-            RenderSystem.recordRenderCall(() -> this._attach(target, attachment));
-        } else {
-            this._attach(target, attachment);
-        }
-    }
-
-    private void _attach(int target, int attachment) {
         Validate.isTrue(this.attachmentType < GL_DEPTH_ATTACHMENT || attachment == 0, "Only one depth buffer attachment is supported.");
         GlStateManager._glFramebufferTexture2D(target, this.attachmentType + attachment, GL_TEXTURE_2D, this.getId(), 0); // Only draw into the first level
-    }
-
-    public int getMipmapLevels() {
-        return mipmapLevels;
     }
 
     @Override
@@ -93,6 +73,16 @@ public class AdvancedFboTextureAttachment extends AbstractTexture implements Adv
     }
 
     @Override
+    public int getAttachmentType() {
+        return attachmentType;
+    }
+
+    @Override
+    public int getFormat() {
+        return format;
+    }
+
+    @Override
     public int getWidth() {
         return width;
     }
@@ -103,8 +93,8 @@ public class AdvancedFboTextureAttachment extends AbstractTexture implements Adv
     }
 
     @Override
-    public int getSamples() {
-        return 1;
+    public int getLevels() {
+        return mipmapLevels;
     }
 
     @Override
