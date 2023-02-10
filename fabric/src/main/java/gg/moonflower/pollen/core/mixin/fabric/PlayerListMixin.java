@@ -19,13 +19,16 @@ public class PlayerListMixin {
 
     @Inject(method = "placeNewPlayer", at = @At("HEAD"))
     public void capturePacketListener(Connection connection, ServerPlayer player, CallbackInfo ci) {
-        this.extension = (ServerLoginPacketListenerImplExtension) connection.getPacketListener();
+        if (connection.getPacketListener() instanceof ServerLoginPacketListenerImplExtension)
+            this.extension = (ServerLoginPacketListenerImplExtension) connection.getPacketListener();
     }
 
     @Inject(method = "placeNewPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ClientboundChangeDifficultyPacket;<init>(Lnet/minecraft/world/Difficulty;Z)V"))
     public void flushLoginPackets(Connection connection, ServerPlayer player, CallbackInfo ci) {
-        this.extension.pollen_flushDelayedPackets(player.connection);
-        this.extension = null;
+        if (this.extension != null) {
+            this.extension.pollen_flushDelayedPackets(player.connection);
+            this.extension = null;
+        }
     }
 
     @Inject(method = "placeNewPlayer", at = @At("TAIL"))

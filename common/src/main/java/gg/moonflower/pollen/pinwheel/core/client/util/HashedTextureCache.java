@@ -2,6 +2,7 @@ package gg.moonflower.pollen.pinwheel.core.client.util;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import gg.moonflower.pollen.api.util.OnlineRequest;
 import gg.moonflower.pollen.pinwheel.api.client.FileCache;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryCache;
 import org.apache.logging.log4j.LogManager;
@@ -36,7 +37,7 @@ public class HashedTextureCache implements FileCache {
         Map<String, String> hashes = new ConcurrentHashMap<>();
         this.hashes = CompletableFuture.allOf(Arrays.stream(hashTableUrls).map(it -> CompletableFuture.runAsync(() ->
         {
-            try (InputStreamReader reader = new InputStreamReader(FileCache.get(it))) {
+            try (InputStreamReader reader = new InputStreamReader(OnlineRequest.get(it))) {
                 hashes.putAll(GSON.fromJson(reader, TypeToken.getParameterized(Map.class, String.class, String.class).getType()));
             } catch (Exception e) {
                 LOGGER.error("Failed to load hash table from '" + it + "'");
@@ -62,7 +63,7 @@ public class HashedTextureCache implements FileCache {
                     return GeometryCache.getPath(url, hashes.get(url), s ->
                     {
                         try {
-                            return FileCache.get(url);
+                            return OnlineRequest.get(url);
                         } catch (IOException e) {
                             if (!ignoreMissing)
                                 LOGGER.error("Failed to read data from '" + url + "'");

@@ -50,7 +50,7 @@
     "minecraft": "1.19.x"
   },
   "conflicts": {
-    "grindenchantments": "*"
+    "grindenchantments": "<1.6.2"
   },
   "custom": {
     "cardinal-components": [

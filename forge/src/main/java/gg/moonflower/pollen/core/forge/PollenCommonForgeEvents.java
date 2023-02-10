@@ -129,7 +129,7 @@ public class PollenCommonForgeEvents {
 
     @SubscribeEvent
     public static void onEvent(net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract event) {
-        InteractionResult result = PlayerInteractionEvents.RIGHT_CLICK_ENTITY.invoker().interaction(event.getEntity(), event.getLevel(), event.getHand(), event.getEntity());
+        InteractionResult result = PlayerInteractionEvents.RIGHT_CLICK_ENTITY.invoker().interaction(event.getEntity(), event.getLevel(), event.getHand(), event.getTarget());
         if (result != InteractionResult.PASS) {
             event.setCanceled(true);
             event.setCancellationResult(result);
@@ -156,9 +156,10 @@ public class PollenCommonForgeEvents {
         ServerPlayerTrackingEvents.STOP_TRACKING_ENTITY.invoker().stopTracking(event.getEntity(), event.getEntity());
     }
 
+    // TODO: allow changing target
     @SubscribeEvent
-    public static void onEvent(net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent event) {
-        SetTargetEvent.EVENT.invoker().setTarget(event.getEntity(), event.getTarget());
+    public static void onEvent(net.minecraftforge.event.entity.living.LivingChangeTargetEvent  event) {
+        SetTargetEvent.EVENT.invoker().setTarget(event.getEntity(), event.getNewTarget());
     }
 
     @SubscribeEvent

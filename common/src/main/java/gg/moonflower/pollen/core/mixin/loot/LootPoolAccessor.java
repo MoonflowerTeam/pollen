@@ -20,8 +20,8 @@ public interface LootPoolAccessor {
     @Accessor
     LootItemFunction[] getFunctions();
 
-    @Accessor
-    NumberProvider getRolls();
+    @Accessor("rolls")
+    NumberProvider getPoolRolls();
 
     @Accessor
     NumberProvider getBonusRolls();

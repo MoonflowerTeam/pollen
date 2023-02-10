@@ -33,9 +33,7 @@ public class PollenShapelessGrindstoneRecipe implements PollenGrindstoneRecipe {
         this.id = id;
         this.group = group;
         this.result = result;
-        this.ingredients = NonNullList.withSize(2, Ingredient.EMPTY);
-        for (int i = 0; i < Math.min(this.ingredients.size(), ingredients.size()); i++)
-            this.ingredients.set(i, ingredients.get(i));
+        this.ingredients = ingredients;
         this.experience = experience;
     }
 
@@ -72,8 +70,7 @@ public class PollenShapelessGrindstoneRecipe implements PollenGrindstoneRecipe {
         ItemStack result = buf.readItem();
         int experience = buf.readVarInt();
         NonNullList<Ingredient> ingredients = NonNullList.withSize(buf.readVarInt(), Ingredient.EMPTY);
-        for (int i = 0; i < ingredients.size(); i++)
-            ingredients.set(i, Ingredient.fromNetwork(buf));
+        ingredients.replaceAll(ignored -> Ingredient.fromNetwork(buf));
         return new PollenShapelessGrindstoneRecipe(id, group, result, ingredients, experience);
     }
 

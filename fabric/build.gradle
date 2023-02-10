@@ -66,12 +66,16 @@ dependencies {
     modImplementation "com.terraformersmc:modmenu:${rootProject.mod_menu_version}" // TODO: modApi when config gui is implemented
 
     // Common Dependencies
-    implementation "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
-    shadowCommon "com.github.Ocelot5836:molang-compiler:${project.molang_compiler_version}"
+    implementation "com.github.MoonflowerTeam:molang-compiler:${project.molang_compiler_version}"
+    shadowCommon "com.github.MoonflowerTeam:molang-compiler:${project.molang_compiler_version}"
     implementation "com.electronwill.night-config:core:${project.night_config_version}"
     shadowCommon "com.electronwill.night-config:core:${project.night_config_version}"
     implementation "com.electronwill.night-config:toml:${project.night_config_version}"
     shadowCommon "com.electronwill.night-config:toml:${project.night_config_version}"
+
+    implementation "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
+    shadowCommon "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
+    annotationProcessor "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
 
     // Fabric-only Dependencies
     modApi "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cardinal_components_version}"
@@ -84,11 +88,14 @@ dependencies {
 
     modRuntimeOnly "me.djtheredstoner:DevAuth-fabric:${rootProject.devauth_version}"
 
-    modRuntimeOnly "mezz.jei:jei-${rootProject.minecraft_version}-fabric:${rootProject.jei_version}"
+//    modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}")
+//    modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-fabric-api:${rootProject.jei_version}")
+//    modRuntimeOnly("mezz.jei:jei-${rootProject.minecraft_version}-fabric:${rootProject.jei_version}")
 
     implementation "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
     annotationProcessor "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
     shadowCommon "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
+
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }

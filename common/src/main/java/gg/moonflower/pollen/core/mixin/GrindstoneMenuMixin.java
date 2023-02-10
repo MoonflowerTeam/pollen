@@ -11,6 +11,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.GrindstoneMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeManager;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -42,18 +44,37 @@ public abstract class GrindstoneMenuMixin extends AbstractContainerMenu implemen
         super(menuType, i);
     }
 
-    @Inject(method = "createResult", at = @At("RETURN"))
+    @Unique
+    private boolean isValid(ItemStack stack) {
+        return stack.isDamageableItem() || stack.is(Items.ENCHANTED_BOOK) || stack.isEnchanted();
+    }
+
+    @Inject(method = "createResult", at = @At("HEAD"), cancellable = true)
     public void modifyAllowed(CallbackInfo ci) {
+        // Reset result slot
+        this.resultSlots.setItem(0, ItemStack.EMPTY);
+
         this.recipe = null;
-        if (this.resultSlots.getItem(0).isEmpty()) {
-            Platform.getRecipeManager().ifPresent(recipeManager -> {
-                Optional<PollenGrindstoneRecipe> optional = recipeManager.getRecipeFor(PollenRecipeTypes.GRINDSTONE_TYPE.get(), this.repairSlots, null);
-                optional.ifPresent(recipe -> {
-                    this.recipe = recipe;
-                    this.resultSlots.setItem(0, recipe.assemble(this.repairSlots));
-                });
+        Optional<RecipeManager> recipeManagerOptional = Platform.getRecipeManager();
+        if (recipeManagerOptional.isPresent()) {
+            RecipeManager recipeManager = recipeManagerOptional.get();
+            Optional<PollenGrindstoneRecipe> optional = recipeManager.getRecipeFor(PollenRecipeTypes.GRINDSTONE_TYPE.get(), this.repairSlots, null);
+            if (optional.isPresent()) {
+                this.recipe = optional.get();
+                this.resultSlots.setItem(0, this.recipe.assemble(this.repairSlots));
+                ci.cancel();
                 this.broadcastChanges();
-            });
+                return;
+            }
+        }
+
+        // The recipe was invalid, so the slots need to be checked for the vanilla recipe
+        for (int i = 0; i < this.repairSlots.getContainerSize(); i++) {
+            ItemStack stack = this.repairSlots.getItem(i);
+            if (!stack.isEmpty() && !this.isValid(stack)) {
+                ci.cancel();
+                return;
+            }
         }
     }
 

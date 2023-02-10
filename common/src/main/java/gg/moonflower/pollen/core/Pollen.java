@@ -1,14 +1,17 @@
 package gg.moonflower.pollen.core;
 
+import gg.moonflower.pollen.api.command.PollenArgumentTypes;
 import gg.moonflower.pollen.api.command.PollenSuggestionProviders;
-import gg.moonflower.pollen.api.command.argument.ColorArgumentType;
-import gg.moonflower.pollen.api.command.argument.EnumArgument;
-import gg.moonflower.pollen.api.command.argument.TimeArgumentType;
 import gg.moonflower.pollen.api.config.ConfigManager;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.crafting.PollenRecipeTypes;
 import gg.moonflower.pollen.api.entity.PollenEntityTypes;
+import gg.moonflower.pollen.api.event.events.client.render.RenderParticleEvents;
 import gg.moonflower.pollen.api.event.events.lifecycle.ServerLifecycleEvents;
+import gg.moonflower.pollen.api.event.events.registry.client.ParticleFactoryRegistryEvent;
+import gg.moonflower.pollen.pinwheel.core.client.particle.CustomParticleInstanceImpl;
+import gg.moonflower.pollen.pinwheel.core.client.particle.CustomParticleEmitterImpl;
+import gg.moonflower.pollen.api.particle.PollenParticles;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.ResourceConditionRegistry;
 import gg.moonflower.pollen.api.registry.client.EntityRendererRegistry;
@@ -25,10 +28,8 @@ import gg.moonflower.pollen.core.resource.condition.ConfigResourceCondition;
 import gg.moonflower.pollen.pinwheel.api.client.animation.AnimationManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.GeometryModelManager;
 import gg.moonflower.pollen.pinwheel.api.client.geometry.VanillaModelMapping;
+import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleManager;
 import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
-import net.minecraft.commands.synchronization.ArgumentTypeInfos;
-import net.minecraft.commands.synchronization.SingletonArgumentInfo;
-import net.minecraft.core.Registry;
 import net.minecraft.server.MinecraftServer;
 import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.ApiStatus;
@@ -51,7 +52,7 @@ public class Pollen {
     private static MinecraftServer server;
 
     static {
-        TESTS_ENABLED = "true".equalsIgnoreCase(System.getProperty("pollen.enableTests"));
+        TESTS_ENABLED = true;
         if (TESTS_ENABLED)
             LogManager.getLogger().info("Pollen tests enabled");
     }
@@ -63,6 +64,7 @@ public class Pollen {
         GeometryModelManager.init();
         GeometryTextureManager.init();
         AnimationManager.init();
+        CustomParticleManager.init();
         PollenShaderTypes.init();
         GeometryModelManager.addLoader(new CosmeticModelLoader());
         GeometryTextureManager.addProvider(new CosmeticTextureLoader());
@@ -70,6 +72,10 @@ public class Pollen {
         EntitlementManager.init();
         EntityRendererRegistry.register(PollenEntityTypes.BOAT, context -> new PollinatedBoatRenderer(context, false));
         EntityRendererRegistry.register(PollenEntityTypes.CHEST_BOAT, context -> new PollinatedBoatRenderer(context, true));
+        ParticleFactoryRegistryEvent.EVENT.register(CustomParticleEmitterImpl::registerFactory);
+        RenderParticleEvents.PRE.register((context, bufferSource, lightTexture, camera, partialTicks) -> {
+            context.addRenderType(CustomParticleInstanceImpl.GEOMETRY_SHEET);
+        });
 
         if (TESTS_ENABLED)
             PollenTest.onClient();
@@ -83,6 +89,9 @@ public class Pollen {
         PollenRecipeTypes.RECIPE_SERIALIZERS.register(PLATFORM);
         PollenRecipeTypes.RECIPES.register(PLATFORM);
         PollenEntityTypes.ENTITY_TYPES.register(PLATFORM);
+        PollenParticles.PARTICLE_TYPES.register(PLATFORM);
+        PollenArgumentTypes.ARGUMENT_TYPES.register(PLATFORM);
+
         if (TESTS_ENABLED)
             PollenTest.onCommon();
     }
@@ -93,9 +102,6 @@ public class Pollen {
     }
 
     private static void onCommonPost(Platform.ModSetupContext context) {
-        ArgumentTypeInfos.register(Registry.COMMAND_ARGUMENT_TYPE, MOD_ID + ":color", ColorArgumentType.class, SingletonArgumentInfo.contextFree(ColorArgumentType::color));
-        ArgumentTypeInfos.register(Registry.COMMAND_ARGUMENT_TYPE, MOD_ID + ":time", TimeArgumentType.class, new TimeArgumentType.Serializer());
-        ArgumentTypeInfos.register(Registry.COMMAND_ARGUMENT_TYPE, MOD_ID + ":enum", EnumArgument.class, new EnumArgument.Serializer());
         ServerLifecycleEvents.PRE_STARTING.register(server -> {
             Pollen.server = server;
             return true;
@@ -109,7 +115,9 @@ public class Pollen {
     private static void onDataInit(Platform.DataSetupContext context) {
         if (!TESTS_ENABLED)
             return;
+
         context.getGenerator().addProvider(true, new PollenLanguageProvider(context.getGenerator(), context.getMod()));
+        PollenTest.onData(context);
     }
 
     @Nullable

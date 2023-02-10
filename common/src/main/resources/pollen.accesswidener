@@ -41,6 +41,7 @@ transitive-accessible method net/minecraft/world/entity/ai/memory/MemoryModuleTy
 transitive-accessible method net/minecraft/world/entity/ai/sensing/SensorType <init> (Ljava/util/function/Supplier;)V
 transitive-accessible method net/minecraft/world/entity/schedule/Activity <init> (Ljava/lang/String;)V
 
+accessible field net/minecraft/data/recipes/RecipeProvider shapeBuilders Ljava/util/Map;
 transitive-accessible method net/minecraft/commands/synchronization/ArgumentTypeInfos register (Lnet/minecraft/core/Registry;Ljava/lang/String;Ljava/lang/Class;Lnet/minecraft/commands/synchronization/ArgumentTypeInfo;)Lnet/minecraft/commands/synchronization/ArgumentTypeInfo;
 
 extendable method net/minecraft/tags/TagEntry <init> (Lnet/minecraft/resources/ResourceLocation;ZZ)V

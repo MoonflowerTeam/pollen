@@ -30,10 +30,11 @@ import java.util.Optional;
 @ApiStatus.Internal
 public class PollenGrindstoneCategory implements IRecipeCategory<PollenGrindstoneRecipe> {
 
+    private static final String TOP_SLOT = "topSlot";
+    private static final String BOTTOM_SLOT = "bottomSlot";
+
     private final IDrawable background;
     private final IDrawable icon;
-    private final String topSlotName = "topSlot";
-    private final String bottomSlotName = "bottomSlot";
 
     public PollenGrindstoneCategory(IGuiHelper guiHelper) {
         this.background = guiHelper.drawableBuilder(new ResourceLocation("textures/gui/container/grindstone.png"), 30, 15, 116, 56).build();
@@ -63,12 +64,19 @@ public class PollenGrindstoneCategory implements IRecipeCategory<PollenGrindston
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, PollenGrindstoneRecipe recipe, IFocusGroup focus) {
         NonNullList<Ingredient> ingredients = recipe.getIngredients();
-        builder.addSlot(RecipeIngredientRole.INPUT, 18, 3).addIngredients(ingredients.get(0)).setSlotName(this.topSlotName);
-        builder.addSlot(RecipeIngredientRole.INPUT, 18, 24).addIngredients(ingredients.get(1)).setSlotName(this.bottomSlotName);
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 98, 28).addItemStack(recipe.getResultItem());
+        if (!ingredients.isEmpty()) {
+            builder.addSlot(RecipeIngredientRole.INPUT, 19, 4).addIngredients(ingredients.get(0)).setSlotName(TOP_SLOT);
+            if (ingredients.size() > 1) {
+                builder.addSlot(RecipeIngredientRole.INPUT, 19, 25).addIngredients(ingredients.get(1)).setSlotName(BOTTOM_SLOT);
+            }
+        }
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 99, 19).addItemStack(recipe.getResultItem());
     }
 
     private static int getExperienceFromItem(ItemStack stack) {
+        if (stack.isEmpty())
+            return 0;
+
         int i = 0;
         Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(stack);
 
@@ -86,15 +94,14 @@ public class PollenGrindstoneCategory implements IRecipeCategory<PollenGrindston
     public void draw(PollenGrindstoneRecipe recipe, IRecipeSlotsView view, PoseStack matrixStack, double mouseX, double mouseY) {
         int experience = recipe.getResultExperience();
 
-
         if (experience == -1) {
-            Optional<ItemStack> topStack = view.findSlotByName(this.topSlotName).flatMap(slot1 -> slot1.getDisplayedIngredient(VanillaTypes.ITEM_STACK));
-            Optional<ItemStack> bottomStack = view.findSlotByName(this.bottomSlotName).flatMap(slot -> slot.getDisplayedIngredient(VanillaTypes.ITEM_STACK));
+            Optional<ItemStack> topStack = view.findSlotByName(TOP_SLOT).flatMap(slot -> slot.getDisplayedIngredient(VanillaTypes.ITEM_STACK));
+            Optional<ItemStack> bottomStack = view.findSlotByName(BOTTOM_SLOT).flatMap(slot -> slot.getDisplayedIngredient(VanillaTypes.ITEM_STACK));
 
-            if (topStack.isEmpty() || bottomStack.isEmpty())
+            if (topStack.isEmpty() && bottomStack.isEmpty())
                 return;
 
-            experience = getExperienceFromItem(topStack.get()) + getExperienceFromItem(bottomStack.get());
+            experience = topStack.map(PollenGrindstoneCategory::getExperienceFromItem).orElse(0) + bottomStack.map(PollenGrindstoneCategory::getExperienceFromItem).orElse(0);
         }
 
         if (experience > 0) {

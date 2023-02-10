@@ -43,12 +43,14 @@ public final class PollenRecipeMaker {
         Collection<ItemStack> ingredients = ingredientManager.getAllIngredients(VanillaTypes.ITEM_STACK);
         Set<Map.Entry<ResourceKey<Enchantment>, Enchantment>> enchantments = Registry.ENCHANTMENT.entrySet();
         for (ItemStack ingredient : ingredients) {
-            if (!ingredient.isEnchantable())
+            if (!ingredient.isEnchantable()) {
                 continue;
+            }
 
             Optional<ResourceKey<Item>> idOptional = Registry.ITEM.getResourceKey(ingredient.getItem());
-            if (idOptional.isEmpty())
+            if (idOptional.isEmpty()) {
                 continue;
+            }
 
             ResourceLocation id = idOptional.get().location();
 

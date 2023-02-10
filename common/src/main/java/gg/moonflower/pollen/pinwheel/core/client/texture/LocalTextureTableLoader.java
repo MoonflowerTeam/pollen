@@ -3,6 +3,7 @@ package gg.moonflower.pollen.pinwheel.core.client.texture;
 import com.google.gson.Gson;
 import gg.moonflower.pollen.pinwheel.api.client.texture.TextureTableLoader;
 import gg.moonflower.pollen.pinwheel.api.common.geometry.GeometryModelParser;
+import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTexture;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -40,12 +41,12 @@ public class LocalTextureTableLoader implements TextureTableLoader {
     private String[] hashTables;
 
     public LocalTextureTableLoader() {
-        this("textures/geometry");
+        this("pinwheel/textures");
     }
 
     public LocalTextureTableLoader(@Nullable String folder) {
         this.textures = new HashMap<>();
-        this.folder = folder == null || folder.isEmpty() ? "" : folder + "/";
+        this.folder = folder == null || folder.isEmpty() ? "" : folder;
         this.hashTables = new String[0];
     }
 
@@ -67,12 +68,19 @@ public class LocalTextureTableLoader implements TextureTableLoader {
             Map<ResourceLocation, GeometryModelTextureTable> textureLocations = new HashMap<>();
             for (Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources(this.folder, name -> name.getPath().endsWith(".json")).entrySet()) {
                 ResourceLocation textureTableLocation = entry.getKey();
-                ResourceLocation textureTableName = new ResourceLocation(textureTableLocation.getNamespace(), textureTableLocation.getPath().substring(this.folder.length(), textureTableLocation.getPath().length() - 5));
+                ResourceLocation textureTableName = new ResourceLocation(textureTableLocation.getNamespace(), textureTableLocation.getPath().substring(this.folder.length() + 1, textureTableLocation.getPath().length() - 5));
                 if (textureTableName.getPath().equals("hash_tables"))
                     continue;
 
                 try (BufferedReader reader = entry.getValue().openAsReader()) {
-                    textureLocations.put(textureTableName, GeometryModelParser.parseTextures(reader));
+                    GeometryModelTextureTable table = GeometryModelParser.parseTextures(reader);
+                    // Validate there are no online textures
+                    table.getTextureDefinitions().forEach((name, textures) -> {
+                        for (GeometryModelTexture texture : textures)
+                            if (texture.getType() == GeometryModelTexture.Type.ONLINE)
+                                throw new IllegalArgumentException(name + " uses unsupported texture type: " + texture.getType().name().toLowerCase());
+                    });
+                    textureLocations.put(textureTableName, table);
                 } catch (Exception e) {
                     LOGGER.error("Failed to load texture table '" + textureTableName + "'", e);
                 }

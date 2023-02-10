@@ -3,6 +3,7 @@ package gg.moonflower.pollen.api.registry.client.forge;
 import gg.moonflower.pollen.api.registry.client.ModelRegistry;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelEvent;
@@ -32,5 +33,9 @@ public class ModelRegistryImpl {
 
     public static void registerFactory(ModelRegistry.ModelFactory factory) {
         FACTORIES.add(factory);
+    }
+
+    public static BakedModel getModel(ResourceLocation location) {
+        return Minecraft.getInstance().getModelManager().getModel(location);
     }
 }

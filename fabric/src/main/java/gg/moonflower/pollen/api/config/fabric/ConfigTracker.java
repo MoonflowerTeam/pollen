@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
@@ -28,6 +29,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+@ApiStatus.Internal
 public class ConfigTracker {
 
     public static final ConfigTracker INSTANCE = new ConfigTracker();
@@ -65,11 +67,11 @@ public class ConfigTracker {
         this.configSets.get(type).forEach(config -> closeConfig(config, configBasePath));
     }
 
-    public List<Pair<String, ClientboundSyncConfigDataPacket>> syncConfigs(boolean isLocal) {
-        return this.configSets.get(PollinatedConfigType.SERVER).stream().map(mc -> {
+    public List<Pair<String, ClientboundSyncConfigDataPacket>> syncConfigs(boolean isLocal) { // Only sync configs for players joining and if the config actually exists
+        return isLocal ? Collections.emptyList() : this.configSets.get(PollinatedConfigType.SERVER).stream().filter(mc -> mc.getFullPath() != null).map(mc -> {
             try {
                 return Pair.of("Config " + mc.getFileName(), new ClientboundSyncConfigDataPacket(mc.getFileName(), Files.readAllBytes(mc.getFullPath())));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 LOGGER.error("Failed to sync {} config for {}", mc.getType(), mc.getModId(), e);
                 return null;
             }
@@ -99,6 +101,9 @@ public class ConfigTracker {
         }
     }
 
+    /**
+     * Populates all server configs with a blank memory config that will be filled by the server.
+     */
     public void loadDefaultServerConfigs() {
         this.configSets.get(PollinatedConfigType.SERVER).forEach(config -> {
             CommentedConfig commentedConfig = CommentedConfig.inMemory();

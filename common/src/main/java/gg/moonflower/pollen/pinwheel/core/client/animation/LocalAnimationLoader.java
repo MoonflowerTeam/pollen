@@ -29,7 +29,7 @@ public class LocalAnimationLoader implements BackgroundLoader<Map<ResourceLocati
     private final String folder;
 
     public LocalAnimationLoader() {
-        this.folder = "pinwheel/animations/";
+        this.folder = "pinwheel/animations";
     }
 
     @Override
@@ -48,7 +48,7 @@ public class LocalAnimationLoader implements BackgroundLoader<Map<ResourceLocati
                                 LOGGER.warn("Duplicate animation: " + id);
                         }
                     } catch (Exception e) {
-                        LOGGER.error("Failed to load animation: " + animationLocation.getNamespace() + ":" + animationLocation.getPath().substring(this.folder.length(), animationLocation.getPath().length() - 5), e);
+                        LOGGER.error("Failed to load animation: " + animationLocation.getNamespace() + ":" + animationLocation.getPath().substring(this.folder.length() + 1, animationLocation.getPath().length() - 5), e);
                     }
                 }
             } catch (ResourceLocationException e) {

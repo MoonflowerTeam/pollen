@@ -12,10 +12,7 @@ import gg.moonflower.pollen.api.registry.EventRegistry;
 @FunctionalInterface
 public interface ReloadRendersEvent {
 
-    PollinatedEvent<ReloadRendersEvent> EVENT = EventRegistry.create(ReloadRendersEvent.class, events -> () -> {
-        for (ReloadRendersEvent event : events)
-            event.reloadRenders();
-    });
+    PollinatedEvent<ReloadRendersEvent> EVENT = EventRegistry.createLoop(ReloadRendersEvent.class);
 
     /**
      * Called when renderers reload.
