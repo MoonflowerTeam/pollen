@@ -38,7 +38,7 @@ public class PollinatedBoatRenderer extends BoatRenderer {
 
     public static ModelLayerLocation createBoatModelName(PollinatedBoatType type) {
         ResourceLocation location =  Objects.requireNonNull(PollenRegistries.BOAT_TYPE_REGISTRY.getKey(type));
-        return new ModelLayerLocation(new ResourceLocation(location.getNamespace(), "chest_boat/" + location.getPath()), "main");
+        return new ModelLayerLocation(new ResourceLocation(location.getNamespace(), "boat/" + location.getPath()), "main");
     }
 
     public static ModelLayerLocation createChestBoatModelName(PollinatedBoatType type) {
@@ -51,6 +51,10 @@ public class PollinatedBoatRenderer extends BoatRenderer {
     }
 
     public ResourceLocation getTextureLocation(Boat boat) {
-        return this.boatResources.get(((PollinatedBoat) boat).getBoatPollenType()).getFirst();
+        return this.getModelWithLocation(boat).getFirst();
+    }
+
+    public Pair<ResourceLocation, BoatModel> getModelWithLocation(Boat boat) {
+        return this.boatResources.get(((PollinatedBoat) boat).getBoatPollenType());
     }
 }

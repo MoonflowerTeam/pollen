@@ -10,6 +10,7 @@ import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleEmitter;
 import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 
@@ -73,7 +74,7 @@ public class EmitterShapeEntityAABBComponent implements CustomParticleComponent,
         }
 
         AABB box = entity.getBoundingBox();
-        Random random = emitter.getRandom();
+        RandomSource random = emitter.getRandom();
         for (int i = 0; i < count; i++) {
             CustomParticle particle = emitter.newParticle();
             MolangEnvironment runtime = particle.getRuntime();

@@ -4,14 +4,14 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import gg.moonflower.pollen.core.mixin.ArgumentTypeInfosAccessor;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 
-public class PollinatedCommandRegistry extends WrapperPollinatedRegistry<ArgumentTypeInfo<?, ?>> {
+public class PollinatedCommandArgumentRegistry extends WrapperPollinatedRegistry<ArgumentTypeInfo<?, ?>> {
 
-    PollinatedCommandRegistry(PollinatedRegistry<ArgumentTypeInfo<?, ?>> commandArgumentRegistry) {
+    PollinatedCommandArgumentRegistry(PollinatedRegistry<ArgumentTypeInfo<?, ?>> commandArgumentRegistry) {
         super(commandArgumentRegistry);
     }
 
     /**
-     * Registers a block with an item.
+     * Registers a command argument type.
      *
      * @param id         The id of the argument type
      * @param clazz      The class of the argument type

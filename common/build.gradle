@@ -20,7 +20,8 @@ dependencies {
     shadowCommon "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
     annotationProcessor "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
 
-    modCompileOnly "mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}"
+    modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}")
+//    modRuntimeOnly("mezz.jei:jei-${rootProject.minecraft_version}-common:${rootProject.jei_version}")
 }
 
 architectury {

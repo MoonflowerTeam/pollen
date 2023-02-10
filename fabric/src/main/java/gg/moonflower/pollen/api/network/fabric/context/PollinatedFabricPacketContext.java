@@ -5,6 +5,7 @@ import gg.moonflower.pollen.api.network.packet.PollinatedPacketDirection;
 import gg.moonflower.pollen.api.platform.Platform;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
 import net.minecraft.network.Connection;
+import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundDisconnectPacket;
 import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
@@ -41,12 +42,12 @@ public abstract class PollinatedFabricPacketContext implements PollinatedPacketC
     public void disconnect(Component message) {
         switch (this.direction) {
             case PLAY_SERVERBOUND -> {
-                this.connection.send(new ClientboundDisconnectPacket(message), future -> this.connection.disconnect(message));
+                this.connection.send(new ClientboundDisconnectPacket(message), PacketSendListener.thenRun(() -> this.connection.disconnect(message)));
                 this.connection.setReadOnly();
                 Platform.getRunningServer().ifPresent(server -> server.executeBlocking(this.connection::handleDisconnection));
             }
             case LOGIN_SERVERBOUND -> {
-                this.connection.send(new ClientboundLoginDisconnectPacket(message), future -> this.connection.disconnect(message));
+                this.connection.send(new ClientboundLoginDisconnectPacket(message), PacketSendListener.thenRun(() -> this.connection.disconnect(message)));
                 this.connection.setReadOnly();
                 Platform.getRunningServer().ifPresent(server -> server.executeBlocking(this.connection::handleDisconnection));
             }

@@ -3,7 +3,7 @@ package gg.moonflower.pollen.core.client.screen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.chat.NarratorChatListener;
+import net.minecraft.client.GameNarrator;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
@@ -19,7 +19,7 @@ public class MoonflowerServerDownScreen extends Screen {
     private MultiLineLabel message = MultiLineLabel.EMPTY;
 
     public MoonflowerServerDownScreen(Screen screen) {
-        super(NarratorChatListener.NO_TITLE);
+        super(GameNarrator.NO_TITLE);
         this.previous = screen;
     }
 

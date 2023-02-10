@@ -29,6 +29,7 @@
     "client.WolfAccessor"
   ],
   "mixins": [
+    "ArgumentTypeInfosAccessor",
     "BlockEntityTypeMixin",
     "BucketItemAccessor",
     "DispenserBlockAccessor",
@@ -38,12 +39,12 @@
     "GrindstoneMenuResultSlotMixin",
     "LivingEntityMixin",
     "PotionBrewingMixin",
+    "RecipeManagerAccessor",
     "ServerAdvancementManagerMixin",
     "ServerPlayerMixin",
     "ServerResourcesMixin",
     "SimpleReloadableResourceManagerMixin",
     "SimpleReloadInstanceMixin",
-    "RecipeManagerAccessor",
     "data.AdvancementBuilderAccessor",
     "data.AdvancementRewardsAccessor",
     "data.TagEntryAccessor",

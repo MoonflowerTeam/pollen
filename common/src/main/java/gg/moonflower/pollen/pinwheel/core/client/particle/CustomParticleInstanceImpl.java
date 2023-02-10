@@ -16,7 +16,6 @@ import gg.moonflower.pollen.pinwheel.api.client.texture.GeometryTextureManager;
 import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomParticleComponent;
 import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomParticleComponentType;
 import gg.moonflower.pollen.pinwheel.api.common.particle.component.CustomParticleRenderComponent;
-import gg.moonflower.pollen.pinwheel.api.common.particle.event.ParticleEvent;
 import gg.moonflower.pollen.pinwheel.api.common.particle.render.CustomParticleRenderProperties;
 import gg.moonflower.pollen.pinwheel.api.common.particle.render.SingleQuadRenderProperties;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTexture;
@@ -31,15 +30,14 @@ import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.core.particles.ParticleGroup;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -205,7 +203,7 @@ public class CustomParticleInstanceImpl extends CustomParticleImpl {
 
     @Override
     protected Component getPrefix() {
-        return new TextComponent("").append(new TextComponent("[Particle]").withStyle(ChatFormatting.YELLOW)).append(super.getPrefix());
+        return Component.empty().append(Component.literal("[Particle]").withStyle(ChatFormatting.YELLOW)).append(super.getPrefix());
     }
 
     @Override

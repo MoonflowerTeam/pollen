@@ -10,6 +10,7 @@ import gg.moonflower.pollen.pinwheel.api.client.particle.CustomParticleEmitter;
 import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.util.RandomSource;
 
 import java.util.Random;
 
@@ -58,7 +59,7 @@ public class EmitterShapeBoxComponent implements CustomParticleComponent, Custom
 
     @Override
     public void onEmitParticles(CustomParticleEmitter emitter, int count) {
-        Random random = emitter.getRandom();
+        RandomSource random = emitter.getRandom();
         for (int i = 0; i < count; i++) {
             CustomParticle particle = emitter.newParticle();
             MolangEnvironment runtime = particle.getRuntime();

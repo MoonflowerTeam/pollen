@@ -100,6 +100,16 @@ public abstract class PollinatedRegistry<T> implements Codec<T>, Keyable, Iterab
     }
 
     /**
+     * Creates a {@link PollinatedRegistry} for registering command arguments.
+     *
+     * @param domain The domain of the mod
+     * @return A specialized command registry that can registry argument types
+     */
+    public static PollinatedCommandArgumentRegistry createCommandArgument(String domain) {
+        return new PollinatedCommandArgumentRegistry(create(Registry.COMMAND_ARGUMENT_TYPE, domain));
+    }
+
+    /**
      * Creates a {@link PollinatedRegistry} backed by a {@link Registry}.
      * <p>Users should always use {@link PollinatedRegistry#create(Registry, String)}.
      * <p>This is for very specific cases where vanilla registries must strictly be used and {@link PollinatedRegistry#create(Registry, String)} can't do what you need.

@@ -8,7 +8,7 @@ import gg.moonflower.pollen.core.client.profile.ProfileData;
 import gg.moonflower.pollen.core.client.profile.ProfileManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
-import net.minecraft.client.gui.chat.NarratorChatListener;
+import net.minecraft.client.GameNarrator;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.toasts.SystemToast;
@@ -40,7 +40,7 @@ public class LinkPatreonScreen extends Screen {
     private CompletableFuture<?> completeFuture;
 
     public LinkPatreonScreen(Screen screen) {
-        super(NarratorChatListener.NO_TITLE);
+        super(GameNarrator.NO_TITLE);
         this.previous = screen;
     }
 

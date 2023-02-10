@@ -7,6 +7,7 @@
   "commands.pollen.config.fail": "Config for %s of type %s not found",
   "commands.pollen.config.success": "Config for %s of type %s found at %s",
   "entity.pollen.boat": "Boat",
+  "entity.pollen.chest_boat": "Boat with Chest",
   "gui.jei.category.pollen.grindstone.experience": "XP: %s - %s",
   "options.pollen.entitlementList": "Moonflower Cosmetics...",
   "options.pollen.entitlementList.none": "You have no cosmetics",

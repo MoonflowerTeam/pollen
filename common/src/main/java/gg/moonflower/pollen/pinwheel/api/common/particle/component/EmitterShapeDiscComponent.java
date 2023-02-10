@@ -13,6 +13,7 @@ import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 
 import java.util.Random;
 
@@ -82,7 +83,7 @@ public class EmitterShapeDiscComponent implements CustomParticleComponent, Custo
     @Override
     public void onEmitParticles(CustomParticleEmitter emitter, int count) {
         MolangEnvironment runtime = emitter.getRuntime();
-        Random random = emitter.getRandom();
+        RandomSource random = emitter.getRandom();
         float normalX = this.normal[0].safeResolve(runtime);
         float normalY = this.normal[1].safeResolve(runtime);
         float normalZ = this.normal[2].safeResolve(runtime);

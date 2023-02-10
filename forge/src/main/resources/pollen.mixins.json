@@ -10,7 +10,6 @@
     "client.LevelRendererVanillaMixin",
     "client.LiquidBlockRendererMixin",
     "client.OptionsMixin",
-    "client.RecipeManagerAccessor",
     "client.RenderSystemMixin"
   ],
   "mixins": [

@@ -36,5 +36,6 @@ public class PollenLanguageProvider extends PollinatedLanguageProvider {
         this.add("screen." + this.domain + ".linkPatreon.error", "Failed to link Patreon");
         this.add("gui.jei.category." + this.domain + ".grindstone.experience", "XP: %s - %s");
         this.addEntityType(PollenEntityTypes.BOAT, "Boat");
+        this.addEntityType(PollenEntityTypes.CHEST_BOAT, "Boat with Chest");
     }
 }

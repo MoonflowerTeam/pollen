@@ -54,7 +54,7 @@ public class LiquidBlockRendererMixin {
     }
 
     @Inject(method = "tesselate", at = @At("HEAD"))
-    public void captureFluid(BlockAndTintGetter lightReader, BlockPos pos, VertexConsumer vertexBuilder, BlockState state, FluidState fluidState, CallbackInfoReturnable<Boolean> cir) {
+    public void captureFluid(BlockAndTintGetter lightReader, BlockPos pos, VertexConsumer vertexBuilder, BlockState state, FluidState fluidState, CallbackInfo ci) {
         this.captureLevel = lightReader;
         this.captureFluid = fluidState;
         this.capturePos = pos;

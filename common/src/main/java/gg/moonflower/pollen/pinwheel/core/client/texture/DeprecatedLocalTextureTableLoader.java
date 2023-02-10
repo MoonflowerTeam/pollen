@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -62,13 +63,14 @@ public class DeprecatedLocalTextureTableLoader implements TextureTableLoader {
         {
             Set<ResourceLocation> deprecatedFiles = new HashSet<>();
             Map<ResourceLocation, GeometryModelTextureTable> textureLocations = new HashMap<>();
-            for (ResourceLocation textureTableLocation : resourceManager.listResources(this.folder, name -> name.endsWith(".json"))) {
+            for (Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources(this.folder, name -> name.getPath().endsWith(".json")).entrySet()) {
+                ResourceLocation textureTableLocation = entry.getKey();
                 ResourceLocation textureTableName = new ResourceLocation(textureTableLocation.getNamespace(), textureTableLocation.getPath().substring(this.folder.length(), textureTableLocation.getPath().length() - 5));
                 if (textureTableName.getPath().equals("hash_tables"))
                     continue;
 
-                try (Resource resource = resourceManager.getResource(textureTableLocation)) {
-                    GeometryModelTextureTable table = GeometryModelParser.parseTextures(new InputStreamReader(resource.getInputStream()));
+                try (BufferedReader reader = entry.getValue().openAsReader()) {
+                    GeometryModelTextureTable table = GeometryModelParser.parseTextures(reader);
                     // Validate there are no online textures
                     table.getTextureDefinitions().forEach((name, textures) -> {
                         for (GeometryModelTexture texture : textures)
@@ -90,11 +92,12 @@ public class DeprecatedLocalTextureTableLoader implements TextureTableLoader {
             Set<String> hashTables = new HashSet<>();
             for (String domain : resourceManager.getNamespaces()) {
                 ResourceLocation hashTableLocation = new ResourceLocation(domain, this.folder + "hash_tables.json");
-                if (!resourceManager.hasResource(hashTableLocation))
+                Optional<Resource> hashTableResource = resourceManager.getResource(hashTableLocation);
+                if (hashTableResource.isEmpty())
                     continue;
 
-                try (Resource resource = resourceManager.getResource(hashTableLocation)) {
-                    hashTables.addAll(Arrays.asList(GSON.fromJson(new InputStreamReader(resource.getInputStream()), String[].class)));
+                try (BufferedReader reader = hashTableResource.get().openAsReader()) {
+                    hashTables.addAll(Arrays.asList(GSON.fromJson(reader, String[].class)));
                     deprecatedFiles.add(hashTableLocation);
                 } catch (Exception e) {
                     LOGGER.error("Failed to load texture hash table for " + domain, e);

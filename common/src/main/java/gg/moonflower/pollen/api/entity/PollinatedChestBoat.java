@@ -37,7 +37,7 @@ public class PollinatedChestBoat extends PollinatedBoat implements HasCustomInve
     }
 
     public PollinatedChestBoat(Level level, double d, double e, double f) {
-        this(EntityType.CHEST_BOAT, level);
+        this(PollenEntityTypes.CHEST_BOAT.get(), level);
         this.setPos(d, e, f);
         this.xo = d;
         this.yo = e;

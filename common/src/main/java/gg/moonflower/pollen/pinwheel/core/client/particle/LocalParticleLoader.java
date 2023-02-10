@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,9 +38,10 @@ public class LocalParticleLoader implements BackgroundLoader<Map<ResourceLocatio
         {
             Map<ResourceLocation, ParticleData> particleData = new HashMap<>();
             try {
-                for (ResourceLocation particleLocation : resourceManager.listResources(this.folder, name -> name.endsWith(".json"))) {
-                    try (Resource resource = resourceManager.getResource(particleLocation)) {
-                        ParticleData particle = ParticleParser.parseParticle(new InputStreamReader(resource.getInputStream()));
+                for (Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources(this.folder, name -> name.getPath().endsWith(".json")).entrySet()) {
+                    ResourceLocation particleLocation = entry.getKey();
+                    try (BufferedReader reader = entry.getValue().openAsReader()) {
+                        ParticleData particle = ParticleParser.parseParticle(reader);
                         ResourceLocation id = new ResourceLocation(particle.description().identifier());
                         if (particleData.put(id, particle) != null)
                             LOGGER.warn("Duplicate particle: " + id);

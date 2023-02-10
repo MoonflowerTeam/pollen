@@ -22,10 +22,10 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -33,7 +33,9 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -262,7 +264,7 @@ public abstract class CustomParticleImpl extends Particle implements CustomParti
 
     @Override
     public void soundEffect(ResourceLocation sound) {
-        Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(sound, SoundSource.AMBIENT, 1.0F, 1.0F, false, 0, SoundInstance.Attenuation.LINEAR, this.x, this.y, this.z, false));
+        Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(sound, SoundSource.AMBIENT, 1.0F, 1.0F, SoundInstance.createUnseededRandom(), false, 0, SoundInstance.Attenuation.LINEAR, this.x, this.y, this.z, false));
     }
 
     @Override
@@ -272,11 +274,11 @@ public abstract class CustomParticleImpl extends Particle implements CustomParti
 
     @Override
     public void log(String message) {
-        Minecraft.getInstance().gui.getChat().addMessage(new TextComponent("").append(this.getPrefix()).append(message));
+        Minecraft.getInstance().gui.getChat().addMessage(Component.empty().append(this.getPrefix()).append(message));
     }
 
     @Override
-    public Random getRandom() {
+    public RandomSource getRandom() {
         return random;
     }
 
@@ -296,7 +298,7 @@ public abstract class CustomParticleImpl extends Particle implements CustomParti
     }
 
     protected Component getPrefix() {
-        return new TextComponent("").append(new TextComponent("[" + this.name + "]").withStyle(ChatFormatting.AQUA)).append(" ");
+        return Component.empty().append(Component.literal("[" + this.name + "]").withStyle(ChatFormatting.AQUA)).append(" ");
     }
 
     private static float evaluateCurve(MolangEnvironment runtime, ParticleData.Curve curve) {

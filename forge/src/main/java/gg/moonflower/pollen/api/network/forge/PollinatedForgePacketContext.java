@@ -7,6 +7,7 @@ import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.core.extension.forge.FMLHandshakeHandlerExtensions;
 import io.netty.util.AttributeKey;
 import net.minecraft.network.Connection;
+import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundDisconnectPacket;
 import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
@@ -47,12 +48,12 @@ public class PollinatedForgePacketContext implements PollinatedPacketContext {
         Connection connection = this.getNetworkManager();
         switch (this.getDirection()) {
             case PLAY_SERVERBOUND -> {
-                connection.send(new ClientboundDisconnectPacket(message), future -> connection.disconnect(message));
+                connection.send(new ClientboundDisconnectPacket(message), PacketSendListener.thenRun(() -> connection.disconnect(message)));
                 connection.setReadOnly();
                 Platform.getRunningServer().ifPresent(server -> server.executeBlocking(connection::handleDisconnection));
             }
             case LOGIN_SERVERBOUND -> {
-                connection.send(new ClientboundLoginDisconnectPacket(message), future -> connection.disconnect(message));
+                connection.send(new ClientboundLoginDisconnectPacket(message), PacketSendListener.thenRun(() -> connection.disconnect(message)));
                 connection.setReadOnly();
                 Platform.getRunningServer().ifPresent(server -> server.executeBlocking(connection::handleDisconnection));
             }
