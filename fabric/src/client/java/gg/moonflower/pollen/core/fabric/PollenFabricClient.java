@@ -1,6 +1,6 @@
-package gg.moonflower.pollen.client.fabric;
+package gg.moonflower.pollen.core.fabric;
 
-import gg.moonflower.pollen.client.PollenClient;
+import gg.moonflower.pollen.core.PollenClient;
 import net.fabricmc.api.ClientModInitializer;
 
 public class PollenFabricClient implements ClientModInitializer {

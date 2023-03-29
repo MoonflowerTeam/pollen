@@ -37,6 +37,15 @@ allprojects {
     version = rootProject.mod_version
     group = rootProject.maven_group
 
+    repositories {
+        maven {
+            url "https://jitpack.io"
+            content {
+                includeGroupByRegex "com\\.github.*"
+            }
+        }
+    }
+
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
         options.release.set(17)

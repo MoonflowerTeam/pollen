@@ -1,7 +1,7 @@
-package gg.moonflower.pollen.forge;
+package gg.moonflower.pollen.core.forge;
 
 import dev.architectury.platform.forge.EventBuses;
-import gg.moonflower.pollen.client.PollenClient;
+import gg.moonflower.pollen.core.PollenClient;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;

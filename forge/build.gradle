@@ -2,6 +2,8 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
+archivesBaseName = "${rootProject.archivesBaseName}-${project.name}"
+
 architectury {
     platformSetupLoomIde()
     forge()
@@ -32,6 +34,9 @@ dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_major_version}.${rootProject.forge_minor_version}.${rootProject.forge_build_version}"
     modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
 
+    implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-common:${rootProject.mixinextras_version}"))
+    implementation(include("com.github.llamalad7.mixinextras:mixinextras-forge:${rootProject.mixinextras_version}"))
+
     implementation(project(":common").sourceSets.client.output)
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
@@ -52,7 +57,7 @@ processResources {
                 "mod_version": project.mod_version,
                 "mod_name": project.mod_name,
                 "mod_description": project.mod_description,
-                "archives_base_name": project.archives_base_namex,
+                "archives_base_name": project.archives_base_name,
                 "minecraft_version": project.minecraft_version,
                 "forge_major_version": project.forge_major_version
     }
@@ -79,5 +84,14 @@ jar {
 components.java {
     withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
         skip()
+    }
+}
+
+publishing {
+    publications {
+        mavenForge(MavenPublication) {
+            artifactId = project.archivesBaseName
+            from components.java
+        }
     }
 }

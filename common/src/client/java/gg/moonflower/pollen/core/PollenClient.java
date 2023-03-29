@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.client;
+package gg.moonflower.pollen.core;
 
 public class PollenClient {
 

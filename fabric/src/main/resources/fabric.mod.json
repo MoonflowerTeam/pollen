@@ -24,16 +24,12 @@
       "gg.moonflower.pollen.core.fabric.PollenFabric"
     ],
     "client": [
-      "gg.moonflower.pollen.client.fabric.PollenFabricClient"
+      "gg.moonflower.pollen.core.fabric.PollenFabricClient"
     ]
   },
   "mixins": [
     "${mod_id}.mixins.json",
     "${mod_id}-common.mixins.json",
-    {
-      "config": "${mod_id}.client.mixins.json",
-      "environment": "client"
-    },
     {
       "config": "${mod_id}-common.client.mixins.json",
       "environment": "client"

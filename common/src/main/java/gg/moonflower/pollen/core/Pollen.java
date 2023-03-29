@@ -7,4 +7,8 @@ public class Pollen {
     public static void init() {}
 
     public static void postInit() {}
+
+    public static <T> T expect() {
+        throw new AssertionError("Expected platform method");
+    }
 }

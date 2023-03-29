@@ -1,3 +1,5 @@
+archivesBaseName = "${rootProject.archivesBaseName}-${project.name}"
+
 architectury {
     common(rootProject.enabled_platforms.split(","))
 }
@@ -10,6 +12,8 @@ loom {
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modApi "dev.architectury:architectury:${rootProject.architectury_version}"
+
+    implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-common:${rootProject.mixinextras_version}"))
 }
 
 processResources {
@@ -17,5 +21,14 @@ processResources {
 
     filesMatching(["architectury.common.json"]) {
         expand "mod_id": project.mod_id
+    }
+}
+
+publishing {
+    publications {
+        mavenCommon(MavenPublication) {
+            artifactId = project.archivesBaseName
+            from components.java
+        }
     }
 }
