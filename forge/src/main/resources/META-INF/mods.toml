@@ -1,31 +1,31 @@
 modLoader = "javafml"
-loaderVersion = "[40,)"
-issueTrackerURL = "https://github.com/MoonflowerTeam/${repo}/issues"
+loaderVersion = "[${forge_major_version},)"
+issueTrackerURL = "https://github.com/MoonflowerTeam/${archives_base_name}/issues"
 license = "LGPLv3"
 
 [[mods]]
-modId = "${id}"
-version = "${version}"
-displayName = "${name}"
+modId = "${mod_id}"
+version = "${mod_version}"
+displayName = "${mod_name}"
+description = "${mod_description}"
+logoFile = "${mod_id}.logo.png"
 authors = "Moonflower"
 credits = "Jackson, Ocelot"
-description = "Pollen is a library mod which includes various utilities and platform bridges for Fabric and Forge using Architectury."
 displayURL= "https://www.moonflower.gg/"
-logoFile = "logo.png"
 
-[modproperties.${id}]
-catalogueImageIcon="icon.png"
+[modproperties.${mod_id}]
+catalogueImageIcon="${mod_id}.icon.png"
 
-[[dependencies.${id}]]
+[[dependencies.${mod_id}]]
 modId = "forge"
 mandatory = true
-versionRange = "[40.1,)"
+versionRange = "[${forge_major_version},)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.${id}]]
+[[dependencies.${mod_id}]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.18.2,)"
+versionRange = "[${minecraft_version},)"
 ordering = "NONE"
 side = "BOTH"

@@ -1,57 +1,46 @@
 {
   "schemaVersion": 1,
-  "id": "${id}",
-  "version": "${version}",
-  "name": "${name}",
-  "description": "Pollen is a feature filled library built for ease of use and maximum compatibility between Forge and Fabric using Architectury with a wide range of utilities to make developing mods a whole lot easier.",
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "icon": "${mod_id}.icon.png",
   "authors": [
     "Moonflower"
   ],
   "contributors": [
     "Jackson",
-    "Ocelot"
+    "RyanHCode"
   ],
   "contact": {
     "homepage": "https://www.moonflower.gg/",
-    "issues": "https://github.com/MoonflowerTeam/${repo}/issues",
-    "sources": "https://github.com/MoonflowerTeam/${repo}/"
+    "issues": "https://github.com/MoonflowerTeam/${archives_base_name}/issues",
+    "sources": "https://github.com/MoonflowerTeam/${archives_base_name}/"
   },
-  "icon": "icon.png",
-  "license": "LGPLv3",
+  "license": "GPLv3",
   "environment": "*",
-  "mixins": [
-    "${id}-common.mixins.json",
-    "${id}.mixins.json"
-  ],
-  "accessWidener": "${id}.accesswidener",
   "entrypoints": {
     "main": [
       "gg.moonflower.pollen.core.fabric.PollenFabric"
     ],
     "client": [
-      "gg.moonflower.pollen.core.fabric.PollenFabricClient"
-    ],
-    "fabric-datagen": [
-      "gg.moonflower.pollen.core.fabric.PollenFabricData"
-    ],
-    "cardinal-components-entity": [
-      "gg.moonflower.pollen.core.fabric.PollenComponents"
-    ],
-    "modmenu": [
-      "gg.moonflower.pollen.core.fabric.PollenModMenu"
+      "gg.moonflower.pollen.client.fabric.PollenFabricClient"
     ]
   },
+  "mixins": [
+    "${mod_id}.mixins.json",
+    "${mod_id}-common.mixins.json",
+    {
+      "config": "${mod_id}.client.mixins.json",
+      "environment": "client"
+    },
+    {
+      "config": "${mod_id}-common.client.mixins.json",
+      "environment": "client"
+    }
+  ],
   "depends": {
-    "fabricloader": ">=0.12",
-    "fabric": ">=0.47",
-    "minecraft": "1.18.x >=1.18.2"
-  },
-  "conflicts": {
-    "grindenchantments": "<1.6.2"
-  },
-  "custom": {
-    "cardinal-components": [
-      "${id}:synced_data"
-    ]
+    "fabric": "*",
+    "minecraft": "~${minecraft_version}"
   }
 }

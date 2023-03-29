@@ -1,50 +1,16 @@
-import groovy.json.JsonOutput
-import groovy.json.JsonSlurper
-
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
-
-archivesBaseName = "${rootProject.archivesBaseName}-${project.name}"
 
 architectury {
     platformSetupLoomIde()
     fabric()
 }
 
-def generatedResources = file("src/generated/resources")
-def accessWidenerFile = project(":common").file("src/main/resources/${rootProject.mod_id}.accesswidener")
-
-sourceSets {
-    main {
-        resources {
-            srcDirs += [
-                    'src/main/generated'
-            ]
-        }
-    }
-}
-
 loom {
-    mixin {
-        defaultRefmapName = "${project.mod_id}-refmap.json"
-    }
-    accessWidenerPath.set(accessWidenerFile)
-
-    runs {
-        datagen {
-            server()
-
-            name "Data Generation"
-            vmArg "-Dfabric-api.datagen"
-            vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated")}"
-
-            runDir "build/datagen"
-        }
-    }
+    splitEnvironmentSourceSets()
+    accessWidenerPath = project(":common").loom.accessWidenerPath
 }
-
-sourceSets.main.resources { srcDir generatedResources }
 
 configurations {
     common
@@ -54,83 +20,45 @@ configurations {
     developmentFabric.extendsFrom common
 }
 
-
-repositories {
-    maven { url "https://maven.terraformersmc.com/" }
-}
-
 dependencies {
-    modApi "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+    modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
-    modImplementation "com.terraformersmc:modmenu:${rootProject.mod_menu_version}" // TODO: modApi when config gui is implemented
-
-    // Common Dependencies
-    implementation "com.github.MoonflowerTeam:molang-compiler:${project.molang_compiler_version}"
-    shadowCommon "com.github.MoonflowerTeam:molang-compiler:${project.molang_compiler_version}"
-    implementation "com.electronwill.night-config:core:${project.night_config_version}"
-    shadowCommon "com.electronwill.night-config:core:${project.night_config_version}"
-    implementation "com.electronwill.night-config:toml:${project.night_config_version}"
-    shadowCommon "com.electronwill.night-config:toml:${project.night_config_version}"
-
-    implementation "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
-    shadowCommon "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
-    annotationProcessor "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
-
-    // Fabric-only Dependencies
-    modApi "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cardinal_components_version}"
-    modApi "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cardinal_components_version}"
-    include "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cardinal_components_version}"
-    include "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cardinal_components_version}"
-    // Needed for making sure render changes apply
-    modCompileOnly "curse.maven:sodium-394468:3605309"
-    modCompileOnly "curse.maven:irisshaders-455508:${project.iris_version}"
-
-    modRuntimeOnly "me.djtheredstoner:DevAuth-fabric:${rootProject.devauth_version}"
-
+    clientImplementation(project(":common").sourceSets.client.output)
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }
 
-task copyAccessWidener(type: Copy) {
-    from(accessWidenerFile)
-    into(generatedResources)
-}
-
 processResources {
-    dependsOn(copyAccessWidener)
-    inputs.property "id", rootProject.mod_id
-    inputs.property "name", rootProject.mod_name
-    inputs.property "version", rootProject.mod_version
-    inputs.property "repo", rootProject.name
+    inputs.property "mod_id", project.mod_id
+    inputs.property "mod_version", project.mod_version
+    inputs.property "mod_name", project.mod_name
+    inputs.property "mod_description", project.mod_description
+    inputs.property "archives_base_name", project.archives_base_name
 
-    filesMatching("fabric.mod.json") {
-        expand "id": rootProject.mod_id,
-                "name": rootProject.mod_name,
-                "version": rootProject.mod_version,
-                "repo": rootProject.name
-    }
+    inputs.property "minecraft_version", project.minecraft_version
 
-    doLast {
-        fileTree(dir: outputs.files.asPath, include: "**/*.json").each {
-            File file -> file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
-        }
+    filesMatching(["fabric.mod.json"]) {
+        expand "mod_id": project.mod_id,
+                "mod_version": project.mod_version,
+                "mod_name": project.mod_name,
+                "mod_description": project.mod_description,
+                "archives_base_name": project.archives_base_name,
+                "minecraft_version": project.minecraft_version
     }
 }
 
 shadowJar {
-    mergeServiceFiles()
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
-    relocate "io.github.ocelot.molangcompiler", "gg.moonflower.pollen.molangcompiler"
-    relocate "com.electronwill.nightconfig", "gg.moonflower.pollen.nightconfig"
-    relocate "com.llamalad7.mixinextras", "gg.moonflower.pollen.mixinextras"
     classifier "dev-shadow"
 }
 
 remapJar {
-    inputFile.set shadowJar.archiveFile
+    injectAccessWidener = true
+    input.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier null
 }
@@ -139,36 +67,8 @@ jar {
     classifier "dev"
 }
 
-sourcesJar {
-    def commonSources = project(":common").sourcesJar
-    dependsOn commonSources
-    from commonSources.archiveFile.map { zipTree(it) }
-    duplicatesStrategy(DuplicatesStrategy.INCLUDE)
-}
-
-publishing {
-    publications {
-        mavenFabric(MavenPublication) {
-            artifactId = project.archivesBaseName
-
-            artifact remapJar
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
-
-            pom.withXml {
-                def depsNode = asNode().appendNode('dependencies')
-                [this.configurations.modApi, this.configurations.api].each {
-                    it.allDependencies.each {
-                        def depNode = depsNode.appendNode('dependency')
-                        depNode.appendNode('groupId', it.group)
-                        depNode.appendNode('artifactId', it.name)
-                        depNode.appendNode('version', it.version)
-                    }
-                }
-            }
-        }
+components.java {
+    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+        skip()
     }
 }
-
-loom.disableDeprecatedPomGeneration(publishing.publications.mavenFabric)

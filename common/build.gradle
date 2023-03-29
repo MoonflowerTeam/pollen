@@ -1,75 +1,21 @@
-plugins {
-    id "com.github.johnrengelman.shadow" version "7.0.0"
-}
-
-configurations {
-    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
-}
-
-dependencies {
-    // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
-    // Do NOT use other classes from fabric loader
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-
-    implementation "com.github.MoonflowerTeam:molang-compiler:${rootProject.molang_compiler_version}"
-    shadowCommon "com.github.MoonflowerTeam:molang-compiler:${rootProject.molang_compiler_version}"
-    implementation "com.electronwill.night-config:core:${rootProject.night_config_version}"
-    implementation "com.electronwill.night-config:toml:${rootProject.night_config_version}"
-
-    implementation "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
-    shadowCommon "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
-    annotationProcessor "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
-}
-
 architectury {
-    common("forge", "fabric")
+    common(rootProject.enabled_platforms.split(","))
 }
 
 loom {
-    accessWidenerPath.set(file("src/main/resources/${project.mod_id}.accesswidener"))
+    splitEnvironmentSourceSets()
+    accessWidenerPath = file("src/main/resources/${project.mod_id}.accesswidener")
 }
 
-shadowJar {
-    mergeServiceFiles()
-    configurations = [project.configurations.shadowCommon]
-    relocate "io.github.ocelot.molangcompiler", "gg.moonflower.pollen.molangcompiler"
-    relocate "com.llamalad7.mixinextras", "gg.moonflower.pollen.mixinextras"
-    classifier "dev-shadow"
+dependencies {
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    modApi "dev.architectury:architectury:${rootProject.architectury_version}"
 }
 
-remapJar {
-    inputFile.set shadowJar.archiveFile
-    dependsOn shadowJar
-    classifier null
-}
+processResources {
+    inputs.property "mod_id", project.mod_id
 
-jar {
-    classifier "dev"
-}
-
-publishing {
-    publications {
-        mavenCommon(MavenPublication) {
-            artifactId = project.archivesBaseName
-
-            artifact remapJar
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
-
-            pom.withXml {
-                def depsNode = asNode().appendNode('dependencies')
-                [this.configurations.modApi, this.configurations.api].each {
-                    it.allDependencies.each {
-                        def depNode = depsNode.appendNode('dependency')
-                        depNode.appendNode('groupId', it.group)
-                        depNode.appendNode('artifactId', it.name)
-                        depNode.appendNode('version', it.version)
-                    }
-                }
-            }
-        }
+    filesMatching(["architectury.common.json"]) {
+        expand "mod_id": project.mod_id
     }
 }
-
-loom.disableDeprecatedPomGeneration(publishing.publications.mavenCommon)
