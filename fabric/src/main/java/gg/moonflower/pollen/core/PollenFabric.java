@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.core.fabric;
+package gg.moonflower.pollen.core;
 
 import gg.moonflower.pollen.core.Pollen;
 import net.fabricmc.api.ModInitializer;

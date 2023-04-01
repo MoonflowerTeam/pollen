@@ -4,6 +4,8 @@
   "compatibilityLevel": "JAVA_17",
   "minVersion": "0.8",
   "mixins": [
+    "network.PlayerListMixin",
+    "network.ServerLoginPacketListenerImplMixin"
   ],
   "injectors": {
     "defaultRequire": 1

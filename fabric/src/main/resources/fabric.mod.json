@@ -21,7 +21,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "gg.moonflower.pollen.core.fabric.PollenFabric"
+      "gg.moonflower.pollen.core.PollenFabric"
     ],
     "client": [
       "gg.moonflower.pollen.core.fabric.PollenFabricClient"
