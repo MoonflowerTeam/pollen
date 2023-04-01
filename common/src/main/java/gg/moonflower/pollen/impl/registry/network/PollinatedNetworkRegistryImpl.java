@@ -5,6 +5,7 @@ import gg.moonflower.pollen.api.network.v1.PollinatedLoginNetworkChannel;
 import gg.moonflower.pollen.api.network.v1.PollinatedPlayNetworkChannel;
 import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacketContext;
+import gg.moonflower.pollen.api.platform.v1.Platform;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketListener;
@@ -17,6 +18,8 @@ import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Supplier;
+
 @ApiStatus.Internal
 public final class PollinatedNetworkRegistryImpl {
 
@@ -25,9 +28,27 @@ public final class PollinatedNetworkRegistryImpl {
         return Pollen.expect();
     }
 
+    public static PollinatedPlayNetworkChannel createPlay(ResourceLocation channelId, String version, Supplier<Object> clientFactory, Supplier<Object> serverFactory) {
+        PollinatedPlayNetworkChannel channel = createPlay(channelId, version);
+        if (Platform.isClient()) {
+            channel.setClientHandler(clientFactory.get());
+        }
+        channel.setServerHandler(serverFactory.get());
+        return channel;
+    }
+
     @ExpectPlatform
     public static PollinatedLoginNetworkChannel createLogin(ResourceLocation channelId, String version) {
         return Pollen.expect();
+    }
+
+    public static PollinatedLoginNetworkChannel createLogin(ResourceLocation channelId, String version, Supplier<Object> clientFactory, Supplier<Object> serverFactory) {
+        PollinatedLoginNetworkChannel channel = createLogin(channelId, version);
+        if (Platform.isClient()) {
+            channel.setClientHandler(clientFactory.get());
+        }
+        channel.setServerHandler(serverFactory.get());
+        return channel;
     }
 
     @SuppressWarnings("unchecked")
