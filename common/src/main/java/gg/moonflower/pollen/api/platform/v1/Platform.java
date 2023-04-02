@@ -62,13 +62,6 @@ public interface Platform {
     }
 
     /**
-     * @return The access to registries for the running server or client
-     */
-    static Optional<RegistryAccess> getRegistryAccess() {
-        return PlatformImpl.getRegistryAccess();
-    }
-
-    /**
      * @return The recipe manager for the running server or client
      */
     static Optional<RecipeManager> getRecipeManager() {

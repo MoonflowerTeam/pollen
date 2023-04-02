@@ -12,12 +12,6 @@ import java.util.Optional;
 public class ClientSidedPlatformImpl implements SidedPlatformImpl {
 
     @Override
-    public Optional<RegistryAccess> getRegistryAccess() {
-        ClientPacketListener listener = Minecraft.getInstance().getConnection();
-        return listener != null ? Optional.of(listener.registryAccess()) : Optional.empty();
-    }
-
-    @Override
     public Optional<RecipeManager> getRecipeManager() {
         ClientPacketListener listener = Minecraft.getInstance().getConnection();
         return listener != null ? Optional.of(listener.getRecipeManager()) : Optional.empty();

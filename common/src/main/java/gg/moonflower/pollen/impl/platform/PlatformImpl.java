@@ -3,7 +3,6 @@ package gg.moonflower.pollen.impl.platform;
 import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.core.Pollen;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -46,13 +45,6 @@ public class PlatformImpl {
 
     public static Optional<MinecraftServer> getRunningServer() {
         return Optional.ofNullable(runningServer);
-    }
-
-    public static Optional<RegistryAccess> getRegistryAccess() {
-        if (runningServer != null) {
-            return Optional.of(runningServer.registryAccess());
-        }
-        return isClient() ? CLIENT_PLATFORM.getRegistryAccess() : Optional.empty();
     }
 
     public static Optional<RecipeManager> getRecipeManager() {

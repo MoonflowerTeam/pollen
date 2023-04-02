@@ -7,7 +7,5 @@ import java.util.Optional;
 
 public interface SidedPlatformImpl {
 
-    Optional<RegistryAccess> getRegistryAccess();
-
     Optional<RecipeManager> getRecipeManager();
 }
