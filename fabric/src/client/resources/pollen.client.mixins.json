@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "gg.moonflower.pollen.client.mixin.fabric",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "client": [
+    "event.registry.TextureAtlasMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
