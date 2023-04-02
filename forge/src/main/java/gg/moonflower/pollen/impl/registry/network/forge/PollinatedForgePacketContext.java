@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.impl.registry.network;
+package gg.moonflower.pollen.impl.registry.network.forge;
 
 import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacketContext;

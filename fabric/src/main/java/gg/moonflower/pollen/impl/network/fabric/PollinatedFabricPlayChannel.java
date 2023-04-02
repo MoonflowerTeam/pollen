@@ -1,10 +1,10 @@
-package gg.moonflower.pollen.impl.network;
+package gg.moonflower.pollen.impl.network.fabric;
 
 import gg.moonflower.pollen.api.network.v1.PacketDeserializer;
 import gg.moonflower.pollen.api.network.v1.PollinatedPlayNetworkChannel;
 import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacketDirection;
-import gg.moonflower.pollen.impl.network.context.PollinatedFabricPlayPacketContext;
+import gg.moonflower.pollen.impl.network.context.fabric.PollinatedFabricPlayPacketContext;
 import gg.moonflower.pollen.impl.registry.network.PollinatedNetworkRegistryImpl;
 import gg.moonflower.pollen.impl.registry.network.fabric.PollinatedNetworkRegistryImplImpl;
 import net.fabricmc.api.EnvType;

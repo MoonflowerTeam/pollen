@@ -1,9 +1,10 @@
-package gg.moonflower.pollen.impl.registry.network;
+package gg.moonflower.pollen.impl.registry.network.forge;
 
 import gg.moonflower.pollen.api.network.v1.PacketDeserializer;
 import gg.moonflower.pollen.api.network.v1.PollinatedNetworkChannel;
 import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacketDirection;
+import gg.moonflower.pollen.impl.registry.network.PollinatedNetworkRegistryImpl;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.simple.SimpleChannel;
 import org.jetbrains.annotations.ApiStatus;

@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.impl.network;
+package gg.moonflower.pollen.impl.network.fabric;
 
 import gg.moonflower.pollen.api.network.v1.PacketDeserializer;
 import gg.moonflower.pollen.api.network.v1.PollinatedLoginNetworkChannel;
@@ -6,8 +6,8 @@ import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacketDirection;
 import gg.moonflower.pollen.api.network.v1.packet.login.PollinatedLoginPacket;
 import gg.moonflower.pollen.core.extensions.fabric.ServerLoginPacketListenerImplExtension;
-import gg.moonflower.pollen.impl.network.context.PollinatedFabricLoginPacketContext;
-import gg.moonflower.pollen.impl.network.context.PollinatedFabricPacketContext;
+import gg.moonflower.pollen.impl.network.context.fabric.PollinatedFabricLoginPacketContext;
+import gg.moonflower.pollen.impl.network.context.fabric.PollinatedFabricPacketContext;
 import gg.moonflower.pollen.impl.registry.network.PollinatedNetworkRegistryImpl;
 import gg.moonflower.pollen.impl.registry.network.fabric.PollinatedNetworkRegistryImplImpl;
 import io.netty.util.concurrent.Future;

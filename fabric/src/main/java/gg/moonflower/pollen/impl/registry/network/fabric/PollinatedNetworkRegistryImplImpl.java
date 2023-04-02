@@ -2,8 +2,8 @@ package gg.moonflower.pollen.impl.registry.network.fabric;
 
 import gg.moonflower.pollen.api.network.v1.PollinatedLoginNetworkChannel;
 import gg.moonflower.pollen.api.network.v1.PollinatedPlayNetworkChannel;
-import gg.moonflower.pollen.impl.network.PollinatedFabricLoginChannel;
-import gg.moonflower.pollen.impl.network.PollinatedFabricPlayChannel;
+import gg.moonflower.pollen.impl.network.fabric.PollinatedFabricLoginChannel;
+import gg.moonflower.pollen.impl.network.fabric.PollinatedFabricPlayChannel;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 

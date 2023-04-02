@@ -21,7 +21,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "gg.moonflower.pollen.core.PollenFabric"
+      "gg.moonflower.pollen.core.fabric.PollenFabric"
     ],
     "client": [
       "gg.moonflower.pollen.core.fabric.PollenFabricClient"
@@ -31,6 +31,10 @@
     "${mod_id}.mixins.json",
     "${mod_id}-common.mixins.json",
     {
+      "config": "${mod_id}.client.mixins.json",
+      "environment": "client"
+    },
+    {
       "config": "${mod_id}-common.client.mixins.json",
       "environment": "client"
     }
@@ -38,5 +42,12 @@
   "depends": {
     "fabric": "*",
     "minecraft": "~${minecraft_version}"
+  },
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_3248": [
+        "gg/moonflower/pollen/core/extensions/fabric/ServerLoginPacketListenerImplExtension"
+      ]
+    }
   }
 }

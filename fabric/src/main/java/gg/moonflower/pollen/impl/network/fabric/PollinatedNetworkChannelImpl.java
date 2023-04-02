@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.impl.network;
+package gg.moonflower.pollen.impl.network.fabric;
 
 import gg.moonflower.pollen.api.network.v1.PacketDeserializer;
 import gg.moonflower.pollen.api.network.v1.PollinatedNetworkChannel;

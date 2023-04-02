@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.impl.registry.network;
+package gg.moonflower.pollen.impl.registry.network.forge;
 
 import gg.moonflower.pollen.api.network.v1.PacketDeserializer;
 import gg.moonflower.pollen.api.network.v1.PollinatedPlayNetworkChannel;
@@ -17,8 +17,6 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Supplier;
 
 @ApiStatus.Internal
 public class PollinatedForgePlayChannel extends PollinatedNetworkChannelImpl implements PollinatedPlayNetworkChannel {

@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.impl.network.context;
+package gg.moonflower.pollen.impl.network.context.fabric;
 
 import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacketContext;
 import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacketDirection;
