@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.core;
 
+import gg.moonflower.pollen.core.network.PollenMessages;
 import gg.moonflower.pollen.impl.platform.PlatformImpl;
 
 public class Pollen {
@@ -8,6 +9,7 @@ public class Pollen {
 
     public static void init() {
         PlatformImpl.init();
+        PollenMessages.init();
     }
 
     public static void postInit() {}

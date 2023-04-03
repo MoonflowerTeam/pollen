@@ -33,6 +33,8 @@ dependencies {
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
+    include(implementation("com.electronwill.night-config:core:${rootProject.nightconfig_version}"))
+    include(implementation("com.electronwill.night-config:toml:${rootProject.nightconfig_version}"))
     include(implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${rootProject.mixinextras_version}")))
 
     clientImplementation(project(":common").sourceSets.client.output)
