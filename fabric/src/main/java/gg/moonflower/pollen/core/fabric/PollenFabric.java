@@ -3,6 +3,7 @@ package gg.moonflower.pollen.core.fabric;
 import gg.moonflower.pollen.api.config.v1.PollinatedConfigType;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.impl.config.fabric.ConfigTracker;
+import gg.moonflower.pollen.impl.event.entity.ModifyTradesEventsImpl;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -40,7 +41,10 @@ public class PollenFabric implements ModInitializer {
         Pollen.init();
         Pollen.postInit();
 
-        ServerLifecycleEvents.SERVER_STARTING.register(server -> ConfigTracker.INSTANCE.loadConfigs(PollinatedConfigType.SERVER, getServerConfigPath(server)));
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> {
+            ConfigTracker.INSTANCE.loadConfigs(PollinatedConfigType.SERVER, getServerConfigPath(server));
+            ModifyTradesEventsImpl.init();
+        });
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> ConfigTracker.INSTANCE.unloadConfigs(PollinatedConfigType.SERVER, getServerConfigPath(server)));
     }
 }
