@@ -5,8 +5,7 @@
   "minVersion": "0.8",
   "client": [
     "Matrix3fAccessor",
-    "Matrix4fAccessor",
-    "pinwheelbridge.PoseStackMixin"
+    "Matrix4fAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

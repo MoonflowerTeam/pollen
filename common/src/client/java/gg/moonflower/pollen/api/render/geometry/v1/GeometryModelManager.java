@@ -35,11 +35,4 @@ public interface GeometryModelManager {
     static GeometryModel getModel(ResourceLocation location) {
         return GeometryModelManagerImpl.getModel(location);
     }
-
-    /**
-     * @return The atlas geometry models use
-     */
-    static GeometryAtlasTexture getAtlas() {
-        return GeometryModelManagerImpl.getAtlas();
-    }
 }

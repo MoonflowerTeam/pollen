@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.api.download.v1;
 
-import gg.moonflower.pollen.impl.base.OnlineRequestImpl;
 import gg.moonflower.pollen.impl.download.OnlineRequestImpl;
 import net.minecraft.util.HttpUtil;
 

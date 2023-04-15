@@ -1,9 +1,8 @@
 package gg.moonflower.pollen.api.download.v1;
 
 import com.google.common.util.concurrent.MoreExecutors;
-import gg.moonflower.pollen.api.util.OnlineRequest;
-import gg.moonflower.pollen.pinwheel.core.client.util.HashedTextureCache;
-import gg.moonflower.pollen.pinwheel.core.client.util.TimedTextureCache;
+import gg.moonflower.pollen.impl.download.HashedTextureCache;
+import gg.moonflower.pollen.impl.download.TimedTextureCache;
 import net.minecraft.ReportedException;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.util.Mth;

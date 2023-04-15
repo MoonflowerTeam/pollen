@@ -5,6 +5,7 @@ import gg.moonflower.pinwheel.api.texture.ModelTexture;
 import gg.moonflower.pollen.api.pinwheelbridge.v1.PinwheelBridge;
 import gg.moonflower.pollen.api.render.geometry.v1.GeometryBufferSource;
 import gg.moonflower.pollen.api.render.geometry.v1.GeometryModelManager;
+import gg.moonflower.pollen.api.render.geometry.v1.GeometryTextureManager;
 import gg.moonflower.pollen.api.render.vertex.v1.TintedVertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -25,14 +26,14 @@ public class GeometryBufferSourceWrapper implements GeometryBufferSource {
 
     private RenderType getRenderType(ModelTexture texture) {
         if (this.particle) {
-            return GeometryRenderTypes.particle(texture.key(), GeometryModelManager.getAtlas(), null);
+            return GeometryRenderTypes.particle(texture.key(), GeometryTextureManager.getAtlas(), null);
         }
-        return GeometryRenderTypes.entity(texture.key(), GeometryModelManager.getAtlas(), null);
+        return GeometryRenderTypes.entity(texture.key(), GeometryTextureManager.getAtlas(), null);
     }
 
     @Override
     public VertexConsumer getBuffer(ModelTexture texture) {
-        TextureAtlasSprite sprite = GeometryModelManager.getAtlas().getSprite(PinwheelBridge.toLocation(texture.location()));
+        TextureAtlasSprite sprite = GeometryTextureManager.getAtlas().getSprite(PinwheelBridge.toLocation(texture.location()));
         return sprite.wrap(TintedVertexConsumer.tinted(this.delegate.getBuffer(this.getRenderType(texture))).tint(texture.color()));
     }
 }

@@ -22,6 +22,14 @@ public class PoseStackWrapper implements MatrixStack {
     }
 
     @Override
+    public void reset() {
+        while (!this.poseStack.clear()) {
+            this.poseStack.popPose();
+        }
+        this.poseStack.setIdentity();
+    }
+
+    @Override
     public void translate(float x, float y, float z) {
         this.poseStack.translate(x, y, z);
     }

@@ -24,5 +24,8 @@ public class PollenShaderTypes {
         ShaderRegistry.register(MODEL_CUTOUT_CULL, DefaultVertexFormat.NEW_ENTITY);
         ShaderRegistry.register(MODEL_TRANSLUCENT, DefaultVertexFormat.NEW_ENTITY);
         ShaderRegistry.register(MODEL_TRANSLUCENT_CULL, DefaultVertexFormat.NEW_ENTITY);
+        ShaderRegistry.register(PARTICLE_SOLID, DefaultVertexFormat.NEW_ENTITY);
+        ShaderRegistry.register(PARTICLE_CUTOUT, DefaultVertexFormat.NEW_ENTITY);
+        ShaderRegistry.register(PARTICLE_TRANSLUCENT, DefaultVertexFormat.NEW_ENTITY);
     }
 }

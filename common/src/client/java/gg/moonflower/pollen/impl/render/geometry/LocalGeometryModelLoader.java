@@ -28,8 +28,7 @@ public final class LocalGeometryModelLoader implements BackgroundLoader<Map<Reso
 
     @Override
     public CompletableFuture<Map<ResourceLocation, GeometryModel>> reload(ResourceManager resourceManager, Executor backgroundExecutor, Executor gameExecutor) {
-        return CompletableFuture.supplyAsync(() ->
-        {
+        return CompletableFuture.supplyAsync(() -> {
             Map<ResourceLocation, GeometryModel> modelLocations = new HashMap<>();
             for (Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources(FOLDER, resourceLocation -> resourceLocation.getPath().endsWith(".json")).entrySet()) {
                 ResourceLocation modelLocation = entry.getKey();
@@ -46,8 +45,6 @@ public final class LocalGeometryModelLoader implements BackgroundLoader<Map<Reso
                     LOGGER.error("Failed to load geometry file '" + modelLocation.getNamespace() + ":" + modelLocation.getPath().substring(FOLDER.length() + 1, modelLocation.getPath().length() - 5) + "'", e);
                 }
             }
-
-            LOGGER.info("Loaded " + modelLocations.size() + " geometry models.");
             return modelLocations;
         }, backgroundExecutor);
     }

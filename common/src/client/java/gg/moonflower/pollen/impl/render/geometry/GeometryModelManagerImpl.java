@@ -3,6 +3,7 @@ package gg.moonflower.pollen.impl.render.geometry;
 import dev.architectury.registry.ReloadListenerRegistry;
 import gg.moonflower.pinwheel.api.geometry.GeometryModel;
 import gg.moonflower.pollen.api.render.geometry.v1.GeometryAtlasTexture;
+import gg.moonflower.pollen.api.render.geometry.v1.GeometryModelManager;
 import gg.moonflower.pollen.api.render.util.v1.BackgroundLoader;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.client.Minecraft;
@@ -25,15 +26,13 @@ import java.util.concurrent.Executor;
 @ApiStatus.Internal
 public final class GeometryModelManagerImpl {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(GeometryModelManager.class);
     private static final Reloader RELOADER = new Reloader();
     private static final Set<BackgroundLoader<Map<ResourceLocation, GeometryModel>>> LOADERS = new HashSet<>();
     private static final Map<ResourceLocation, GeometryModel> MODELS = new HashMap<>();
-    private static final GeometryTextureSpriteUploader UPLOADER = new GeometryTextureSpriteUploader(Minecraft.getInstance().getTextureManager());
 
     public static void init() {
         ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, RELOADER, new ResourceLocation(Pollen.MOD_ID, "geometry_model_manager"));
-        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, UPLOADER, new ResourceLocation(Pollen.MOD_ID, "geometry_texture_atlas"));
         addLoader(new LocalGeometryModelLoader());
     }
 
@@ -47,10 +46,6 @@ public final class GeometryModelManagerImpl {
             LOGGER.warn("Unknown geometry model with key '{}'", location);
             return GeometryModel.EMPTY;
         });
-    }
-
-    public static GeometryAtlasTexture getAtlas() {
-        return UPLOADER;
     }
 
     private static class Reloader implements PreparableReloadListener {

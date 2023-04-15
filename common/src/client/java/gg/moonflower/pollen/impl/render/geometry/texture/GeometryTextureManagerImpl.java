@@ -4,6 +4,7 @@ import com.google.common.base.Suppliers;
 import dev.architectury.registry.ReloadListenerRegistry;
 import gg.moonflower.pinwheel.api.texture.TextureTable;
 import gg.moonflower.pollen.api.render.geometry.v1.GeometryAtlasTexture;
+import gg.moonflower.pollen.api.render.geometry.v1.GeometryTextureManager;
 import gg.moonflower.pollen.api.render.util.v1.BackgroundLoader;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.impl.render.geometry.GeometryTextureSpriteUploader;
@@ -25,7 +26,7 @@ import java.util.function.Supplier;
 @ApiStatus.Internal
 public final class GeometryTextureManagerImpl {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(GeometryTextureManager.class);
     private static final Reloader RELOADER = new Reloader();
     private static final Set<BackgroundLoader<Map<ResourceLocation, TextureTable>>> LOADERS = new HashSet<>();
     private static final Map<ResourceLocation, TextureTable> TEXTURES = new HashMap<>();
