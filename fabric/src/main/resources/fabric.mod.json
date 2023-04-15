@@ -42,12 +42,5 @@
   "depends": {
     "fabric": "*",
     "minecraft": "~${minecraft_version}"
-  },
-  "custom": {
-    "loom:injected_interfaces": {
-      "net/minecraft/class_3248": [
-        "gg/moonflower/pollen/core/extensions/fabric/ServerLoginPacketListenerImplExtension"
-      ]
-    }
   }
 }

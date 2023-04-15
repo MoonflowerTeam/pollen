@@ -1,6 +1,7 @@
 package gg.moonflower.pollen.impl.platform.fabric;
 
-import gg.moonflower.pollen.api.platform.v1.Platform;
+import dev.architectury.platform.Platform;
+import dev.architectury.utils.Env;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.thread.BlockableEventLoop;
@@ -19,7 +20,7 @@ public class PlatformImplImpl {
     }
 
     public static BlockableEventLoop<?> getGameExecutor() {
-        return Platform.isClient() ? CLIENT_EXECUTOR.getGameExecutor() : COMMON_EXECUTOR.getGameExecutor();
+        return Platform.getEnvironment() == Env.CLIENT ? CLIENT_EXECUTOR.getGameExecutor() : COMMON_EXECUTOR.getGameExecutor();
     }
 
     public static boolean isModLoaded(String modId) {

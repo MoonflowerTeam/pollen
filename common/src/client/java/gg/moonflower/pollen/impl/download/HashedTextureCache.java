@@ -1,8 +1,9 @@
-package gg.moonflower.pollen.impl.cache;
+package gg.moonflower.pollen.impl.download;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import gg.moonflower.pollen.api.cache.v1.FileCache;
+import gg.moonflower.pollen.api.download.v1.FileCache;
+import gg.moonflower.pollen.api.download.v1.OnlineRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -38,7 +39,7 @@ public class HashedTextureCache implements FileCache {
             try (InputStreamReader reader = new InputStreamReader(OnlineRequest.get(it))) {
                 hashes.putAll(GSON.fromJson(reader, TypeToken.getParameterized(Map.class, String.class, String.class).getType()));
             } catch (Exception e) {
-                LOGGER.error("Failed to load hash table from '" + it + "'");
+                LOGGER.error("Failed to load hash table from '" + it + "'", e);
             }
         }, executor)).toArray(CompletableFuture[]::new)).handleAsync((__, t) ->
         {

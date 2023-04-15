@@ -1,11 +1,12 @@
 package gg.moonflower.pollen.impl.registry.network;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import dev.architectury.platform.Platform;
+import dev.architectury.utils.Env;
 import gg.moonflower.pollen.api.network.v1.PollinatedLoginNetworkChannel;
 import gg.moonflower.pollen.api.network.v1.PollinatedPlayNetworkChannel;
 import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacketContext;
-import gg.moonflower.pollen.api.platform.v1.Platform;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketListener;
@@ -30,7 +31,7 @@ public final class PollinatedNetworkRegistryImpl {
 
     public static PollinatedPlayNetworkChannel createPlay(ResourceLocation channelId, String version, Supplier<Object> clientFactory, Supplier<Object> serverFactory) {
         PollinatedPlayNetworkChannel channel = createPlay(channelId, version);
-        if (Platform.isClient()) {
+        if (Platform.getEnvironment() == Env.CLIENT) {
             channel.setClientHandler(clientFactory.get());
         }
         channel.setServerHandler(serverFactory.get());
@@ -44,7 +45,7 @@ public final class PollinatedNetworkRegistryImpl {
 
     public static PollinatedLoginNetworkChannel createLogin(ResourceLocation channelId, String version, Supplier<Object> clientFactory, Supplier<Object> serverFactory) {
         PollinatedLoginNetworkChannel channel = createLogin(channelId, version);
-        if (Platform.isClient()) {
+        if (Platform.getEnvironment() == Env.CLIENT) {
             channel.setClientHandler(clientFactory.get());
         }
         channel.setServerHandler(serverFactory.get());

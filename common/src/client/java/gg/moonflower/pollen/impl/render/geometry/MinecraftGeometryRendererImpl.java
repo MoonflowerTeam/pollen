@@ -5,12 +5,10 @@ import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import gg.moonflower.pinwheel.api.geometry.GeometryModel;
 import gg.moonflower.pinwheel.api.geometry.bone.Polygon;
 import gg.moonflower.pinwheel.api.geometry.bone.Vertex;
-import gg.moonflower.pinwheel.api.texture.ModelTexture;
 import gg.moonflower.pinwheel.api.texture.TextureTable;
 import gg.moonflower.pinwheel.api.transform.MatrixStack;
 import gg.moonflower.pollen.api.render.geometry.v1.GeometryBufferSource;
 import gg.moonflower.pollen.api.render.geometry.v1.MinecraftGeometryRenderer;
-import gg.moonflower.pollen.api.render.vertex.v1.TintedVertexConsumer;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix3f;
@@ -18,6 +16,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -97,12 +96,8 @@ public class MinecraftGeometryRendererImpl implements MinecraftGeometryRenderer 
     }
 
     private VertexConsumer createBuilder(String material) {
-        ModelTexture[] textures = this.textures.getLayerTextures(material);
-        VertexConsumer[] builders = new VertexConsumer[textures.length];
-        for (int i = 0; i < textures.length; i++) {
-            ModelTexture texture = textures[i];
-            builders[i] = TintedVertexConsumer.tinted(this.bufferSource.getBuffer(texture)).tint(texture.color());
-        }
-        return VertexMultiConsumer.create(builders);
+        return VertexMultiConsumer.create(Arrays.stream(this.textures.getLayerTextures(material))
+                .map(this.bufferSource::getBuffer)
+                .toArray(VertexConsumer[]::new));
     }
 }

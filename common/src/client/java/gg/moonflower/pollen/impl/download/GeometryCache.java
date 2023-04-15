@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.impl.cache;
+package gg.moonflower.pollen.impl.download;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -12,6 +12,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.FileInputStream;
@@ -26,12 +27,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-/**
- * Caches online geometry textures by md5 hash.
- *
- * @author Ocelot
- * @since 1.0.0
- */
+@ApiStatus.Internal
 public final class GeometryCache {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -49,7 +45,7 @@ public final class GeometryCache {
         if (Files.exists(CACHE_METADATA_LOCATION)) {
             LOGGER.debug("Reading cache metadata from file.");
             try (InputStreamReader reader = new InputStreamReader(new FileInputStream(CACHE_METADATA_LOCATION.toFile()))) {
-                CACHE_METADATA = new JsonParser().parse(reader).getAsJsonObject();
+                CACHE_METADATA = JsonParser.parseReader(reader).getAsJsonObject();
             } catch (Exception e) {
                 LOGGER.error("Failed to load cache metadata", e);
             }
