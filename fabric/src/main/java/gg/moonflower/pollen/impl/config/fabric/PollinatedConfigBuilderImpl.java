@@ -6,19 +6,14 @@ import com.electronwill.nightconfig.core.InMemoryFormat;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.ObjectArrays;
+import dev.architectury.platform.Platform;
 import gg.moonflower.pollen.api.config.v1.PollinatedConfigBuilder;
-import gg.moonflower.pollen.api.platform.v1.Platform;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -139,8 +134,9 @@ public class PollinatedConfigBuilderImpl implements PollinatedConfigBuilder {
     public PollinatedConfigBuilder comment(String comment) {
         if (comment == null || comment.isEmpty()) {
             comment = "No comment";
-            if (!Platform.isProduction())
+            if (Platform.isDevelopmentEnvironment()) {
                 LogManager.getLogger().error("Null comment for config option {}, this is invalid and may be disallowed in the future.", FabricConfigSpec.DOT_JOINER.join(this.currentPath));
+            }
         }
         this.context.setComment(comment);
         return this;
@@ -150,8 +146,9 @@ public class PollinatedConfigBuilderImpl implements PollinatedConfigBuilder {
     public PollinatedConfigBuilder comment(String... comment) {
         if (comment == null || comment.length < 1 || (comment.length == 1 && comment[0].isEmpty())) {
             comment = new String[]{"No comment"};
-            if (!Platform.isProduction())
+            if (Platform.isDevelopmentEnvironment()) {
                 LogManager.getLogger().error("Null comment for config option {}, this is invalid and may be disallowed in the future.", FabricConfigSpec.DOT_JOINER.join(this.currentPath));
+            }
         }
         this.context.setComment(comment);
         return this;

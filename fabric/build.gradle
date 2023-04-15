@@ -37,6 +37,11 @@ dependencies {
     include(implementation("com.electronwill.night-config:toml:${rootProject.nightconfig_version}"))
     include(implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${rootProject.mixinextras_version}")))
 
+    // Pinwheel
+    include(implementation("gg.moonflower.pinwheel:pinwheel:${rootProject.pinwheel_version}"))
+    include(implementation("com.github.Ocelot5836:molang-compiler:master-SNAPSHOT"))
+    include(implementation("org.joml:joml:${rootProject.joml_version}"))
+
     clientImplementation(project(":common").sourceSets.client.output)
     shadowCommon(sourceSets.client.output)
 
@@ -67,6 +72,7 @@ shadowJar {
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
+    relocate "org.joml.joml", "gg.moonflower.pollen.joml"
     classifier "dev-shadow"
 }
 

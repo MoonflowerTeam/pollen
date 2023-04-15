@@ -37,6 +37,11 @@ dependencies {
     implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-common:${rootProject.mixinextras_version}"))
     implementation(include("com.github.llamalad7.mixinextras:mixinextras-forge:${rootProject.mixinextras_version}"))
 
+    // Pinwheel
+    include(implementation("gg.moonflower.pinwheel:pinwheel:${rootProject.pinwheel_version}"))
+    include(implementation("com.github.Ocelot5836:molang-compiler:master-SNAPSHOT"))
+    include(implementation("org.joml:joml:${rootProject.joml_version}"))
+
     implementation(project(":common").sourceSets.client.output)
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
@@ -68,6 +73,7 @@ shadowJar {
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
+    relocate "org.joml.joml", "gg.moonflower.pollen.joml"
     classifier "dev-shadow"
 }
 
