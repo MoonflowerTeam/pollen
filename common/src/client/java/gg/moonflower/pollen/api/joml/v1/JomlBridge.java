@@ -101,4 +101,35 @@ public interface JomlBridge {
         jomlMatrix.m22(accessor.m22());
         return jomlMatrix;
     }
+
+    static com.mojang.math.Vector3d set(com.mojang.math.Vector3d minecraftVector, Vector3dc jomlVector) {
+        minecraftVector.set(jomlVector.x(), jomlVector.y(), jomlVector.z());
+        return minecraftVector;
+    }
+
+    static Vector3d set(Vector3d jomlVector, com.mojang.math.Vector3d minecraftVector) {
+        return jomlVector.set(minecraftVector.x, minecraftVector.y, minecraftVector.z);
+    }
+
+    static com.mojang.math.Vector3f set(com.mojang.math.Vector3f minecraftVector, Vector3fc jomlVector) {
+        minecraftVector.set(jomlVector.x(), jomlVector.y(), jomlVector.z());
+        return minecraftVector;
+    }
+
+    static Vector3f set(Vector3f jomlVector, com.mojang.math.Vector3f minecraftVector) {
+        return jomlVector.set(minecraftVector.x(), minecraftVector.y(), minecraftVector.z());
+    }
+
+    static com.mojang.math.Vector4f set(com.mojang.math.Vector4f minecraftVector, Vector4fc jomlVector) {
+        minecraftVector.set(jomlVector.x(), jomlVector.y(), jomlVector.z(), jomlVector.w());
+        return minecraftVector;
+    }
+
+    static Vector4f set(Vector4f jomlVector, com.mojang.math.Vector3f minecraftVector) {
+        return jomlVector.set(minecraftVector.x(), minecraftVector.y(), minecraftVector.z());
+    }
+
+    static Vector4f set(Vector4f jomlVector, com.mojang.math.Vector4f minecraftVector) {
+        return jomlVector.set(minecraftVector.x(), minecraftVector.y(), minecraftVector.z(), minecraftVector.w());
+    }
 }
