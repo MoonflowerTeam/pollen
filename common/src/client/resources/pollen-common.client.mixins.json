@@ -5,7 +5,8 @@
   "minVersion": "0.8",
   "client": [
     "Matrix3fAccessor",
-    "Matrix4fAccessor"
+    "Matrix4fAccessor",
+    "ParticleEngineMixin"
   ],
   "injectors": {
     "defaultRequire": 1
