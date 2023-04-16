@@ -7,6 +7,7 @@ import gg.moonflower.pinwheel.api.texture.ModelTextureKey;
 import gg.moonflower.pollen.api.render.geometry.v1.GeometryAtlasTexture;
 import gg.moonflower.pollen.api.render.shader.v1.ShaderRegistry;
 import gg.moonflower.pollen.impl.render.shader.PollenShaderTypes;
+import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
@@ -143,7 +144,6 @@ public final class GeometryRenderTypes extends RenderType {
 
     private static RenderType particleCutout(ModelTextureKey texture, GeometryAtlasTexture atlas, boolean cull, @Nullable Consumer<CompositeState.CompositeStateBuilder> consumer) {
         int hash = Objects.hash(texture, atlas, cull, consumer);
-        PARTICLE_RENDER_TYPES.clear();
         return PARTICLE_RENDER_TYPES.computeIfAbsent(hash, h -> {
             CompositeState.CompositeStateBuilder state =
                     CompositeState.builder()

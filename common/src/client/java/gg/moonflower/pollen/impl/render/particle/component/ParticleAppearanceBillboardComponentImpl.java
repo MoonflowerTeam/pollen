@@ -48,7 +48,7 @@ public class ParticleAppearanceBillboardComponentImpl extends BedrockParticleCom
         switch (this.data.cameraMode()) {
             case ROTATE_XYZ -> JomlBridge.set(renderProperties.getRotation(), camera.rotation());
             case ROTATE_Y ->
-                    JomlBridge.set(renderProperties.getRotation(), Vector3f.YN.rotationDegrees(camera.getYRot()));
+                    renderProperties.getRotation().setAngleAxis((float) -(camera.getYRot() * Math.PI / 180.0F), 0, 1, 0);
             case LOOK_AT_XYZ -> {
                 Vector3dc pos = this.particle.position(partialTicks);
                 double dx = camera.getPosition().x() - pos.x();
@@ -56,8 +56,7 @@ public class ParticleAppearanceBillboardComponentImpl extends BedrockParticleCom
                 double dz = camera.getPosition().z() - pos.z();
                 float yRot = (float) Mth.atan2(dz, dx);
                 float xRot = (float) Mth.atan2(dy, Math.sqrt(dx * dx + dz * dz));
-                Quaternionf rotation = renderProperties.getRotation();
-                rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
+                Quaternionf rotation = renderProperties.getRotation().identity();
                 rotation.rotateZYX(0, -((float) (Math.PI / 2F) + yRot), xRot);
             }
             case LOOK_AT_Y -> {
@@ -65,8 +64,7 @@ public class ParticleAppearanceBillboardComponentImpl extends BedrockParticleCom
                 double dx = camera.getPosition().x() - pos.x();
                 double dz = camera.getPosition().z() - pos.z();
                 float yRot = (float) Mth.atan2(dz, dx);
-                Quaternionf rotation = renderProperties.getRotation();
-                rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
+                Quaternionf rotation = renderProperties.getRotation().identity();
                 rotation.rotateY(-((float) (Math.PI / 2F) + yRot));
             }
             case DIRECTION_X -> {
@@ -94,8 +92,7 @@ public class ParticleAppearanceBillboardComponentImpl extends BedrockParticleCom
 
                 float yRot = (float) Mth.atan2(dz, dx);
                 float xRot = (float) Mth.atan2(dy, Math.sqrt(dx * dx + dz * dz));
-                Quaternionf rotation = renderProperties.getRotation();
-                rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
+                Quaternionf rotation = renderProperties.getRotation().identity();
                 rotation.rotateZYX(0, -yRot, xRot);
             }
             case DIRECTION_Y -> {
@@ -123,8 +120,7 @@ public class ParticleAppearanceBillboardComponentImpl extends BedrockParticleCom
 
                 float yRot = (float) Mth.atan2(dz, dx);
                 float xRot = (float) Mth.atan2(dy, Math.sqrt(dx * dx + dz * dz));
-                Quaternionf rotation = renderProperties.getRotation();
-                rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
+                Quaternionf rotation = renderProperties.getRotation().identity();
                 rotation.rotateZYX(0, -(yRot - (float) (Math.PI / 2F)), -(xRot - (float) (Math.PI / 2F)));
             }
             case DIRECTION_Z -> {
@@ -152,8 +148,7 @@ public class ParticleAppearanceBillboardComponentImpl extends BedrockParticleCom
 
                 float yRot = (float) Mth.atan2(dz, dx);
                 float xRot = (float) Mth.atan2(dy, Math.sqrt(dx * dx + dz * dz));
-                Quaternionf rotation = renderProperties.getRotation();
-                rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
+                Quaternionf rotation = renderProperties.getRotation().identity();
                 rotation.rotateZYX(0, -((float) (Math.PI / 2F) + yRot), xRot);
             }
         }

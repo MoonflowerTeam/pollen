@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import gg.moonflower.pinwheel.api.particle.component.ParticleComponent;
 import gg.moonflower.pinwheel.api.particle.render.ParticleRenderProperties;
@@ -12,9 +11,7 @@ import gg.moonflower.pinwheel.api.texture.ModelTexture;
 import gg.moonflower.pinwheel.api.transform.MatrixStack;
 import gg.moonflower.pollen.api.joml.v1.JomlBridge;
 import gg.moonflower.pollen.api.registry.particle.v1.BedrockParticleComponentFactory;
-import gg.moonflower.pollen.api.render.geometry.v1.GeometryAtlasTexture;
 import gg.moonflower.pollen.api.render.geometry.v1.GeometryBufferSource;
-import gg.moonflower.pollen.api.render.geometry.v1.GeometryTextureManager;
 import gg.moonflower.pollen.api.render.particle.v1.BedrockParticleEmitter;
 import gg.moonflower.pollen.api.render.particle.v1.MinecraftSingleQuadRenderProperties;
 import gg.moonflower.pollen.api.render.particle.v1.component.BedrockParticleComponent;
@@ -26,7 +23,6 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.core.particles.ParticleGroup;
 import net.minecraft.network.chat.Component;
@@ -35,6 +31,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3dc;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -66,7 +63,6 @@ public class BedrockParticleInstanceImpl extends BedrockParticleImpl {
     private static final MatrixStack MATRIX_STACK = MatrixStack.create();
     private static final GeometryBufferSource BUFFER_SOURCE = GeometryBufferSource.particle(Minecraft.getInstance().renderBuffers().bufferSource());
     private static final Matrix4f POSITION = new Matrix4f();
-    private static final Matrix3f NORMAL = new Matrix3f();
 
     private final BedrockParticleEmitterImpl emitter;
     private final Set<BedrockParticleRenderComponent> renderComponents;
@@ -78,6 +74,7 @@ public class BedrockParticleInstanceImpl extends BedrockParticleImpl {
         super(clientLevel, x, y, z, emitter.getName(), particle -> MolangRuntime.runtime(emitter.getRuntimeBuilder()).setVariables(particle));
         this.emitter = emitter;
         this.renderComponents = new HashSet<>();
+        this.addComponents();
     }
 
     @Override
@@ -112,20 +109,20 @@ public class BedrockParticleInstanceImpl extends BedrockParticleImpl {
         if (this.renderProperties != null) {
             profiler.push("tessellate");
             MATRIX_STACK.pushMatrix();
-            Vec3 pos = camera.getPosition();
-            float x = (float) (Mth.lerp(partialTicks, this.xo, this.x) - pos.x());
-            float y = (float) (Mth.lerp(partialTicks, this.yo, this.y) - pos.y());
-            float z = (float) (Mth.lerp(partialTicks, this.zo, this.z) - pos.z());
+            Vector3dc pos = this.position(partialTicks);
+            Vec3 cameraPos = camera.getPosition();
+            float x = (float) (pos.x() - cameraPos.x());
+            float y = (float) (pos.y() - cameraPos.y());
+            float z = (float) (pos.z() - cameraPos.z());
             MATRIX_STACK.translate(x, y, z);
             if (this.renderProperties instanceof MinecraftSingleQuadRenderProperties properties && properties.canRender()) {
-                GeometryAtlasTexture atlas = GeometryTextureManager.getAtlas();
                 ModelTexture texture = this.data.description().texture();
 
                 float zRot = Mth.lerp(partialTicks, this.oRoll, this.roll);
                 MATRIX_STACK.pushMatrix();
                 MATRIX_STACK.translate(0, 0.01, 0);
                 MATRIX_STACK.rotate(properties.getRotation());
-                MATRIX_STACK.rotate(zRot, 0, 0, 1);
+                MATRIX_STACK.rotate((float) (zRot * Math.PI / 180.0F), 0, 0, 1);
                 MATRIX_STACK.scale(properties.getWidth(), properties.getHeight(), 1.0F);
                 this.renderQuad(BUFFER_SOURCE.getBuffer(texture), properties);
                 MATRIX_STACK.popMatrix();
@@ -158,38 +155,29 @@ public class BedrockParticleInstanceImpl extends BedrockParticleImpl {
         int light = properties.getPackedLight();
 
         Matrix4f matrix4f = JomlBridge.set(POSITION, MATRIX_STACK.position());
-        Matrix3f matrix3f = JomlBridge.set(NORMAL, MATRIX_STACK.normal());
 
         consumer.vertex(matrix4f, -1.0F, -1.0F, 0.0F);
-        consumer.color(r, g, b, a);
         consumer.uv(uMax, vMax);
-        consumer.overlayCoords(OverlayTexture.NO_OVERLAY);
+        consumer.color(r, g, b, a);
         consumer.uv2(light);
-        consumer.normal(matrix3f, 0, 1, 0);
         consumer.endVertex();
 
         consumer.vertex(matrix4f, -1.0F, 1.0F, 0.0F);
-        consumer.color(r, g, b, a);
         consumer.uv(uMax, vMin);
-        consumer.overlayCoords(OverlayTexture.NO_OVERLAY);
+        consumer.color(r, g, b, a);
         consumer.uv2(light);
-        consumer.normal(matrix3f, 0, 1, 0);
         consumer.endVertex();
 
         consumer.vertex(matrix4f, 1.0F, 1.0F, 0.0F);
-        consumer.color(r, g, b, a);
         consumer.uv(uMin, vMin);
-        consumer.overlayCoords(OverlayTexture.NO_OVERLAY);
+        consumer.color(r, g, b, a);
         consumer.uv2(light);
-        consumer.normal(matrix3f, 0, 1, 0);
         consumer.endVertex();
 
         consumer.vertex(matrix4f, 1.0F, -1.0F, 0.0F);
-        consumer.color(r, g, b, a);
         consumer.uv(uMin, vMax);
-        consumer.overlayCoords(OverlayTexture.NO_OVERLAY);
+        consumer.color(r, g, b, a);
         consumer.uv2(light);
-        consumer.normal(matrix3f, 0, 1, 0);
         consumer.endVertex();
     }
 

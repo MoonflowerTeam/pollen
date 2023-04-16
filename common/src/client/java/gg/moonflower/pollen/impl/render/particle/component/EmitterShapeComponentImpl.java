@@ -35,8 +35,18 @@ public class EmitterShapeComponentImpl extends BedrockParticleEmitterComponentIm
     }
 
     @Override
-    public ParticleInstance createParticle() {
+    public BedrockParticle createParticle() {
         return this.particle.newParticle();
+    }
+
+    @Override
+    public void spawnParticle(ParticleInstance instance) {
+        if (!(instance instanceof BedrockParticle particle)) {
+            throw new AssertionError();
+        }
+
+        Vector3dc pos = particle.position();
+        this.particle.summonParticle(particle, pos.x(), pos.y(), pos.z());
     }
 
     @Override
@@ -66,8 +76,7 @@ public class EmitterShapeComponentImpl extends BedrockParticleEmitterComponentIm
             throw new AssertionError();
         }
 
-        Vector3dc pos = this.particle.position();
-        particle.setPosition(pos.x() + x, pos.y() + y, pos.z() + z);
+        particle.setPosition(x, y, z);
     }
 
     @Override
@@ -92,14 +101,9 @@ public class EmitterShapeComponentImpl extends BedrockParticleEmitterComponentIm
         physics.setVelocity(new Vector3d(dx, dy, dz));
     }
 
-    private static class Source implements ParticleSourceObject, ParticleSourceObject.Bounds {
+    private static class Source implements ParticleSourceObject {
 
         private AABB bounds;
-
-        @Override
-        public Bounds getBounds() {
-            return this;
-        }
 
         @Override
         public float getMinX() {

@@ -34,7 +34,7 @@ public interface BedrockParticleEmitter extends BedrockParticle {
     void restart();
 
     /**
-     * @return Creates a new particle that can be summoned with {@link #summonParticle(ParticleOptions, double, double, double, double, double, double)}
+     * @return Creates a new particle that can be summoned with {@link #summonParticle(BedrockParticle, double, double, double)}
      */
     BedrockParticle newParticle();
 
@@ -45,11 +45,8 @@ public interface BedrockParticleEmitter extends BedrockParticle {
      * @param x        The x position relative to this particle to summon
      * @param y        The y position relative to this particle to summon
      * @param z        The z position relative to this particle to summon
-     * @param dx       The motion in the x
-     * @param dy       The motion in the y
-     * @param dz       The motion in the z
      */
-    void summonParticle(BedrockParticle particle, double x, double y, double z, double dx, double dy, double dz);
+    void summonParticle(BedrockParticle particle, double x, double y, double z);
 
     /**
      * Summons a particle relative to this particle.

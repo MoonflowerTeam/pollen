@@ -5,6 +5,8 @@ import gg.moonflower.pinwheel.api.particle.ParticleData;
 import gg.moonflower.pinwheel.api.particle.ParticleEvent;
 import gg.moonflower.pinwheel.api.particle.component.ParticleComponent;
 import gg.moonflower.pollen.api.registry.particle.v1.BedrockParticleComponentFactory;
+import gg.moonflower.pollen.api.registry.particle.v1.BedrockParticleComponentType;
+import gg.moonflower.pollen.api.registry.particle.v1.BedrockParticleComponents;
 import gg.moonflower.pollen.api.render.particle.v1.BedrockParticle;
 import gg.moonflower.pollen.api.render.particle.v1.BedrockParticleCurves;
 import gg.moonflower.pollen.api.render.particle.v1.BedrockParticleManager;
@@ -111,6 +113,28 @@ public abstract class BedrockParticleImpl extends Particle implements BedrockPar
 
         this.physics = null;
         this.age = -1;
+    }
+
+    protected void addComponents() {
+        this.data.components().forEach((component, data) -> {
+            ResourceLocation id = ResourceLocation.tryParse(component);
+            if (id == null) {
+                LOGGER.warn(this.getPrefix().getString() + "Invalid component id: {}", component);
+                return;
+            }
+
+            BedrockParticleComponentType<?> type = BedrockParticleComponents.COMPONENTS.getRegistrar().get(id);
+            if (type == null) {
+                LOGGER.warn(this.getPrefix().getString() + "Unknown component: {}", id);
+                return;
+            }
+
+            try {
+                this.addComponent(type.componentFactory(), data);
+            } catch (Exception e) {
+                LOGGER.error(this.getPrefix().getString() + "Failed to create component: {}", component, e);
+            }
+        });
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

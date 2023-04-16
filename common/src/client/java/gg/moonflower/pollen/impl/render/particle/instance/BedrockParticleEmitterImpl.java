@@ -45,35 +45,12 @@ public class BedrockParticleEmitterImpl extends BedrockParticleImpl implements B
     private final Set<BedrockParticleEmitterListener> listeners;
     private final Set<BedrockParticle> particles;
 
-    public BedrockParticleEmitterImpl(@NotNull Entity entity, ResourceLocation name) {
-        this(entity, (ClientLevel) entity.level, entity.getX(), entity.getY(), entity.getZ(), name);
-    }
-
     public BedrockParticleEmitterImpl(@Nullable Entity entity, ClientLevel level, double x, double y, double z, ResourceLocation name) {
         super(level, x, y, z, name, particle -> MolangRuntime.runtime().setVariable("entity_scale", MolangVariable.create(1.0F)).setVariables(particle));
         this.entity = entity;
         this.listeners = new HashSet<>();
         this.particles = new HashSet<>();
-
-        this.data.components().forEach((component, data) -> {
-            ResourceLocation id = ResourceLocation.tryParse(component);
-            if (id == null) {
-                LOGGER.warn(this.getPrefix().getString() + "Invalid component id: {}", component);
-                return;
-            }
-
-            BedrockParticleComponentType<?> type = BedrockParticleComponents.COMPONENTS.getRegistrar().get(id);
-            if (type == null) {
-                LOGGER.warn(this.getPrefix().getString() + "Unknown component: {}", id);
-                return;
-            }
-
-            try {
-                this.addComponent(type.componentFactory(), data);
-            } catch (Exception e) {
-                LOGGER.error(this.getPrefix().getString() + "Failed to create component: {}", component, e);
-            }
-        });
+        this.addComponents();
     }
 
     @Override
@@ -133,19 +110,13 @@ public class BedrockParticleEmitterImpl extends BedrockParticleImpl implements B
     }
 
     @Override
-    public void summonParticle(BedrockParticle particle, double x, double y, double z, double dx, double dy, double dz) {
+    public void summonParticle(BedrockParticle particle, double x, double y, double z) {
         if (!(particle instanceof Particle p)) {
-            throw new UnsupportedOperationException(particle.getName() + " must extent net.minecraft.client.particle.Particle");
+            throw new UnsupportedOperationException(particle.getName() + " must extend net.minecraft.client.particle.Particle");
         }
 
         Vector3dc pos = particle.position();
         particle.setPosition(pos.x() + x, pos.y() + y, pos.z() + z);
-
-        BedrockParticlePhysics physics = particle.getPhysics();
-        if (physics != null) {
-            physics.setDirection(dx, dy, dz);
-        }
-
         this.particles.add(particle);
         Minecraft.getInstance().particleEngine.add(p);
     }

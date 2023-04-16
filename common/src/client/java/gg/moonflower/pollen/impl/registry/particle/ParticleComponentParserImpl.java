@@ -10,6 +10,8 @@ import gg.moonflower.pollen.api.registry.particle.v1.BedrockParticleComponentTyp
 import gg.moonflower.pollen.api.registry.particle.v1.BedrockParticleComponents;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,6 +19,8 @@ import java.util.Map;
 
 @ApiStatus.Internal
 public class ParticleComponentParserImpl implements ParticleComponentParser {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ParticleComponentParser.class);
 
     @Override
     public Map<String, ParticleComponent> deserialize(JsonObject json) throws JsonParseException {
@@ -26,7 +30,8 @@ public class ParticleComponentParserImpl implements ParticleComponentParser {
                 ResourceLocation id = new ResourceLocation(entry.getKey());
                 BedrockParticleComponentType<?> type = BedrockParticleComponents.COMPONENTS.getRegistrar().get(id);
                 if (type == null) {
-                    throw new JsonSyntaxException("Unknown particle component: " + id);
+                    LOGGER.error("Unknown particle component: " + id);
+                    continue;
                 }
 
                 components.put(entry.getKey(), type.dataFactory().create(entry.getValue()));
