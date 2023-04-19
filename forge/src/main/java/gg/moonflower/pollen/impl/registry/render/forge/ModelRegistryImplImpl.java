@@ -22,7 +22,7 @@ public class ModelRegistryImplImpl {
     }
 
     @SubscribeEvent
-    public static void onEvent(ModelEvent.RegisterAdditional event) {
+    public static void event(ModelEvent.RegisterAdditional event) {
         SPECIAL_MODELS.forEach(event::register);
         FACTORIES.forEach(factory -> factory.registerModels(Minecraft.getInstance().getResourceManager(), event::register));
     }
