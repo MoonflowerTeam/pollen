@@ -2,8 +2,8 @@ package gg.moonflower.pollen.api.event.level.v1;
 
 import dev.architectury.event.Event;
 import dev.architectury.event.EventFactory;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.chunk.ChunkAccess;
 
 @FunctionalInterface
 public interface ServerChunkLoadingEvent {
@@ -12,5 +12,5 @@ public interface ServerChunkLoadingEvent {
 
     Event<ServerChunkLoadingEvent> UNLOAD_CHUNK = EventFactory.createLoop();
 
-    void event(ServerLevel level, LevelChunk chunk);
+    void event(LevelAccessor level, ChunkAccess chunk);
 }

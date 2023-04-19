@@ -4,7 +4,10 @@ import dev.architectury.platform.forge.EventBuses;
 import gg.moonflower.pollen.api.event.registry.v1.RegisterAtlasSpriteEvent;
 import gg.moonflower.pollen.core.PollenClient;
 import gg.moonflower.pollen.core.Pollen;
-import gg.moonflower.pollen.impl.event.entity.ModifyTradesEventsImpl;
+import gg.moonflower.pollen.impl.event.entity.forge.EntityTrackingEventImpl;
+import gg.moonflower.pollen.impl.event.entity.forge.ModifyTradesEventsImpl;
+import gg.moonflower.pollen.impl.event.level.forge.ChunkLoadingEventImpl;
+import gg.moonflower.pollen.impl.event.network.forge.ClientNetworkEventImpl;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -27,6 +30,9 @@ public class PollenForge {
         eventBus.addListener(this::registerSprites);
 
         MinecraftForge.EVENT_BUS.register(ModifyTradesEventsImpl.class);
+        MinecraftForge.EVENT_BUS.register(ChunkLoadingEventImpl.class);
+        MinecraftForge.EVENT_BUS.register(ClientNetworkEventImpl.class);
+        MinecraftForge.EVENT_BUS.register(EntityTrackingEventImpl.class);
 
         Pollen.init();
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> PollenClient::init);
