@@ -19,13 +19,11 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Supplier;
 
-public final class ModifyTradesEvents {
+public interface ModifyTradesEvents {
 
-    public static final Event<ModifyVillager> VILLAGER = EventFactory.createLoop();
-    public static final Event<ModifyWanderer> WANDERER = EventFactory.createLoop();
+    Event<ModifyVillager> VILLAGER = EventFactory.createLoop();
 
-    private ModifyTradesEvents() {
-    }
+    Event<ModifyWanderer> WANDERER = EventFactory.createLoop();
 
     /**
      * Registers new trades into all villager types trader.
@@ -34,7 +32,7 @@ public final class ModifyTradesEvents {
      * @since 1.0.0
      */
     @FunctionalInterface
-    public interface ModifyVillager {
+    interface ModifyVillager {
 
         /**
          * Modifies the trades for all normal villagers.
@@ -82,7 +80,7 @@ public final class ModifyTradesEvents {
      * @since 1.0.0
      */
     @FunctionalInterface
-    public interface ModifyWanderer {
+    interface ModifyWanderer {
 
         /**
          * Modifies the trades for the wandering trader.
@@ -116,7 +114,7 @@ public final class ModifyTradesEvents {
      * @author Ocelot
      * @since 1.0.0
      */
-    public static class TradeRegistry implements List<VillagerTrades.ItemListing> {
+    class TradeRegistry implements List<VillagerTrades.ItemListing> {
 
         private final List<VillagerTrades.ItemListing> trades;
 
@@ -304,7 +302,7 @@ public final class ModifyTradesEvents {
         }
     }
 
-    private static class ItemTrade implements VillagerTrades.ItemListing {
+    class ItemTrade implements VillagerTrades.ItemListing {
 
         private final Supplier<? extends ItemLike> item;
         private final int emeralds;
