@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.joml.v1;
+package gg.moonflower.pollen.api.render.wrapper.v0;
 
 import com.mojang.math.Quaternion;
 import gg.moonflower.pollen.client.mixin.Matrix3fAccessor;
@@ -11,7 +11,7 @@ import org.joml.*;
  * @author Ocelot
  * @since 2.0.0
  */
-public interface JomlBridge {
+public interface JomlWrapper {
 
     static Quaternion set(Quaternion minecraftQuaternion, Quaternionfc jomlQuaternion) {
         minecraftQuaternion.set(jomlQuaternion.x(), jomlQuaternion.y(), jomlQuaternion.z(), jomlQuaternion.w());

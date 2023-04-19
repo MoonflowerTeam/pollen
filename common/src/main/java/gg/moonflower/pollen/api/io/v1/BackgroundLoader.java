@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.render.util.v1;
+package gg.moonflower.pollen.api.io.v1;
 
 import net.minecraft.server.packs.resources.ResourceManager;
 

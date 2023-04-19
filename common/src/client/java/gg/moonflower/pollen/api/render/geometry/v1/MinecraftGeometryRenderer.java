@@ -5,7 +5,7 @@ import gg.moonflower.pinwheel.api.geometry.GeometryModel;
 import gg.moonflower.pinwheel.api.geometry.GeometryRenderer;
 import gg.moonflower.pinwheel.api.texture.TextureTable;
 import gg.moonflower.pinwheel.api.transform.MatrixStack;
-import gg.moonflower.pollen.api.pinwheelbridge.v1.PinwheelBridge;
+import gg.moonflower.pollen.api.render.wrapper.v1.PinwheelWrapper;
 import gg.moonflower.pollen.impl.render.geometry.MinecraftGeometryRendererImpl;
 
 /**
@@ -31,7 +31,7 @@ public interface MinecraftGeometryRenderer extends GeometryRenderer {
      * @param alpha         The alpha tint to apply
      */
     default void render(GeometryModel model, TextureTable textureTable, GeometryBufferSource bufferSource, PoseStack poseStack, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        this.render(model, textureTable, bufferSource, PinwheelBridge.wrap(poseStack), packedLight, packedOverlay, red, green, blue, alpha);
+        this.render(model, textureTable, bufferSource, PinwheelWrapper.toPinwheel(poseStack), packedLight, packedOverlay, red, green, blue, alpha);
     }
 
     /**

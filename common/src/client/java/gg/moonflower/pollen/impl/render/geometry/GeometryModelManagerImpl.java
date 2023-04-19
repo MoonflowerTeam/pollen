@@ -2,11 +2,9 @@ package gg.moonflower.pollen.impl.render.geometry;
 
 import dev.architectury.registry.ReloadListenerRegistry;
 import gg.moonflower.pinwheel.api.geometry.GeometryModel;
-import gg.moonflower.pollen.api.render.geometry.v1.GeometryAtlasTexture;
 import gg.moonflower.pollen.api.render.geometry.v1.GeometryModelManager;
-import gg.moonflower.pollen.api.render.util.v1.BackgroundLoader;
+import gg.moonflower.pollen.api.io.v1.BackgroundLoader;
 import gg.moonflower.pollen.core.Pollen;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;

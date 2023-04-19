@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import gg.moonflower.pinwheel.api.transform.MatrixStack;
-import gg.moonflower.pollen.api.joml.v1.JomlBridge;
+import gg.moonflower.pollen.api.render.wrapper.v0.JomlWrapper;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
@@ -76,11 +76,11 @@ public class PoseStackWrapper implements MatrixStack {
 
     @Override
     public Matrix4f position() {
-        return JomlBridge.set(new Matrix4f(), this.poseStack.last().pose());
+        return JomlWrapper.set(new Matrix4f(), this.poseStack.last().pose());
     }
 
     @Override
     public Matrix3f normal() {
-        return JomlBridge.set(new Matrix3f(), this.poseStack.last().normal());
+        return JomlWrapper.set(new Matrix3f(), this.poseStack.last().normal());
     }
 }

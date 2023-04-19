@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.impl.render.shader;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import gg.moonflower.pollen.api.render.shader.v1.ShaderRegistry;
+import gg.moonflower.pollen.api.registry.render.v1.ShaderRegistry;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;

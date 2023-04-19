@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.impl.download;
+package gg.moonflower.pollen.impl.io;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -7,7 +7,6 @@ import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.platform.Platform;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -22,7 +21,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -32,7 +30,7 @@ public final class GeometryCache {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new Gson();
-    private static final Path CACHE_FOLDER = Paths.get(Minecraft.getInstance().gameDirectory.toURI()).resolve(Pollen.MOD_ID + "-cache");
+    private static final Path CACHE_FOLDER = Platform.getGameFolder().resolve(Pollen.MOD_ID + "-cache");
     private static final Object METADATA_LOCK = new Object();
     private static final Object IO_LOCK = new Object();
 

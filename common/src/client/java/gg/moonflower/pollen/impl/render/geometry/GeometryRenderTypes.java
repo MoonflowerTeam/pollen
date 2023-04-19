@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import gg.moonflower.pinwheel.api.texture.ModelTextureKey;
 import gg.moonflower.pollen.api.render.geometry.v1.GeometryAtlasTexture;
-import gg.moonflower.pollen.api.render.shader.v1.ShaderRegistry;
+import gg.moonflower.pollen.api.registry.render.v1.ShaderRegistry;
 import gg.moonflower.pollen.impl.render.shader.PollenShaderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;

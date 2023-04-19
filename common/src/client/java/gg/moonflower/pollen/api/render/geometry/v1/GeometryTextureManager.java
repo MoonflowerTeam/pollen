@@ -1,7 +1,7 @@
 package gg.moonflower.pollen.api.render.geometry.v1;
 
 import gg.moonflower.pinwheel.api.texture.TextureTable;
-import gg.moonflower.pollen.api.render.util.v1.BackgroundLoader;
+import gg.moonflower.pollen.api.io.v1.BackgroundLoader;
 import gg.moonflower.pollen.impl.render.geometry.texture.GeometryTextureManagerImpl;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;

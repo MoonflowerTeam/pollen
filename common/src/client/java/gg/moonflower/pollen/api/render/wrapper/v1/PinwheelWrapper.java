@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.pinwheelbridge.v1;
+package gg.moonflower.pollen.api.render.wrapper.v1;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import gg.moonflower.pinwheel.api.texture.TextureLocation;
@@ -10,13 +10,13 @@ import org.apache.commons.codec.binary.Base32;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
-public interface PinwheelBridge {
+public interface PinwheelWrapper {
 
-    static MatrixStack wrap(PoseStack poseStack) {
+    static MatrixStack toPinwheel(PoseStack poseStack) {
         return new PoseStackWrapper(poseStack);
     }
 
-    static ResourceLocation toLocation(TextureLocation location) {
+    static ResourceLocation toNative(TextureLocation location) {
         if (location.isOnline()) {
             return new ResourceLocation(location.namespace(), "base32" + new Base32().encodeToString(location.path().getBytes(StandardCharsets.UTF_8)).toLowerCase(Locale.ROOT).replaceAll("=", "_"));
         }

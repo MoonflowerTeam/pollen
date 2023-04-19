@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.api.render.shader.v1;
+package gg.moonflower.pollen.api.registry.render.v1;
 
 import com.mojang.blaze3d.vertex.VertexFormat;
 import gg.moonflower.pollen.impl.render.shader.ShaderRegistryImpl;

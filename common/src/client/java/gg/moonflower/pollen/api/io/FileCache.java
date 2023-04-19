@@ -1,8 +1,9 @@
-package gg.moonflower.pollen.api.download.v1;
+package gg.moonflower.pollen.api.io;
 
 import com.google.common.util.concurrent.MoreExecutors;
-import gg.moonflower.pollen.impl.download.HashedTextureCache;
-import gg.moonflower.pollen.impl.download.TimedTextureCache;
+import gg.moonflower.pollen.api.io.v1.OnlineRequest;
+import gg.moonflower.pollen.impl.io.HashedTextureCache;
+import gg.moonflower.pollen.impl.io.TimedTextureCache;
 import net.minecraft.ReportedException;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.util.Mth;
@@ -24,19 +25,6 @@ public interface FileCache {
 
     @ApiStatus.Internal
     AtomicInteger ID_GENERATOR = new AtomicInteger();
-
-    /**
-     * Opens a GET stream to the specified URL.
-     *
-     * @param url The url to open a stream to
-     * @return The opened stream to the resource
-     * @throws IOException If any error occurs while trying to fetch resources
-     * @deprecated Use {@link OnlineRequest#get(String)}
-     */
-    @Deprecated
-    static InputStream get(String url) throws IOException {
-        return OnlineRequest.get(url);
-    }
 
     /**
      * @return A new executor intended to be used for downloading a lot of small files

@@ -1,6 +1,6 @@
-package gg.moonflower.pollen.api.download.v1;
+package gg.moonflower.pollen.api.io.v1;
 
-import gg.moonflower.pollen.impl.download.OnlineRequestImpl;
+import gg.moonflower.pollen.impl.io.OnlineRequestImpl;
 import net.minecraft.util.HttpUtil;
 
 import java.io.IOException;

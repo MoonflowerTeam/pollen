@@ -1,10 +1,9 @@
 package gg.moonflower.pollen.impl.render.geometry;
 
 import gg.moonflower.pinwheel.api.texture.ModelTexture;
-import gg.moonflower.pinwheel.api.texture.TextureLocation;
 import gg.moonflower.pinwheel.api.texture.TextureTable;
-import gg.moonflower.pollen.api.download.v1.FileCache;
-import gg.moonflower.pollen.api.pinwheelbridge.v1.PinwheelBridge;
+import gg.moonflower.pollen.api.io.FileCache;
+import gg.moonflower.pollen.api.render.wrapper.v1.PinwheelWrapper;
 import gg.moonflower.pollen.api.render.geometry.v1.GeometryAtlasTexture;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.Util;
@@ -81,7 +80,7 @@ public class GeometryTextureSpriteUploader extends SimplePreparableReloadListene
             profiler.startTick();
             profiler.push("stitching");
             ResourceManager onlineResources = new OnlineResourceManager(resourceManager, onlineRepository, this.textures.stream().filter(texture -> texture.type() == ModelTexture.Type.ONLINE).collect(Collectors.toSet()));
-            TextureAtlas.Preparations sheetData = this.textureAtlas.prepareToStitch(onlineResources, this.textures.stream().filter(texture -> texture.type() != ModelTexture.Type.UNKNOWN).map(texture -> PinwheelBridge.toLocation(texture.location())).distinct(), profiler, Minecraft.getInstance().options.mipmapLevels().get());
+            TextureAtlas.Preparations sheetData = this.textureAtlas.prepareToStitch(onlineResources, this.textures.stream().filter(texture -> texture.type() != ModelTexture.Type.UNKNOWN).map(texture -> PinwheelWrapper.toNative(texture.location())).distinct(), profiler, Minecraft.getInstance().options.mipmapLevels().get());
             profiler.pop();
             profiler.endTick();
             return sheetData;

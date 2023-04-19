@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.impl.download;
+package gg.moonflower.pollen.impl.io;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.util.HttpUtil;

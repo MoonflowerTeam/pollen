@@ -3,7 +3,7 @@ package gg.moonflower.pollen.impl.render.geometry;
 import gg.moonflower.pinwheel.api.geometry.GeometryModel;
 import gg.moonflower.pinwheel.api.geometry.GeometryModelData;
 import gg.moonflower.pinwheel.api.geometry.GeometryModelParser;
-import gg.moonflower.pollen.api.render.util.v1.BackgroundLoader;
+import gg.moonflower.pollen.api.io.v1.BackgroundLoader;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;

@@ -5,7 +5,7 @@ import dev.architectury.registry.ReloadListenerRegistry;
 import gg.moonflower.pinwheel.api.texture.TextureTable;
 import gg.moonflower.pollen.api.render.geometry.v1.GeometryAtlasTexture;
 import gg.moonflower.pollen.api.render.geometry.v1.GeometryTextureManager;
-import gg.moonflower.pollen.api.render.util.v1.BackgroundLoader;
+import gg.moonflower.pollen.api.io.v1.BackgroundLoader;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.impl.render.geometry.GeometryTextureSpriteUploader;
 import net.minecraft.client.Minecraft;
