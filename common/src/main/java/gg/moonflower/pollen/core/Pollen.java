@@ -9,10 +9,11 @@ public class Pollen {
 
     public static void init() {
         PlatformImpl.init();
-        PollenMessages.init();
     }
 
-    public static void postInit() {}
+    public static void postInit() {
+        PollenMessages.init();
+    }
 
     public static <T> T expect() {
         throw new AssertionError("Expected platform method");

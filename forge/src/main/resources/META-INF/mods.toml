@@ -20,12 +20,12 @@ catalogueImageIcon="${mod_id}.icon.png"
 modId = "forge"
 mandatory = true
 versionRange = "[${forge_major_version},)"
-ordering = "NONE"
+ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.${mod_id}]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[${minecraft_version},)"
-ordering = "NONE"
+ordering = "AFTER"
 side = "BOTH"
