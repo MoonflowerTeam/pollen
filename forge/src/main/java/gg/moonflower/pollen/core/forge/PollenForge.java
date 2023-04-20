@@ -8,6 +8,8 @@ import gg.moonflower.pollen.impl.event.entity.forge.EntityTrackingEventImpl;
 import gg.moonflower.pollen.impl.event.entity.forge.ModifyTradesEventsImpl;
 import gg.moonflower.pollen.impl.event.level.forge.ChunkLoadingEventImpl;
 import gg.moonflower.pollen.impl.event.network.forge.ClientNetworkEventImpl;
+import gg.moonflower.pollen.impl.registry.render.forge.ModelRegistryImplImpl;
+import gg.moonflower.pollen.impl.registry.tooltip.forge.ClientTooltipComponentRegistryImplImpl;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -28,6 +30,9 @@ public class PollenForge {
         eventBus.addListener(this::commonInit);
         eventBus.addListener(this::clientInit);
         eventBus.addListener(this::registerSprites);
+
+        eventBus.register(ModelRegistryImplImpl.class);
+        eventBus.register(ClientTooltipComponentRegistryImplImpl.class);
 
         MinecraftForge.EVENT_BUS.register(ModifyTradesEventsImpl.class);
         MinecraftForge.EVENT_BUS.register(ChunkLoadingEventImpl.class);
