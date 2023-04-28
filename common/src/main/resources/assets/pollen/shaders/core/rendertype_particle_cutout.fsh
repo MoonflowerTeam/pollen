@@ -23,5 +23,6 @@ void main() {
     }
     color *= vertexColor * ColorModulator;
     color *= lightMapColor;
+    color.a = 1.0;
     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
 }

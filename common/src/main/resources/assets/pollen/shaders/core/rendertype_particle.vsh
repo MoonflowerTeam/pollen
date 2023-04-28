@@ -21,9 +21,10 @@ out vec4 lightMapColor;
 out vec2 texCoord0;
 
 void main() {
-    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+    vec4 worldPos = ModelViewMat * vec4(Position, 1.0);
+    gl_Position = ProjMat * worldPos;
 
-    vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+    vertexDistance = length(worldPos.xyz);
     vertexColor = Color;
     lightMapColor = texelFetch(Sampler2, UV2 / 16, 0);
     texCoord0 = UV0;

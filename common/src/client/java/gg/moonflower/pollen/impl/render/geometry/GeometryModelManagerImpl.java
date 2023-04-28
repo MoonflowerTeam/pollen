@@ -2,11 +2,9 @@ package gg.moonflower.pollen.impl.render.geometry;
 
 import dev.architectury.registry.ReloadListenerRegistry;
 import gg.moonflower.pinwheel.api.geometry.GeometryModel;
-import gg.moonflower.pollen.api.render.geometry.v1.GeometryAtlasTexture;
 import gg.moonflower.pollen.api.render.geometry.v1.GeometryModelManager;
 import gg.moonflower.pollen.api.render.util.v1.BackgroundLoader;
 import gg.moonflower.pollen.core.Pollen;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -41,8 +39,7 @@ public final class GeometryModelManagerImpl {
     }
 
     public static GeometryModel getModel(ResourceLocation location) {
-        return MODELS.computeIfAbsent(location, key ->
-        {
+        return MODELS.computeIfAbsent(location, key -> {
             LOGGER.warn("Unknown geometry model with key '{}'", location);
             return GeometryModel.EMPTY;
         });
@@ -52,15 +49,13 @@ public final class GeometryModelManagerImpl {
         @Override
         public CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier stage, ResourceManager resourceManager, ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor, Executor gameExecutor) {
             Map<ResourceLocation, GeometryModel> geometryModels = new HashMap<>();
-            return CompletableFuture.allOf(LOADERS.stream().map(modelLoader -> modelLoader.reload(resourceManager, backgroundExecutor, gameExecutor).thenAcceptAsync(models ->
-            {
+            return CompletableFuture.allOf(LOADERS.stream().map(modelLoader -> modelLoader.reload(resourceManager, backgroundExecutor, gameExecutor).thenAcceptAsync(models -> {
                 for (Map.Entry<ResourceLocation, GeometryModel> entry : models.entrySet()) {
                     if (geometryModels.put(entry.getKey(), entry.getValue()) != null) {
                         LOGGER.warn("Duplicate geometry model: " + entry.getKey());
                     }
                 }
-            }, gameExecutor)).toArray(CompletableFuture[]::new)).thenCompose(stage::wait).thenRunAsync(() ->
-            {
+            }, gameExecutor)).toArray(CompletableFuture[]::new)).thenCompose(stage::wait).thenRunAsync(() -> {
                 LOGGER.info("Loaded " + geometryModels.size() + " geometry models.");
                 MODELS.clear();
                 MODELS.putAll(geometryModels);
