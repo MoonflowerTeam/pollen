@@ -19,6 +19,12 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3dc;
 
+/**
+ * An instance of a bedrock modular particle
+ *
+ * @author Ocelot
+ * @since 2.0.0
+ */
 public interface BedrockParticle extends ParticleInstance, ParticleContext {
 
     /**
@@ -32,9 +38,9 @@ public interface BedrockParticle extends ParticleInstance, ParticleContext {
         ResourceLocation id = ResourceLocation.tryParse(effect);
         if (id != null && BedrockParticleManager.hasParticle(id)) {
             return new BedrockParticleOption(PollenParticles.CUSTOM.get(), id);
-        } else {
-            return ParticleArgument.readParticle(new StringReader(effect));
         }
+
+        return ParticleArgument.readParticle(new StringReader(effect));
     }
 
     /**
