@@ -1,8 +1,6 @@
 package gg.moonflower.pollen.impl.registry.render.forge;
 
-import dev.architectury.platform.forge.EventBuses;
 import gg.moonflower.pollen.api.registry.render.v1.ModelRegistry;
-import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
@@ -16,10 +14,6 @@ public class ModelRegistryImplImpl {
 
     private static final Set<ResourceLocation> SPECIAL_MODELS = ConcurrentHashMap.newKeySet();
     private static final Set<ModelRegistry.ModelFactory> FACTORIES = ConcurrentHashMap.newKeySet();
-
-    static {
-        EventBuses.onRegistered(Pollen.MOD_ID, bus -> bus.register(ModelRegistryImplImpl.class));
-    }
 
     @SubscribeEvent
     public static void onEvent(ModelEvent.RegisterAdditional event) {

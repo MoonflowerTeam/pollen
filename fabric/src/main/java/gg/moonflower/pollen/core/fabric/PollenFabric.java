@@ -1,12 +1,16 @@
 package gg.moonflower.pollen.core.fabric;
 
 import gg.moonflower.pollen.api.config.v1.PollinatedConfigType;
+import gg.moonflower.pollen.api.event.entity.v1.EntityTrackingEvent;
+import gg.moonflower.pollen.api.event.level.v1.ServerChunkLoadingEvent;
 import gg.moonflower.pollen.core.Pollen;
 import gg.moonflower.pollen.impl.config.fabric.ConfigTracker;
 import gg.moonflower.pollen.impl.event.entity.ModifyTradesEventsImpl;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
@@ -46,5 +50,9 @@ public class PollenFabric implements ModInitializer {
             ModifyTradesEventsImpl.init();
         });
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> ConfigTracker.INSTANCE.unloadConfigs(PollinatedConfigType.SERVER, getServerConfigPath(server)));
+        EntityTrackingEvents.START_TRACKING.register((trackedEntity, player) -> EntityTrackingEvent.START_TRACKING.invoker().event(trackedEntity, player));
+        EntityTrackingEvents.STOP_TRACKING.register((trackedEntity, player) -> EntityTrackingEvent.STOP_TRACKING.invoker().event(trackedEntity, player));
+        ServerChunkEvents.CHUNK_LOAD.register((world, chunk) -> ServerChunkLoadingEvent.LOAD_CHUNK.invoker().event(world, chunk));
+        ServerChunkEvents.CHUNK_UNLOAD.register((world, chunk) -> ServerChunkLoadingEvent.UNLOAD_CHUNK.invoker().event(world, chunk));
     }
 }

@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.impl.event.entity;
+package gg.moonflower.pollen.impl.event.entity.forge;
 
 import gg.moonflower.pollen.api.event.entity.v1.ModifyTradesEvents;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
