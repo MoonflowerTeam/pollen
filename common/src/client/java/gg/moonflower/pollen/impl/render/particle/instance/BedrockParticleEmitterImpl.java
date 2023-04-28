@@ -115,8 +115,7 @@ public class BedrockParticleEmitterImpl extends BedrockParticleImpl implements B
             throw new UnsupportedOperationException(particle.getName() + " must extend net.minecraft.client.particle.Particle");
         }
 
-        Vector3dc pos = particle.position();
-        particle.setPosition(pos.x() + x, pos.y() + y, pos.z() + z);
+        particle.setPosition(this.x + x, this.y + y, this.z + z);
         this.particles.add(particle);
         Minecraft.getInstance().particleEngine.add(p);
     }

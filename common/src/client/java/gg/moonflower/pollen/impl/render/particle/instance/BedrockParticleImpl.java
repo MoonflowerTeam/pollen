@@ -28,13 +28,18 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
@@ -55,6 +60,7 @@ import java.util.function.Supplier;
 @ApiStatus.Internal
 public abstract class BedrockParticleImpl extends Particle implements BedrockParticle, MolangVariableProvider {
 
+    private static final Set<VoxelShape> COLLISION_SHAPES = new HashSet<>();
     protected static final Logger LOGGER = LoggerFactory.getLogger(BedrockParticle.class);
     protected static final double MAXIMUM_COLLISION_VELOCITY_SQUARED = Mth.square(100.0);
 
@@ -79,6 +85,7 @@ public abstract class BedrockParticleImpl extends Particle implements BedrockPar
     private final Vector3d pos;
     private final Vector3d renderPos;
     private final BlockPos.MutableBlockPos blockPos;
+    private final Vector3d delta;
     private BedrockParticlePhysicsImpl physics;
     private float radius;
 
@@ -108,10 +115,12 @@ public abstract class BedrockParticleImpl extends Particle implements BedrockPar
         this.pos = new Vector3d();
         this.renderPos = new Vector3d();
         this.blockPos = new BlockPos.MutableBlockPos();
+        this.delta = new Vector3d();
         this.oRoll = 0;
         this.roll = 0;
 
         this.physics = null;
+        this.radius = 0.1F;
         this.age = -1;
     }
 
@@ -190,29 +199,32 @@ public abstract class BedrockParticleImpl extends Particle implements BedrockPar
         profiler.pop();
 
         if (this.physics != null) {
-            profiler.push("physics");
+            this.hasPhysics = this.physics.hasCollision();
+            if (this.hasPhysics) {
+                profiler.push("physics");
 
-            float radius = this.physics.getCollisionRadius();
-            if (this.radius != radius) {
-                this.radius = radius;
-                this.setSize(radius * 2, radius * 2);
-            }
-
-            if (!this.disableMovement) { // Stop moving particles if they collide and effectively stop because of it
-                profiler.push("components");
-                this.physicsComponents.forEach(BedrockParticlePhysicsComponent::physicsTick);
-                profiler.popPush("move");
-                this.physics.tick();
-
-                float speed = this.physics.getSpeed();
-                if (speed * speed > 1.0E-7) {
-                    Vector3dc direction = this.physics.getDirection();
-                    this.move(direction.x() * speed, direction.y() * speed, direction.z() * speed);
+                float radius = this.physics.getCollisionRadius();
+                if (this.radius != radius) {
+                    this.radius = radius;
+                    this.setSize(radius * 2, radius * 2);
                 }
 
+                if (!this.disableMovement) { // Stop moving particles if they collide and effectively stop because of it
+                    profiler.push("components");
+                    this.physicsComponents.forEach(BedrockParticlePhysicsComponent::physicsTick);
+                    profiler.popPush("move");
+                    this.physics.tick();
+
+                    float speed = this.physics.getSpeed();
+                    if (speed * speed > 1.0E-7) {
+                        Vector3dc direction = this.physics.getDirection();
+                        this.move(direction.x() * speed, direction.y() * speed, direction.z() * speed);
+                    }
+
+                    profiler.pop();
+                }
                 profiler.pop();
             }
-            profiler.pop();
         }
 
         // Tick age
@@ -227,10 +239,10 @@ public abstract class BedrockParticleImpl extends Particle implements BedrockPar
         double h = dy;
         double i = dz;
         if (this.physics != null && (dx != 0.0 || dy != 0.0 || dz != 0.0) && dx * dx + dy * dy + dz * dz < MAXIMUM_COLLISION_VELOCITY_SQUARED) {
-            Vec3 vec3 = Entity.collideBoundingBox(null, new Vec3(dx, dy, dz), this.getBoundingBox(), this.level, List.of());
-            dx = vec3.x;
-            dy = vec3.y;
-            dz = vec3.z;
+            collideBoundingBox(this.delta.set(dx, dy, dz), this.getBoundingBox(), this.level);
+            dx = this.delta.x();
+            dy = this.delta.y();
+            dz = this.delta.z();
         }
 
         if (dx != 0.0 || dy != 0.0 || dz != 0.0) {
@@ -249,11 +261,51 @@ public abstract class BedrockParticleImpl extends Particle implements BedrockPar
 
             if (xCollision || yCollision || zCollision) {
                 this.listeners.forEach(listener -> listener.onCollide(this, xCollision, yCollision, zCollision));
-                if (this.onGround && this.physics.getSquareSpeed() <= 1.0E-7) {
+                if (this.onGround && this.physics.getSpeed() * this.physics.getSpeed() <= 1.0E-7) {
                     this.disableMovement = true;
                 }
             }
         }
+    }
+
+    private static synchronized void collideBoundingBox(Vector3d delta, AABB box, Level level) {
+        COLLISION_SHAPES.clear();
+        level.getBlockCollisions(null, box.expandTowards(delta.x(), delta.y(), delta.z())).forEach(COLLISION_SHAPES::add);
+        // TODO reuse block collision shapes between particles
+        if (COLLISION_SHAPES.isEmpty()) {
+            return;
+        }
+
+        double x = delta.x();
+        double y = delta.y();
+        double z = delta.z();
+        if (y != 0.0) {
+            y = Shapes.collide(Direction.Axis.Y, box, COLLISION_SHAPES, y);
+            if (y != 0.0) {
+                box = box.move(0.0, y, 0.0);
+            }
+        }
+
+        boolean zCollide = Math.abs(x) < Math.abs(z);
+        if (zCollide && z != 0.0) {
+            z = Shapes.collide(Direction.Axis.Z, box, COLLISION_SHAPES, z);
+            if (z != 0.0) {
+                box = box.move(0.0, 0.0, z);
+            }
+        }
+
+        if (x != 0.0) {
+            x = Shapes.collide(Direction.Axis.X, box, COLLISION_SHAPES, x);
+            if (!zCollide && x != 0.0) {
+                box = box.move(x, 0.0, 0.0);
+            }
+        }
+
+        if (!zCollide && z != 0.0) {
+            z = Shapes.collide(Direction.Axis.Z, box, COLLISION_SHAPES, z);
+        }
+
+        delta.set(x, y, z);
     }
 
     @Override
@@ -417,6 +469,7 @@ public abstract class BedrockParticleImpl extends Particle implements BedrockPar
         this.x = x;
         this.y = y;
         this.z = z;
+        this.setBoundingBox(new AABB(x - this.radius, y, z - this.radius, x + this.radius, y + this.radius * 2, z + this.radius));
         this.blockPos.set(x, y, z);
     }
 

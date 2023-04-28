@@ -2,6 +2,12 @@ package gg.moonflower.pollen.api.render.particle.v1.component;
 
 import org.joml.Vector3dc;
 
+/**
+ * Physics that dictate how particles move in the world.
+ *
+ * @author Ocelot
+ * @since 2.0.0
+ */
 public interface BedrockParticlePhysics {
 
     /**
@@ -13,14 +19,6 @@ public interface BedrockParticlePhysics {
      * @return The speed of motion
      */
     float getSpeed();
-
-    /**
-     * @return The square of the speed of motion
-     */
-    default float getSquareSpeed() {
-        float speed = this.getSpeed();
-        return speed * speed;
-    }
 
     /**
      * @return The current velocity of this particle in blocks/tick
@@ -65,7 +63,7 @@ public interface BedrockParticlePhysics {
     /**
      * Sets the direction this particle will travel in.
      *
-     * @param direction The direction to travel
+     * @param direction The direction to travel. This is expected to be normalized
      */
     default void setDirection(Vector3dc direction) {
         this.setDirection(direction.x(), direction.y(), direction.z());

@@ -1,7 +1,6 @@
 package gg.moonflower.pollen.impl.render.particle;
 
 import gg.moonflower.pollen.api.render.particle.v1.component.BedrockParticlePhysics;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
@@ -31,9 +30,9 @@ public class BedrockParticlePhysicsImpl implements BedrockParticlePhysics {
         this.collision = true;
     }
 
-    public void tick(){
+    public void tick() {
         if (this.acceleration.lengthSquared() > 1.0E-7) {
-            this.setVelocity(this.getVelocity().add(this.acceleration, new Vector3d()));
+            this.setVelocity(this.getVelocity().add(this.acceleration, this.velocity));
         }
     }
 
@@ -79,12 +78,17 @@ public class BedrockParticlePhysicsImpl implements BedrockParticlePhysics {
 
     @Override
     public void setDirection(double dx, double dy, double dz) {
-        this.direction.set(dx, dy, dz).normalize();
+        this.direction.set(dx, dy, dz);
+
+        double lengthSq = this.direction.lengthSquared();
+        if (lengthSq != 0) { // 0 causes division by zero
+            this.direction.normalize();
+        }
     }
 
     @Override
     public void setSpeed(float speed) {
-        this.speed = speed;
+        this.speed = Math.max(speed, 0);
     }
 
     @Override
