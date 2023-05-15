@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.Map;
 
 /**
- * Manages {@link AnimationData} loading using custom loaders, which can then be accessed through {@link #getModel(ResourceLocation)}.
+ * Manages {@link GeometryModel} loading using custom loaders, which can then be accessed through {@link #getModel(ResourceLocation)}.
  *
  * @author Ocelot
  * @see BackgroundLoader

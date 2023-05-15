@@ -39,7 +39,8 @@ dependencies {
 
     // Pinwheel
     include(implementation("gg.moonflower.pinwheel:pinwheel:${rootProject.pinwheel_version}"))
-    include(implementation("com.github.Ocelot5836:molang-compiler:master-SNAPSHOT"))
+//    include(implementation("com.github.MoonflowerTeam:molang-compiler:master-SNAPSHOT"))
+    include(implementation("io.github.ocelot:molang-compiler:2.2.0"))
     include(implementation("org.joml:joml:${rootProject.joml_version}"))
 
     implementation(project(":common").sourceSets.client.output)

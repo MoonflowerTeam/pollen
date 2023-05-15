@@ -31,8 +31,8 @@ public class ProfilingMolangEnvironment implements MolangEnvironment {
     }
 
     @Override
-    public void loadParameter(int index, MolangExpression expression) throws MolangException {
-        this.environment.loadParameter(index, expression);
+    public void loadParameter(MolangExpression expression) throws MolangException {
+        this.environment.loadParameter(expression);
     }
 
     @Override
@@ -60,8 +60,13 @@ public class ProfilingMolangEnvironment implements MolangEnvironment {
     }
 
     @Override
-    public boolean hasParameter(int parameter) throws MolangException {
+    public boolean hasParameter(int parameter) {
         return this.environment.hasParameter(parameter);
+    }
+
+    @Override
+    public int getParameters() {
+        return this.environment.getParameters();
     }
 
     @Override
