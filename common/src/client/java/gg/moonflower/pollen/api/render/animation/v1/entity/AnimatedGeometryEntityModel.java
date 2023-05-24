@@ -27,10 +27,12 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AnimatedGeometryEntityModel<T extends Entity & AnimatedEntity> extends EntityModel<T> {
 
+    private final GeometryBufferSource buffers;
     private final ResourceLocation model;
     private ResourceLocation texture;
 
     public AnimatedGeometryEntityModel(ResourceLocation model) {
+        this.buffers = GeometryBufferSource.entity(Minecraft.getInstance().renderBuffers().bufferSource());
         this.model = model;
         this.texture = null;
     }
@@ -58,14 +60,17 @@ public class AnimatedGeometryEntityModel<T extends Entity & AnimatedEntity> exte
 
     @Override
     public void renderToBuffer(PoseStack matrixStack, VertexConsumer builder, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        this.renderToBuffer(matrixStack, Minecraft.getInstance().renderBuffers().bufferSource(), packedLight, packedOverlay, red, green, blue, alpha);
-    }
-
-    public void renderToBuffer(PoseStack matrixStack, MultiBufferSource source, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         matrixStack.pushPose();
         matrixStack.translate(0, 1.501F, 0); // LivingEntityRenderer translates after scaling, so we have to undo that
-        MinecraftGeometryRenderer.getInstance().render(this.getModel(), this.getTexture(), GeometryBufferSource.entity(source), matrixStack, packedLight, packedOverlay, red, green, blue, alpha);
+        MinecraftGeometryRenderer.getInstance().render(this.getModel(), this.getTexture(), this.getGeometryBuffers(), matrixStack, packedLight, packedOverlay, red, green, blue, alpha);
         matrixStack.popPose();
+    }
+
+    /**
+     * @return The source of buffers for geometry rendering
+     */
+    public GeometryBufferSource getGeometryBuffers() {
+        return this.buffers;
     }
 
     /**
