@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.api.animation.v1.controller;
 
-import gg.moonflower.pinwheel.api.animation.AnimationController;
 import gg.moonflower.pollen.api.animation.v1.state.AnimationState;
 
 /**
@@ -9,7 +8,7 @@ import gg.moonflower.pollen.api.animation.v1.state.AnimationState;
  * @author Ocelot
  * @since 2.0.0
  */
-public interface StateAnimationController extends AnimationController {
+public interface StateAnimationController extends PollenAnimationController {
 
     /**
      * Clears all playing animations.

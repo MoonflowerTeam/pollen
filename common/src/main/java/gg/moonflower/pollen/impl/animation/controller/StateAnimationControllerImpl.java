@@ -3,7 +3,6 @@ package gg.moonflower.pollen.impl.animation.controller;
 import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
 import gg.moonflower.pollen.api.animation.v1.controller.SerializableAnimationController;
 import gg.moonflower.pollen.api.animation.v1.controller.StateAnimationController;
-import gg.moonflower.pollen.api.animation.v1.controller.TickingAnimationController;
 import gg.moonflower.pollen.api.animation.v1.state.AnimationState;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
@@ -17,7 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 @ApiStatus.Internal
-public class StateAnimationControllerImpl extends AnimationControllerImpl implements StateAnimationController, TickingAnimationController, SerializableAnimationController {
+public class StateAnimationControllerImpl extends AnimationControllerImpl implements StateAnimationController, SerializableAnimationController {
 
     protected final AnimationState[] states;
     protected final IntSet playingStates;

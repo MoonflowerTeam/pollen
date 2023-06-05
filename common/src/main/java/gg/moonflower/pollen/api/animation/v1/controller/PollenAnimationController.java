@@ -11,6 +11,11 @@ import gg.moonflower.pinwheel.api.animation.AnimationController;
 public interface PollenAnimationController extends AnimationController {
 
     /**
+     * Steps forward one tick (0.05 seconds) for all animations.
+     */
+    void tick();
+
+    /**
      * Sets the lifetime of the controller.
      *
      * @param lifetime The new lifetime value
