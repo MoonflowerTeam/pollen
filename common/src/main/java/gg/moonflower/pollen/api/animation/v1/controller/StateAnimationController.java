@@ -1,9 +1,8 @@
 package gg.moonflower.pollen.api.animation.v1.controller;
 
-import gg.moonflower.pollen.api.animation.v1.RenderAnimationTimer;
 import gg.moonflower.pollen.api.animation.v1.state.AnimationState;
-import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 /**
  * An animation controller that sets animations based on {@linkplain AnimationState animation states}.
@@ -17,6 +16,20 @@ public interface StateAnimationController extends PollenAnimationController {
      * Clears all playing animations.
      */
     void clearAnimations();
+
+    /**
+     * Adds the specified listener for animation events.
+     *
+     * @param listener The listener to add
+     */
+    void addListener(AnimationStateListener listener);
+
+    /**
+     * Removes the specified listener for animation events.
+     *
+     * @param listener The listener to remove
+     */
+    void removeListener(AnimationStateListener listener);
 
     /**
      * Starts all animations in the specified state.
@@ -51,4 +64,9 @@ public interface StateAnimationController extends PollenAnimationController {
         this.clearAnimations();
         this.startAnimations(animation);
     }
+
+    /**
+     * @return All animation states playing in this controller
+     */
+    Collection<AnimationState> getPlayingStates();
 }
