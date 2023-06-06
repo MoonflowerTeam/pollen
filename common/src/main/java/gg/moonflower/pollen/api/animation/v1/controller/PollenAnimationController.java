@@ -1,6 +1,9 @@
 package gg.moonflower.pollen.api.animation.v1.controller;
 
 import gg.moonflower.pinwheel.api.animation.AnimationController;
+import gg.moonflower.pollen.api.animation.v1.RenderAnimationTimer;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * An abstract pollen animation controller.
@@ -31,4 +34,19 @@ public interface PollenAnimationController extends AnimationController {
      * @param limbSwingAmount The limb swing amount factor
      */
     void setRenderParameters(float xRotation, float yRotation, float limbSwing, float limbSwingAmount);
+
+    /**
+     * Updates the interpolated render time for all animations in the controller.
+     *
+     * @param partialTicks The percentage from last tick to this tick
+     */
+    void updateRenderTime(float partialTicks);
+
+    /**
+     * Sets a custom timing scheme that runs how the specified animation will calculate render time.
+     *
+     * @param animation The animation to set a custom timer for
+     * @param timer     The timer to use
+     */
+    void setRenderTimer(ResourceLocation animation, @Nullable RenderAnimationTimer timer);
 }

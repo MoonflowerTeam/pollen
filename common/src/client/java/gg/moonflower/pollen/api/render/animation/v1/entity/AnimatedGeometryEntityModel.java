@@ -12,7 +12,6 @@ import gg.moonflower.pollen.api.render.geometry.v1.GeometryTextureManager;
 import gg.moonflower.pollen.api.render.geometry.v1.MinecraftGeometryRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
@@ -37,15 +36,29 @@ public class AnimatedGeometryEntityModel<T extends Entity & AnimatedEntity> exte
         this.texture = null;
     }
 
+    private PollenAnimationController getAnimationController(T entity) {
+        if (entity.getAnimationController() instanceof PollenAnimationController controller) {
+            return controller;
+        }
+        throw new IllegalStateException("Animation controller must implement PollenAnimationController to use AnimatedGeometryEntityModel");
+    }
+
+    @Override
+    public void prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTicks) {
+        PollenAnimationController controller = this.getAnimationController(entity);
+        if (controller.getPlayingAnimations().isEmpty()) {
+            return;
+        }
+
+        controller.updateRenderTime(partialTicks);
+    }
+
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float animationTicks, float netHeadYaw, float headPitch) {
         GeometryModel model = this.getModel();
         model.resetTransformation();
 
-        if (!(entity.getAnimationController() instanceof PollenAnimationController controller)) {
-            throw new IllegalStateException("Animation controller must implement PollenAnimationController to use AnimatedGeometryEntityModel");
-        }
-
+        PollenAnimationController controller = this.getAnimationController(entity);
         if (controller.getPlayingAnimations().isEmpty()) {
             return;
         }

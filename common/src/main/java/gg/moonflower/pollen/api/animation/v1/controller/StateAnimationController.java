@@ -1,6 +1,9 @@
 package gg.moonflower.pollen.api.animation.v1.controller;
 
+import gg.moonflower.pollen.api.animation.v1.RenderAnimationTimer;
 import gg.moonflower.pollen.api.animation.v1.state.AnimationState;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * An animation controller that sets animations based on {@linkplain AnimationState animation states}.

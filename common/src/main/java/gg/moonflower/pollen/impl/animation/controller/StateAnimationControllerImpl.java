@@ -59,6 +59,9 @@ public class StateAnimationControllerImpl extends AnimationControllerImpl implem
 
         this.removedStates.forEach(id -> this.stopAnimations(this.states[id]));
         this.removedStates.clear();
+
+        // Update animation times
+        super.tick();
     }
 
     @Override

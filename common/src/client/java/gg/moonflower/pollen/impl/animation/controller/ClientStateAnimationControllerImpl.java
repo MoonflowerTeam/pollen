@@ -1,25 +1,41 @@
 package gg.moonflower.pollen.impl.animation.controller;
 
 import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
+import gg.moonflower.pollen.api.animation.v1.RenderAnimationTimer;
 import gg.moonflower.pollen.api.animation.v1.state.AnimationState;
 import gg.moonflower.pollen.api.render.animation.v1.AnimationManager;
+import gg.moonflower.pollen.impl.animation.PollenPlayingAnimationImpl;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class ClientStateAnimationControllerImpl extends StateAnimationControllerImpl {
 
     private final Map<ResourceLocation, PlayingAnimation> playingAnimations;
+    private final Map<ResourceLocation, RenderAnimationTimer> animationTimers;
 
     public ClientStateAnimationControllerImpl(AnimationState[] states, MolangRuntime.Builder builder) {
         super(states, builder);
-        this.playingAnimations = new HashMap<>();
+        this.playingAnimations = new Object2ObjectArrayMap<>();
+        this.animationTimers = new Object2ObjectArrayMap<>();
     }
 
     private void startAnimation(ResourceLocation name) {
-        this.playingAnimations.put(name, PlayingAnimation.of(AnimationManager.getAnimation(name)));
+        PlayingAnimation playingAnimation = PlayingAnimation.of(AnimationManager.getAnimation(name));
+        if (playingAnimation instanceof PollenPlayingAnimationImpl impl) {
+            RenderAnimationTimer timer = this.animationTimers.get(name);
+            if (timer != null) {
+                impl.setTimer(timer);
+            }
+        }
+        this.playingAnimations.put(name, playingAnimation);
     }
 
     @Override
@@ -70,5 +86,14 @@ public class ClientStateAnimationControllerImpl extends StateAnimationController
 
         this.playingAnimations.keySet().removeAll(removedAnimations);
         this.dirty = false;
+    }
+
+    @Override
+    public void setRenderTimer(ResourceLocation animation, @Nullable RenderAnimationTimer timer) {
+        if (timer != null && !RenderAnimationTimer.LINEAR.equals(timer)) {
+            this.animationTimers.put(animation, timer);
+        } else {
+            this.animationTimers.remove(animation);
+        }
     }
 }

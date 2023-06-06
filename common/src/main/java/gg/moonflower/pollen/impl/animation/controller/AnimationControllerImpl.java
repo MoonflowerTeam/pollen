@@ -2,11 +2,16 @@ package gg.moonflower.pollen.impl.animation.controller;
 
 import gg.moonflower.pinwheel.api.animation.AnimationController;
 import gg.moonflower.pinwheel.api.animation.AnimationVariableStorage;
+import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
 import gg.moonflower.pollen.api.animation.v1.AnimationRuntime;
+import gg.moonflower.pollen.api.animation.v1.RenderAnimationTimer;
 import gg.moonflower.pollen.api.animation.v1.controller.PollenAnimationController;
+import gg.moonflower.pollen.impl.animation.PollenPlayingAnimationImpl;
 import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import io.github.ocelot.molangcompiler.api.MolangRuntime;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +44,17 @@ public abstract class AnimationControllerImpl implements PollenAnimationControll
     }
 
     @Override
+    public void tick() {
+        for (PlayingAnimation playingAnimation : this.getPlayingAnimations()) {
+            if (!(playingAnimation instanceof PollenPlayingAnimationImpl impl)) {
+                continue;
+            }
+
+            impl.tick();
+        }
+    }
+
+    @Override
     public MolangEnvironment getEnvironment() {
         return this.environment;
     }
@@ -59,5 +75,20 @@ public abstract class AnimationControllerImpl implements PollenAnimationControll
         this.yRotation.setValue(yRotation);
         this.limbSwing.setValue(limbSwing);
         this.limbSwingAmount.setValue(limbSwingAmount);
+    }
+
+    @Override
+    public void updateRenderTime(float partialTicks) {
+        for (PlayingAnimation playingAnimation : this.getPlayingAnimations()) {
+            if (!(playingAnimation instanceof PollenPlayingAnimationImpl impl)) {
+                continue;
+            }
+
+            impl.setRenderTime(partialTicks);
+        }
+    }
+
+    @Override
+    public void setRenderTimer(ResourceLocation animation, @Nullable RenderAnimationTimer timer) {
     }
 }
