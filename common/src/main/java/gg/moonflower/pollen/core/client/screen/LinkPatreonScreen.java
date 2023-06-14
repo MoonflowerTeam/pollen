@@ -8,15 +8,12 @@ import gg.moonflower.pollen.core.client.profile.ProfileData;
 import gg.moonflower.pollen.core.client.profile.ProfileManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
-import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.HttpUtil;
 
 import java.util.UUID;
@@ -26,10 +23,10 @@ import java.util.concurrent.CompletionException;
 public class LinkPatreonScreen extends Screen {
 
     private final Screen previous;
-    private static final Component TITLE = new TranslatableComponent("screen." + Pollen.MOD_ID + ".linkPatreon.header").withStyle(ChatFormatting.BOLD);
-    private static final Component CONTENT = new TranslatableComponent("screen." + Pollen.MOD_ID + ".linkPatreon.message");
-    private static final Component WAITING_CONTENT = new TranslatableComponent("screen." + Pollen.MOD_ID + ".linkPatreon.waiting");
-    private static final Component PATREON_FAIL = new TranslatableComponent("screen." + Pollen.MOD_ID + ".linkPatreon.fail");
+    private static final Component TITLE = Component.translatable("screen." + Pollen.MOD_ID + ".linkPatreon.header").withStyle(ChatFormatting.BOLD);
+    private static final Component CONTENT = Component.translatable("screen." + Pollen.MOD_ID + ".linkPatreon.message");
+    private static final Component WAITING_CONTENT = Component.translatable("screen." + Pollen.MOD_ID + ".linkPatreon.waiting");
+    private static final Component PATREON_FAIL = Component.translatable("screen." + Pollen.MOD_ID + ".linkPatreon.fail");
     private static final Component NARRATION = TITLE.copy().append("\n").append(CONTENT);
     private MultiLineLabel message = MultiLineLabel.EMPTY;
 
@@ -42,7 +39,7 @@ public class LinkPatreonScreen extends Screen {
     private CompletableFuture<?> completeFuture;
 
     public LinkPatreonScreen(Screen screen) {
-        super(NarratorChatListener.NO_TITLE);
+        super(Component.empty());
         this.previous = screen;
     }
 
@@ -91,7 +88,7 @@ public class LinkPatreonScreen extends Screen {
                         return;
                     }
 
-                    this.minecraft.getToasts().addToast(SystemToast.multiline(this.minecraft, SystemToast.SystemToastIds.WORLD_BACKUP, PATREON_FAIL, new TextComponent(e.getLocalizedMessage())));
+                    this.minecraft.getToasts().addToast(SystemToast.multiline(this.minecraft, SystemToast.SystemToastIds.WORLD_BACKUP, PATREON_FAIL, Component.literal(e.getLocalizedMessage())));
                     this.cancelButton.visible = false;
                     this.cancelButton.active = true;
                     this.proceedButton.visible = true;

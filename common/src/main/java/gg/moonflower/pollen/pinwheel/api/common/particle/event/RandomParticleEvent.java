@@ -20,7 +20,7 @@ public class RandomParticleEvent implements ParticleEvent {
 
     @Override
     public void execute(ParticleContext context) {
-        WeightedRandom.getRandomItem(context.getRandom(), this.events).ifPresent(event -> event.event.execute(context));
+        WeightedRandom.getRandomItem(context.getRandomSource(), this.events).ifPresent(event -> event.event.execute(context));
     }
 
     private record WeightedEvent(ParticleEvent event, Weight weight) implements WeightedEntry {

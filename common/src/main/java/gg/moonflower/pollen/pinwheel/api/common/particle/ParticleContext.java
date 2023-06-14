@@ -3,8 +3,7 @@ package gg.moonflower.pollen.pinwheel.api.common.particle;
 import gg.moonflower.pollen.pinwheel.api.common.particle.event.ParticleEvent;
 import io.github.ocelot.molangcompiler.api.MolangExpression;
 import net.minecraft.resources.ResourceLocation;
-
-import java.util.Random;
+import net.minecraft.util.RandomSource;
 
 /**
  * Basic context from a particle for {@link ParticleEvent}.
@@ -46,5 +45,5 @@ public interface ParticleContext {
     /**
      * @return The source of random
      */
-    Random getRandom();
+    RandomSource getRandomSource();
 }

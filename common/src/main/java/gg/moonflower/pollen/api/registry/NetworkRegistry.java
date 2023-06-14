@@ -9,7 +9,6 @@ import gg.moonflower.pollen.api.platform.Platform;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.status.ServerStatusPacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -65,7 +64,7 @@ public final class NetworkRegistry {
         } catch (Exception e) {
             LogManager.getLogger().error("Failed to process packet for class: " + msg.getClass().getName(), e);
 
-            Component reason = new TranslatableComponent("disconnect.genericReason", "Internal Exception: " + e);
+            Component reason = Component.translatable("disconnect.genericReason", "Internal Exception: " + e);
             Connection networkManager = context.getNetworkManager();
             PacketListener netHandler = networkManager.getPacketListener();
 

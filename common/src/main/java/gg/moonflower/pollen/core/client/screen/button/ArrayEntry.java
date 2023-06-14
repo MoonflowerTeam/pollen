@@ -5,7 +5,6 @@ import gg.moonflower.pollen.core.client.screen.EntitlementButton;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +30,7 @@ public class ArrayEntry<T> extends EntitlementEntry {
     }
 
     private Component getDisplay() {
-        return this.genericValueLabel(new TextComponent(this.displayGenerator.apply(this.values[this.index])));
+        return this.genericValueLabel(Component.literal(this.displayGenerator.apply(this.values[this.index])));
     }
 
     @Override

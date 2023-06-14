@@ -58,7 +58,7 @@ public class EmitterShapeBoxComponent implements CustomParticleComponent, Custom
 
     @Override
     public void onEmitParticles(CustomParticleEmitter emitter, int count) {
-        Random random = emitter.getRandom();
+        Random random = emitter.getRandomSource();
         for (int i = 0; i < count; i++) {
             CustomParticle particle = emitter.newParticle();
             MolangEnvironment runtime = particle.getRuntime();

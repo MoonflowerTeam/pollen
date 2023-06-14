@@ -13,8 +13,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,15 +34,15 @@ public class ConfigCommand {
                             String configFileName = getConfigFileName(modId, type);
                             if (configFileName != null) {
                                 File f = new File(configFileName);
-                                ctx.getSource().sendSuccess(new TranslatableComponent("commands." + Pollen.MOD_ID + ".config.success",
+                                ctx.getSource().sendSuccess(Component.translatable("commands." + Pollen.MOD_ID + ".config.success",
                                         modId,
                                         type,
-                                        new TextComponent(f.getName()).withStyle(ChatFormatting.UNDERLINE).
+                                        Component.literal(f.getName()).withStyle(ChatFormatting.UNDERLINE).
                                                 withStyle((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, f.getAbsolutePath())))
                                 ), false);
                                 return Command.SINGLE_SUCCESS;
                             } else {
-                                ctx.getSource().sendFailure(new TranslatableComponent("commands." + Pollen.MOD_ID + ".config.fail", modId, type));
+                                ctx.getSource().sendFailure(Component.translatable("commands." + Pollen.MOD_ID + ".config.fail", modId, type));
                                 return 0;
                             }
                         })))

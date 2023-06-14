@@ -3,24 +3,22 @@ package gg.moonflower.pollen.core.client.screen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 
 public class MoonflowerServerDownScreen extends Screen {
 
     private final Screen previous;
-    private static final Component TITLE = new TranslatableComponent("screen." + Pollen.MOD_ID + ".moonflowerServerDown.header").withStyle(ChatFormatting.BOLD);
-    private static final Component CONTENT = new TranslatableComponent("screen." + Pollen.MOD_ID + ".moonflowerServerDown.message");
+    private static final Component TITLE = Component.translatable("screen." + Pollen.MOD_ID + ".moonflowerServerDown.header").withStyle(ChatFormatting.BOLD);
+    private static final Component CONTENT = Component.translatable("screen." + Pollen.MOD_ID + ".moonflowerServerDown.message");
     private static final Component NARRATION = TITLE.copy().append("\n").append(CONTENT);
     private MultiLineLabel message = MultiLineLabel.EMPTY;
 
     public MoonflowerServerDownScreen(Screen screen) {
-        super(NarratorChatListener.NO_TITLE);
+        super(Component.empty());
         this.previous = screen;
     }
 

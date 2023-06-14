@@ -73,7 +73,7 @@ public class EmitterShapeEntityAABBComponent implements CustomParticleComponent,
         }
 
         AABB box = entity.getBoundingBox();
-        Random random = emitter.getRandom();
+        Random random = emitter.getRandomSource();
         for (int i = 0; i < count; i++) {
             CustomParticle particle = emitter.newParticle();
             MolangEnvironment runtime = particle.getRuntime();

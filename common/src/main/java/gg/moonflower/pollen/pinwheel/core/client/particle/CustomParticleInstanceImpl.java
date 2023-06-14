@@ -205,7 +205,7 @@ public class CustomParticleInstanceImpl extends CustomParticleImpl {
 
     @Override
     protected Component getPrefix() {
-        return new TextComponent("").append(new TextComponent("[Particle]").withStyle(ChatFormatting.YELLOW)).append(super.getPrefix());
+        return Component.literal("").append(Component.literal("[Particle]").withStyle(ChatFormatting.YELLOW)).append(super.getPrefix());
     }
 
     @Override

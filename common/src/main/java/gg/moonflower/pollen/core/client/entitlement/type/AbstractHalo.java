@@ -12,7 +12,7 @@ import gg.moonflower.pollen.core.client.screen.button.ToggleEntry;
 import gg.moonflower.pollen.pinwheel.api.common.texture.GeometryModelTextureTable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
@@ -50,9 +50,9 @@ public abstract class AbstractHalo extends Entitlement implements RenderableCosm
 
     @Override
     public void addEntries(Consumer<EntitlementEntry> entryConsumer) {
-        entryConsumer.accept(new ArrayEntry<>(new TextComponent("Visibility"), this, v -> this.visibility = v, this.visibility, Visibility.values()));
-        entryConsumer.accept(new ArrayEntry<>(new TextComponent("Display"), this, v -> this.display = v, this.display, Display.values()));
-        entryConsumer.accept(new ToggleEntry(new TextComponent("Emissive"), this, v -> this.emissive = v, this.emissive));
+        entryConsumer.accept(new ArrayEntry<>(Component.literal("Visibility"), this, v -> this.visibility = v, this.visibility, Visibility.values()));
+        entryConsumer.accept(new ArrayEntry<>(Component.literal("Display"), this, v -> this.display = v, this.display, Display.values()));
+        entryConsumer.accept(new ToggleEntry(Component.literal("Emissive"), this, v -> this.emissive = v, this.emissive));
     }
 
     @Nullable

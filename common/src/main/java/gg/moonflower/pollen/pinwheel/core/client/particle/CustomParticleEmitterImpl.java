@@ -23,7 +23,6 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
@@ -169,7 +168,7 @@ public class CustomParticleEmitterImpl extends CustomParticleImpl implements Cus
 
     @Override
     protected Component getPrefix() {
-        return new TextComponent("").append(new TextComponent("[Emitter]").withStyle(ChatFormatting.YELLOW)).append(super.getPrefix());
+        return Component.literal("").append(Component.literal("[Emitter]").withStyle(ChatFormatting.YELLOW)).append(super.getPrefix());
     }
 
     @Override

@@ -82,7 +82,7 @@ public class EmitterShapeDiscComponent implements CustomParticleComponent, Custo
     @Override
     public void onEmitParticles(CustomParticleEmitter emitter, int count) {
         MolangEnvironment runtime = emitter.getRuntime();
-        Random random = emitter.getRandom();
+        Random random = emitter.getRandomSource();
         float normalX = this.normal[0].safeResolve(runtime);
         float normalY = this.normal[1].safeResolve(runtime);
         float normalZ = this.normal[2].safeResolve(runtime);

@@ -13,7 +13,7 @@ import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.synchronization.ArgumentSerializer;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Arrays;
@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 public class EnumArgument implements ArgumentType<String> {
 
     private static final Collection<String> EXAMPLES = Arrays.asList("creative", "survival", "loot_chest", "accessory");
-    private static final SimpleCommandExceptionType INVALID_TYPE = new SimpleCommandExceptionType(new TranslatableComponent("argument." + Pollen.MOD_ID + ".enum.invalid"));
+    private static final SimpleCommandExceptionType INVALID_TYPE = new SimpleCommandExceptionType(Component.translatable("argument." + Pollen.MOD_ID + ".enum.invalid"));
 
     private final String[] values;
 
