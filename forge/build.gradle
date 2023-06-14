@@ -72,8 +72,8 @@ dependencies {
     modRuntimeOnly "curse.maven:configured-457570:3559398"
     modRuntimeOnly "curse.maven:catalogue-459701:3559402"
 
-    modCompileOnly "mezz.jei:jei-${rootProject.minecraft_version}:${rootProject.jei_version}:api"
-    modRuntimeOnly "mezz.jei:jei-${rootProject.minecraft_version}:${rootProject.jei_version}"
+    modCompileOnly "mezz.jei:jei-${rootProject.minecraft_version}-forge-api:${rootProject.jei_version}"
+    modRuntimeOnly "mezz.jei:jei-${rootProject.minecraft_version}-forge:${rootProject.jei_version}"
 
     forgeRuntimeLibrary "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"
     annotationProcessor "com.github.LlamaLad7:MixinExtras:${rootProject.mixin_extras_version}"

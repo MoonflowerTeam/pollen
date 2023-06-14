@@ -84,7 +84,7 @@ dependencies {
     include "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cardinal_components_version}"
     // Needed for making sure render changes apply
     modCompileOnly "maven.modrinth:sodium:mc1.19.2-0.4.4"
-    modCompileOnly "maven.modrinth:iris:1.6.4+1.19.2"
+    modCompileOnly "maven.modrinth:iris:${rootProject.iris_version}+1.19.2"
 
     modRuntimeOnly "me.djtheredstoner:DevAuth-fabric:${rootProject.devauth_version}"
 
