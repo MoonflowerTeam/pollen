@@ -1,20 +1,16 @@
 package gg.moonflower.pollen.impl.render.particle.instance;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import gg.moonflower.molangcompiler.api.MolangExpression;
+import gg.moonflower.molangcompiler.api.bridge.MolangVariableProvider;
 import gg.moonflower.pinwheel.api.particle.component.ParticleComponent;
 import gg.moonflower.pinwheel.api.particle.render.ParticleRenderProperties;
 import gg.moonflower.pollen.api.registry.particle.v1.BedrockParticleComponentFactory;
-import gg.moonflower.pollen.api.registry.particle.v1.BedrockParticleComponentType;
-import gg.moonflower.pollen.api.registry.particle.v1.BedrockParticleComponents;
 import gg.moonflower.pollen.api.render.particle.v1.BedrockParticle;
 import gg.moonflower.pollen.api.render.particle.v1.BedrockParticleEmitter;
 import gg.moonflower.pollen.api.render.particle.v1.component.BedrockParticleComponent;
-import gg.moonflower.pollen.api.render.particle.v1.component.BedrockParticlePhysics;
 import gg.moonflower.pollen.api.render.particle.v1.listener.BedrockParticleEmitterListener;
 import gg.moonflower.pollen.impl.particle.BedrockParticleOption;
-import io.github.ocelot.molangcompiler.api.MolangRuntime;
-import io.github.ocelot.molangcompiler.api.bridge.MolangVariable;
-import io.github.ocelot.molangcompiler.api.bridge.MolangVariableProvider;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -27,9 +23,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3dc;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -46,11 +40,12 @@ public class BedrockParticleEmitterImpl extends BedrockParticleImpl implements B
     private final Set<BedrockParticle> particles;
 
     public BedrockParticleEmitterImpl(@Nullable Entity entity, ClientLevel level, double x, double y, double z, ResourceLocation name) {
-        super(level, x, y, z, name, particle -> MolangRuntime.runtime().setVariable("entity_scale", MolangVariable.create(1.0F)).setVariables(particle));
+        super(level, x, y, z, name);
         this.entity = entity;
         this.listeners = new HashSet<>();
         this.particles = new HashSet<>();
         this.addComponents();
+        this.getEnvironment().edit().setVariable("entity_scale", MolangExpression.of(1.0F)).setVariables(this);
     }
 
     @Override

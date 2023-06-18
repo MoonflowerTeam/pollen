@@ -1,6 +1,9 @@
 package gg.moonflower.pollen.impl.render.particle.instance;
 
-import com.google.common.base.Suppliers;
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
+import gg.moonflower.molangcompiler.api.MolangRuntime;
+import gg.moonflower.molangcompiler.api.bridge.MolangVariable;
+import gg.moonflower.molangcompiler.api.bridge.MolangVariableProvider;
 import gg.moonflower.pinwheel.api.particle.ParticleData;
 import gg.moonflower.pinwheel.api.particle.ParticleEvent;
 import gg.moonflower.pinwheel.api.particle.component.ParticleComponent;
@@ -17,10 +20,6 @@ import gg.moonflower.pollen.api.render.particle.v1.component.BedrockParticleTick
 import gg.moonflower.pollen.api.render.particle.v1.listener.BedrockParticleListener;
 import gg.moonflower.pollen.impl.render.particle.BedrockParticlePhysicsImpl;
 import gg.moonflower.pollen.impl.render.particle.ProfilingMolangEnvironment;
-import io.github.ocelot.molangcompiler.api.MolangEnvironment;
-import io.github.ocelot.molangcompiler.api.MolangRuntime;
-import io.github.ocelot.molangcompiler.api.bridge.MolangVariable;
-import io.github.ocelot.molangcompiler.api.bridge.MolangVariableProvider;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -49,7 +48,6 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * @author Ocelot
@@ -64,6 +62,7 @@ public abstract class BedrockParticleImpl extends Particle implements BedrockPar
     protected final ResourceLocation name;
     protected final ParticleData data;
     protected final BedrockParticleCurves curves;
+    protected final MolangEnvironment environment;
     protected final Random random;
 
     protected final MolangVariable renderAge;
@@ -76,8 +75,6 @@ public abstract class BedrockParticleImpl extends Particle implements BedrockPar
     private final Set<BedrockParticleListener> listeners;
     private final Set<BedrockParticleTickComponent> tickComponents;
     private final Set<BedrockParticlePhysicsComponent> physicsComponents;
-    private final Supplier<MolangRuntime.Builder> builder;
-    private final Supplier<MolangEnvironment> runtime;
 
     private final Vector3d pos;
     private final Vector3d renderPos;
@@ -89,11 +86,12 @@ public abstract class BedrockParticleImpl extends Particle implements BedrockPar
     protected int age;
     protected boolean disableMovement;
 
-    protected BedrockParticleImpl(ClientLevel level, double x, double y, double z, ResourceLocation name, Function<BedrockParticleImpl, MolangRuntime.Builder> runtimeFactory) {
+    protected BedrockParticleImpl(ClientLevel level, double x, double y, double z, ResourceLocation name) {
         super(level, x, y, z);
         this.name = name;
         this.data = BedrockParticleManager.getParticle(this.name);
         this.curves = new BedrockParticleCurves(this.data);
+        this.environment = new ProfilingMolangEnvironment(MolangRuntime.runtime().setVariables(this.curves).create(), level.getProfilerSupplier());
         this.random = new Random();
         this.renderAge = MolangVariable.create();
         this.lifetime = MolangVariable.create();
@@ -105,9 +103,6 @@ public abstract class BedrockParticleImpl extends Particle implements BedrockPar
         this.listeners = new HashSet<>();
         this.tickComponents = new HashSet<>();
         this.physicsComponents = new HashSet<>();
-
-        this.builder = Suppliers.memoize(() -> runtimeFactory.apply(this).setVariables(this.curves));
-        this.runtime = Suppliers.memoize(() -> new ProfilingMolangEnvironment(this.getRuntimeBuilder().create(), level.getProfilerSupplier()));
 
         this.pos = new Vector3d();
         this.renderPos = new Vector3d();
@@ -480,10 +475,6 @@ public abstract class BedrockParticleImpl extends Particle implements BedrockPar
 
     @Override
     public MolangEnvironment getEnvironment() {
-        return this.runtime.get();
-    }
-
-    protected MolangRuntime.Builder getRuntimeBuilder() {
-        return this.builder.get();
+        return this.environment;
     }
 }

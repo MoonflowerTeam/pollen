@@ -1,5 +1,6 @@
 package gg.moonflower.pollen.impl.render.particle.component;
 
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.pinwheel.api.particle.ParticleInstance;
 import gg.moonflower.pinwheel.api.particle.ParticleSourceObject;
 import gg.moonflower.pinwheel.api.particle.component.ParticleEmitterShape;
@@ -7,7 +8,6 @@ import gg.moonflower.pollen.api.render.particle.v1.BedrockParticle;
 import gg.moonflower.pollen.api.render.particle.v1.BedrockParticleEmitter;
 import gg.moonflower.pollen.api.render.particle.v1.component.BedrockParticlePhysics;
 import gg.moonflower.pollen.api.render.particle.v1.listener.BedrockParticleEmitterListener;
-import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.ApiStatus;
@@ -41,12 +41,12 @@ public class EmitterShapeComponentImpl extends BedrockParticleEmitterComponentIm
 
     @Override
     public void spawnParticle(ParticleInstance instance) {
-        if (!(instance instanceof BedrockParticle particle)) {
+        if (!(instance instanceof BedrockParticle bedrockParticle)) {
             throw new AssertionError();
         }
 
-        Vector3dc pos = particle.position();
-        this.particle.summonParticle(particle, pos.x(), pos.y(), pos.z());
+        Vector3dc pos = bedrockParticle.position();
+        this.particle.summonParticle(bedrockParticle, pos.x(), pos.y(), pos.z());
     }
 
     @Override
@@ -72,20 +72,20 @@ public class EmitterShapeComponentImpl extends BedrockParticleEmitterComponentIm
 
     @Override
     public void setPosition(ParticleInstance instance, double x, double y, double z) {
-        if (!(instance instanceof BedrockParticle particle)) {
+        if (!(instance instanceof BedrockParticle bedrockParticle)) {
             throw new AssertionError();
         }
 
-        particle.setPosition(x, y, z);
+        bedrockParticle.setPosition(x, y, z);
     }
 
     @Override
     public void setVelocity(ParticleInstance instance, double dx, double dy, double dz) {
-        if (!(instance instanceof BedrockParticle particle)) {
+        if (!(instance instanceof BedrockParticle bedrockParticle)) {
             throw new AssertionError();
         }
 
-        BedrockParticlePhysics physics = particle.getPhysics();
+        BedrockParticlePhysics physics = bedrockParticle.getPhysics();
         if (physics == null) {
             return;
         }

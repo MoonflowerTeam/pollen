@@ -20,7 +20,7 @@ public class EmitterRateSteadyComponentImpl extends BedrockParticleEmitterCompon
     }
 
     private int evaluateSpawnCount() {
-        return (int) (this.data.spawnRate().safeResolve(this.particle.getEnvironment()) / 20F);
+        return (int) (this.particle.getEnvironment().safeResolve(this.data.spawnRate()) / 20F);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class EmitterRateSteadyComponentImpl extends BedrockParticleEmitterCompon
 
     @Override
     public void onCreate(BedrockParticle particle) {
-        this.maxParticlesEval = (int) this.data.maxParticles().safeResolve(particle.getEnvironment());
+        this.maxParticlesEval = (int) this.particle.getEnvironment().safeResolve(this.data.maxParticles());
     }
 
     @Override

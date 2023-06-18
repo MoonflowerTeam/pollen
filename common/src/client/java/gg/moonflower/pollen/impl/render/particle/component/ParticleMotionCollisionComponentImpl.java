@@ -24,7 +24,7 @@ public class ParticleMotionCollisionComponentImpl extends BedrockParticleCompone
 
     @Override
     public void physicsTick() {
-        this.getPhysics().setCollision(this.data.enabled().safeResolve(this.particle.getEnvironment()) == 1);
+        this.getPhysics().setCollision(this.particle.getEnvironment().safeResolve(this.data.enabled()) == 1);
     }
 
     @Override

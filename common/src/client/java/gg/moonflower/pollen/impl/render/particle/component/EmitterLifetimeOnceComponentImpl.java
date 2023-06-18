@@ -28,6 +28,6 @@ public class EmitterLifetimeOnceComponentImpl extends BedrockParticleEmitterComp
 
     @Override
     public void onCreate(BedrockParticle particle) {
-        this.activeTimeEval = (int) this.data.activeTime().safeResolve(particle.getEnvironment());
+        this.activeTimeEval = (int) particle.getEnvironment().safeResolve(this.data.activeTime());
     }
 }

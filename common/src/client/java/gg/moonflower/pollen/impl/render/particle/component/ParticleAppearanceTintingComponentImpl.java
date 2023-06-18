@@ -1,10 +1,10 @@
 package gg.moonflower.pollen.impl.render.particle.component;
 
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.pinwheel.api.particle.component.ParticleAppearanceTintingComponent;
 import gg.moonflower.pinwheel.api.particle.render.ParticleRenderProperties;
 import gg.moonflower.pollen.api.render.particle.v1.BedrockParticle;
 import gg.moonflower.pollen.api.render.particle.v1.component.BedrockParticleRenderComponent;
-import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import net.minecraft.client.Camera;
 import org.jetbrains.annotations.ApiStatus;
 

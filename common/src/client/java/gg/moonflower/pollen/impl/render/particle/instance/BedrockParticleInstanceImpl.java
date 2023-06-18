@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.mojang.math.Matrix4f;
+import gg.moonflower.molangcompiler.api.bridge.MolangVariableProvider;
 import gg.moonflower.pinwheel.api.particle.ParticleData;
 import gg.moonflower.pinwheel.api.particle.component.ParticleComponent;
 import gg.moonflower.pinwheel.api.particle.render.ParticleRenderProperties;
@@ -20,8 +21,6 @@ import gg.moonflower.pollen.api.render.particle.v1.BedrockParticleEmitter;
 import gg.moonflower.pollen.api.render.particle.v1.MinecraftSingleQuadRenderProperties;
 import gg.moonflower.pollen.api.render.particle.v1.component.BedrockParticleComponent;
 import gg.moonflower.pollen.api.render.particle.v1.component.BedrockParticleRenderComponent;
-import io.github.ocelot.molangcompiler.api.MolangRuntime;
-import io.github.ocelot.molangcompiler.api.bridge.MolangVariableProvider;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -75,10 +74,11 @@ public class BedrockParticleInstanceImpl extends BedrockParticleImpl {
     private ParticleRenderProperties renderProperties;
 
     public BedrockParticleInstanceImpl(BedrockParticleEmitterImpl emitter, ClientLevel clientLevel, double x, double y, double z) {
-        super(clientLevel, x, y, z, emitter.getName(), particle -> MolangRuntime.runtime(emitter.getRuntimeBuilder()).setVariables(particle));
+        super(clientLevel, x, y, z, emitter.getName());
         this.emitter = emitter;
         this.renderComponents = new HashSet<>();
         this.addComponents();
+        this.environment.edit().setVariables(this);
     }
 
     @Override
@@ -226,7 +226,6 @@ public class BedrockParticleInstanceImpl extends BedrockParticleImpl {
         context.addVariable("particle_random_3", this.random3);
         context.addVariable("particle_random_4", this.random4);
     }
-
 
     @Override
     public @Nullable ParticleRenderProperties getRenderProperties() {

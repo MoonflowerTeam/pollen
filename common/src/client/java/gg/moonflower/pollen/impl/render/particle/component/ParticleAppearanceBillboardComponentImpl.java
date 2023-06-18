@@ -1,6 +1,8 @@
 package gg.moonflower.pollen.impl.render.particle.component;
 
 import com.mojang.math.Vector3f;
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
+import gg.moonflower.molangcompiler.api.MolangExpression;
 import gg.moonflower.pinwheel.api.particle.component.ParticleAppearanceBillboardComponent;
 import gg.moonflower.pinwheel.api.particle.render.SingleQuadRenderProperties;
 import gg.moonflower.pollen.api.joml.v1.JomlBridge;
@@ -10,8 +12,6 @@ import gg.moonflower.pollen.api.render.particle.v1.component.BedrockParticlePhys
 import gg.moonflower.pollen.api.render.particle.v1.component.BedrockParticleRenderComponent;
 import gg.moonflower.pollen.api.render.particle.v1.listener.BedrockParticleListener;
 import gg.moonflower.pollen.impl.render.particle.MinecraftSingleQuadRenderPropertiesImpl;
-import io.github.ocelot.molangcompiler.api.MolangEnvironment;
-import io.github.ocelot.molangcompiler.api.MolangExpression;
 import net.minecraft.client.Camera;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.ApiStatus;
@@ -41,8 +41,8 @@ public class ParticleAppearanceBillboardComponentImpl extends BedrockParticleCom
     public void render(Camera camera, float partialTicks) {
         MolangEnvironment environment = this.particle.getEnvironment();
         SingleQuadRenderProperties renderProperties = getRenderProperties(particle);
-        renderProperties.setWidth(this.data.size()[0].safeResolve(environment));
-        renderProperties.setHeight(this.data.size()[1].safeResolve(environment));
+        renderProperties.setWidth(environment.safeResolve(this.data.size()[0]));
+        renderProperties.setHeight(environment.safeResolve(this.data.size()[1]));
         this.data.textureSetter().setUV(this.particle, environment, renderProperties);
 
         switch (this.data.cameraMode()) {
@@ -79,9 +79,9 @@ public class ParticleAppearanceBillboardComponentImpl extends BedrockParticleCom
 
                 MolangExpression[] customDirection = this.data.customDirection();
                 if (customDirection != null) {
-                    dx = customDirection[0].safeResolve(environment);
-                    dy = customDirection[1].safeResolve(environment);
-                    dz = customDirection[2].safeResolve(environment);
+                    dx = environment.safeResolve(customDirection[0]);
+                    dy = environment.safeResolve(customDirection[1]);
+                    dz = environment.safeResolve(customDirection[2]);
                 } else {
                     Vector3dc direction = physics.getDirection();
                     int factor = physics.getSpeed() > this.data.minSpeedThreshold() ? 1 : 0;
@@ -107,9 +107,9 @@ public class ParticleAppearanceBillboardComponentImpl extends BedrockParticleCom
 
                 MolangExpression[] customDirection = this.data.customDirection();
                 if (customDirection != null) {
-                    dx = customDirection[0].safeResolve(environment);
-                    dy = customDirection[1].safeResolve(environment);
-                    dz = customDirection[2].safeResolve(environment);
+                    dx = environment.safeResolve(customDirection[0]);
+                    dy = environment.safeResolve(customDirection[1]);
+                    dz = environment.safeResolve(customDirection[2]);
                 } else {
                     Vector3dc direction = physics.getDirection();
                     int factor = physics.getSpeed() > this.data.minSpeedThreshold() ? 1 : 0;
@@ -135,9 +135,9 @@ public class ParticleAppearanceBillboardComponentImpl extends BedrockParticleCom
 
                 MolangExpression[] customDirection = this.data.customDirection();
                 if (customDirection != null) {
-                    dx = customDirection[0].safeResolve(environment);
-                    dy = customDirection[1].safeResolve(environment);
-                    dz = customDirection[2].safeResolve(environment);
+                    dx = environment.safeResolve(customDirection[0]);
+                    dy = environment.safeResolve(customDirection[1]);
+                    dz = environment.safeResolve(customDirection[2]);
                 } else {
                     Vector3dc direction = physics.getDirection();
                     int factor = physics.getSpeed() > this.data.minSpeedThreshold() ? 1 : 0;

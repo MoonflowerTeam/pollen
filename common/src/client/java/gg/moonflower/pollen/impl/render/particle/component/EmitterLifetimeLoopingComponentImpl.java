@@ -1,11 +1,10 @@
 package gg.moonflower.pollen.impl.render.particle.component;
 
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.pinwheel.api.particle.component.EmitterLifetimeLoopingComponent;
 import gg.moonflower.pollen.api.render.particle.v1.BedrockParticle;
-import gg.moonflower.pollen.api.render.particle.v1.BedrockParticleEmitter;
 import gg.moonflower.pollen.api.render.particle.v1.component.BedrockParticleTickComponent;
 import gg.moonflower.pollen.api.render.particle.v1.listener.BedrockParticleListener;
-import io.github.ocelot.molangcompiler.api.MolangEnvironment;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
@@ -35,7 +34,7 @@ public class EmitterLifetimeLoopingComponentImpl extends BedrockParticleEmitterC
     @Override
     public void onCreate(BedrockParticle particle) {
         MolangEnvironment runtime = particle.getEnvironment();
-        this.activeTimeEval = (int) this.data.activeTime().safeResolve(runtime);
-        this.sleepTimer = (int) this.data.sleepTime().safeResolve(runtime);
+        this.activeTimeEval = (int) runtime.safeResolve(this.data.activeTime());
+        this.sleepTimer = (int) runtime.safeResolve(this.data.sleepTime());
     }
 }

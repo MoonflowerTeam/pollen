@@ -1,17 +1,18 @@
 package gg.moonflower.pollen.impl.animation.runtime;
 
+import gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
+import gg.moonflower.molangcompiler.api.MolangRuntime;
 import gg.moonflower.pollen.api.animation.v1.controller.StateAnimationController;
 import gg.moonflower.pollen.api.animation.v1.state.AnimationState;
-import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public interface SidedAnimationRuntime {
 
-    void addGlobal(MolangRuntime.Builder builder);
+    void addGlobal(MolangEnvironmentBuilder<?> builder);
 
-    void addEntity(MolangRuntime.Builder builder, Entity entity, boolean client);
+    void addEntity(MolangEnvironmentBuilder<?> builder, Entity entity, boolean client);
 
-    StateAnimationController createController(AnimationState[] states, MolangRuntime.Builder builder, boolean client);
+    StateAnimationController createController(AnimationState[] states, MolangRuntime runtime, boolean client);
 }

@@ -1,10 +1,10 @@
 package gg.moonflower.pollen.api.render.particle.v1;
 
 import com.mojang.datafixers.util.Pair;
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
+import gg.moonflower.molangcompiler.api.bridge.MolangVariable;
+import gg.moonflower.molangcompiler.api.bridge.MolangVariableProvider;
 import gg.moonflower.pinwheel.api.particle.ParticleData;
-import io.github.ocelot.molangcompiler.api.MolangEnvironment;
-import io.github.ocelot.molangcompiler.api.bridge.MolangVariable;
-import io.github.ocelot.molangcompiler.api.bridge.MolangVariableProvider;
 import net.minecraft.util.Mth;
 import net.minecraft.util.profiling.ProfilerFiller;
 
@@ -18,7 +18,8 @@ import java.util.stream.Collectors;
  * @author Ocelot
  * @since 2.0.0
  */
-public record BedrockParticleCurves(Map<String, Pair<ParticleData.Curve, MolangVariable>> variables) implements MolangVariableProvider {
+public record BedrockParticleCurves(
+        Map<String, Pair<ParticleData.Curve, MolangVariable>> variables) implements MolangVariableProvider {
 
     public BedrockParticleCurves(ParticleData data) {
         this(data.curves().entrySet().stream().collect(Collectors.toUnmodifiableMap(entry -> {
@@ -47,12 +48,12 @@ public record BedrockParticleCurves(Map<String, Pair<ParticleData.Curve, MolangV
         this.variables.forEach((name, pair) -> context.addVariable(name, pair.getSecond()));
     }
 
-    private static float evaluateCurve(MolangEnvironment runtime, ParticleData.Curve curve) {
-        float horizontalRange = curve.horizontalRange().safeResolve(runtime);
+    private static float evaluateCurve(MolangEnvironment environment, ParticleData.Curve curve) {
+        float horizontalRange = environment.safeResolve(curve.horizontalRange());
         if (horizontalRange == 0) {
             return 1.0F;
         }
-        float input = curve.input().safeResolve(runtime) / horizontalRange;
+        float input = environment.safeResolve(curve.input()) / horizontalRange;
 
         ParticleData.CurveNode[] nodes = curve.nodes();
         int index = getIndex(curve, input);
@@ -62,31 +63,32 @@ public record BedrockParticleCurves(Map<String, Pair<ParticleData.Curve, MolangV
                 ParticleData.CurveNode current = nodes[index];
                 ParticleData.CurveNode next = index + 1 >= nodes.length ? current : nodes[index + 1];
 
-                float a = current.getValue().safeResolve(runtime);
-                float b = next.getValue().safeResolve(runtime);
+                float a = environment.safeResolve(current.getValue());
+                float b = environment.safeResolve(next.getValue());
                 float progress = (input - current.getTime()) / (next.getTime() - current.getTime());
 
                 return Mth.lerp(progress, a, b);
             }
             case BEZIER -> {
-                float a = nodes[0].getValue().safeResolve(runtime);
-                float b = nodes[1].getValue().safeResolve(runtime);
-                float c = nodes[2].getValue().safeResolve(runtime);
-                float d = nodes[3].getValue().safeResolve(runtime);
+                float a = environment.safeResolve(nodes[0].getValue());
+                float b = environment.safeResolve(nodes[1].getValue());
+                float c = environment.safeResolve(nodes[2].getValue());
+                float d = environment.safeResolve(nodes[3].getValue());
 
                 return bezier(a, b, c, d, input);
             }
             case BEZIER_CHAIN -> {
                 ParticleData.BezierChainCurveNode current = (ParticleData.BezierChainCurveNode) nodes[index];
-                if (index + 1 >= nodes.length)
-                    return current.getRightValue().safeResolve(runtime);
+                if (index + 1 >= nodes.length) {
+                    return environment.safeResolve(current.getRightValue());
+                }
 
                 ParticleData.BezierChainCurveNode next = (ParticleData.BezierChainCurveNode) nodes[index + 1];
                 float step = input - current.getTime() + next.getTime() / 3F;
-                float a = current.getRightValue().safeResolve(runtime);
-                float b = a + step * current.getRightSlope().safeResolve(runtime);
-                float d = next.getLeftValue().safeResolve(runtime);
-                float c = d - step * next.getLeftSlope().safeResolve(runtime);
+                float a = environment.safeResolve(current.getRightValue());
+                float b = a + step * environment.safeResolve(current.getRightSlope());
+                float d = environment.safeResolve(next.getLeftValue());
+                float c = d - step * environment.safeResolve(next.getLeftSlope());
                 float progress = (input - current.getTime()) / (next.getTime() - current.getTime());
 
                 return bezier(a, b, c, d, progress);
@@ -98,10 +100,10 @@ public record BedrockParticleCurves(Map<String, Pair<ParticleData.Curve, MolangV
                     ParticleData.CurveNode to = nodes[index + 1];
                     ParticleData.CurveNode after = nodes[index + 2];
 
-                    float a = last.getValue().safeResolve(runtime);
-                    float b = from.getValue().safeResolve(runtime);
-                    float c = to.getValue().safeResolve(runtime);
-                    float d = after.getValue().safeResolve(runtime);
+                    float a = environment.safeResolve(last.getValue());
+                    float b = environment.safeResolve(from.getValue());
+                    float c = environment.safeResolve(to.getValue());
+                    float d = environment.safeResolve(after.getValue());
                     float nextTime = to.getTime();
                     float progress = (input - from.getTime()) / (nextTime - from.getTime());
 

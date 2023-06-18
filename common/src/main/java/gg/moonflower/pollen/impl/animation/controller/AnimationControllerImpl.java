@@ -1,5 +1,8 @@
 package gg.moonflower.pollen.impl.animation.controller;
 
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
+import gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
+import gg.moonflower.molangcompiler.api.MolangRuntime;
 import gg.moonflower.pinwheel.api.animation.AnimationController;
 import gg.moonflower.pinwheel.api.animation.AnimationVariableStorage;
 import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
@@ -7,8 +10,6 @@ import gg.moonflower.pollen.api.animation.v1.AnimationRuntime;
 import gg.moonflower.pollen.api.animation.v1.RenderAnimationTimer;
 import gg.moonflower.pollen.api.animation.v1.controller.PollenAnimationController;
 import gg.moonflower.pollen.impl.animation.PollenPlayingAnimationImpl;
-import io.github.ocelot.molangcompiler.api.MolangEnvironment;
-import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +31,8 @@ public abstract class AnimationControllerImpl implements PollenAnimationControll
     private final AnimationVariableStorage.Value limbSwing;
     private final AnimationVariableStorage.Value limbSwingAmount;
 
-    public AnimationControllerImpl(MolangRuntime.Builder builder) {
+    public AnimationControllerImpl(MolangRuntime runtime) {
+        MolangEnvironmentBuilder<?> builder = runtime.edit();
         AnimationRuntime.addGlobal(builder);
         this.storage = AnimationVariableStorage.create(Set.of("life_time", "head_x_rotation", "head_y_rotation", "limb_swing", "limb_swing_amount"));
         this.lifetime = Objects.requireNonNull(this.storage.getField("life_time"));

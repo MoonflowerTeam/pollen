@@ -1,11 +1,11 @@
 package gg.moonflower.pollen.impl.animation.controller;
 
+import gg.moonflower.molangcompiler.api.MolangRuntime;
 import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
 import gg.moonflower.pollen.api.animation.v1.controller.AnimationStateListener;
 import gg.moonflower.pollen.api.animation.v1.controller.SerializableAnimationController;
 import gg.moonflower.pollen.api.animation.v1.controller.StateAnimationController;
 import gg.moonflower.pollen.api.animation.v1.state.AnimationState;
-import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
@@ -31,8 +31,8 @@ public class StateAnimationControllerImpl extends AnimationControllerImpl implem
 
     private final Set<AnimationStateListener> listeners;
 
-    public StateAnimationControllerImpl(AnimationState[] states, MolangRuntime.Builder builder) {
-        super(builder);
+    public StateAnimationControllerImpl(AnimationState[] states, MolangRuntime runtime) {
+        super(runtime);
         this.states = states;
         this.playingStates = new IntArraySet(states.length);
         this.dirty = false;

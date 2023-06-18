@@ -2,6 +2,7 @@ package gg.moonflower.pollen.api.render.particle.v1;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import gg.moonflower.molangcompiler.api.MolangExpression;
 import gg.moonflower.pinwheel.api.particle.ParticleContext;
 import gg.moonflower.pinwheel.api.particle.ParticleInstance;
 import gg.moonflower.pinwheel.api.particle.render.ParticleRenderProperties;
@@ -9,7 +10,6 @@ import gg.moonflower.pollen.api.render.particle.v1.component.BedrockParticlePhys
 import gg.moonflower.pollen.api.render.particle.v1.listener.BedrockParticleListener;
 import gg.moonflower.pollen.impl.particle.BedrockParticleOption;
 import gg.moonflower.pollen.impl.particle.PollenParticles;
-import io.github.ocelot.molangcompiler.api.MolangExpression;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.commands.arguments.ParticleArgument;
 import net.minecraft.core.BlockPos;
@@ -66,7 +66,7 @@ public interface BedrockParticle extends ParticleInstance, ParticleContext {
 
     @Override
     default void expression(MolangExpression expression) {
-        expression.safeResolve(this.getEnvironment());
+        this.getEnvironment().safeResolve(expression);
     }
 
     /**

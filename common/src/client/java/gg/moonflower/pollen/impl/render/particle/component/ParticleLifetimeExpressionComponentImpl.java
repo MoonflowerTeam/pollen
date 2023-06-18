@@ -18,13 +18,13 @@ public class ParticleLifetimeExpressionComponentImpl extends BedrockParticleComp
 
     @Override
     public void tick() {
-        if (this.data.expirationExpression().safeResolve(this.particle.getEnvironment()) != 0) {
+        if (this.particle.getEnvironment().safeResolve(this.data.expirationExpression()) != 0) {
             this.particle.expire();
         }
     }
 
     @Override
     public void onCreate(BedrockParticle particle) {
-        particle.setLifetime(this.data.maxLifetime().safeResolve(particle.getEnvironment()));
+        particle.setLifetime(particle.getEnvironment().safeResolve(this.data.maxLifetime()));
     }
 }

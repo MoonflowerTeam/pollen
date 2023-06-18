@@ -1,9 +1,10 @@
 package gg.moonflower.pollen.api.animation.v1;
 
+import gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
+import gg.moonflower.molangcompiler.api.MolangRuntime;
 import gg.moonflower.pollen.api.animation.v1.controller.StateAnimationController;
 import gg.moonflower.pollen.api.animation.v1.state.AnimationState;
 import gg.moonflower.pollen.impl.animation.runtime.AnimationRuntimeImpl;
-import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import net.minecraft.world.entity.Entity;
 
 /**
@@ -19,7 +20,7 @@ public interface AnimationRuntime {
      *
      * @param builder The builder to add to
      */
-    static void addGlobal(MolangRuntime.Builder builder) {
+    static void addGlobal(MolangEnvironmentBuilder<?> builder) {
         AnimationRuntimeImpl.addGlobal(builder);
     }
 
@@ -28,7 +29,7 @@ public interface AnimationRuntime {
      *
      * @param builder The builder to add to
      */
-    static void addEntity(MolangRuntime.Builder builder, Entity entity, boolean client) {
+    static void addEntity(MolangEnvironmentBuilder<?> builder, Entity entity, boolean client) {
         AnimationRuntimeImpl.addEntity(builder, entity, client);
     }
 
@@ -36,12 +37,12 @@ public interface AnimationRuntime {
      * Creates a state animation controller.
      *
      * @param states  The states to have
-     * @param builder The MoLang builder to use
+     * @param runtime The MoLang builder to use
      * @param client  Whether the controller is client-sided
      * @return A new state animation controller
      */
-    static StateAnimationController createState(AnimationState[] states, MolangRuntime.Builder builder, boolean client) {
-        return AnimationRuntimeImpl.createStateController(states, builder, client);
+    static StateAnimationController createState(AnimationState[] states, MolangRuntime runtime, boolean client) {
+        return AnimationRuntimeImpl.createStateController(states, runtime, client);
     }
 
     /**
@@ -55,6 +56,6 @@ public interface AnimationRuntime {
         boolean client = entity.getLevel().isClientSide();
         MolangRuntime.Builder builder = MolangRuntime.runtime();
         AnimationRuntime.addEntity(builder, entity, client);
-        return createState(states, builder, client);
+        return createState(states, builder.create(), client);
     }
 }

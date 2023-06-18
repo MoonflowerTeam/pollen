@@ -21,7 +21,7 @@ public class EmitterRateInstantComponentImpl extends BedrockParticleEmitterCompo
     @Override
     public void tick() {
         if (!this.complete) {
-            this.particle.emitParticles((int) this.data.particleCount().safeResolve(this.particle.getEnvironment()));
+            this.particle.emitParticles((int) this.particle.getEnvironment().safeResolve(this.data.particleCount()));
         }
     }
 

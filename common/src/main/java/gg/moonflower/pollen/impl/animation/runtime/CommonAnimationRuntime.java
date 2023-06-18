@@ -1,13 +1,13 @@
 package gg.moonflower.pollen.impl.animation.runtime;
 
+import gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
+import gg.moonflower.molangcompiler.api.MolangExpression;
+import gg.moonflower.molangcompiler.api.MolangRuntime;
+import gg.moonflower.molangcompiler.api.bridge.MolangJavaFunction;
+import gg.moonflower.molangcompiler.api.bridge.MolangVariableProvider;
 import gg.moonflower.pollen.api.animation.v1.controller.StateAnimationController;
 import gg.moonflower.pollen.api.animation.v1.state.AnimationState;
 import gg.moonflower.pollen.impl.animation.controller.StateAnimationControllerImpl;
-import io.github.ocelot.molangcompiler.api.MolangExpression;
-import io.github.ocelot.molangcompiler.api.MolangRuntime;
-import io.github.ocelot.molangcompiler.api.bridge.MolangJavaFunction;
-import io.github.ocelot.molangcompiler.api.bridge.MolangVariableProvider;
-import io.github.ocelot.molangcompiler.api.exception.MolangException;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -27,9 +27,9 @@ public class CommonAnimationRuntime implements SidedAnimationRuntime {
             return 1.0F;
         }
 
-        float first = context.resolve(0);
+        float first = context.get(0);
         for (int i = 1; i < context.getParameters(); i++) {
-            if (Math.abs(context.resolve(i) - first) > 1.0E-6) {
+            if (Math.abs(context.get(i) - first) > 1.0E-6) {
                 return 0.0F;
             }
         }
@@ -39,27 +39,27 @@ public class CommonAnimationRuntime implements SidedAnimationRuntime {
     {
         int size = context.getParameters();
         if (size == 1) {
-            float value = context.resolve(0);
+            float value = context.get(0);
             LOGGER.info(String.valueOf(value));
             return value;
         }
 
         String[] values = new String[size];
         for (int i = 0; i < values.length; i++) {
-            values[i] = Float.toString(context.resolve(i));
+            values[i] = Float.toString(context.get(i));
         }
         LOGGER.info(String.join(", ", values));
         return 0.0F;
     };
 
     @Override
-    public void addGlobal(MolangRuntime.Builder builder) {
+    public void addGlobal(MolangEnvironmentBuilder<?> builder) {
         builder.setQuery("approx_eq", -1, APPROX_EQUALS);
         builder.setQuery("log", -1, LOG);
     }
 
     @Override
-    public void addEntity(MolangRuntime.Builder builder, Entity entity, boolean client) {
+    public void addEntity(MolangEnvironmentBuilder<?> builder, Entity entity, boolean client) {
         if (entity instanceof MolangVariableProvider provider) {
             builder.setVariables(provider);
         }
@@ -100,7 +100,7 @@ public class CommonAnimationRuntime implements SidedAnimationRuntime {
     }
 
     @Override
-    public StateAnimationController createController(AnimationState[] states, MolangRuntime.Builder builder, boolean client) {
-        return new StateAnimationControllerImpl(states, builder);
+    public StateAnimationController createController(AnimationState[] states, MolangRuntime runtime, boolean client) {
+        return new StateAnimationControllerImpl(states, runtime);
     }
 }

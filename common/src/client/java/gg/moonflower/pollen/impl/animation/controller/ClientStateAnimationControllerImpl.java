@@ -1,11 +1,11 @@
 package gg.moonflower.pollen.impl.animation.controller;
 
+import gg.moonflower.molangcompiler.api.MolangRuntime;
 import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
 import gg.moonflower.pollen.api.animation.v1.RenderAnimationTimer;
 import gg.moonflower.pollen.api.animation.v1.state.AnimationState;
 import gg.moonflower.pollen.api.render.animation.v1.AnimationManager;
 import gg.moonflower.pollen.impl.animation.PollenPlayingAnimationImpl;
-import io.github.ocelot.molangcompiler.api.MolangRuntime;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -21,8 +21,8 @@ public class ClientStateAnimationControllerImpl extends StateAnimationController
     private final Map<ResourceLocation, PlayingAnimation> playingAnimations;
     private final Map<ResourceLocation, RenderAnimationTimer> animationTimers;
 
-    public ClientStateAnimationControllerImpl(AnimationState[] states, MolangRuntime.Builder builder) {
-        super(states, builder);
+    public ClientStateAnimationControllerImpl(AnimationState[] states, MolangRuntime runtime) {
+        super(states, runtime);
         this.playingAnimations = new Object2ObjectArrayMap<>();
         this.animationTimers = new Object2ObjectArrayMap<>();
     }

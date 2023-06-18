@@ -2,13 +2,13 @@ package gg.moonflower.pollen.impl.render.geometry;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import gg.moonflower.molangcompiler.api.bridge.MolangJavaFunction;
+import gg.moonflower.molangcompiler.api.exception.MolangException;
+import gg.moonflower.molangcompiler.api.exception.MolangRuntimeException;
 import gg.moonflower.pinwheel.api.geometry.*;
 import gg.moonflower.pinwheel.api.geometry.bone.AnimatedBone;
-import gg.moonflower.pinwheel.api.texture.TextureTable;
 import gg.moonflower.pinwheel.api.transform.LocatorTransformation;
 import gg.moonflower.pinwheel.api.transform.MatrixStack;
-import io.github.ocelot.molangcompiler.api.bridge.MolangJavaFunction;
-import io.github.ocelot.molangcompiler.api.exception.MolangException;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.Model;
@@ -38,9 +38,9 @@ public class BedrockGeometryModel extends Model implements GeometryModel {
             return 1.0F;
         }
 
-        float first = context.resolve(0);
+        float first = context.get(0);
         for (int i = 1; i < context.getParameters(); i++) {
-            if (Math.abs(context.resolve(i) - first) > 0.0000001) {
+            if (Math.abs(context.get(i) - first) > 0.0000001) {
                 return 0.0F;
             }
         }
@@ -49,13 +49,13 @@ public class BedrockGeometryModel extends Model implements GeometryModel {
     private static final MolangJavaFunction LAST_FRAME_TIME = context -> {
         FrameTimer frameTimer = Minecraft.getInstance().getFrameTimer();
         long[] log = frameTimer.getLog();
-        int index = (int) Math.min(context.resolve(0),
+        int index = (int) Math.min(context.get(0),
                 log.length - 1); // Extended from 30 to 240 since that's what FrameTimer stores
         if (index == 0) {
             return (float) log[frameTimer.getLogEnd()] / 1_000_000_000F; // ns to s
         }
         if (index < 0) {
-            throw new MolangException("Invalid argument for last_frame_time(): " + index);
+            throw new MolangRuntimeException("Invalid argument for last_frame_time(): " + index);
         }
         int wrappedIndex = frameTimer.getLogEnd() - index;
         while (wrappedIndex < 0) {
@@ -63,19 +63,19 @@ public class BedrockGeometryModel extends Model implements GeometryModel {
         }
         return (float) log[frameTimer.wrapIndex(wrappedIndex)] / 1_000_000_000F; // ns to s
     };
-    private static final MolangJavaFunction AVERAGE_FRAME_TIME = context -> applyFrame((int) context.resolve(0), stream -> OptionalLong.of(stream.sum())) / context.resolve(0);
-    private static final MolangJavaFunction MAX_FRAME_TIME = context -> applyFrame((int) context.resolve(0), LongStream::max);
-    private static final MolangJavaFunction MIN_FRAME_TIME = context -> applyFrame((int) context.resolve(0), LongStream::min);
+    private static final MolangJavaFunction AVERAGE_FRAME_TIME = context -> applyFrame((int) context.get(0), stream -> OptionalLong.of(stream.sum())) / context.get(0);
+    private static final MolangJavaFunction MAX_FRAME_TIME = context -> applyFrame((int) context.get(0), LongStream::max);
+    private static final MolangJavaFunction MIN_FRAME_TIME = context -> applyFrame((int) context.get(0), LongStream::min);
     private static final MolangJavaFunction CAMERA_ROTATION = context -> {
-        int param = (int) context.resolve(0);
+        int param = (int) context.get(0);
         if (param < 0 || param >= 2) {
-            throw new MolangException("Invalid argument for camera_rotation: " + param);
+            throw new MolangRuntimeException("Invalid argument for camera_rotation: " + param);
         }
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         return param == 0 ? camera.getXRot() : camera.getYRot();
     };
     private static final MolangJavaFunction LOG = context -> {
-        float value = context.resolve(0);
+        float value = context.get(0);
         BedrockGeometryModel.LOGGER.info(value);
         return value;
     };
@@ -230,7 +230,7 @@ public class BedrockGeometryModel extends Model implements GeometryModel {
 //        this.updateLocators();
 //    }
 
-    private static float applyFrame(int count, FrameFunction frameFunction) throws MolangException {
+    private static float applyFrame(int count, FrameFunction frameFunction) throws MolangRuntimeException {
         FrameTimer frameTimer = Minecraft.getInstance().getFrameTimer();
         long[] log = frameTimer.getLog();
         int duration = Math.min(count, log.length - 1); // Extended from 30 to 240 since that's what FrameTimer stores
@@ -238,7 +238,7 @@ public class BedrockGeometryModel extends Model implements GeometryModel {
             return (float) frameTimer.getLog()[frameTimer.getLogEnd()] / 1_000_000_000F; // ns to s
         }
         if (duration < 0) {
-            throw new MolangException("Invalid argument for last_frame_time(): " + duration);
+            throw new MolangRuntimeException("Invalid argument for last_frame_time(): " + duration);
         }
         int wrappedIndex = frameTimer.getLogEnd() - duration;
         while (wrappedIndex < 0) {
@@ -252,6 +252,6 @@ public class BedrockGeometryModel extends Model implements GeometryModel {
     @FunctionalInterface
     private interface FrameFunction {
 
-        OptionalLong apply(LongStream stream) throws MolangException;
+        OptionalLong apply(LongStream stream) throws MolangRuntimeException;
     }
 }

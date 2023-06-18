@@ -19,14 +19,14 @@ public class EmitterInitializationComponentImpl extends BedrockParticleEmitterCo
     @Override
     public void tick() {
         if (this.data.tickExpression() != null) {
-            this.data.tickExpression().safeResolve(this.particle.getEnvironment());
+            this.particle.getEnvironment().safeResolve(this.data.tickExpression());
         }
     }
 
     @Override
     public void onCreate(BedrockParticle particle) {
         if (this.data.creationExpression() != null) {
-            this.data.creationExpression().safeResolve(particle.getEnvironment());
+            this.particle.getEnvironment().safeResolve(this.data.creationExpression());
         }
     }
 }

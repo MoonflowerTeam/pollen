@@ -1,12 +1,13 @@
 package gg.moonflower.pollen.impl.animation.runtime;
 
+import gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
+import gg.moonflower.molangcompiler.api.MolangExpression;
+import gg.moonflower.molangcompiler.api.MolangRuntime;
+import gg.moonflower.molangcompiler.api.bridge.MolangJavaFunction;
+import gg.moonflower.molangcompiler.api.exception.MolangRuntimeException;
 import gg.moonflower.pollen.api.animation.v1.controller.StateAnimationController;
 import gg.moonflower.pollen.api.animation.v1.state.AnimationState;
 import gg.moonflower.pollen.impl.animation.controller.ClientStateAnimationControllerImpl;
-import io.github.ocelot.molangcompiler.api.MolangExpression;
-import io.github.ocelot.molangcompiler.api.MolangRuntime;
-import io.github.ocelot.molangcompiler.api.bridge.MolangJavaFunction;
-import io.github.ocelot.molangcompiler.api.exception.MolangException;
 import net.minecraft.client.Camera;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
@@ -15,7 +16,6 @@ import net.minecraft.util.FrameTimer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.OptionalLong;
@@ -28,12 +28,12 @@ public class ClientAnimationRuntime extends CommonAnimationRuntime {
     {
         FrameTimer frameTimer = Minecraft.getInstance().getFrameTimer();
         long[] log = frameTimer.getLog();
-        int index = (int) Math.min(context.resolve(0), log.length - 1); // Extended from 30 to 240 since that's what FrameTimer stores
+        int index = (int) Math.min(context.get(0), log.length - 1); // Extended from 30 to 240 since that's what FrameTimer stores
         if (index == 0) {
             return (float) log[frameTimer.getLogEnd()] / 1_000_000_000F; // ns to s
         }
         if (index < 0) {
-            throw new MolangException("Invalid argument for last_frame_time(): " + index);
+            throw new MolangRuntimeException("Invalid argument for last_frame_time(): " + index);
         }
         int wrappedIndex = frameTimer.getLogEnd() - index;
         while (wrappedIndex < 0) {
@@ -41,21 +41,21 @@ public class ClientAnimationRuntime extends CommonAnimationRuntime {
         }
         return (float) log[frameTimer.wrapIndex(wrappedIndex)] / 1_000_000_000F; // ns to s
     };
-    private static final MolangJavaFunction AVERAGE_FRAME_TIME = context -> applyFrame("average_frame_time", (int) context.resolve(0), stream -> OptionalLong.of(stream.sum())) / context.resolve(0);
-    private static final MolangJavaFunction MAX_FRAME_TIME = context -> applyFrame("max_frame_time", (int) context.resolve(0), LongStream::max);
-    private static final MolangJavaFunction MIN_FRAME_TIME = context -> applyFrame("min_frame_time", (int) context.resolve(0), LongStream::min);
+    private static final MolangJavaFunction AVERAGE_FRAME_TIME = context -> applyFrame("average_frame_time", (int) context.get(0), stream -> OptionalLong.of(stream.sum())) / context.get(0);
+    private static final MolangJavaFunction MAX_FRAME_TIME = context -> applyFrame("max_frame_time", (int) context.get(0), LongStream::max);
+    private static final MolangJavaFunction MIN_FRAME_TIME = context -> applyFrame("min_frame_time", (int) context.get(0), LongStream::min);
     private static final MolangJavaFunction CAMERA_ROTATION = context ->
     {
-        int param = (int) context.resolve(0);
+        int param = (int) context.get(0);
         if (param < 0 || param >= 2) {
-            throw new MolangException("Invalid argument for camera_rotation: " + param);
+            throw new MolangRuntimeException("Invalid argument for camera_rotation: " + param);
         }
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         return param == 0 ? camera.getXRot() : camera.getYRot();
     };
 
     @Override
-    public void addGlobal(MolangRuntime.Builder builder) {
+    public void addGlobal(MolangEnvironmentBuilder<?> builder) {
         super.addGlobal(builder);
         builder.setQuery("average_frame_time", () ->
         {
@@ -86,7 +86,7 @@ public class ClientAnimationRuntime extends CommonAnimationRuntime {
     }
 
     @Override
-    public void addEntity(MolangRuntime.Builder builder, Entity entity, boolean client) {
+    public void addEntity(MolangEnvironmentBuilder<?> builder, Entity entity, boolean client) {
         super.addEntity(builder, entity, client);
 
         if (!client) {
@@ -119,8 +119,8 @@ public class ClientAnimationRuntime extends CommonAnimationRuntime {
         builder.setQuery("distance_from_camera", MolangExpression.of(() -> (float) Minecraft.getInstance().gameRenderer.getMainCamera().getPosition().distanceTo(entity.position())));
         builder.setQuery("camera_distance_range_lerp", 2, context ->
         {
-            float first = context.resolve(0);
-            float second = context.resolve(1);
+            float first = context.get(0);
+            float second = context.get(1);
             if (first == second) {
                 return 1.0F;
             }
@@ -145,7 +145,7 @@ public class ClientAnimationRuntime extends CommonAnimationRuntime {
 
             double distance = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition().distanceTo(entity.position());
             for (int i = 0; i < context.getParameters(); i++) {
-                if (distance < context.resolve(0)) {
+                if (distance < context.get(0)) {
                     return i;
                 }
             }
@@ -153,29 +153,29 @@ public class ClientAnimationRuntime extends CommonAnimationRuntime {
         });
         builder.setQuery("position", 1, context ->
         {
-            int index = (int) context.resolve(0);
+            int index = (int) context.get(0);
             if (index < 0 || index >= 3) {
-                throw new MolangException("Invalid argument for position(): " + index);
+                throw new MolangRuntimeException("Invalid argument for position(): " + index);
             }
             float partialTicks = Minecraft.getInstance().getFrameTime();
             return (float) (index == 0 ? entity.getX(partialTicks) : index == 1 ? entity.getY(partialTicks) : entity.getZ(partialTicks));
         });
         builder.setQuery("position_delta", 1, context ->
         {
-            int index = (int) context.resolve(0);
+            int index = (int) context.get(0);
             if (index < 0 || index >= 3) {
-                throw new MolangException("Invalid argument for position(): " + index);
+                throw new MolangRuntimeException("Invalid argument for position(): " + index);
             }
             return (float) (index == 0 ? entity.getDeltaMovement().x() : index == 1 ? entity.getDeltaMovement().y() : entity.getDeltaMovement().z());
         });
     }
 
     @Override
-    public StateAnimationController createController(AnimationState[] states, MolangRuntime.Builder builder, boolean client) {
-        return client ? new ClientStateAnimationControllerImpl(states, builder) : super.createController(states, builder, false);
+    public StateAnimationController createController(AnimationState[] states, MolangRuntime runtime, boolean client) {
+        return client ? new ClientStateAnimationControllerImpl(states, runtime) : super.createController(states, runtime, false);
     }
 
-    private static float applyFrame(String name, int count, FrameFunction terminator) throws MolangException {
+    private static float applyFrame(String name, int count, FrameFunction terminator) throws MolangRuntimeException {
         FrameTimer frameTimer = Minecraft.getInstance().getFrameTimer();
         long[] log = frameTimer.getLog();
         int duration = Math.min(count, log.length - 1); // Extended from 30 to 240 since that's what FrameTimer stores
@@ -183,7 +183,7 @@ public class ClientAnimationRuntime extends CommonAnimationRuntime {
             return (float) frameTimer.getLog()[frameTimer.getLogEnd()] / 1_000_000_000F; // ns to s
         }
         if (duration < 0) {
-            throw new MolangException("Invalid argument for " + name + "(): " + duration);
+            throw new MolangRuntimeException("Invalid argument for " + name + "(): " + duration);
         }
         int wrappedIndex = frameTimer.getLogEnd() - duration;
         while (wrappedIndex < 0) {
@@ -196,6 +196,6 @@ public class ClientAnimationRuntime extends CommonAnimationRuntime {
 
     @FunctionalInterface
     private interface FrameFunction {
-        OptionalLong apply(LongStream stream) throws MolangException;
+        OptionalLong apply(LongStream stream) throws MolangRuntimeException;
     }
 }
