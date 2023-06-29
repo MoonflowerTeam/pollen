@@ -15,7 +15,7 @@ public class PollenFabricClient implements ClientModInitializer {
         PollenClient.init();
         PollenClient.postInit();
 
-        PollenMessages.PLAY.setClientHandler(new FabricClientLoginPacketHandlerImpl());
+        PollenMessages.LOGIN.setClientHandler(new FabricClientLoginPacketHandlerImpl());
 
         ClientChunkEvents.CHUNK_LOAD.register((level, chunk) -> ClientChunkLoadingEvent.LOAD_CHUNK.invoker().event(level, chunk));
         ClientChunkEvents.CHUNK_UNLOAD.register((level, chunk) -> ClientChunkLoadingEvent.UNLOAD_CHUNK.invoker().event(level, chunk));
