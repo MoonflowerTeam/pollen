@@ -5,13 +5,17 @@ import gg.moonflower.molangcompiler.api.MolangExpression;
 import gg.moonflower.molangcompiler.api.MolangRuntime;
 import gg.moonflower.molangcompiler.api.bridge.MolangJavaFunction;
 import gg.moonflower.molangcompiler.api.exception.MolangRuntimeException;
+import gg.moonflower.pollen.api.animation.v1.controller.IdleAnimationController;
+import gg.moonflower.pollen.api.animation.v1.controller.PollenAnimationController;
 import gg.moonflower.pollen.api.animation.v1.controller.StateAnimationController;
 import gg.moonflower.pollen.api.animation.v1.state.AnimationState;
 import gg.moonflower.pollen.impl.animation.controller.ClientStateAnimationControllerImpl;
+import gg.moonflower.pollen.impl.animation.controller.ClientIdleAnimationControllerImpl;
 import net.minecraft.client.Camera;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FrameTimer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -173,6 +177,11 @@ public class ClientAnimationRuntime extends CommonAnimationRuntime {
     @Override
     public StateAnimationController createController(AnimationState[] states, MolangRuntime runtime, boolean client) {
         return client ? new ClientStateAnimationControllerImpl(states, runtime) : super.createController(states, runtime, false);
+    }
+
+    @Override
+    public IdleAnimationController createIdleController(PollenAnimationController controller) {
+        return new ClientIdleAnimationControllerImpl(controller);
     }
 
     private static float applyFrame(String name, int count, FrameFunction terminator) throws MolangRuntimeException {

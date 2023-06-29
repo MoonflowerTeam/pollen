@@ -5,9 +5,13 @@ import gg.moonflower.molangcompiler.api.MolangExpression;
 import gg.moonflower.molangcompiler.api.MolangRuntime;
 import gg.moonflower.molangcompiler.api.bridge.MolangJavaFunction;
 import gg.moonflower.molangcompiler.api.bridge.MolangVariableProvider;
+import gg.moonflower.pollen.api.animation.v1.controller.IdleAnimationController;
+import gg.moonflower.pollen.api.animation.v1.controller.PollenAnimationController;
 import gg.moonflower.pollen.api.animation.v1.controller.StateAnimationController;
 import gg.moonflower.pollen.api.animation.v1.state.AnimationState;
+import gg.moonflower.pollen.impl.animation.controller.IdleAnimationControllerImpl;
 import gg.moonflower.pollen.impl.animation.controller.StateAnimationControllerImpl;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -102,5 +106,10 @@ public class CommonAnimationRuntime implements SidedAnimationRuntime {
     @Override
     public StateAnimationController createController(AnimationState[] states, MolangRuntime runtime, boolean client) {
         return new StateAnimationControllerImpl(states, runtime);
+    }
+
+    @Override
+    public IdleAnimationController createIdleController(PollenAnimationController controller) {
+        return new IdleAnimationControllerImpl(controller);
     }
 }

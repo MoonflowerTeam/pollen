@@ -49,4 +49,12 @@ public interface PollenAnimationController extends AnimationController {
      * @param timer     The timer to use
      */
     void setRenderTimer(ResourceLocation animation, @Nullable RenderAnimationTimer timer);
+
+    /**
+     * Retrieves the render timer the specified animation uses.
+     *
+     * @param animation The animation to get the render timer for
+     * @return The timer that animation uses
+     */
+    RenderAnimationTimer getRenderTimer(ResourceLocation animation);
 }

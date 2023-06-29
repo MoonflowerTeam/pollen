@@ -96,4 +96,9 @@ public class ClientStateAnimationControllerImpl extends StateAnimationController
             this.animationTimers.remove(animation);
         }
     }
+
+    @Override
+    public RenderAnimationTimer getRenderTimer(ResourceLocation animation) {
+        return this.animationTimers.getOrDefault(animation, RenderAnimationTimer.LINEAR);
+    }
 }

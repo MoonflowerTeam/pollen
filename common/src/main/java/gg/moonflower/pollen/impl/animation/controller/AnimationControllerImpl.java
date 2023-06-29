@@ -16,9 +16,6 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
-import java.util.Set;
-
 @ApiStatus.Internal
 public abstract class AnimationControllerImpl implements PollenAnimationController {
 
@@ -32,27 +29,27 @@ public abstract class AnimationControllerImpl implements PollenAnimationControll
     private final AnimationVariableStorage.Value limbSwingAmount;
 
     public AnimationControllerImpl(MolangRuntime runtime) {
-        MolangEnvironmentBuilder<?> builder = runtime.edit();
-        AnimationRuntime.addGlobal(builder);
-        this.storage = AnimationVariableStorage.create(Set.of("life_time", "head_x_rotation", "head_y_rotation", "limb_swing", "limb_swing_amount"));
-        this.lifetime = Objects.requireNonNull(this.storage.getField("life_time"));
-        this.xRotation = Objects.requireNonNull(this.storage.getField("head_x_rotation"));
-        this.yRotation = Objects.requireNonNull(this.storage.getField("head_y_rotation"));
-        this.limbSwing = Objects.requireNonNull(this.storage.getField("limb_swing"));
-        this.limbSwingAmount = Objects.requireNonNull(this.storage.getField("limb_swing_amount"));
+        MolangEnvironmentBuilder<?> runtimeBuilder = runtime.edit();
+        AnimationRuntime.addGlobal(runtimeBuilder);
 
-        builder.setVariables(this.storage);
-        this.environment = builder.create();
+        AnimationVariableStorage.Builder storageBuilder = AnimationVariableStorage.builder();
+        this.lifetime = storageBuilder.add("life_time");
+        this.xRotation = storageBuilder.add("head_x_rotation");
+        this.yRotation = storageBuilder.add("head_y_rotation");
+        this.limbSwing = storageBuilder.add("limb_swing");
+        this.limbSwingAmount = storageBuilder.add("limb_swing_amount");
+        this.storage = storageBuilder.create();
+
+        runtimeBuilder.setVariables(this.storage);
+        this.environment = runtimeBuilder.create();
     }
 
     @Override
     public void tick() {
         for (PlayingAnimation playingAnimation : this.getPlayingAnimations()) {
-            if (!(playingAnimation instanceof PollenPlayingAnimationImpl impl)) {
-                continue;
+            if (playingAnimation instanceof PollenPlayingAnimationImpl impl) {
+                impl.tick();
             }
-
-            impl.tick();
         }
     }
 
@@ -92,5 +89,10 @@ public abstract class AnimationControllerImpl implements PollenAnimationControll
 
     @Override
     public void setRenderTimer(ResourceLocation animation, @Nullable RenderAnimationTimer timer) {
+    }
+
+    @Override
+    public RenderAnimationTimer getRenderTimer(ResourceLocation animation) {
+        return null;
     }
 }

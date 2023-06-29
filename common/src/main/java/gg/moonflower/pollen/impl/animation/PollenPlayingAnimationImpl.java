@@ -20,7 +20,9 @@ public class PollenPlayingAnimationImpl extends PlayingAnimationImpl {
     }
 
     public void tick() {
-        this.lastTime = this.getAnimationTime();
+        float time = this.getAnimationTime();
+        this.setAnimationTime(time + 0.05F);
+        this.lastTime = time;
     }
 
     public void setRenderTime(float partialTicks) {

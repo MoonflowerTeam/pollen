@@ -2,9 +2,12 @@ package gg.moonflower.pollen.api.animation.v1;
 
 import gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
 import gg.moonflower.molangcompiler.api.MolangRuntime;
+import gg.moonflower.pollen.api.animation.v1.controller.IdleAnimationController;
+import gg.moonflower.pollen.api.animation.v1.controller.PollenAnimationController;
 import gg.moonflower.pollen.api.animation.v1.controller.StateAnimationController;
 import gg.moonflower.pollen.api.animation.v1.state.AnimationState;
 import gg.moonflower.pollen.impl.animation.runtime.AnimationRuntimeImpl;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
 /**
@@ -57,5 +60,18 @@ public interface AnimationRuntime {
         MolangRuntime.Builder builder = MolangRuntime.runtime();
         AnimationRuntime.addEntity(builder, entity, client);
         return createState(states, builder.create(), client);
+    }
+
+    /**
+     * Creates an idle animation controller for specifying what animations to play when no animation is playing.
+     *
+     * @param controller        The controller to wrap
+     * @param defaultAnimations The animations to use as default
+     * @return A new idle animation controller for passing to the renderer
+     */
+    static IdleAnimationController createIdle(PollenAnimationController controller, ResourceLocation... defaultAnimations) {
+        IdleAnimationController idleController = AnimationRuntimeImpl.createIdleController(controller);
+        idleController.setIdleAnimations(defaultAnimations);
+        return idleController;
     }
 }

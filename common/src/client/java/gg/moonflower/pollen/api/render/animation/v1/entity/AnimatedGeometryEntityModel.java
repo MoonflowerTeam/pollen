@@ -37,7 +37,7 @@ public class AnimatedGeometryEntityModel<T extends Entity & AnimatedEntity> exte
     }
 
     private PollenAnimationController getAnimationController(T entity) {
-        if (entity.getAnimationController() instanceof PollenAnimationController controller) {
+        if (entity.getRenderAnimationController() instanceof PollenAnimationController controller) {
             return controller;
         }
         throw new IllegalStateException("Animation controller must implement PollenAnimationController to use AnimatedGeometryEntityModel");
@@ -46,7 +46,7 @@ public class AnimatedGeometryEntityModel<T extends Entity & AnimatedEntity> exte
     @Override
     public void prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTicks) {
         PollenAnimationController controller = this.getAnimationController(entity);
-        if (controller.getPlayingAnimations().isEmpty()) {
+        if (controller.isNoAnimationPlaying()) {
             return;
         }
 
@@ -59,7 +59,7 @@ public class AnimatedGeometryEntityModel<T extends Entity & AnimatedEntity> exte
         model.resetTransformation();
 
         PollenAnimationController controller = this.getAnimationController(entity);
-        if (controller.getPlayingAnimations().isEmpty()) {
+        if (controller.isNoAnimationPlaying()) {
             return;
         }
 

@@ -22,6 +22,13 @@ public interface AnimatedEntity {
     AnimationController getAnimationController();
 
     /**
+     * @return The controller of animations for client rendering
+     */
+    default AnimationController getRenderAnimationController() {
+        return this.getAnimationController();
+    }
+
+    /**
      * Syncs the animations from this controller with the client on the server if possible.
      *
      * @throws IllegalStateException If the value of {@link #getAnimationController()} is not an instance of {@link SerializableAnimationController}
