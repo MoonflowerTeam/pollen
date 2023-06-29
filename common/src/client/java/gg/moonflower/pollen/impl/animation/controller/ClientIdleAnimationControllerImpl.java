@@ -1,8 +1,6 @@
 package gg.moonflower.pollen.impl.animation.controller;
 
 import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
-import gg.moonflower.pollen.api.animation.v1.controller.DelegateAnimationController;
-import gg.moonflower.pollen.api.animation.v1.controller.IdleAnimationController;
 import gg.moonflower.pollen.api.animation.v1.controller.PollenAnimationController;
 import gg.moonflower.pollen.api.render.animation.v1.AnimationManager;
 import gg.moonflower.pollen.impl.animation.PollenPlayingAnimationImpl;
@@ -24,6 +22,7 @@ public class ClientIdleAnimationControllerImpl extends IdleAnimationControllerIm
     public ClientIdleAnimationControllerImpl(PollenAnimationController delegate) {
         super(delegate);
         this.playingAnimations = new ArrayList<>();
+        this.idleAnimations = new ResourceLocation[0];
     }
 
     private void startIdle() {
@@ -44,6 +43,10 @@ public class ClientIdleAnimationControllerImpl extends IdleAnimationControllerIm
     public void tick() {
         super.tick();
         if (this.delegate.isNoAnimationPlaying()) {
+            if (this.idleAnimations.length == 0) {
+                return;
+            }
+
             for (PlayingAnimation playingAnimation : this.playingAnimations) {
                 if (playingAnimation instanceof PollenPlayingAnimationImpl impl) {
                     impl.tick();
