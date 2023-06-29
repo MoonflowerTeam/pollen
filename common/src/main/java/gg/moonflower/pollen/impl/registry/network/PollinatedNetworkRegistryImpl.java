@@ -56,10 +56,10 @@ public final class PollinatedNetworkRegistryImpl {
     public static <MSG extends PollinatedPacket<T>, T> void processMessage(@NotNull MSG msg, PollinatedPacketContext context, Object handler) {
         try {
             msg.processPacket((T) handler, context);
-        } catch (Exception e) {
-            LogManager.getLogger().error("Failed to process packet for class: " + msg.getClass().getName(), e);
+        } catch (Throwable t) {
+            LogManager.getLogger().error("Failed to process packet for class: " + msg.getClass().getName(), t);
 
-            Component reason = Component.translatable("disconnect.genericReason", "Internal Exception: " + e);
+            Component reason = Component.translatable("disconnect.genericReason", "Internal Exception: " + t);
             Connection networkManager = context.getNetworkManager();
             PacketListener netHandler = networkManager.getPacketListener();
 
@@ -72,7 +72,7 @@ public final class PollinatedNetworkRegistryImpl {
                 ((ServerGamePacketListenerImpl) netHandler).disconnect(reason);
             } else {
                 networkManager.disconnect(reason);
-                netHandler.onDisconnect(reason);
+                context.enqueueWork(() -> netHandler.onDisconnect(reason));
             }
         }
     }
