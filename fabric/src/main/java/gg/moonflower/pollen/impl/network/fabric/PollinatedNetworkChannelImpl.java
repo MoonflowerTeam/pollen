@@ -4,6 +4,8 @@ import gg.moonflower.pollen.api.network.v1.PacketDeserializer;
 import gg.moonflower.pollen.api.network.v1.PollinatedNetworkChannel;
 import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacketDirection;
+import io.netty.handler.codec.DecoderException;
+import io.netty.handler.codec.EncoderException;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -42,7 +44,7 @@ public class PollinatedNetworkChannelImpl implements PollinatedNetworkChannel {
         try {
             message.writePacketData(buf);
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to write packet data", e);
+            throw new EncoderException("Failed to write packet data", e);
         }
         return buf;
     }
@@ -59,7 +61,7 @@ public class PollinatedNetworkChannelImpl implements PollinatedNetworkChannel {
         try {
             return factory.deserializer.deserialize(buf);
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to read packet data", e);
+            throw new DecoderException("Failed to read packet data", e);
         }
     }
 
