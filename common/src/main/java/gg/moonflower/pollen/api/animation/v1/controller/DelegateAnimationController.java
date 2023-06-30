@@ -40,11 +40,6 @@ public abstract class DelegateAnimationController implements PollenAnimationCont
     }
 
     @Override
-    public void updateRenderTime(float partialTicks) {
-        this.delegate.updateRenderTime(partialTicks);
-    }
-
-    @Override
     public void setRenderTimer(ResourceLocation animation, @Nullable RenderAnimationTimer timer) {
         this.delegate.setRenderTimer(animation, timer);
     }

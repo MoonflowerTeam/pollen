@@ -25,8 +25,8 @@ public class ClientIdleAnimationControllerImpl extends IdleAnimationControllerIm
         this.idleAnimations = new ResourceLocation[0];
     }
 
-    private void startIdle() {
-        if (this.playingAnimations.isEmpty()) {
+    private void tickIdle() {
+        if (!this.playingAnimations.isEmpty()) {
             return;
         }
 
@@ -42,26 +42,25 @@ public class ClientIdleAnimationControllerImpl extends IdleAnimationControllerIm
     @Override
     public void tick() {
         super.tick();
-        if (this.delegate.isNoAnimationPlaying()) {
-            if (this.idleAnimations.length == 0) {
-                return;
-            }
-
-            for (PlayingAnimation playingAnimation : this.playingAnimations) {
-                if (playingAnimation instanceof PollenPlayingAnimationImpl impl) {
-                    impl.tick();
-                }
-            }
-
-            this.startIdle();
-        } else {
+        if (!this.delegate.isNoAnimationPlaying()) {
             this.playingAnimations.clear();
+            return;
+        }
+
+        for (PlayingAnimation playingAnimation : this.playingAnimations) {
+            if (playingAnimation instanceof PollenPlayingAnimationImpl impl) {
+                impl.tick();
+            }
+        }
+
+        if (this.idleAnimations.length > 0) {
+            this.tickIdle();
         }
     }
 
     @Override
     public Collection<PlayingAnimation> getPlayingAnimations() {
-        return !this.playingAnimations.isEmpty() ? this.playingAnimations : super.getPlayingAnimations();
+        return this.delegate.isNoAnimationPlaying() ? this.playingAnimations : super.getPlayingAnimations();
     }
 
     @Override
@@ -71,14 +70,14 @@ public class ClientIdleAnimationControllerImpl extends IdleAnimationControllerIm
 
     @Override
     public void setIdleAnimations(ResourceLocation... animations) {
-        if (!Arrays.equals(this.idleAnimations, animations)) {
+        if (Arrays.equals(this.idleAnimations, animations)) {
             return;
         }
 
         this.idleAnimations = animations;
         if (this.delegate.isNoAnimationPlaying()) {
             this.playingAnimations.clear();
-            this.startIdle();
+            this.tickIdle();
         }
     }
 }

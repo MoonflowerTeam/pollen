@@ -2,6 +2,7 @@ package gg.moonflower.pollen.api.render.animation.v1.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
 import gg.moonflower.pinwheel.api.geometry.GeometryModel;
 import gg.moonflower.pinwheel.api.texture.TextureTable;
 import gg.moonflower.pollen.api.animation.v1.controller.PollenAnimationController;
@@ -16,6 +17,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 /**
  * A basic implementation of {@link EntityModel} for {@link GeometryModel}.
@@ -45,12 +48,7 @@ public class AnimatedGeometryEntityModel<T extends Entity & AnimatedEntity> exte
 
     @Override
     public void prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTicks) {
-        PollenAnimationController controller = this.getAnimationController(entity);
-        if (controller.isNoAnimationPlaying()) {
-            return;
-        }
-
-        controller.updateRenderTime(partialTicks);
+        this.getAnimationController(entity).updateRenderTime(partialTicks);
     }
 
     @Override
@@ -59,7 +57,8 @@ public class AnimatedGeometryEntityModel<T extends Entity & AnimatedEntity> exte
         model.resetTransformation();
 
         PollenAnimationController controller = this.getAnimationController(entity);
-        if (controller.isNoAnimationPlaying()) {
+        Collection<PlayingAnimation> animations = controller.getPlayingAnimations();
+        if (animations.isEmpty()) {
             return;
         }
 
@@ -67,7 +66,7 @@ public class AnimatedGeometryEntityModel<T extends Entity & AnimatedEntity> exte
         profiler.push("applyMolangAnimation");
         controller.setLifetime(animationTicks / 20F);
         controller.setRenderParameters(headPitch, netHeadYaw, limbSwing, limbSwingAmount);
-        model.applyAnimations(controller);
+        model.applyAnimations(controller.getEnvironment(), animations);
         profiler.pop();
     }
 

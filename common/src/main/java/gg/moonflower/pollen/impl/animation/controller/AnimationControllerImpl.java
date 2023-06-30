@@ -77,22 +77,11 @@ public abstract class AnimationControllerImpl implements PollenAnimationControll
     }
 
     @Override
-    public void updateRenderTime(float partialTicks) {
-        for (PlayingAnimation playingAnimation : this.getPlayingAnimations()) {
-            if (!(playingAnimation instanceof PollenPlayingAnimationImpl impl)) {
-                continue;
-            }
-
-            impl.setRenderTime(partialTicks);
-        }
-    }
-
-    @Override
     public void setRenderTimer(ResourceLocation animation, @Nullable RenderAnimationTimer timer) {
     }
 
     @Override
     public RenderAnimationTimer getRenderTimer(ResourceLocation animation) {
-        return null;
+        return RenderAnimationTimer.LINEAR;
     }
 }

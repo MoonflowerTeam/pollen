@@ -1,7 +1,9 @@
 package gg.moonflower.pollen.api.animation.v1.controller;
 
 import gg.moonflower.pinwheel.api.animation.AnimationController;
+import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
 import gg.moonflower.pollen.api.animation.v1.RenderAnimationTimer;
+import gg.moonflower.pollen.impl.animation.PollenPlayingAnimationImpl;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +42,13 @@ public interface PollenAnimationController extends AnimationController {
      *
      * @param partialTicks The percentage from last tick to this tick
      */
-    void updateRenderTime(float partialTicks);
+    default void updateRenderTime(float partialTicks) {
+        for (PlayingAnimation animation : this.getPlayingAnimations()) {
+            if (animation instanceof PollenPlayingAnimationImpl impl) {
+                impl.setRenderTime(partialTicks);
+            }
+        }
+    }
 
     /**
      * Sets a custom timing scheme that runs how the specified animation will calculate render time.
