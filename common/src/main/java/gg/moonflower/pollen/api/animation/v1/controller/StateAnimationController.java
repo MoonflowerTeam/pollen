@@ -61,6 +61,11 @@ public interface StateAnimationController extends PollenAnimationController {
      * @param animation The animation state to start playing
      */
     default void setPlayingAnimation(AnimationState animation) {
+        if (animation == AnimationState.EMPTY) {
+            this.clearAnimations();
+            return;
+        }
+
         if (this.isAnimationPlaying(animation)) {
             return;
         }
