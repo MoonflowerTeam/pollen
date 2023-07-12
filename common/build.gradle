@@ -5,7 +5,6 @@ architectury {
 }
 
 loom {
-    splitEnvironmentSourceSets()
     accessWidenerPath = file("src/main/resources/${project.mod_id}.accesswidener")
 }
 

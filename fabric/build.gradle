@@ -10,13 +10,6 @@ architectury {
 }
 
 loom {
-    splitEnvironmentSourceSets()
-    mods {
-        main {
-            sourceSet sourceSets.main
-            sourceSet sourceSets.client
-        }
-    }
     accessWidenerPath = project(":common").loom.accessWidenerPath
 }
 
@@ -42,9 +35,6 @@ dependencies {
 //    include(implementation("com.github.MoonflowerTeam:molang-compiler:master-SNAPSHOT"))
     include(implementation("gg.moonflower:molang-compiler:3.0.0"))
     include(implementation("org.joml:joml:${rootProject.joml_version}"))
-
-    clientImplementation(project(":common").sourceSets.client.output)
-    shadowCommon(sourceSets.client.output)
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }

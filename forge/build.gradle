@@ -43,7 +43,6 @@ dependencies {
     include(implementation("gg.moonflower:molang-compiler:3.0.0"))
     include(implementation("org.joml:joml:${rootProject.joml_version}"))
 
-    implementation(project(":common").sourceSets.client.output)
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 }
