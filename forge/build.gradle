@@ -40,7 +40,7 @@ dependencies {
     // Pinwheel
     include(implementation("gg.moonflower.pinwheel:pinwheel:${rootProject.pinwheel_version}"))
 //    include(implementation("com.github.MoonflowerTeam:molang-compiler:master-SNAPSHOT"))
-    include(implementation("gg.moonflower:molang-compiler:3.0.0"))
+    include(implementation("gg.moonflower:molang-compiler:${rootProject.molangcompiler_version}"))
     include(implementation("org.joml:joml:${rootProject.joml_version}"))
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }

@@ -18,7 +18,7 @@ dependencies {
     // Pinwheel
     implementation("gg.moonflower.pinwheel:pinwheel:${rootProject.pinwheel_version}")
 //    implementation("com.github.Ocelot5836:molang-compiler:master-SNAPSHOT")
-    implementation("gg.moonflower:molang-compiler:3.0.0")
+    implementation("gg.moonflower:molang-compiler:${rootProject.molangcompiler_version}")
     implementation("org.joml:joml:${rootProject.joml_version}")
 
     implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-common:${rootProject.mixinextras_version}"))
