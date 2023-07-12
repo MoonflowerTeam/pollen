@@ -6,6 +6,9 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.mojang.math.Matrix4f;
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
+import gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
+import gg.moonflower.molangcompiler.api.MolangRuntime;
 import gg.moonflower.molangcompiler.api.bridge.MolangVariableProvider;
 import gg.moonflower.pinwheel.api.particle.ParticleData;
 import gg.moonflower.pinwheel.api.particle.component.ParticleComponent;
@@ -78,7 +81,9 @@ public class BedrockParticleInstanceImpl extends BedrockParticleImpl {
         this.emitter = emitter;
         this.renderComponents = new HashSet<>();
         this.addComponents();
-        this.environment.edit().setVariables(this);
+        MolangEnvironmentBuilder<? extends MolangEnvironment> builder = this.environment.edit();
+        builder.setVariables(emitter);
+        builder.setVariables(this);
     }
 
     @Override

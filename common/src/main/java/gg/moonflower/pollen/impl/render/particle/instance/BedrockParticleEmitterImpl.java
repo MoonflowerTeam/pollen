@@ -151,6 +151,13 @@ public class BedrockParticleEmitterImpl extends BedrockParticleImpl implements B
         context.addVariable("emitter_random_2", this.random2);
         context.addVariable("emitter_random_3", this.random3);
         context.addVariable("emitter_random_4", this.random4);
+
+        context.addVariable("particle_age", this.renderAge);
+        context.addVariable("particle_lifetime", this.lifetime);
+        context.addVariable("particle_random_1", this.random1);
+        context.addVariable("particle_random_2", this.random2);
+        context.addVariable("particle_random_3", this.random3);
+        context.addVariable("particle_random_4", this.random4);
     }
 
     @Override
