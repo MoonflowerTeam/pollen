@@ -13,7 +13,6 @@ public class Pollen {
     public static void init() {
         PinwheelMolangCompiler.set(MolangCompiler.create(MolangCompiler.DEFAULT_FLAGS, Pollen.class.getClassLoader()));
         PlatformImpl.init();
-        PollenMessages.init();
         PollenParticles.PARTICLE_TYPES.register();
     }
 

@@ -1,6 +1,5 @@
 package gg.moonflower.pollen.core.network;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.network.v1.PollinatedLoginNetworkChannel;
 import gg.moonflower.pollen.api.network.v1.PollinatedPlayNetworkChannel;
 import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacketDirection;
@@ -26,13 +25,5 @@ public class PollenMessages {
 
         // Register Login
         LOGIN.register(ServerboundAckPacket.class, ServerboundAckPacket::new);
-
-        // Register Platform
-        registerPlatformPackets();
-    }
-
-    @ExpectPlatform
-    public static void registerPlatformPackets() {
-        throw new AssertionError("Expected platform method");
     }
 }

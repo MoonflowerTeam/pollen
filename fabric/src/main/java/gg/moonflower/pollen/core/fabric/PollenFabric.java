@@ -4,6 +4,8 @@ import gg.moonflower.pollen.api.config.v1.PollinatedConfigType;
 import gg.moonflower.pollen.api.event.entity.v1.EntityTrackingEvent;
 import gg.moonflower.pollen.api.event.level.v1.ServerChunkLoadingEvent;
 import gg.moonflower.pollen.core.Pollen;
+import gg.moonflower.pollen.core.network.PollenMessages;
+import gg.moonflower.pollen.core.network.fabric.ClientboundSyncConfigDataPacket;
 import gg.moonflower.pollen.impl.config.fabric.ConfigTracker;
 import gg.moonflower.pollen.impl.event.entity.ModifyTradesEventsImpl;
 import net.fabricmc.api.EnvType;
@@ -44,6 +46,7 @@ public class PollenFabric implements ModInitializer {
 
         Pollen.init();
         Pollen.postInit();
+        PollenMessages.LOGIN.registerLogin(ClientboundSyncConfigDataPacket.class, ClientboundSyncConfigDataPacket::new, ConfigTracker.INSTANCE::syncConfigs);
 
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
             ConfigTracker.INSTANCE.loadConfigs(PollinatedConfigType.SERVER, getServerConfigPath(server));
