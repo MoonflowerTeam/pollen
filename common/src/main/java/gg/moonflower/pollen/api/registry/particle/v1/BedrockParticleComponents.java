@@ -38,7 +38,8 @@ public interface BedrockParticleComponents {
     RegistrySupplier<BedrockParticleComponentType<EmitterShapePointComponent>> EMITTER_SHAPE_POINT = register("emitter_shape_point", EmitterShapePointComponent::deserialize, BedrockParticleComponentFactory.emitter(EmitterShapeComponentImpl::new));
     RegistrySupplier<BedrockParticleComponentType<EmitterShapeSphereComponent>> EMITTER_SHAPE_SPHERE = register("emitter_shape_sphere", EmitterShapeSphereComponent::deserialize, BedrockParticleComponentFactory.emitter(EmitterShapeComponentImpl::new));
 
-    RegistrySupplier<BedrockParticleComponentType<EmitterInitializationComponent>> EMITTER_INITIALIZATION = register("emitter_initialization", EmitterInitializationComponent::deserialize, BedrockParticleComponentFactory.emitter(EmitterInitializationComponentImpl::new));
+    RegistrySupplier<BedrockParticleComponentType<EmitterInitializationComponent>> EMITTER_INITIALIZATION = register("emitter_initialization", EmitterInitializationComponent::deserialize, BedrockParticleComponentFactory.emitter(ParticleInitializationComponentImpl::new));
+    RegistrySupplier<BedrockParticleComponentType<EmitterInitializationComponent>> PARTICLE_INITIALIZATION = register("particle_initialization", EmitterInitializationComponent::deserialize, BedrockParticleComponentFactory.particle(ParticleInitializationComponentImpl::new));
     RegistrySupplier<BedrockParticleComponentType<EmitterLocalSpaceComponent>> EMITTER_LOCAL_SPACE = register("emitter_local_space", EmitterLocalSpaceComponent::deserialize, BedrockParticleComponentFactory.emitter(EmitterLocalSpaceComponentImpl::new));
 
     RegistrySupplier<BedrockParticleComponentType<ParticleAppearanceBillboardComponent>> PARTICLE_APPEARANCE_BILLBOARD = register("particle_appearance_billboard", ParticleAppearanceBillboardComponent::deserialize, BedrockParticleComponentFactory.particle(ParticleAppearanceBillboardComponentImpl::new));

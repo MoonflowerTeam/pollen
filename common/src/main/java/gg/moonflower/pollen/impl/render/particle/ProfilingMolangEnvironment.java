@@ -8,6 +8,7 @@ import gg.moonflower.molangcompiler.api.object.MolangObject;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.Collection;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal
@@ -63,6 +64,11 @@ public class ProfilingMolangEnvironment implements MolangEnvironment {
     @Override
     public int getParameters() {
         return this.environment.getParameters();
+    }
+
+    @Override
+    public Collection<String> getObjects() {
+        return this.environment.getObjects();
     }
 
     @Override
@@ -152,6 +158,12 @@ public class ProfilingMolangEnvironment implements MolangEnvironment {
         @Override
         public MolangEnvironmentBuilder<MolangEnvironment> clearVariable() {
             this.builder.clearVariable();
+            return this;
+        }
+
+        @Override
+        public MolangEnvironmentBuilder<MolangEnvironment> copy(MolangEnvironment environment) {
+            this.builder.copy(environment);
             return this;
         }
 

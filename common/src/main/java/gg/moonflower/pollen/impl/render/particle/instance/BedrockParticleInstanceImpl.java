@@ -8,7 +8,6 @@ import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.mojang.math.Matrix4f;
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
-import gg.moonflower.molangcompiler.api.MolangRuntime;
 import gg.moonflower.molangcompiler.api.bridge.MolangVariableProvider;
 import gg.moonflower.pinwheel.api.particle.ParticleData;
 import gg.moonflower.pinwheel.api.particle.component.ParticleComponent;
@@ -82,7 +81,9 @@ public class BedrockParticleInstanceImpl extends BedrockParticleImpl {
         this.renderComponents = new HashSet<>();
         this.addComponents();
         MolangEnvironmentBuilder<? extends MolangEnvironment> builder = this.environment.edit();
-        builder.setVariables(emitter);
+        builder.copy(emitter.getEnvironment()); // create copies of state variables
+        builder.setVariables(emitter); // copy references from emitter
+        builder.setVariables(this.curves);
         builder.setVariables(this);
     }
 

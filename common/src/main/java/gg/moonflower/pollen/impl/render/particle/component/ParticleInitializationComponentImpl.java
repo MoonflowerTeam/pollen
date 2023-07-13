@@ -2,17 +2,20 @@ package gg.moonflower.pollen.impl.render.particle.component;
 
 import gg.moonflower.pinwheel.api.particle.component.EmitterInitializationComponent;
 import gg.moonflower.pollen.api.render.particle.v1.BedrockParticle;
+import gg.moonflower.pollen.api.render.particle.v1.BedrockParticleEmitter;
+import gg.moonflower.pollen.api.render.particle.v1.component.BedrockParticleComponent;
 import gg.moonflower.pollen.api.render.particle.v1.component.BedrockParticleTickComponent;
 import gg.moonflower.pollen.api.render.particle.v1.listener.BedrockParticleListener;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-public class EmitterInitializationComponentImpl extends BedrockParticleEmitterComponentImpl implements BedrockParticleTickComponent, BedrockParticleListener {
+public class ParticleInitializationComponentImpl implements BedrockParticleComponent, BedrockParticleTickComponent, BedrockParticleListener {
 
+    private final BedrockParticle particle;
     private final EmitterInitializationComponent data;
 
-    public EmitterInitializationComponentImpl(BedrockParticle particle, EmitterInitializationComponent data) {
-        super(particle);
+    public ParticleInitializationComponentImpl(BedrockParticle particle, EmitterInitializationComponent data) {
+        this.particle = particle;
         this.data = data;
     }
 
