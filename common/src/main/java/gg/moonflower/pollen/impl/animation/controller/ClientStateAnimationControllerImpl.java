@@ -28,12 +28,10 @@ public class ClientStateAnimationControllerImpl extends StateAnimationController
     }
 
     private void startAnimation(ResourceLocation name) {
-        PlayingAnimation playingAnimation = PlayingAnimation.of(AnimationManager.getAnimation(name));
-        if (playingAnimation instanceof PollenPlayingAnimationImpl impl) {
-            RenderAnimationTimer timer = this.animationTimers.get(name);
-            if (timer != null) {
-                impl.setTimer(timer);
-            }
+        PollenPlayingAnimationImpl playingAnimation = new PollenPlayingAnimationImpl(AnimationManager.getAnimation(name));
+        RenderAnimationTimer timer = this.animationTimers.get(name);
+        if (timer != null) {
+            playingAnimation.setTimer(timer);
         }
         this.playingAnimations.put(name, playingAnimation);
     }

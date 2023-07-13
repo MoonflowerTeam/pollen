@@ -31,10 +31,8 @@ public class ClientIdleAnimationControllerImpl extends IdleAnimationControllerIm
         }
 
         for (ResourceLocation animation : this.idleAnimations) {
-            PlayingAnimation playingAnimation = PlayingAnimation.of(AnimationManager.getAnimation(animation));
-            if (playingAnimation instanceof PollenPlayingAnimationImpl impl) {
-                impl.setTimer(this.delegate.getRenderTimer(animation));
-            }
+            PollenPlayingAnimationImpl playingAnimation = new PollenPlayingAnimationImpl(AnimationManager.getAnimation(animation));
+            playingAnimation.setTimer(this.delegate.getRenderTimer(animation));
             this.playingAnimations.add(playingAnimation);
         }
     }
