@@ -38,10 +38,9 @@ dependencies {
     implementation(include("com.github.llamalad7.mixinextras:mixinextras-forge:${rootProject.mixinextras_version}"))
 
     // Pinwheel
-    include(implementation("gg.moonflower.pinwheel:pinwheel:${rootProject.pinwheel_version}"))
-//    include(implementation("com.github.MoonflowerTeam:molang-compiler:master-SNAPSHOT"))
-    include(implementation("gg.moonflower:molang-compiler:${rootProject.molangcompiler_version}"))
-    include(implementation("org.joml:joml:${rootProject.joml_version}"))
+    include(forgeRuntimeLibrary("gg.moonflower.pinwheel:pinwheel:${rootProject.pinwheel_version}"))
+    include(forgeRuntimeLibrary("gg.moonflower:molang-compiler:${rootProject.molangcompiler_version}"))
+    include(forgeRuntimeLibrary("org.joml:joml:${rootProject.joml_version}"))
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
