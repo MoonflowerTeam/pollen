@@ -1,0 +1,23 @@
+{
+	"argument.pollen.color.invalid": "Linha de cor inválida",
+	"argument.pollen.enum.invalid": "Valor do enum inválido",
+	"argument.pollen.time.big": "O tempo não pode ser maior que %s); encontrado %s",
+	"argument.pollen.time.low": "O tempo não pode ser menor que %s); encontrado %s",
+	"argument.pollen.time.unknown_unit": "Unidade de tempo inválida",
+	"commands.pollen.config.fail": "Config para %s do tipo %s não encontrada",
+	"commands.pollen.config.success": "Config para %s do tipo %s encontrada em %s",
+	"entity.pollen.boat": "Bote",
+	"gui.jei.category.pollen.grindstone.experience": "EXP: %s - %s",
+	"options.pollen.entitlementList": "Cosméticos do Moonflower...",
+	"options.pollen.entitlementList.none": "Você não possui cosméticos",
+	"options.pollen.entitlementList.reload": "Recarregar",
+	"options.pollen.entitlementList.title": "Configurações dos cosméticos do Moonflower",
+	"pack.source.forgemod": "Modificação para o Forge",
+	"screen.pollen.linkPatreon.error": "Falha ao vincular ao Patreon",
+	"screen.pollen.linkPatreon.header": "Vincular ao Patreon",
+	"screen.pollen.linkPatreon.message": "Você precisa vincular a sua conta do Minecraft à sua conta do Patreon para ter acesso aos cosméticos do Moonflower. Esta etapa continuará em um navegador externo, deseja prosseguir?",
+	"screen.pollen.linkPatreon.waiting": "Aguardando resposta do servidor...",
+	"screen.pollen.moonflowerProfilesDisabled": "Os perfis do Moonflower estão desativados. Para ver ou alterar seus cosméticos defina a opção '%s' para false nas configurações do cliente.",
+	"screen.pollen.moonflowerServerDown.header": "Servidores do Moonflower offline",
+	"screen.pollen.moonflowerServerDown.message": "Infelizmente, o servidor de cosméticos está offline no momento e você não poderá ver ou gerenciar cosméticos. Tente novamente mais tarde."
+}

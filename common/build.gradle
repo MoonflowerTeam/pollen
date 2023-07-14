@@ -21,6 +21,8 @@ dependencies {
     implementation("gg.moonflower:molang-compiler:${rootProject.molangcompiler_version}")
     implementation("org.joml:joml:${rootProject.joml_version}")
 
+    modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}")
+
     implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-common:${rootProject.mixinextras_version}"))
 }
 

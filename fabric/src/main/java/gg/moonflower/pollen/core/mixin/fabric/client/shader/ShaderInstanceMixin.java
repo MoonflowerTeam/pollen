@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.client.mixin.fabric.shader;
+package gg.moonflower.pollen.core.mixin.fabric.client.shader;
 
 import com.mojang.blaze3d.shaders.Program;
 import net.minecraft.client.renderer.ShaderInstance;

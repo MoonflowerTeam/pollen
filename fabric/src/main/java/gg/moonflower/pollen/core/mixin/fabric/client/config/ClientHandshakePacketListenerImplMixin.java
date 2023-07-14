@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.client.mixin.fabric.config;
+package gg.moonflower.pollen.core.mixin.fabric.client.config;
 
 import gg.moonflower.pollen.impl.config.fabric.ConfigTracker;
 import net.minecraft.client.Minecraft;

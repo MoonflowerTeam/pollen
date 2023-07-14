@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.client.mixin;
+package gg.moonflower.pollen.impl.mixin.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;

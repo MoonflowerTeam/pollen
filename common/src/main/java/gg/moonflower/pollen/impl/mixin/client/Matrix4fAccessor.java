@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.client.mixin;
+package gg.moonflower.pollen.impl.mixin.client;
 
 import com.mojang.math.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;

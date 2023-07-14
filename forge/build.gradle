@@ -17,7 +17,6 @@ loom {
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
         mixinConfig "${project.mod_id}-common.mixins.json"
-        mixinConfig "${project.mod_id}-common.client.mixins.json"
         mixinConfig "${project.mod_id}.mixins.json"
     }
 }
@@ -41,6 +40,10 @@ dependencies {
     include(forgeRuntimeLibrary("gg.moonflower.pinwheel:pinwheel:${rootProject.pinwheel_version}"))
     include(forgeRuntimeLibrary("gg.moonflower:molang-compiler:${rootProject.molangcompiler_version}"))
     include(forgeRuntimeLibrary("org.joml:joml:${rootProject.joml_version}"))
+
+    modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}")
+    modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraft_version}-forge-api:${rootProject.jei_version}")
+    modRuntimeOnly("mezz.jei:jei-${rootProject.minecraft_version}-forge:${rootProject.jei_version}")
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }

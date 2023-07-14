@@ -25,19 +25,14 @@
     ],
     "client": [
       "gg.moonflower.pollen.core.fabric.PollenFabricClient"
+    ],
+    "jei_mod_plugin": [
+      "gg.moonflower.pollen.core.compat.jei.PollenJeiPlugin"
     ]
   },
   "mixins": [
     "${mod_id}.mixins.json",
-    "${mod_id}-common.mixins.json",
-    {
-      "config": "${mod_id}.client.mixins.json",
-      "environment": "client"
-    },
-    {
-      "config": "${mod_id}-common.client.mixins.json",
-      "environment": "client"
-    }
+    "${mod_id}-common.mixins.json"
   ],
   "depends": {
     "fabric": "*",

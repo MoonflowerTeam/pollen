@@ -1,8 +1,8 @@
 package gg.moonflower.pollen.api.joml.v1;
 
 import com.mojang.math.Quaternion;
-import gg.moonflower.pollen.client.mixin.Matrix3fAccessor;
-import gg.moonflower.pollen.client.mixin.Matrix4fAccessor;
+import gg.moonflower.pollen.impl.mixin.client.Matrix3fAccessor;
+import gg.moonflower.pollen.impl.mixin.client.Matrix4fAccessor;
 import org.joml.*;
 
 /**

@@ -7,6 +7,11 @@
     "network.PlayerListMixin",
     "network.ServerLoginPacketListenerImplMixin"
   ],
+  "client": [
+    "client.config.ClientHandshakePacketListenerImplMixin",
+    "client.registry.TextureAtlasMixin",
+    "client.shader.ShaderInstanceMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

@@ -1,4 +1,4 @@
-package gg.moonflower.pollen.client.mixin.fabric.event.registry;
+package gg.moonflower.pollen.core.mixin.fabric.client.registry;
 
 import gg.moonflower.pollen.api.event.registry.v1.RegisterAtlasSpriteEvent;
 import net.minecraft.client.renderer.texture.TextureAtlas;

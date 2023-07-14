@@ -5,7 +5,16 @@
   "minVersion": "0.8",
   "mixins": [
     "PoiTypesAccessor",
-    "ServerPlayerMixin"
+    "ServerPlayerMixin",
+    "crafting.GrindstoneMenuMixin",
+    "crafting.GrindstoneMenuRepairSlotMixin",
+    "crafting.GrindstoneMenuResultSlotMixin",
+    "crafting.PotionBrewingMixin"
+  ],
+  "client": [
+    "client.Matrix3fAccessor",
+    "client.Matrix4fAccessor",
+    "client.ParticleEngineMixin"
   ],
   "injectors": {
     "defaultRequire": 1

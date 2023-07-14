@@ -1,0 +1,23 @@
+{
+  "argument.pollen.color.invalid": "Invalid Color String",
+  "argument.pollen.enum.invalid": "Invalid Enum Value",
+  "argument.pollen.time.big": "Time must not be more than %s); found %s",
+  "argument.pollen.time.low": "Time must not be less than %s); found %s",
+  "argument.pollen.time.unknown_unit": "Invalid Time Unit",
+  "commands.pollen.config.fail": "Config for %s of type %s not found",
+  "commands.pollen.config.success": "Config for %s of type %s found at %s",
+  "entity.pollen.boat": "Boat",
+  "gui.jei.category.pollen.grindstone.experience": "XP: %s - %s",
+  "options.pollen.entitlementList": "Moonflower Cosmetics...",
+  "options.pollen.entitlementList.none": "You have no cosmetics",
+  "options.pollen.entitlementList.reload": "Refresh",
+  "options.pollen.entitlementList.title": "Moonflower Cosmetic Settings",
+  "pack.source.forgemod": "Forge Mod",
+  "screen.pollen.linkPatreon.error": "Failed to link Patreon",
+  "screen.pollen.linkPatreon.header": "Link Patreon",
+  "screen.pollen.linkPatreon.message": "You must link your Minecraft account to your Patreon account before you can access your Moonflower cosmetics. This will continue in an external browser, do you wish to proceed?",
+  "screen.pollen.linkPatreon.waiting": "Waiting for response from server...",
+  "screen.pollen.moonflowerProfilesDisabled": "Moonflower profiles are disabled. To see or manage cosmetics set '%s' in the client config to false.",
+  "screen.pollen.moonflowerServerDown.header": "Moonflower Servers are Down",
+  "screen.pollen.moonflowerServerDown.message": "Unfortunately, the cosmetic servers are down right now so you will not be able to see or manage cosmetics. Please try again later."
+}
