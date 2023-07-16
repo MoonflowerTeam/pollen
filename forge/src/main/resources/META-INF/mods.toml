@@ -10,7 +10,7 @@ displayName = "${mod_name}"
 description = "${mod_description}"
 logoFile = "${mod_id}.logo.png"
 authors = "Moonflower"
-credits = "Jackson, Ocelot"
+credits = "Jackson, Ocelot, RyanHCode"
 displayURL= "https://www.moonflower.gg/"
 
 [modproperties.${mod_id}]
