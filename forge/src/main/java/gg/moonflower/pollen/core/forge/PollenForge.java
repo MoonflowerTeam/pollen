@@ -29,14 +29,9 @@ public class PollenForge {
         EventBuses.registerModEventBus(Pollen.MOD_ID, eventBus);
         eventBus.addListener(this::commonInit);
         eventBus.addListener(this::clientInit);
-        eventBus.addListener(this::registerSprites);
-
-        eventBus.register(ModelRegistryImplImpl.class);
-        eventBus.register(ClientTooltipComponentRegistryImplImpl.class);
 
         MinecraftForge.EVENT_BUS.register(ModifyTradesEventsImpl.class);
         MinecraftForge.EVENT_BUS.register(ChunkLoadingEventImpl.class);
-        MinecraftForge.EVENT_BUS.register(ClientNetworkEventImpl.class);
         MinecraftForge.EVENT_BUS.register(EntityTrackingEventImpl.class);
 
         Pollen.init();
@@ -49,10 +44,5 @@ public class PollenForge {
 
     private void clientInit(FMLClientSetupEvent event) {
         PollenClient.postInit();
-    }
-
-    private void registerSprites(TextureStitchEvent.Pre event) {
-        TextureAtlas atlas = event.getAtlas();
-        RegisterAtlasSpriteEvent.event(atlas.location()).invoker().registerSprites(atlas, event::addSprite);
     }
 }

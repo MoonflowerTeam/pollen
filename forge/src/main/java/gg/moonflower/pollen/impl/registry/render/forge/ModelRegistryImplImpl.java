@@ -1,15 +1,19 @@
 package gg.moonflower.pollen.impl.registry.render.forge;
 
 import gg.moonflower.pollen.api.registry.render.v1.ModelRegistry;
+import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Mod.EventBusSubscriber(modid = Pollen.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ModelRegistryImplImpl {
 
     private static final Set<ResourceLocation> SPECIAL_MODELS = ConcurrentHashMap.newKeySet();
