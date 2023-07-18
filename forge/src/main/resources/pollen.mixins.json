@@ -5,7 +5,9 @@
   "minVersion": "0.8",
   "mixins": [
     "FireBlockAccessor",
-    "network.HandshakeHandlerMixin"
+    "network.HandshakeHandlerMixin",
+    "registry.content.AxeItemMixin",
+    "registry.content.ShovelItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1

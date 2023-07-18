@@ -5,6 +5,8 @@ import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.world.level.ItemLike;
 
 /**
+ * Registers composting probabilities to specific items.
+ *
  * @author Ocelot
  * @since 2.0.0
  */

@@ -10,8 +10,10 @@ import net.minecraft.world.level.block.DispenserBlock;
 import java.util.function.BiPredicate;
 
 /**
+ * Allows adding extra dispenser behavior based on specific conditions.
+ *
  * @author Jackson
- * @since 1.4.0
+ * @since 2.0.0
  */
 public interface DispenseItemBehaviorRegistry {
 

@@ -6,6 +6,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 /**
+ * Registers flammability to fire blocks.
+ *
  * @author Ocelot
  * @since 2.0.0
  */

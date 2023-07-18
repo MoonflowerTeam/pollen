@@ -5,7 +5,9 @@
   "minVersion": "0.8",
   "mixins": [
     "network.PlayerListMixin",
-    "network.ServerLoginPacketListenerImplMixin"
+    "network.ServerLoginPacketListenerImplMixin",
+    "registry.content.AxeItemMixin",
+    "registry.content.ShovelItemMixin"
   ],
   "client": [
     "client.config.ClientHandshakePacketListenerImplMixin",
