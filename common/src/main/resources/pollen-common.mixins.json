@@ -13,6 +13,7 @@
     "crafting.PotionBrewingMixin"
   ],
   "client": [
+    "client.ItemRendererMixin",
     "client.Matrix3fAccessor",
     "client.Matrix4fAccessor",
     "client.ParticleEngineMixin"

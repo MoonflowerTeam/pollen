@@ -18,7 +18,7 @@
     "issues": "https://github.com/MoonflowerTeam/${archives_base_name}/issues",
     "sources": "https://github.com/MoonflowerTeam/${archives_base_name}/"
   },
-  "license": "GPLv3",
+  "license": "LGPLv3",
   "environment": "*",
   "entrypoints": {
     "main": [

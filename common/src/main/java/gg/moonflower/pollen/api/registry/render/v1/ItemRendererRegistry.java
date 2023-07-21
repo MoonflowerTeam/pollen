@@ -15,6 +15,13 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface ItemRendererRegistry {
 
+    /**
+     * Registers a new custom item renderer.
+     *
+     * @param item     The item to register for the renderer
+     * @param renderer The renderer to use instead of the normal baked model rendering
+     * @see DynamicItemRenderer
+     */
     static void registerRenderer(ItemLike item, DynamicItemRenderer renderer) {
         ItemRendererRegistryImpl.registerRenderer(item, renderer);
     }
