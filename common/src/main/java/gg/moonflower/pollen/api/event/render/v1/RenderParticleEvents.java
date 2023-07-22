@@ -8,13 +8,11 @@ import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 
-public final class RenderParticleEvents {
+public interface RenderParticleEvents {
 
-    public static final Event<Pre> PRE = EventFactory.createLoop(Pre.class);
-    public static final Event<Post> POST = EventFactory.createLoop(Post.class);
+    Event<Pre> PRE = EventFactory.createLoop(Pre.class);
 
-    private RenderParticleEvents() {
-    }
+    Event<Post> POST = EventFactory.createLoop(Post.class);
 
     /**
      * Called before particles are drawn.
@@ -23,7 +21,7 @@ public final class RenderParticleEvents {
      * @since 2.0.0
      */
     @FunctionalInterface
-    public interface Pre {
+    interface Pre {
 
         /**
          * Sets up how particles will be rendered.
@@ -44,7 +42,7 @@ public final class RenderParticleEvents {
      * @since 2.0.0
      */
     @FunctionalInterface
-    public interface Post {
+    interface Post {
 
         /**
          * Sets up the fog colors in the renderer.
@@ -63,7 +61,7 @@ public final class RenderParticleEvents {
      * @author Ocelot
      * @since 2.0.0
      */
-    public interface Context {
+    interface Context {
 
         /**
          * @return The particle engine instance
@@ -73,7 +71,7 @@ public final class RenderParticleEvents {
         /**
          * Inserts the specified render type to draw last.
          *
-         * @param type   The render type to add
+         * @param type The render type to add
          */
         void addRenderType(ParticleRenderType type);
     }

@@ -11,7 +11,7 @@ public interface ClientNetworkEvent {
 
     Event<ClientNetworkEvent> LOGIN = EventFactory.createLoop();
 
-    Event<ClientNetworkEvent> DISCONNECT = EventFactory.createEventResult();
+    Event<ClientNetworkEvent> DISCONNECT = EventFactory.createLoop();
 
     void event(MultiPlayerGameMode controller, LocalPlayer player, Connection connection);
 }

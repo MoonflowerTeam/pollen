@@ -28,7 +28,7 @@ public interface ModifyTradesEvents {
     /**
      * Registers new trades into all villager types trader.
      *
-     * @author Jackson, Ocelot
+     * @author Ocelot, Jackson
      * @since 1.0.0
      */
     @FunctionalInterface
