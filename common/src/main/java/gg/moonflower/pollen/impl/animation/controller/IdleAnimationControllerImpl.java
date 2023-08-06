@@ -25,4 +25,9 @@ public class IdleAnimationControllerImpl extends DelegateAnimationController imp
     @Override
     public void setIdleAnimations(ResourceLocation... animations) {
     }
+
+    @Override
+    public void updateRenderTime(float partialTicks) {
+        this.delegate.updateRenderTime(partialTicks);
+    }
 }

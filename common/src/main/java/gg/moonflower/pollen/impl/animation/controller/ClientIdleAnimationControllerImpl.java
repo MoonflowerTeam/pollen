@@ -57,6 +57,18 @@ public class ClientIdleAnimationControllerImpl extends IdleAnimationControllerIm
     }
 
     @Override
+    public void updateRenderTime(float partialTicks) {
+        super.updateRenderTime(partialTicks);
+        if (this.delegate.isNoAnimationPlaying()) {
+            for (PlayingAnimation animation : this.playingAnimations) {
+                if (animation instanceof PollenPlayingAnimationImpl impl) {
+                    impl.setRenderTime(partialTicks);
+                }
+            }
+        }
+    }
+
+    @Override
     public Collection<PlayingAnimation> getPlayingAnimations() {
         return this.delegate.isNoAnimationPlaying() ? this.playingAnimations : super.getPlayingAnimations();
     }

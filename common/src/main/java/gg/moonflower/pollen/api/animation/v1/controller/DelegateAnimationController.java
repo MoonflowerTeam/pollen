@@ -4,7 +4,6 @@ import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.pinwheel.api.animation.AnimationVariableStorage;
 import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
 import gg.moonflower.pollen.api.animation.v1.RenderAnimationTimer;
-import gg.moonflower.pollen.api.animation.v1.controller.PollenAnimationController;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +21,11 @@ public abstract class DelegateAnimationController implements PollenAnimationCont
 
     public DelegateAnimationController(PollenAnimationController delegate) {
         this.delegate = delegate;
+    }
+
+    @Override
+    public void clearAnimations() {
+        this.delegate.clearAnimations();
     }
 
     @Override

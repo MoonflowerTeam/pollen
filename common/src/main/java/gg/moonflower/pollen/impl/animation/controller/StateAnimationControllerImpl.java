@@ -27,7 +27,8 @@ public class StateAnimationControllerImpl extends AnimationControllerImpl implem
     protected boolean dirty;
 
     private final IntSet removedStates;
-    private final int[] stateTimes;
+    protected final int[] stateTimes;
+    protected final int[] stateTransitions;
 
     private final Set<AnimationStateListener> listeners;
 
@@ -39,6 +40,7 @@ public class StateAnimationControllerImpl extends AnimationControllerImpl implem
 
         this.removedStates = new IntOpenHashSet();
         this.stateTimes = new int[states.length];
+        this.stateTransitions = new int[states.length];
 
         this.listeners = new ObjectArraySet<>();
     }
@@ -73,18 +75,20 @@ public class StateAnimationControllerImpl extends AnimationControllerImpl implem
     }
 
     @Override
-    public void clearAnimations() {
+    public void clearAnimations(int transitionTicks) {
         for (int stateId : this.playingStates) {
+            this.stateTransitions[stateId] = transitionTicks;
             this.listeners.forEach(listener -> listener.onAnimationStop(this.states[stateId]));
         }
         this.playingStates.clear();
+        this.dirty = true;
     }
 
     @Override
-    public boolean startAnimations(AnimationState animation) {
+    public boolean startAnimations(AnimationState animation, int transitionTicks) {
         if (AnimationState.EMPTY.equals(animation)) {
             if (!this.playingStates.isEmpty()) {
-                this.clearAnimations();
+                this.clearAnimations(transitionTicks);
                 return true;
             }
             return false;
@@ -98,6 +102,7 @@ public class StateAnimationControllerImpl extends AnimationControllerImpl implem
         if (this.playingStates.add(id)) {
             this.dirty = true;
             this.stateTimes[id] = 0;
+            this.stateTransitions[id] = transitionTicks;
             this.listeners.forEach(listener -> listener.onAnimationStart(animation));
             return true;
         }
@@ -106,7 +111,7 @@ public class StateAnimationControllerImpl extends AnimationControllerImpl implem
     }
 
     @Override
-    public boolean stopAnimations(AnimationState animation) {
+    public boolean stopAnimations(AnimationState animation, int transitionTicks) {
         if (AnimationState.EMPTY.equals(animation)) {
             return false;
         }
@@ -118,6 +123,7 @@ public class StateAnimationControllerImpl extends AnimationControllerImpl implem
 
         if (this.playingStates.remove(id)) {
             this.dirty = true;
+            this.stateTransitions[id] = transitionTicks;
             this.listeners.forEach(listener -> listener.onAnimationStop(animation));
             if (this.playingStates.isEmpty()) {
                 this.listeners.forEach(AnimationStateListener::onAnimationsComplete);
@@ -155,13 +161,17 @@ public class StateAnimationControllerImpl extends AnimationControllerImpl implem
 
     @Override
     public void writeToNetwork(FriendlyByteBuf buf) {
-        int[] states = this.playingStates.toIntArray();
-        buf.writeVarIntArray(states);
+        buf.writeVarIntArray(this.playingStates.toIntArray());
+        buf.writeVarIntArray(this.stateTransitions);
     }
 
     @Override
     public void readFromNetwork(FriendlyByteBuf buf) {
         int[] states = buf.readVarIntArray();
+
+        // Copy transition data
+        int[] transitions = buf.readVarIntArray();
+        System.arraycopy(transitions, 0, this.stateTransitions, 0, Math.min(transitions.length, this.stateTransitions.length));
 
         for (int state : states) {
             // If the local playing states don't have the new state, then it just started playing

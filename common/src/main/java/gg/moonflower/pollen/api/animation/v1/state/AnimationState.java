@@ -2,6 +2,8 @@ package gg.moonflower.pollen.api.animation.v1.state;
 
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.Arrays;
+
 /**
  * An animation state is an array of animations that can play for a specific amount of time.
  * This is to allow the server to know what animation should be playing for state checking.
@@ -14,4 +16,12 @@ import net.minecraft.resources.ResourceLocation;
 public record AnimationState(int tickDuration, ResourceLocation... animations) {
 
     public static final AnimationState EMPTY = new AnimationState(0);
+
+    @Override
+    public String toString() {
+        return "AnimationState[" +
+                "tickDuration=" + this.tickDuration +
+                ", animations=" + Arrays.toString(this.animations) +
+                ']';
+    }
 }
