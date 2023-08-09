@@ -7,34 +7,21 @@ plugins {
 
 archivesBaseName = "${rootProject.archivesBaseName}-${project.name}"
 
-loom {
-    accessWidenerPath.set(project(":common").file("src/main/resources/${project.mod_id}.accesswidener"))
-
-    forge {
-        // For some reason gradle doesn't like using rootProject here?
-        mixinConfig "${project.mod_id}-common.mixins.json"
-        mixinConfig "${project.mod_id}.mixins.json"
-
-        convertAccessWideners.set(true)
-        extraAccessWideners.add("${project.mod_id}.accesswidener")
-
-        dataGen {
-            mod project.mod_id
-        }
-    }
-    mixin {
-        defaultRefmapName = "${project.mod_id}-refmap.json"
-    }
-    launches {
-        data {
-            arg "--existing", file("src/main/resources").absolutePath
-        }
-    }
-}
-
 architectury {
     platformSetupLoomIde()
     forge()
+}
+
+loom {
+    accessWidenerPath = project(":common").loom.accessWidenerPath
+
+    forge {
+        convertAccessWideners = true
+        extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
+
+        mixinConfig "${project.mod_id}-common.mixins.json"
+        mixinConfig "${project.mod_id}.mixins.json"
+    }
 }
 
 configurations {
