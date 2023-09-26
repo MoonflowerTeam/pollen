@@ -29,3 +29,10 @@ mandatory = true
 versionRange = "[${minecraft_version},)"
 ordering = "AFTER"
 side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "architectury"
+mandatory = true
+versionRange = "[6.5,)"
+ordering = "BEFORE"
+side = "BOTH"
